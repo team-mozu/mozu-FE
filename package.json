@@ -6,7 +6,16 @@
     "start": "node select.js",
     "admin": "yarn workspaces admin",
     "student": "yarn workspaces student",
-    "ui": "yarn workspaces ui"
+    "ui": "yarn workspaces ui",
+    "postinstall": "husky install",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --cache",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --cache --fix",
+      "prettier --cache --write"
+    ]
   },
   "workspaces": {
     "packages": [
@@ -14,8 +23,12 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
     "@types/node": "^22.10.5",
     "eslint": "^9.17.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.3.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2"
   },
