@@ -6,11 +6,7 @@ const questions = [
     type: 'list',
     name: 'file',
     message: 'Whats the project you want to run?:',
-    choices: [
-      'user',
-      'admin',
-      'ui',
-    ],
+    choices: ['user', 'admin', 'ui'],
   },
 ];
 
@@ -19,25 +15,26 @@ inquirer.prompt(questions).then((answers) => {
 
   if (answers.file === 'user') {
     command = 'yarn';
-    args = ['workspace', '@entrydsm/user', 'run', 'start'];
+    args = ['workspace', '@mozu/user', 'run', 'start'];
   } else if (answers.file === 'admin') {
     command = 'yarn';
-    args = ['workspace', '@entrydsm/admin', 'run', 'start'];
+    args = ['workspace', '@mozu/admin', 'run', 'start'];
   } else if (answers.file === 'ui') {
     command = 'yarn';
-    args = ['workspace', '@entrydsm/ui', 'run', 'start'];
+    args = ['workspace', '@mozu/ui', 'run', 'start'];
 
-  const child = spawn(command, args, { shell: true });
+    const child = spawn(command, args, { shell: true });
 
-  child.stdout.on('data', (data) => {
-    console.log(`${data}`);
-  });
+    child.stdout.on('data', (data) => {
+      console.log(`${data}`);
+    });
 
-  child.stderr.on('data', (data) => {
-    console.error(`${data}`);
-  });
+    child.stderr.on('data', (data) => {
+      console.error(`${data}`);
+    });
 
-  child.on('close', (code) => {
-    console.log(`Child process exited with code ${code}`);
-  });
-}});
+    child.on('close', (code) => {
+      console.log(`Child process exited with code ${code}`);
+    });
+  }
+});
