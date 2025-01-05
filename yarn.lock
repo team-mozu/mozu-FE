@@ -306,6 +306,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mozu/design-token@workspace:packages/design-token":
+  version: 0.0.0-use.local
+  resolution: "@mozu/design-token@workspace:packages/design-token"
+  languageName: unknown
+  linkType: soft
+
+"@mozu/ui@workspace:packages/ui":
+  version: 0.0.0-use.local
+  resolution: "@mozu/ui@workspace:packages/ui"
+  languageName: unknown
+  linkType: soft
+
 "@types/estree@npm:^1.0.6":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
