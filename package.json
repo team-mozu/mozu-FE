@@ -1,0 +1,25 @@
+{
+  "name": "mozu-fe",
+  "packageManager": "yarn@4.5.1",
+  "private": true,
+  "scripts": {
+    "start": "node select.js",
+    "admin": "yarn workspaces admin",
+    "student": "yarn workspaces student",
+    "ui": "yarn workspaces ui"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "inquirer": "^12.3.0"
+  }
+}
