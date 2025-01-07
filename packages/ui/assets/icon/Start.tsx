@@ -1,3 +1,5 @@
+import { color } from '@mozu/design-token';
+
 type StartType = {
   size?: number;
   color?: string;
