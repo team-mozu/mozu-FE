@@ -1,4 +1,6 @@
 export const color = {
+  black: '#000000',
+  white: '#FFFFFF',
   orange: {
     5: '#FFF7ED',
     10: '#FFEDD5',
