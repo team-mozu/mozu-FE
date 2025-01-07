@@ -1,10 +1,10 @@
-import { React } from 'react';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Del, Edit, Plus, Save, Start } from './assets';
+import { ReactNode } from 'react';
 
 type ButtonType = {
-  children?: string;
+  children?: ReactNode;
   backgroundColor?: string;
   color?: string;
   hoverBorderColor?: string;
@@ -75,13 +75,13 @@ const ButtonContainer = styled.button<ButtonType>`
   font: ${font.b1};
   &:hover {
     background-color: ${(props) =>
-      props.hoverBackgroundColor || props.backgroundColor};
+    props.hoverBackgroundColor || props.backgroundColor};
     color: ${(props) => props.hoverColor || props.color};
     border: 1px solid ${(props) => props.hoverBorderColor || props.borderColor};
   }
   &:active {
     background-color: ${(props) =>
-      props.activeBackgroundColor || props.backgroundColor};
+    props.activeBackgroundColor || props.backgroundColor};
     color: ${(props) => props.activeColor || props.color};
     border: 1px solid ${(props) => props.activeBorderColor || props.borderColor};
   }
