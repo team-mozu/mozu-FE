@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { React } from 'react';
 import { color } from '@mozu/design-token';
 
 type StarType = {

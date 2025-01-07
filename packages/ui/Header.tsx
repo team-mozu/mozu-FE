@@ -1,7 +1,6 @@
 import { LogoWithText } from './assets';
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
-import { React } from 'react';
 
 export const Header = () => {
   return (
