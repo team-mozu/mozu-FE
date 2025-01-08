@@ -1,6 +1,6 @@
 {
   "name": "mozu-fe",
-  "packageManager": "yarn@4.5.1",
+  "packageManager": "yarn@4.6.0",
   "private": true,
   "scripts": {
     "start": "node select.js",
@@ -33,6 +33,7 @@
     "typescript": "5.5.4"
   },
   "dependencies": {
+    "@rollup/rollup-darwin-arm64": "^4.30.1",
     "inquirer": "^12.3.0"
   }
 }
