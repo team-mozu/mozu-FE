@@ -1,6 +1,6 @@
 {
   "name": "mozu-fe",
-  "packageManager": "yarn@4.5.1",
+  "packageManager": "yarn@4.6.0",
   "private": true,
   "scripts": {
     "start": "node select.js",
@@ -19,14 +19,22 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/ui",
+      "packages/admin",
+      "packages/design-token"
     ]
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "corepack": "^0.30.0",
     "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "husky": "^8.0.0",
     "lint-staged": "^15.3.0",
     "prettier": "^3.4.2",
