@@ -4,3 +4,7 @@ export * from './Plus';
 export * from './Save';
 export * from './Start';
 export * from './Star';
+export * from './ManagerLogo';
+export * from './ArticleIcon';
+export * from './ClassIcon';
+export * from './StockIcon';
