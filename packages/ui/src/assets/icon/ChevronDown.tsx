@@ -1,11 +1,11 @@
 import { color } from '@mozu/design-token';
 
-type SaveType = {
+interface ISaveType {
   size?: number;
   color?: string;
-};
+}
 
-export const ChevronDown = ({ size, color }: SaveType) => {
+export const ChevronDown = ({ size, color }: ISaveType) => {
   return (
     <svg
       width={size}
@@ -20,6 +20,7 @@ export const ChevronDown = ({ size, color }: SaveType) => {
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
+        transform="rotate(180, 12, 12)"
       />
     </svg>
   );

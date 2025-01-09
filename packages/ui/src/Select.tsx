@@ -28,7 +28,7 @@ export const Select = ({ data, width, height, padding }: ISelectProps) => {
     const value = e.currentTarget.getAttribute('value');
     if (value) {
       setCurrentValue(value);
-      setShowOptions(false);
+      setShowOptions(true);
     }
   };
 
@@ -95,20 +95,23 @@ const SelectContainer = styled.div<
 const Label = styled.label`
   color: ${color.black};
   font: ${font.b1};
+  font-weight: ${font.b1.fontWeight};
   display: inline-block;
 `;
 
 const ChevronWrapper = styled.div<{ show: boolean }>`
   position: absolute;
-  top: 4px;
-  right: 8px;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%)
+    rotate(${(props) => (props.show ? '180deg' : '0deg')});
+  transform-origin: center;
   transition: transform 0.3s ease;
-  transform: ${(props) => (props.show ? 'rotate(0deg)' : 'rotate(180deg)')};
 `;
 
 const SelectOptions = styled.ul<ISelectOptionsType>`
   position: absolute;
-  top: 38px;
+  top: calc(100% + 4px);
   left: 0;
   width: 100%;
   max-height: ${(props) => (props.show ? '180px' : '0')};
@@ -122,6 +125,8 @@ const SelectOptions = styled.ul<ISelectOptionsType>`
 const Option = styled.li`
   padding: 8px 12px;
   cursor: pointer;
+  font: ${font.b2};
+  font-weight: ${font.b2.fontWeight};
   &:hover {
     background-color: ${color.zinc[100]};
   }
