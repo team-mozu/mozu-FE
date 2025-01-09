@@ -37,7 +37,7 @@ export const CheckBox = ({ onChange, checked, id }: Props) => {
 const Container = styled.div`
   display: flex;
   justify-content: center;
-  align-item: center;
+  align-items: center;
 `;
 
 const CheckBoxLabel = styled.div<CheckType>`
@@ -49,6 +49,7 @@ const CheckBoxLabel = styled.div<CheckType>`
   display: flex;
   justify-content: center;
   align-item: center;
+  line-height: 20px;
 `;
 
 const CheckBoxInput = styled.input`

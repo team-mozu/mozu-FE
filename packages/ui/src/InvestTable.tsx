@@ -264,12 +264,18 @@ const PlusTd = styled(Td)`
 const Thead = styled.thead`
   > tr {
     background-color: ${color.orange[50]};
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
 const Tbody = styled.tbody`
   > tr {
     background-color: ${color.white};
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
