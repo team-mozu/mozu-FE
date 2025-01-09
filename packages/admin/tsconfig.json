@@ -19,10 +19,11 @@
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
     "paths": {
       "@/*": ["./src/*"],
-      "@mozu/design-token": ["../design-token/src/index.ts"]
+      "@mozu/ui": ["../../ui/build/index.js"]
     },
-    "typeRoots": ["node_modules/@types", "src/@types"],
     "outDir": "build"
   },
+  "typeRoots": ["node_modules/@types", "src/@types"],
+  "exclude": ["node_modules", "build", "./node_modules/**/*"],
   "include": ["src"]
 }
