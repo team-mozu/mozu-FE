@@ -1,5 +1,3 @@
-// ✅ 앞서 정의한 patch 파일을 불러옵니다.
-
 require('@mozu/eslint-config/patch');
 
 module.exports = {

@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
-import { color, font } from "@mozu/design-token";
-import { useEffect, useRef, useState, MouseEvent } from "react";
-import { ChevronDown } from ".";
+import styled from '@emotion/styled';
+import { color, font } from '@mozu/design-token';
+import { useEffect, useRef, useState, MouseEvent } from 'react';
+import { ChevronDown } from '.';
 
-type SelectProps = {
+interface ISelectProps {
   data: string[];
   width?: number;
   height?: number;
@@ -13,19 +13,19 @@ type SelectProps = {
     bottom?: number;
     left?: number;
   };
-};
+}
 
-type SelectOptionsType = {
+interface ISelectOptionsType {
   show: boolean;
-};
+}
 
-export const Select = ({ data, width, height, padding }: SelectProps) => {
+export const Select = ({ data, width, height, padding }: ISelectProps) => {
   const [currentValue, setCurrentValue] = useState<string>(data[0]);
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const selectRef = useRef<HTMLDivElement | null>(null);
 
   const handleOnChangeSelectValue = (e: React.MouseEvent<HTMLLIElement>) => {
-    const value = e.currentTarget.getAttribute("value");
+    const value = e.currentTarget.getAttribute('value');
     if (value) {
       setCurrentValue(value);
       setShowOptions(false);
@@ -35,14 +35,20 @@ export const Select = ({ data, width, height, padding }: SelectProps) => {
   useEffect(() => {
     const handleClickOutside = (event: unknown) => {
       const mouseEvent = event as MouseEvent;
-      if (selectRef.current && !selectRef.current.contains(mouseEvent.target as Node)) {
+      if (
+        selectRef.current &&
+        !selectRef.current.contains(mouseEvent.target as Node)
+      ) {
         setShowOptions(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside as EventListener);
+    document.addEventListener('mousedown', handleClickOutside as EventListener);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside as EventListener);
+      document.removeEventListener(
+        'mousedown',
+        handleClickOutside as EventListener,
+      );
     };
   }, [selectRef]);
 
@@ -71,7 +77,9 @@ export const Select = ({ data, width, height, padding }: SelectProps) => {
 };
 
 // 스타일 정의
-const SelectContainer = styled.div<Pick<SelectProps, "width" | "height" | "padding"> & { show: boolean }>`
+const SelectContainer = styled.div<
+  Pick<ISelectProps, 'width' | 'height' | 'padding'> & { show: boolean }
+>`
   position: relative;
   width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
@@ -95,17 +103,17 @@ const ChevronWrapper = styled.div<{ show: boolean }>`
   top: 4px;
   right: 8px;
   transition: transform 0.3s ease;
-  transform: ${(props) => (props.show ? "rotate(0deg)" : "rotate(180deg)")};
+  transform: ${(props) => (props.show ? 'rotate(0deg)' : 'rotate(180deg)')};
 `;
 
-const SelectOptions = styled.ul<SelectOptionsType>`
+const SelectOptions = styled.ul<ISelectOptionsType>`
   position: absolute;
   top: 38px;
   left: 0;
   width: 100%;
-  max-height: ${(props) => (props.show ? "180px" : "0")};
+  max-height: ${(props) => (props.show ? '180px' : '0')};
   overflow-y: auto;
-  border: ${(props) => (props.show ? `1px solid ${color.zinc[200]}` : "none")};
+  border: ${(props) => (props.show ? `1px solid ${color.zinc[200]}` : 'none')};
   border-radius: 8px;
   background-color: ${color.white};
   transition: max-height 0.2s ease-in-out;

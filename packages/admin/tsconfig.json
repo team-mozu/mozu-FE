@@ -22,10 +22,9 @@
       "@mozu/ui": ["../ui/src/index.ts"],
       "@mozu/design-token": ["../design-token/src/index.ts"]
     },
+    "typeRoots": ["node_modules/@types", "src/@types"],
     "outDir": "build"
   },
   "references": [{ "path": "../ui" }],
-  "include": ["src", "vite.config.ts"],
-  "typeRoots": ["node_modules/@types", "src/@types"],
-  "exclude": ["node_modules", "build", "./node_modules/**/*"]
+  "include": ["src", "vite.config.ts"]
 }

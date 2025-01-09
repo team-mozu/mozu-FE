@@ -2,23 +2,11 @@
   "name": "@mozu/ui",
   "version": "1.0.0",
   "description": "",
-  "main": "./build/index.js",
-  "module": "./build/index.js",
-  "types": "./build/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./build/index.js",
-      "require": "./build/index.cjs"
-    }
-  },
-  "type": "module",
+  "main": "index.ts",
   "author": "",
   "license": "ISC",
-  "scripts": {
-    "build": "yarn build:js && yarn build:type && yarn build:css",
-    "build:js": "node build.js",
-    "build:type": "yarn tsc --emitDeclarationOnly",
-    "dev": "yarn build:js --watch && yarn build:type --watch"
+  "exports": {
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -28,9 +16,6 @@
     "react-dom": "18.3.1",
     "react-router-dom": "^7.1.1"
   },
-  "files": [
-    "./build"
-  ],
   "devDependencies": {
     "@mozu/prettier-config": "workspace:^",
     "@types/react": "18.3.18",

@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 
-type InvestmentMetricsType = {
+interface IInvestmentMetricsType {
   title?: string;
   subTitle?: string;
   number?: string;
-};
+}
 
 export const InvestmentMetrics = ({
   title,
   subTitle,
   number,
-}: InvestmentMetricsType) => {
+}: IInvestmentMetricsType) => {
   return (
     <InvestMetricsContainer>
       <ContentContainer>

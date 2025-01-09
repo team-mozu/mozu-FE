@@ -9,11 +9,16 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "../",
     "strict": true,
     "skipLibCheck": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@mozu/design-token": ["../design-token/src/index.ts"]
+    }
   },
+  "references": [{ "path": "../design-token" }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

@@ -7,3 +7,4 @@ export * from './SideBar';
 export * from './InvestmentMetrics';
 export * from './SideBar';
 export * from './NavBtn';
+export * from './Select';
