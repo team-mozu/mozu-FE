@@ -1,9 +1,9 @@
 import { color } from '@mozu/design-token';
 
-type ManagerLogoType = {
+interface ManagerLogoType {
   size?: number;
   color?: string;
-};
+}
 
 export const ManagerLogo = ({
   size = 20,

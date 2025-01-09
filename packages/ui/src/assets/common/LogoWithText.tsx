@@ -1,9 +1,9 @@
-type LogoType = {
+interface ILogoType {
   width: number;
   height: number;
-};
+}
 
-export const LogoWithText = ({ width, height }: LogoType) => {
+export const LogoWithText = ({ width, height }: ILogoType) => {
   return (
     <svg
       width={width}

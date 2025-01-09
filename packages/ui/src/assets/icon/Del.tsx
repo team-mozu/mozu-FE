@@ -1,11 +1,11 @@
 import { color } from '@mozu/design-token';
 
-type DelType = {
+interface IDelType {
   size?: number;
   color?: string;
-};
+}
 
-export const Del = ({ size, color }: DelType) => {
+export const Del = ({ size, color }: IDelType) => {
   return (
     <svg
       width={size}

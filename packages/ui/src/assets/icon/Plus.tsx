@@ -1,9 +1,9 @@
 import { color } from '@mozu/design-token';
 
-type PlusType = {
+interface PlusType {
   size?: number;
   color?: string;
-};
+}
 
 export const Plus = ({ size, color }: PlusType) => {
   return (

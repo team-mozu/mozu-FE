@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Del, Edit, Plus, Save, Start } from '.';
+import { font } from '@mozu/design-token';
+import { Del, Edit, Plus, Save, Start } from './assets';
 import { ReactNode } from 'react';
 
-type ButtonType = {
+interface IButtonType {
   children?: ReactNode;
   backgroundColor?: string;
   color?: string;
@@ -18,7 +18,7 @@ type ButtonType = {
   iconColor?: string;
   type?: 'startImg' | 'delImg' | 'editImg' | 'plusImg' | 'saveImg';
   isIcon?: boolean;
-};
+}
 
 export const Button = ({
   children,
@@ -35,7 +35,7 @@ export const Button = ({
   iconColor,
   type = 'startImg',
   isIcon = false,
-}: ButtonType) => {
+}: IButtonType) => {
   const buttonIconType = {
     startImg: <Start size={iconSize} color={iconColor} />,
     delImg: <Del size={iconSize} color={iconColor} />,
@@ -62,7 +62,7 @@ export const Button = ({
   );
 };
 
-const ButtonContainer = styled.button<ButtonType>`
+const ButtonContainer = styled.button<IButtonType>`
   padding: 10px 16px;
   border-radius: 8px;
   background-color: ${(props) => props.backgroundColor};

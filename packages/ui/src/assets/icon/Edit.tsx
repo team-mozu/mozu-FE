@@ -1,9 +1,9 @@
 import { color } from '@mozu/design-token';
 
-type EditType = {
+interface EditType {
   size?: number;
   color?: string;
-};
+}
 
 export const Edit = ({ size, color }: EditType) => {
   return (

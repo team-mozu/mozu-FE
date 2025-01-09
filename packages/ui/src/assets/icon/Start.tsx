@@ -1,9 +1,9 @@
 import { color } from '@mozu/design-token';
 
-type StartType = {
+interface StartType {
   size?: number;
   color?: string;
-};
+}
 
 export const Start = ({ size, color }: StartType) => {
   return (

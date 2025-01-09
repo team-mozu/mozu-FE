@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
 import { color } from '@mozu/design-token';
-import { Star } from '.';
+import { Star } from './assets';
 import { Button } from '@mozu/ui';
 import { useState } from 'react';
 
-type ClassPostType = {
+interface IClassPostType {
   title: string;
   creationDate: string;
-};
+}
 
-export const ClassPost = ({ title, creationDate }: ClassPostType) => {
+export const ClassPost = ({ title, creationDate }: IClassPostType) => {
   const [isClick, setIsClick] = useState<boolean>(false);
 
   const starClick = () => {
