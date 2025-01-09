@@ -1,9 +1,9 @@
 import { color } from '@mozu/design-token';
 
-type SaveType = {
+interface SaveType {
   size?: number;
   color?: string;
-};
+}
 
 export const Save = ({ size, color }: SaveType) => {
   return (

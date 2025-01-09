@@ -5,13 +5,13 @@ import { NavBtn } from './NavBtn';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
-type SideBarType = {
+interface ISideBarType {
   name?: string;
   role?: string;
   navTitle?: string;
-};
+}
 
-export const SideBar = ({ name, role, navTitle }: SideBarType) => {
+export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
   const { pathname } = useLocation();
   const [isClassColor, setIsClassColor] = useState<boolean>(false);
   const [isStockColor, setIsStockColor] = useState<boolean>(false);
@@ -67,6 +67,7 @@ export const SideBar = ({ name, role, navTitle }: SideBarType) => {
     </>
   );
 };
+
 const BtnContainer = styled.div`
   width: 100%;
 `;

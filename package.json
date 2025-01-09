@@ -8,7 +8,7 @@
     "student": "yarn workspaces student",
     "ui": "yarn workspaces ui",
     "postinstall": "husky install",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --cache",
+    "lint": "eslint packages --ext ts,tsx --report-unused-disable-directives --cache",
     "lint-staged": "lint-staged"
   },
   "lint-staged": {
@@ -25,12 +25,19 @@
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
+    "@mozu/eslint-config": "workspace:^",
+    "@mozu/prettier-config": "workspace:^",
     "@types/node": "^22.10.5",
-    "eslint": "^9.17.0",
+    "eslint": "8.57.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.3.0",
     "prettier": "^3.4.2",
-    "typescript": "5.5.4"
+    "typescript": "^5.7.3"
+  },
+  "resolutions": {
+    "eslint": "8.57.0",
+    "@typescript-eslint/eslint-plugin": "7.5.0",
+    "@typescript-eslint/parser": "7.5.0"
   },
   "dependencies": {
     "@rollup/rollup-darwin-arm64": "^4.30.1",

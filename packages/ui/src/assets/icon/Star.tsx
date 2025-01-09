@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
-import { React } from 'react';
 import { color } from '@mozu/design-token';
 
-type StarType = {
+interface StarType {
   size?: number;
   strokeColor?: string;
   fillColor?: string;
   onClick?: () => void;
-};
+}
 
 export const Star = ({
   size = 20,

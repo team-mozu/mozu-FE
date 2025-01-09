@@ -13,6 +13,7 @@ export const Header = () => {
     </HeaderContainer>
   );
 };
+
 const LogoContainer = styled.div`
   display: flex;
   gap: 12px;

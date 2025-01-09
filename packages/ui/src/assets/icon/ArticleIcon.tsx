@@ -1,11 +1,9 @@
-import { color } from '@mozu/design-token';
-
-type ArticleType = {
+interface IArticleType {
   size?: number;
   color?: string;
-};
+}
 
-export const ArticleIcon = ({ size = 20, color = '#52525B' }: ArticleType) => {
+export const ArticleIcon = ({ size = 20, color = '#52525B' }: IArticleType) => {
   return (
     <svg
       width={size}

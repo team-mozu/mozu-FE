@@ -3,13 +3,13 @@ import { color } from '@mozu/design-token';
 import { ReactNode } from 'react';
 import { ArticleIcon, ClassIcon, StockIcon } from './assets';
 
-type NavType = {
+interface INavType {
   children?: ReactNode;
   isColor?: boolean;
   type?: 'classIcon' | 'stockIcon' | 'articleIcon';
-};
+}
 
-export const NavBtn = ({ children, isColor, type }: NavType) => {
+export const NavBtn = ({ children, isColor, type }: INavType) => {
   const getIconColor = () => (isColor ? color.orange[600] : color.zinc[500]);
 
   const buttonIconType = {
@@ -20,13 +20,13 @@ export const NavBtn = ({ children, isColor, type }: NavType) => {
 
   return (
     <NavContent isColor={isColor}>
-      {buttonIconType[type]}
+      {type ? buttonIconType[type] : null}
       {children}
     </NavContent>
   );
 };
 
-const NavContent = styled.button<Pick<NavType, 'isColor'>>`
+const NavContent = styled.button<Pick<INavType, 'isColor'>>`
   width: 100%;
   height: 52px;
   background-color: ${({ isColor }) =>

@@ -1,9 +1,9 @@
 import { color } from '@mozu/design-token';
 
-type StockType = {
+interface StockType {
   size?: number;
   color?: string;
-};
+}
 
 export const StockIcon = ({ size = 20, color = '#52525B' }: StockType) => {
   return (

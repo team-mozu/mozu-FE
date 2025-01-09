@@ -1,11 +1,11 @@
 import { color } from '@mozu/design-token';
 
-type ClassType = {
+interface IClassType {
   size?: number;
   color?: string;
-};
+}
 
-export const ClassIcon = ({ size = 20, color = '#52525B' }: ClassType) => {
+export const ClassIcon = ({ size = 20, color = '#52525B' }: IClassType) => {
   return (
     <svg
       width={size}
