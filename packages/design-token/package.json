@@ -2,10 +2,14 @@
   "name": "@mozu/design-token",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "build/index.js",
   "author": "",
   "license": "ISC",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js",
+      "require": "./build/index.cjs"
+    }
   }
 }
