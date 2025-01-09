@@ -19,7 +19,9 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/ui",
+      "packages/admin",
+      "packages/design-token"
     ]
   },
   "devDependencies": {

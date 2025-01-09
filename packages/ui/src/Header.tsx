@@ -1,4 +1,4 @@
-import { LogoWithText } from './assets';
+import { LogoWithText } from '.';
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
 

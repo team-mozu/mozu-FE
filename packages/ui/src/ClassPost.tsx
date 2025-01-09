@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { color } from '@mozu/design-token';
 import { Star } from './assets';
-import { Button } from '.';
+import { Button } from '@mozu/ui';
 import { useState } from 'react';
 
 interface IClassPostType {
