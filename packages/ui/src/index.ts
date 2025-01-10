@@ -9,3 +9,6 @@ export * from './SideBar';
 export * from './NavBtn';
 export * from './Select';
 export * from './SearchInput';
+export * from './AddInvestItemModal';
+export * from './Item';
+export * from './Checkbox';

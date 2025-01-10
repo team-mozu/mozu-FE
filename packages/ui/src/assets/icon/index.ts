@@ -10,3 +10,4 @@ export * from './ClassIcon';
 export * from './StockIcon';
 export * from './ChevronDown';
 export * from './Search';
+export * from './Check';
