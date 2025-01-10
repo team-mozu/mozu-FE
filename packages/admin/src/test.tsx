@@ -3,6 +3,7 @@ import { Select } from '@mozu/ui';
 const dummyData = ['1', '2', '3', '4', '5'];
 
 export const Test = () => {
+<<<<<<< Updated upstream
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <Select
@@ -13,4 +14,7 @@ export const Test = () => {
       />
     </div>
   );
+=======
+  return <div style={{ width: '100vh' }}></div>;
+>>>>>>> Stashed changes
 };
