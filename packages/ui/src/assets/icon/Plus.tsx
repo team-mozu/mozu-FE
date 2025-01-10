@@ -1,11 +1,9 @@
-import { color } from '@mozu/design-token';
-
-interface PlusType {
+interface IPlusType {
   size?: number;
   color?: string;
 }
 
-export const Plus = ({ size, color }: PlusType) => {
+export const Plus = ({ size, color }: IPlusType) => {
   return (
     <svg
       width={size}

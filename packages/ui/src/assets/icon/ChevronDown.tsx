@@ -1,11 +1,9 @@
-import { color } from '@mozu/design-token';
-
-type SaveType = {
+interface ISaveType {
   size?: number;
   color?: string;
-};
+}
 
-export const ChevronDown = ({ size, color }: SaveType) => {
+export const ChevronDown = ({ size, color }: ISaveType) => {
   return (
     <svg
       width={size}

@@ -158,4 +158,8 @@ export const GlobalStyle = css`
     text-decoration: none;
     color: inherit;
   }
+  input {
+    border: none;
+    outline: none;
+  }
 `;

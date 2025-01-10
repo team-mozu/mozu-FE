@@ -4,5 +4,5 @@
     "outDir": "build",
     "composite": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "index.ts"]
 }

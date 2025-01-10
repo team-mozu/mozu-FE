@@ -1,11 +1,9 @@
-import { color } from '@mozu/design-token';
-
-interface StockType {
+interface IStockType {
   size?: number;
   color?: string;
 }
 
-export const StockIcon = ({ size = 20, color = '#52525B' }: StockType) => {
+export const StockIcon = ({ size = 20, color = '#52525B' }: IStockType) => {
   return (
     <svg
       width={size}

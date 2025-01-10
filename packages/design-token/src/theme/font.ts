@@ -1,7 +1,7 @@
 const fontToCss = (weight: number, size: number, lineHeight: number) => {
   return {
-    fontWeight: `${weight}px`,
     fontSize: `${size}px`,
+    fontWeight: `${weight}`,
     lineHeight: `${lineHeight}px`,
   };
 };
