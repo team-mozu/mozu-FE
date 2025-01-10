@@ -40,7 +40,6 @@
     "@typescript-eslint/parser": "7.5.0"
   },
   "dependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.30.1",
     "inquirer": "^12.3.0"
   }
 }

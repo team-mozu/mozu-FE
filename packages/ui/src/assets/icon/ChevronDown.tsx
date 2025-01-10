@@ -1,5 +1,3 @@
-import { color } from '@mozu/design-token';
-
 interface ISaveType {
   size?: number;
   color?: string;

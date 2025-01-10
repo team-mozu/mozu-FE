@@ -1,11 +1,9 @@
-import { color } from '@mozu/design-token';
-
-interface EditType {
+interface IEditType {
   size?: number;
   color?: string;
 }
 
-export const Edit = ({ size, color }: EditType) => {
+export const Edit = ({ size, color }: IEditType) => {
   return (
     <svg
       width={size}

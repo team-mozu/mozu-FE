@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { color } from '@mozu/design-token';
 
-interface StarType {
+interface IStarType {
   size?: number;
   strokeColor?: string;
   fillColor?: string;
@@ -13,7 +12,7 @@ export const Star = ({
   strokeColor,
   fillColor,
   onClick,
-}: StarType) => {
+}: IStarType) => {
   return (
     <SvgContainer onClick={onClick}>
       <svg
@@ -35,7 +34,7 @@ export const Star = ({
   );
 };
 
-const SvgContainer = styled.div<Pick<StarType, 'size'>>`
+const SvgContainer = styled.div<Pick<IStarType, 'size'>>`
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
   cursor: pointer;

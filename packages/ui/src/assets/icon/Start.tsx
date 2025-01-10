@@ -1,11 +1,9 @@
-import { color } from '@mozu/design-token';
-
-interface StartType {
+interface IStartType {
   size?: number;
   color?: string;
 }
 
-export const Start = ({ size, color }: StartType) => {
+export const Start = ({ size, color }: IStartType) => {
   return (
     <svg
       width={size}

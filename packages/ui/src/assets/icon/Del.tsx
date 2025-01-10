@@ -1,5 +1,3 @@
-import { color } from '@mozu/design-token';
-
 interface IDelType {
   size?: number;
   color?: string;

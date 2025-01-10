@@ -10,3 +10,4 @@ export * from './NavBtn';
 export * from './Select';
 export * from './CheckBox';
 export * from './InvestTable';
+export * from './SearchInput';
