@@ -18,6 +18,7 @@ export const ChevronDown = ({ size, color }: ISaveType) => {
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
+        transform="rotate(180, 12, 12)"
       />
     </svg>
   );
