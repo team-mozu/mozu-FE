@@ -226,7 +226,6 @@ const Caption = styled.caption`
   font: ${font.b1};
   color: ${color.zinc[800]};
   margin-bottom: 18px;
-  font-weight: 500;
 `;
 
 const CheckTh = styled.th`
@@ -240,7 +239,6 @@ const CheckTd = styled(CheckTh)``;
 const Th = styled(CheckTh)<ThProps>`
   text-align: left;
   font: ${font.b1};
-  font-weight: 500;
   width: ${(props) => props.width};
 `;
 const Td = styled(Th)``;
