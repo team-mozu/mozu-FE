@@ -9,8 +9,8 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
     "resolveJsonModule": true,
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "noEmit": true,
 
@@ -19,10 +19,12 @@
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
     "paths": {
       "@/*": ["./src/*"],
+      "@mozu/ui": ["../ui/src/index.ts"],
       "@mozu/design-token": ["../design-token/src/index.ts"]
     },
     "typeRoots": ["node_modules/@types", "src/@types"],
     "outDir": "build"
   },
-  "include": ["src"]
+  "references": [{ "path": "../ui" }],
+  "include": ["src", "vite.config.ts"]
 }

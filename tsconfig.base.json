@@ -6,6 +6,7 @@
     "declaration": true,
     "strict": true,
     "moduleResolution": "node",
+    "declarationDir": "dist",
     "jsx": "react-jsx"
   }
 }

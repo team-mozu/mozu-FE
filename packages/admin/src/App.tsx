@@ -1,12 +1,11 @@
 import { RouterProvider } from 'react-router-dom';
 import { Router } from './router';
-import { Global } from '@emotion/react';
-import { GlobalStyle } from './style/globalStyle.style';
+import { GlobalStyle } from '@mozu/design-token';
 
 function App() {
   return (
     <>
-      <Global styles={GlobalStyle} />
+      <GlobalStyle />
       <RouterProvider router={Router} />
     </>
   );
