@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 
-type AccountsType = {
+interface IAccountsType {
   title?: string;
   content: string;
-};
+}
 
-export const Accounts = ({ title, content }: AccountsType) => {
+export const Accounts = ({ title, content }: IAccountsType) => {
   return (
     <AccountsContainer>
       <ContentContainer>

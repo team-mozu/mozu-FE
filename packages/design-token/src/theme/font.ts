@@ -3,7 +3,6 @@ const fontToCss = (weight: number, size: number, lineHeight: number) => {
     fontFamily: 'Pretendard',
     fontWeight: weight,
     fontSize: `${size}px`,
-    fontWeight: `${weight}`,
     lineHeight: `${lineHeight}px`,
   };
 };

@@ -93,9 +93,7 @@ const SelectContainer = styled.div<
 `;
 
 const Label = styled.label`
-  color: ${color.black};
   font: ${font.b1};
-  font-weight: ${font.b1.fontWeight};
   display: inline-block;
 `;
 
@@ -126,7 +124,6 @@ const Option = styled.li`
   padding: 8px 12px;
   cursor: pointer;
   font: ${font.b2};
-  font-weight: ${font.b2.fontWeight};
   &:hover {
     background-color: ${color.zinc[100]};
   }
