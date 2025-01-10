@@ -4,15 +4,15 @@ import { Plus } from './assets';
 import { useEffect, useState } from 'react';
 import { Button, CheckBox } from './index';
 
-interface ThProps {
+interface IThProps {
   width: string;
 }
 
-interface EditType {
+interface IEditType {
   edit: boolean;
 }
 
-export const InvestTable = ({ edit }: EditType) => {
+export const InvestTable = ({ edit }: IEditType) => {
   const headers = [
     { text: '종목코드', value: '종목코드', width: '120px' },
     { text: '종목이름', value: '종목이름', width: '500px' },
@@ -236,9 +236,9 @@ const CheckTh = styled.th`
 
 const CheckTd = styled(CheckTh)``;
 
-const Th = styled(CheckTh)<ThProps>`
+const Th = styled(CheckTh)<IThProps>`
   text-align: left;
-  font: ${font.b1};
+  font: ${font.b2};
   width: ${(props) => props.width};
 `;
 const Td = styled(Th)``;
@@ -248,6 +248,7 @@ const PlusField = styled.div`
   justify-content: center;
   gap: 8px;
   cursor: pointer;
+  font: ${font.b1};
 `;
 
 const PlusTd = styled(Td)`
@@ -280,6 +281,6 @@ const Tbody = styled.tbody`
 const Input = styled.input`
   border: none;
   outline: none;
-  font: ${font.b1};
+  font: ${font.b2};
   width: 110px;
 `;
