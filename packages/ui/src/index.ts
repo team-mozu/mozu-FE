@@ -9,5 +9,5 @@ export * from './SideBar';
 export * from './NavBtn';
 export * from './Select';
 export * from './CheckBox';
-export * from './InvestTable';
+export * from './Tables';
 export * from './SearchInput';
