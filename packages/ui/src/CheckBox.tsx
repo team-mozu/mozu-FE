@@ -2,18 +2,18 @@ import styled from '@emotion/styled';
 import { color } from '@mozu/design-token';
 import { Check } from './assets';
 
-interface Props {
+interface IProps {
   onChange: () => void;
   checked: boolean;
   id: string;
 }
 
-interface CheckType {
+interface ICheckType {
   backgroundColor: string;
   borderColor: string;
 }
 
-export const CheckBox = ({ onChange, checked, id }: Props) => {
+export const CheckBox = ({ onChange, checked, id }: IProps) => {
   return (
     <Container>
       <CheckBoxInput
@@ -40,7 +40,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const CheckBoxLabel = styled.div<CheckType>`
+const CheckBoxLabel = styled.div<ICheckType>`
   background-color: ${(props) => props.backgroundColor};
   width: 20px;
   height: 20px;
