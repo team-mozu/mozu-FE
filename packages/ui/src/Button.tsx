@@ -63,6 +63,7 @@ export const Button = ({
 };
 
 const ButtonContainer = styled.button<IButtonType>`
+  cursor: pointer;
   padding: 10px 16px;
   border-radius: 8px;
   background-color: ${(props) => props.backgroundColor};

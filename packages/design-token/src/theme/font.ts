@@ -17,7 +17,7 @@ export const font = {
   t3: fontToCss(500, 18, 20),
   t4: fontToCss(400, 18, 20),
   b1: fontToCss(500, 16, 20),
-  b2: fontToCss(400, 18, 20),
+  b2: fontToCss(400, 16, 20),
   l1: fontToCss(500, 14, 18),
   l2: fontToCss(400, 14, 18),
 };
