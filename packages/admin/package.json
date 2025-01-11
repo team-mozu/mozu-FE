@@ -32,6 +32,7 @@
     "scheduler": "^0.25.0"
   },
   "devDependencies": {
+    "@mozu/design-token": "workspace:^",
     "@mozu/eslint-config": "workspace:^",
     "@mozu/prettier-config": "workspace:^",
     "@mozu/ui": "workspace:^",

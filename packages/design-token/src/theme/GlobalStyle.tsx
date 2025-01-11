@@ -158,6 +158,12 @@ const baseStyle = css`
     text-decoration: none;
     color: inherit;
   }
+  input {
+    border: none;
+  }
+  input:focus {
+    outline: none;
+  }
 `;
 
 export const GlobalStyle = () => {
