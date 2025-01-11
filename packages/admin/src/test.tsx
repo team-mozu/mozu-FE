@@ -1,9 +1,15 @@
-import { StockSearchSideBar } from '@mozu/ui';
+import { Input } from '@mozu/ui';
 
 export const Test = () => {
   return (
-    <div style={{ width: '100vh' }}>
-      <StockSearchSideBar />;
-    </div>
+    <Input
+      width={'1080px'}
+      height={'48px'}
+      placeholder={'수업 이름을 입력해 주세요..'}
+      paddingTop={'14px'}
+      paddingRight={'16px'}
+      paddingBottom={'14px'}
+      paddingLeft={'16px'}
+    />
   );
 };
