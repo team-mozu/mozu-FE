@@ -1,33 +1,57 @@
 import styled from '@emotion/styled';
 import { color } from '@mozu/design-token';
-import { useState } from 'react';
 import { Check } from './assets';
 
-export const Checkbox = () => {
-  const [isCheck, setIsCheck] = useState<boolean>(false);
+interface IProps {
+  onChange: () => void;
+  checked: boolean;
+  id: string;
+}
 
-  const checkClick = () => {
-    setIsCheck(!isCheck);
-  };
+interface ICheckType {
+  backgroundColor: string;
+  borderColor: string;
+}
 
+export const CheckBox = ({ onChange, checked, id }: IProps) => {
   return (
-    <>
-      <CheckboxContainer isCheck={isCheck} onClick={checkClick}>
-        <Check />
-      </CheckboxContainer>
-    </>
+    <Container>
+      <CheckBoxInput
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        id={id}
+      />
+      <label htmlFor={id}>
+        <CheckBoxLabel
+          borderColor={checked ? color.orange[500] : color.zinc[500]}
+          backgroundColor={checked ? color.orange[500] : color.white}
+        >
+          {checked ? <Check /> : <div></div>}
+        </CheckBoxLabel>
+      </label>
+    </Container>
   );
 };
 
-const CheckboxContainer = styled.div<{ isCheck: boolean }>`
+const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const CheckBoxLabel = styled.div<ICheckType>`
+  background-color: ${(props) => props.backgroundColor};
   width: 20px;
   height: 20px;
+  border: 1px solid ${(props) => props.borderColor};
   border-radius: 4px;
-  background-color: ${({ isCheck }) =>
-    isCheck ? color.orange[500] : 'transparent'};
-  border: 1px solid
-    ${({ isCheck }) => (isCheck ? color.orange[500] : color.zinc[500])};
+  display: flex;
+  justify-content: center;
+  align-item: center;
+  line-height: 20px;
+`;
+
+const CheckBoxInput = styled.input`
+  display: none;
 `;
