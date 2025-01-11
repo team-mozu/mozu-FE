@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
-import { Checkbox } from './Checkbox';
+// import { Checkbox } from './Checkbox';
 
 interface IItemType {
   isHeader?: boolean;
