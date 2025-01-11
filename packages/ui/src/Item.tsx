@@ -1,18 +1,28 @@
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
-import { Checkbox } from './Checkbox';
+import { CheckBox } from './Checkbox';
 
 interface IItemType {
   isHeader?: boolean;
   title1?: string;
   title2?: string;
+  onChange?: () => void;
+  checked?: boolean;
+  id?: string;
 }
 
-export const Item = ({ isHeader, title1, title2 }: IItemType) => {
+export const Item = ({
+  isHeader,
+  title1,
+  title2,
+  onChange,
+  checked,
+  id,
+}: IItemType) => {
   return (
     <TableContent isHeader={isHeader}>
       <ContentContainer>
-        <Checkbox />
+        <CheckBox id={id} onChange={onChange} checked={checked} />
         <TitleContainer>
           <Title isHeader={isHeader}>{title1}</Title>
           <Title isHeader={isHeader}>{title2}</Title>
