@@ -1,16 +1,15 @@
-import { Select } from '@mozu/ui';
-
-const dummyData = ['1', '2', '3', '4', '5'];
+import { Input } from '@mozu/ui';
 
 export const Test = () => {
   return (
-    <div style={{ width: '100%', height: '100vh' }}>
-      <Select
-        data={dummyData}
-        width={120}
-        height={48}
-        padding={{ top: 14, right: 16, bottom: 14, left: 16 }}
-      />
-    </div>
+    <Input
+      width={'1080px'}
+      height={'48px'}
+      placeholder={'수업 이름을 입력해 주세요..'}
+      paddingTop={'14px'}
+      paddingRight={'16px'}
+      paddingBottom={'14px'}
+      paddingLeft={'16px'}
+    />
   );
 };
