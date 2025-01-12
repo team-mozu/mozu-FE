@@ -12,7 +12,15 @@ import { ArticleItem } from './ArticleItem';
 import { Button } from './Button';
 import { useState } from 'react';
 
-export const AddArticleItemModal = () => {
+interface IArticleModalType {
+  close: () => void;
+}
+
+export const AddArticleItemModal = ({ close }: IArticleModalType) => {
+  const onClose = () => {
+    close();
+  };
+
   const ArticleData = [
     {
       title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"',
@@ -81,13 +89,15 @@ export const AddArticleItemModal = () => {
         </TableContainer>
         <FooterContainer>
           <BtnContainer>
-            <Button
-              backgroundColor={color.zinc[50]}
-              borderColor={color.zinc[200]}
-              color={color.zinc[800]}
-            >
-              취소
-            </Button>
+            <div onClick={onClose}>
+              <Button
+                backgroundColor={color.zinc[50]}
+                borderColor={color.zinc[200]}
+                color={color.zinc[800]}
+              >
+                취소
+              </Button>
+            </div>
             <Button
               backgroundColor={color.orange[500]}
               borderColor={color.orange[500]}
@@ -101,6 +111,8 @@ export const AddArticleItemModal = () => {
     </ModalBackground>
   );
 };
+
+const CancleBtn = styled.div``;
 
 const ItemContents = styled.div`
   overflow: scroll;
