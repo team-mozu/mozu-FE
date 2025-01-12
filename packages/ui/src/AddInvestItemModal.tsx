@@ -3,8 +3,38 @@ import { font, color } from '@mozu/design-token';
 import { SearchInput } from './SearchInput';
 import { Item } from './Item';
 import { Button } from './Button';
+import { useState } from 'react';
 
 export const AddInvestItemModal = () => {
+  const datas = [
+    { id: '0', code: '035720', name: '카카오' },
+    { id: '1', code: '005380', name: '현대차' },
+    { id: '2', code: '000270', name: '기아' },
+    { id: '3', code: '035420', name: 'NAVER' },
+    { id: '4', code: '259960', name: '크래프톤' },
+    { id: '5', code: '247540', name: '에코프로비엠' },
+    { id: '6', code: '068270', name: '셀트리온' },
+    { id: '7', code: '006400', name: '삼성SDI' },
+    { id: '8', code: '373220', name: 'LG에너지솔루션' },
+  ];
+  const [checkedItems, setCheckedItems] = useState<boolean[]>(
+    Array(datas.length).fill(false),
+  );
+  const [isHeadCheck, setIsHeadCheck] = useState<boolean>(false);
+
+  const checkClick = (index: number) => {
+    setCheckedItems((prev) => {
+      const updateCheckItems = [...checkedItems];
+      updateCheckItems[index] = !updateCheckItems[index];
+      return updateCheckItems;
+    });
+  };
+
+  const headClick = () => {
+    setIsHeadCheck(!isHeadCheck);
+    setCheckedItems((prev) => prev.map(() => !isHeadCheck));
+  };
+
   return (
     <ModalBackground>
       <InvestItemContainer>
@@ -13,17 +43,26 @@ export const AddInvestItemModal = () => {
           <SearchInput inputText="종목 검색.." />
         </SearchContainer>
         <TableContainer>
-          <Item isHeader={true} title1="종목 코드" title2="종목 이름" />
+          <Item
+            isHeader={true}
+            title1="종목 코드"
+            title2="종목 이름"
+            id="title"
+            checked={isHeadCheck}
+            onChange={headClick}
+          />
           <ItemContents>
-            <Item title1="035720" title2="카카오" />
-            <Item title1="005380" title2="현대차" />
-            <Item title1="000270" title2="기아" />
-            <Item title1="035420" title2="NAVER" />
-            <Item title1="259960" title2="크래프톤" />
-            <Item title1="247540" title2="에코프로비엠" />
-            <Item title1="068270" title2="셀트리온" />
-            <Item title1="006400" title2="삼성SDI" />
-            <Item title1="373220" title2="LG에너지솔루션" />
+            {datas.map((data, index) => {
+              return (
+                <Item
+                  title1={data.code}
+                  title2={data.name}
+                  onChange={() => checkClick(index)}
+                  checked={checkedItems[index]}
+                  id={data.id}
+                />
+              );
+            })}
           </ItemContents>
         </TableContainer>
         <FooterContainer>
