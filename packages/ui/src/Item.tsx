@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
-import { CheckBox } from './Checkbox';
+import { CheckBox } from './CheckBox';
 
 interface IItemType {
   isHeader?: boolean;
@@ -12,7 +12,7 @@ interface IItemType {
 }
 
 export const Item = ({
-  isHeader,
+  isHeader = false,
   title1,
   title2,
   onChange,

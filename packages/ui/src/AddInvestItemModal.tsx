@@ -39,7 +39,7 @@ export const AddInvestItemModal = () => {
     <ModalBackground>
       <InvestItemContainer>
         <SearchContainer>
-          <Title>투자종목 추가</Title>
+          <Title isHeader>투자종목 추가</Title>
           <SearchInput inputText="종목 검색.." />
         </SearchContainer>
         <TableContainer>
@@ -60,6 +60,7 @@ export const AddInvestItemModal = () => {
                   onChange={() => checkClick(index)}
                   checked={checkedItems[index]}
                   id={data.id}
+                  key={index}
                 />
               );
             })}
