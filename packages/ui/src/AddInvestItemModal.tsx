@@ -89,7 +89,7 @@ export const AddInvestItemModal = () => {
   );
 };
 
-const FooterContainer = styled.footer`
+export const FooterContainer = styled.footer`
   width: 100%;
   height: 64px;
   display: flex;
@@ -98,12 +98,12 @@ const FooterContainer = styled.footer`
   padding-right: 12px;
 `;
 
-const BtnContainer = styled.div`
+export const BtnContainer = styled.div`
   display: flex;
   gap: 10px;
 `;
 
-const TableContainer = styled.div`
+export const TableContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -131,7 +131,7 @@ const InvestItemContainer = styled.div`
   padding-top: 12px;
 `;
 
-const ModalBackground = styled.div`
+export const ModalBackground = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: rgb(0, 0, 0, 0.08);
@@ -145,7 +145,7 @@ const ItemContents = styled.div`
   height: 432px;
 `;
 
-const Title = styled.div<{ isHeader: boolean }>`
+export const Title = styled.div<{ isHeader: boolean }>`
   font: ${font.b1};
   color: ${color.black};
   margin-left: 4px;
