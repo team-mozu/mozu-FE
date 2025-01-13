@@ -23,7 +23,7 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
       setIsClassColor(true);
       setIsStockColor(false);
       setIsArticleColor(false);
-    } else if (pathname === '/a') {
+    } else if (pathname === '/stock-management') {
       //pathname이 종목관리일 때 (path 나오면 수정)
       setIsClassColor(false);
       setIsStockColor(true);
