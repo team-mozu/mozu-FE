@@ -50,6 +50,7 @@ const InputContainer = styled.div<IInputContainerType>`
 `;
 
 const InputContent = styled.input`
+  background-color: ${color.zinc[50]};
   border: none;
   width: 100%;
   color: ${color.black};
