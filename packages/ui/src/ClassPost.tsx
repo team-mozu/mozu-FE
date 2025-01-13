@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { color } from '@mozu/design-token';
+import { color, font } from '@mozu/design-token';
 import { Star } from './assets';
 import { Button } from '@mozu/ui';
 import { useState } from 'react';
@@ -48,19 +48,19 @@ const PostContainer = styled.div`
   height: 156px;
   border: 1px solid ${color.zinc[200]};
   border-radius: 8px;
-  background-color: ${color.zinc[50]};
+  background-color: ${color.white};
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const Title = styled.div`
-  font: h4;
+  font: ${font.h4};
   color: ${color.black};
 `;
 
 const CreationDate = styled.div`
-  font: b2;
+  font: ${font.b2};
   color: ${color.zinc[500]};
 `;
 
@@ -72,6 +72,7 @@ const TilteContainer = styled.div`
 `;
 
 const TitleIconContainer = styled.div`
+  width: 432px;
   display: flex;
   justify-content: space-between;
   align-items: start;
