@@ -1,11 +1,19 @@
 import styled from '@emotion/styled';
-import { SelectError, StockSearchSideBar } from '@mozu/ui';
+import {
+  DeleteModal,
+  InvestmentMetrics,
+  SelectError,
+  StockSearchSideBar,
+  StockManagementDetail,
+} from '@mozu/ui';
+import { useState } from 'react';
 
 export const StockManagementPage = () => {
+  const [isSelect, setIsSelect] = useState<boolean>(true);
   return (
     <Container>
       <StockSearchSideBar />
-      <SelectError />
+      {isSelect ? <StockManagementDetail /> : <SelectError />}
     </Container>
   );
 };
