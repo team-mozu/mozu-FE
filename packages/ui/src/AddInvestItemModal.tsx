@@ -5,15 +5,7 @@ import { Item } from './Item';
 import { Button } from './Button';
 import { useState } from 'react';
 
-interface IInvestModalType {
-  close: () => void;
-}
-
-export const AddInvestItemModal = ({ close }: IInvestModalType) => {
-  const onClose = () => {
-    close();
-  };
-
+export const AddInvestItemModal = () => {
   const datas = [
     { id: '0', code: '035720', name: '카카오' },
     { id: '1', code: '005380', name: '현대차' },
@@ -76,15 +68,14 @@ export const AddInvestItemModal = ({ close }: IInvestModalType) => {
         </TableContainer>
         <FooterContainer>
           <BtnContainer>
-            <div onClick={onClose}>
-              <Button
-                backgroundColor={color.zinc[50]}
-                borderColor={color.zinc[200]}
-                color={color.zinc[800]}
-              >
-                취소
-              </Button>
-            </div>
+            <Button
+              backgroundColor={color.zinc[50]}
+              borderColor={color.zinc[200]}
+              color={color.zinc[800]}
+            >
+              취소
+            </Button>
+
             <Button
               backgroundColor={color.orange[500]}
               borderColor={color.orange[500]}
