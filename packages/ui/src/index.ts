@@ -16,6 +16,8 @@ export * from './Tables';
 export * from './Input';
 export * from './CheckBox';
 export * from './AddInvestItemModal';
+export * from './AddArticleItemModal';
+export * from './ArticleItem';
 export * from './Item';
 export * from './DeleteModal';
 export * from './TextArea';
