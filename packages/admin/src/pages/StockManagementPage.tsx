@@ -5,6 +5,6 @@ export const StockManagementPage = () => {
 };
 
 const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 `;

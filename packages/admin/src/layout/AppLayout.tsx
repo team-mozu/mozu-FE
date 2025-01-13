@@ -19,12 +19,14 @@ export const AppLayout = () => {
 };
 
 const AppContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 `;
 
 const MainContent = styled.div`
-  margin-left: 280px; /* 사이드바 너비만큼 여백 추가 */
+  margin-left: 280px;
   margin-top: 64px;
-  flex: 1; /* 남은 공간을 채우는 콘텐츠 */
+  flex: 1;
 `;
