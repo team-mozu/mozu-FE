@@ -3,7 +3,7 @@ import { font, color } from '@mozu/design-token';
 import { SearchInput } from './SearchInput';
 import { Item } from './Item';
 import { Button } from './Button';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 export const AddInvestItemModal = () => {
   const datas = [
@@ -21,6 +21,7 @@ export const AddInvestItemModal = () => {
     Array(datas.length).fill(false),
   );
   const [isHeadCheck, setIsHeadCheck] = useState<boolean>(false);
+  const [isClose, setIsClose] = useState<boolean>(false);
 
   const checkClick = (index: number) => {
     setCheckedItems((prev) => {
@@ -35,57 +36,67 @@ export const AddInvestItemModal = () => {
     setCheckedItems((prev) => prev.map(() => !isHeadCheck));
   };
 
+  const outSideRef = useRef();
+
+  const closeClick = (e: MouseEvent) => {
+    if (outSideRef.current === e.target) {
+      setIsClose(true);
+    }
+  };
+
   return (
-    <ModalBackground>
-      <InvestItemContainer>
-        <SearchContainer>
-          <Title isHeader>투자종목 추가</Title>
-          <SearchInput inputText="종목 검색.." />
-        </SearchContainer>
-        <TableContainer>
-          <Item
-            isHeader={true}
-            title1="종목 코드"
-            title2="종목 이름"
-            id="title"
-            checked={isHeadCheck}
-            onChange={headClick}
-          />
-          <ItemContents>
-            {datas.map((data, index) => {
-              return (
-                <Item
-                  title1={data.code}
-                  title2={data.name}
-                  onChange={() => checkClick(index)}
-                  checked={checkedItems[index]}
-                  id={data.id}
-                  key={index}
-                />
-              );
-            })}
-          </ItemContents>
-        </TableContainer>
-        <FooterContainer>
-          <BtnContainer>
-            <Button
-              backgroundColor={color.zinc[50]}
-              borderColor={color.zinc[200]}
-              color={color.zinc[800]}
-            >
-              취소
-            </Button>
-            <Button
-              backgroundColor={color.orange[500]}
-              borderColor={color.orange[500]}
-              color={color.white}
-            >
-              선택 종목 추가
-            </Button>
-          </BtnContainer>
-        </FooterContainer>
-      </InvestItemContainer>
-    </ModalBackground>
+    !isClose && (
+      <ModalBackground ref={outSideRef} onClick={closeClick}>
+        <InvestItemContainer>
+          <SearchContainer>
+            <Title isHeader>투자종목 추가</Title>
+            <SearchInput inputText="종목 검색.." />
+          </SearchContainer>
+          <TableContainer>
+            <Item
+              isHeader={true}
+              title1="종목 코드"
+              title2="종목 이름"
+              id="title"
+              checked={isHeadCheck}
+              onChange={headClick}
+            />
+            <ItemContents>
+              {datas.map((data, index) => {
+                return (
+                  <Item
+                    title1={data.code}
+                    title2={data.name}
+                    onChange={() => checkClick(index)}
+                    checked={checkedItems[index]}
+                    id={data.id}
+                    key={index}
+                  />
+                );
+              })}
+            </ItemContents>
+          </TableContainer>
+          <FooterContainer>
+            <BtnContainer>
+              <Button
+                backgroundColor={color.zinc[50]}
+                borderColor={color.zinc[200]}
+                color={color.zinc[800]}
+              >
+                취소
+              </Button>
+              <Button
+                backgroundColor={color.orange[500]}
+                borderColor={color.orange[500]}
+                color={color.white}
+              >
+                선택 종목 추가
+              </Button>
+            </BtnContainer>
+          </FooterContainer>
+        </InvestItemContainer>
+      </ModalBackground>
+    )
   );
 };
 
