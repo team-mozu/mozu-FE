@@ -7,15 +7,18 @@ import { useState } from 'react';
 interface IClassPostType {
   title: string;
   creationDate: string;
+  starOnClick?: () => void;
+  isClick?: boolean;
+  delClick?: () => void;
 }
 
-export const ClassPost = ({ title, creationDate }: IClassPostType) => {
-  const [isClick, setIsClick] = useState<boolean>(false);
-
-  const starClick = () => {
-    setIsClick(!isClick);
-  };
-
+export const ClassPost = ({
+  title,
+  creationDate,
+  starOnClick,
+  isClick,
+  delClick,
+}: IClassPostType) => {
   return (
     <PostContainer>
       <ContentContainer>
@@ -26,7 +29,7 @@ export const ClassPost = ({ title, creationDate }: IClassPostType) => {
           </TilteContainer>
           <Star
             size={20}
-            onClick={starClick}
+            onClick={starOnClick}
             strokeColor={isClick ? color.yellow[400] : color.zinc[600]}
             fillColor={isClick ? color.yellow[400] : 'none'}
           />
@@ -35,6 +38,7 @@ export const ClassPost = ({ title, creationDate }: IClassPostType) => {
           backgroundColor={color.zinc[50]}
           color={color.zinc[800]}
           borderColor={color.zinc[200]}
+          onClick={delClick}
         >
           삭제하기
         </Button>
