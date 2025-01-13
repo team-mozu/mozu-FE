@@ -1,4 +1,5 @@
 import { Global, css } from '@emotion/react';
+import { color } from './color';
 
 const baseStyle = css`
   html,
@@ -111,6 +112,7 @@ const baseStyle = css`
   }
   body {
     margin: 0;
+    background: ${color.zinc[50]};
   }
   menu,
   ol,

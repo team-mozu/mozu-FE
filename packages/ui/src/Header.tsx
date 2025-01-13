@@ -33,7 +33,7 @@ const SchoolTag = styled.div`
 const HeaderContainer = styled.header`
   position: fixed;
   top: 0;
-  width: 100%;
+  width: calc(100% - 280px);
   z-index: 1;
   height: 64px;
   padding: 0 40px;

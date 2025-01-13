@@ -15,6 +15,7 @@ export const StockSearchSideBar = () => {
         <StockDiv />
         <StockDiv />
         <StockDiv />
+        <StockDiv />
       </ArticleWrapper>
       <AddButton text="종목 추가하기" />
     </SideBarContainer>
@@ -26,6 +27,8 @@ const SideBarContainer = styled.div`
   height: 100%;
   backgroundcolor: white;
   border-right: 1px solid ${color.zinc[200]};
+  display: flex;
+  flex-direction: column;
 `;
 
 const UpperWrapper = styled.div`
@@ -34,9 +37,13 @@ const UpperWrapper = styled.div`
   gap: 8px;
   font: ${font.b1};
   padding: 12px;
+  background-color: ${color.white};
   border-bottom: 1px solid ${color.zinc[200]};
 `;
 
 const ArticleWrapper = styled.div`
+  background-color: ${color.white};
+  flex: 1;
   width: 100%;
+  overflow-y: auto;
 `;

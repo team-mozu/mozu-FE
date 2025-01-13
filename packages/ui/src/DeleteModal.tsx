@@ -37,9 +37,10 @@ export const DeleteModal = ({ titleComment, subComment }: IDeleteModal) => {
 };
 
 const DeleteModalContainer = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 480px;
+  height: 258px;
   border: 1px solid ${color.zinc[200]};
+  background-color: ${color.white};
   border-radius: 1rem;
 `;
 
@@ -78,7 +79,7 @@ const TextDiv = styled.div`
 const TitleText = styled.p`
   font: ${font.h4};
   color: ${color.black};
-  width: 70%;
+  width: 60%;
   white-space: normal;
   overflow-wrap: break-word;
   word-break: keep-all;
