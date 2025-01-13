@@ -18,7 +18,11 @@ export * from './InvestTable';
 export * from './SearchInput';
 export * from './Input';
 export * from './CheckBox';
-export * from './InvestTable';
+
+export * from './Tables';
+
+
+
 export * from './SearchInput';
 export * from './AddInvestItemModal';
 export * from './Item';
@@ -52,3 +56,4 @@ export * from './ArticleDiv';
 export * from './StockSearchSideBar';
 export * from './StockDiv';
 export * from './Input';
+
