@@ -30,3 +30,5 @@ export * from './ArticleDiv';
 export * from './StockSearchSideBar';
 export * from './StockDiv';
 export * from './Input';
+export * from './Title';
+export * from './PostTitle';

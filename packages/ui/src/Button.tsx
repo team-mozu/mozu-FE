@@ -18,6 +18,7 @@ interface IButtonType {
   iconColor?: string;
   type?: 'startImg' | 'delImg' | 'editImg' | 'plusImg' | 'saveImg';
   isIcon?: boolean;
+  onClick?: () => void;
 }
 
 export const Button = ({
@@ -34,6 +35,7 @@ export const Button = ({
   iconSize,
   iconColor,
   type = 'startImg',
+  onClick,
   isIcon = false,
 }: IButtonType) => {
   const buttonIconType = {
@@ -55,6 +57,7 @@ export const Button = ({
       activeBorderColor={activeBorderColor}
       activeBackgroundColor={activeBackgroundColor}
       activeColor={activeColor}
+      onClick={onClick}
     >
       {children}
       {isIcon && buttonIconType[type]}
