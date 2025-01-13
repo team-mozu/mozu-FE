@@ -1,5 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { StockManagementPage, SignInPage, ClassManagement } from '@/pages';
+import {
+  StockManagementPage,
+  SignInPage,
+  StockManagementAddPage,
+} from '@/pages';
 import { AppLayout } from '@/layout';
 
 export const Router = createBrowserRouter([
@@ -16,7 +20,16 @@ export const Router = createBrowserRouter([
           },
           {
             path: ':id',
-            element: <StockManagementPage />,
+            children: [
+              {
+                path: '/',
+                element: <StockManagementPage />,
+              },
+              {
+                path: '/add',
+                element: <StockManagementAddPage />,
+              },
+            ],
           },
         ],
       },
