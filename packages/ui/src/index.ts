@@ -23,4 +23,5 @@ export * from './InvestTable';
 export * from './SearchInput';
 export * from './AddInvestItemModal';
 export * from './Item';
+export * from './DeleteModal';
 export * from './TextArea';
