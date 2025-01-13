@@ -6,35 +6,61 @@ import { Button } from './Button';
 interface IDeleteModal {
   titleComment: string;
   subComment: string;
+  onCancel: () => void;
+  onDelete: () => void;
 }
 
-export const DeleteModal = ({ titleComment, subComment }: IDeleteModal) => {
+export const DeleteModal = ({
+  titleComment,
+  subComment,
+  onCancel,
+  onDelete,
+}: IDeleteModal) => {
   return (
-    <DeleteModalContainer>
-      <UpperContainer>
-        <IconDiv>
-          <Del size={24} color={color.red[500]} />
-        </IconDiv>
-        <TextDiv>
-          <TitleText>{titleComment}</TitleText>
-          <SubtitleText>{subComment}</SubtitleText>
-        </TextDiv>
-      </UpperContainer>
-      <UnderContainer>
-        <Button
-          backgroundColor={color.zinc[50]}
-          color={color.zinc[800]}
-          borderColor={color.zinc[200]}
-        >
-          취소
-        </Button>
-        <Button backgroundColor={color.red[500]} color={color.white}>
-          삭제하기
-        </Button>
-      </UnderContainer>
-    </DeleteModalContainer>
+    <ModalBackdrop onClick={onCancel}>
+      <DeleteModalContainer onClick={(e) => e.stopPropagation()}>
+        <UpperContainer>
+          <IconDiv>
+            <Del size={24} color={color.red[500]} />
+          </IconDiv>
+          <TextDiv>
+            <TitleText>{titleComment}</TitleText>
+            <SubtitleText>{subComment}</SubtitleText>
+          </TextDiv>
+        </UpperContainer>
+        <UnderContainer>
+          <div onClick={onCancel}>
+            <Button
+              backgroundColor={color.zinc[50]}
+              color={color.zinc[800]}
+              borderColor={color.zinc[200]}
+            >
+              취소
+            </Button>
+          </div>
+          <div onClick={onDelete}>
+            <Button backgroundColor={color.red[500]} color={color.white}>
+              삭제하기
+            </Button>
+          </div>
+        </UnderContainer>
+      </DeleteModalContainer>
+    </ModalBackdrop>
   );
 };
+
+const ModalBackdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.08); // 배경 흐림 효과
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
 
 const DeleteModalContainer = styled.div`
   width: 480px;
