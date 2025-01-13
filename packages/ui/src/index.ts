@@ -12,6 +12,7 @@ export * from './ArticleSearchSideBar';
 export * from './ArticleDiv';
 export * from './StockSearchSideBar';
 export * from './StockDiv';
+export * from './Tables';
 export * from './Input';
 export * from './CheckBox';
 export * from './AddInvestItemModal';
