@@ -9,7 +9,16 @@ export const Router = createBrowserRouter([
     children: [
       {
         path: '/stock-management',
-        element: <StockManagementPage />,
+        children: [
+          {
+            index: true,
+            element: <StockManagementPage />,
+          },
+          {
+            path: ':id',
+            element: <StockManagementPage />,
+          },
+        ],
       },
     ],
   },
