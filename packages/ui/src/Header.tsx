@@ -31,9 +31,13 @@ const SchoolTag = styled.div`
 `;
 
 const HeaderContainer = styled.header`
+  position: fixed;
+  top: 0;
   width: 100%;
+  z-index: 1;
   height: 64px;
   padding: 0 40px;
+  margin-left: 280px;
   display: flex;
   align-items: center;
   justify-content: space-between;

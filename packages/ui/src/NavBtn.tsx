@@ -33,6 +33,8 @@ const NavContent = styled.button<Pick<INavType, 'isColor'>>`
     isColor ? color.orange[50] : 'transparent'};
   color: ${({ isColor }) => (isColor ? color.orange[600] : color.zinc[500])};
   display: flex;
+  border: none;
+  cursor: pointer;
   gap: 12px;
   padding-left: 20px;
   align-items: center;
