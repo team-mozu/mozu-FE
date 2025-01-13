@@ -1,10 +1,24 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { Test } from './test';
+import { StockManagementPage, SignInPage } from '@/pages';
+import { AppLayout } from '@/layout';
 
 export const Router = createBrowserRouter([
   {
     path: '/',
-    element: <Test />,
-    errorElement: <div>404</div>,
-  }
+    element: <AppLayout />,
+    children: [
+      {
+        path: '/stock-management',
+        element: <StockManagementPage />,
+      },
+    ],
+  },
+  {
+    path: '/signin',
+    element: <SignInPage />,
+  },
+  {
+    path: '*', // 404 페이지
+    element: <div>404</div>,
+  },
 ]);

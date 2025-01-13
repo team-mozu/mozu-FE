@@ -23,7 +23,7 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
       setIsClassColor(true);
       setIsStockColor(false);
       setIsArticleColor(false);
-    } else if (pathname === '/a') {
+    } else if (pathname === '/stock-management') {
       //pathname이 종목관리일 때 (path 나오면 수정)
       setIsClassColor(false);
       setIsStockColor(true);
@@ -130,6 +130,9 @@ const ContentContainer = styled.div`
 `;
 
 const SideBarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
   height: 100vh;
   width: 280px;
   background-color: ${color.white};
@@ -137,5 +140,6 @@ const SideBarContainer = styled.div`
   flex-direction: column;
   gap: 24px;
   align-items: center;
+  border-right: 1px solid ${color.zinc[200]};
   justify-content: start;
 `;

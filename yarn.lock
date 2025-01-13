@@ -1104,6 +1104,7 @@ __metadata:
     "@emotion/use-insertion-effect-with-fallbacks": "npm:^1.2.0"
     "@emotion/utils": "npm:^1.4.2"
     "@emotion/weak-memoize": "npm:^0.4.0"
+    "@mozu/design-token": "workspace:^"
     "@mozu/eslint-config": "workspace:^"
     "@mozu/prettier-config": "workspace:^"
     "@mozu/ui": "workspace:^"
