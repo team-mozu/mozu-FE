@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { StockManagementPage, SignInPage } from '@/pages';
 import { AppLayout } from '@/layout';
+import { CreateClass } from './pages/CreateClass';
 
 export const Router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ export const Router = createBrowserRouter([
             element: <StockManagementPage />,
           },
         ],
+      },
+      {
+        path: 'create-class',
+        element: <CreateClass />,
       },
     ],
   },
