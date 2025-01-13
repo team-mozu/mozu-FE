@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 import {
-  DeleteModal,
-  InvestmentMetrics,
   SelectError,
   StockSearchSideBar,
   StockManagementDetail,
