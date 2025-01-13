@@ -42,5 +42,5 @@ const HeaderContainer = styled.header`
   align-items: center;
   justify-content: space-between;
   background-color: ${color.white};
-  border: 1px solid ${color.zinc[200]};
+  border-bottom: 1px solid ${color.zinc[200]};
 `;
