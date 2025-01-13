@@ -6,7 +6,7 @@ interface ITitleType {
   subTitle?: string;
 }
 
-export const Title = ({ mainTitle, subTitle }: ITitleType) => {
+export const PageTitle = ({ mainTitle, subTitle }: ITitleType) => {
   return (
     <TitleContainer>
       <MainTitle>{mainTitle}</MainTitle>

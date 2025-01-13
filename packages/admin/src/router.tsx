@@ -1,5 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { StockManagementPage, SignInPage, ClassManagement } from '@/pages';
+import {
+  StockManagementPage,
+  SignInPage,
+  ClassManagement,
+  ArticleManagementAdd,
+} from '@/pages';
 import { AppLayout } from '@/layout';
 
 export const Router = createBrowserRouter([
@@ -19,6 +24,10 @@ export const Router = createBrowserRouter([
             element: <StockManagementPage />,
           },
         ],
+      },
+      {
+        path: '/article-management-add',
+        element: <ArticleManagementAdd />,
       },
       {
         path: '/class-management',

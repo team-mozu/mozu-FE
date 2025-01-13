@@ -1,4 +1,4 @@
-import { Button, ClassPost, DeleteModal, PostTitle, Title } from '@mozu/ui';
+import { Button, ClassPost, DeleteModal, PostTitle, PageTitle } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState } from 'react';
@@ -54,7 +54,7 @@ export const ClassManagement = () => {
       )}
       <ClassManagementContent>
         <TitleContainer>
-          <Title
+          <PageTitle
             mainTitle="수업 관리"
             subTitle="수업 환경을 만들어 사용해 보세요."
           />
