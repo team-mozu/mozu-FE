@@ -4,6 +4,7 @@ import {
   SignInPage,
   ClassManagement,
   ArticleManagementAdd,
+  StockManagementAddPage,
 } from '@/pages';
 import { AppLayout } from '@/layout';
 
@@ -21,7 +22,16 @@ export const Router = createBrowserRouter([
           },
           {
             path: ':id',
-            element: <StockManagementPage />,
+            children: [
+              {
+                path: '/',
+                element: <StockManagementPage />,
+              },
+              {
+                path: '/add',
+                element: <StockManagementAddPage />,
+              },
+            ],
           },
         ],
       },
