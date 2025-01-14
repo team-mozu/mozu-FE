@@ -3,6 +3,7 @@ import {
   StockManagementPage,
   SignInPage,
   StockManagementAddPage,
+  ClassManagement,
 } from '@/pages';
 import { AppLayout } from '@/layout';
 
