@@ -2,7 +2,13 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Plus } from './assets';
 import { useEffect, useState } from 'react';
-import { Button, CheckBox, Select } from './index';
+import {
+  AddArticleItemModal,
+  AddInvestItemModal,
+  Button,
+  CheckBox,
+  Select,
+} from './index';
 
 interface IThProps {
   width: string;
@@ -25,20 +31,30 @@ export const Tables = ({ edit, tableName }: IEditType) => {
     { text: '5차', value: '5차', width: edit ? '140px' : '160px' },
   ];
 
-  const newInvestData = [
-    // 추가될 더미 데이터들
-    {
-      details: [
-        { text: '000660', value: '종목코드', width: '120px' },
-        { text: 'SK하이닉스', value: '종목이름', width: '500px' },
-        { text: '110,000', value: '현재가', width: '140px' },
-      ],
-    },
-  ];
+  const [isModal, setIsModal] = useState<boolean>(false);
 
-  const newArticleData = [
-    '수학천재 지도현 돌연 은퇴 선언, 세계 수학계 깜짝놀라..',
-  ];
+  const isOpen = () => {
+    setIsModal(true);
+  };
+
+  const isClose = () => {
+    setIsModal(false);
+  };
+
+  // const newInvestData = [
+  //   // 추가될 더미 데이터들
+  //   {
+  //     details: [
+  //       { text: '000660', value: '종목코드', width: '120px' },
+  //       { text: 'SK하이닉스', value: '종목이름', width: '500px' },
+  //       { text: '110,000', value: '현재가', width: '140px' },
+  //     ],
+  //   },
+  // ];
+
+  // const newArticleData = [
+  //   '수학천재 지도현 돌연 은퇴 선언, 세계 수학계 깜짝놀라..',
+  // ];
 
   const [investDatas, setInvestDatas] = useState([
     // 현재 추가되어 있는 데이터
@@ -127,13 +143,13 @@ export const Tables = ({ edit, tableName }: IEditType) => {
     }
   };
 
-  const addRow = () => {
-    if (tableName === 'invest') {
-      setInvestDatas(investDatas.concat(newInvestData));
-    } else {
-      setArticleDatas(articleDatas.concat(newArticleData));
-    }
-  };
+  // const addRow = () => {
+  //   if (tableName === 'invest') {
+  //     setInvestDatas(investDatas.concat(newInvestData));
+  //   } else {
+  //     setArticleDatas(articleDatas.concat(newArticleData));
+  //   }
+  // };
 
   const [prices, setPrices] = useState<string[]>(
     Array(5 * investDatas.length).fill(''),
@@ -162,115 +178,15 @@ export const Tables = ({ edit, tableName }: IEditType) => {
     };
 
   return tableName === 'invest' ? (
-    <Table>
-      <Caption>
-        <CaptionBox>
-          <Text>투자 종목</Text>
-          {edit && (
-            <div onClick={handleDeleteChecked}>
-              <Button
-                backgroundColor={color.zinc[50]}
-                borderColor={color.zinc[200]}
-                hoverBackgroundColor={color.zinc[200]}
-              >
-                선택항목 삭제하기
-              </Button>
-            </div>
-          )}
-        </CaptionBox>
-      </Caption>
-      <Thead>
-        <tr>
-          {edit && (
-            <CheckTh>
-              <CheckBox
-                onChange={HeadClick}
-                checked={isInvestHeadCheck}
-                id="Invest-head"
-              />
-            </CheckTh>
-          )}
+    <>
+      {tableName === 'invest' && isModal && (
+        <AddInvestItemModal close={isClose} />
+      )}
 
-          {headers.map((header) =>
-            !edit && header.text === '현재가' ? null : (
-              <Th key={header.text} width={header.width}>
-                {header.text}
-              </Th>
-            ),
-          )}
-        </tr>
-      </Thead>
-      <Tbody>
-        {investDatas.map((data, rowIndex) => (
-          <tr key={rowIndex}>
-            {edit && (
-              <CheckTd>
-                <CheckBox
-                  checked={checkedInvests[rowIndex]}
-                  onChange={() => CheckClick(rowIndex)}
-                  id={`Invest-checkbox-${rowIndex}`}
-                />
-              </CheckTd>
-            )}
-
-            {data.details.map((item, index) =>
-              !edit && index === 2 ? null : (
-                <Td key={index} width={item.width}>
-                  {item.text}
-                </Td>
-              ),
-            )}
-            {edit
-              ? Array(5)
-                  .fill(null)
-                  .map((item, index) => (
-                    <Td key={`input-${rowIndex * 5 + index}`} width="140">
-                      <Input
-                        value={prices[rowIndex * 5 + index]}
-                        type="text"
-                        placeholder={`${index + 1}차 금액`}
-                        onChange={priceChangeHandler(rowIndex * 5 + index)}
-                        required
-                      />
-                    </Td>
-                  ))
-              : Array(5)
-                  .fill(null)
-                  .map((price, index) => (
-                    <Td key={`input-${rowIndex * 5 + index}`} width="160">
-                      {prices[rowIndex * 5 + index]}
-                    </Td>
-                  ))}
-          </tr>
-        ))}
-        {edit && (
-          <tr>
-            <PlusTd colSpan={9} width="1510" onClick={addRow}>
-              <PlusField>
-                <Plus size={20} color="black" />
-                추가하기
-              </PlusField>
-            </PlusTd>
-          </tr>
-        )}
-      </Tbody>
-    </Table>
-  ) : (
-    <Table>
-      <Caption>
-        <CaptionBox>
-          <Text>기사 목록</Text>
-          <Option>
-            <SelectBox>
-              <Select
-                data={['1', '2', '3', '4', '5']}
-                width={100}
-                height={40}
-                padding={{ top: 10, bottom: 10, right: 76, left: 16 }}
-              />
-              차
-            </SelectBox>
-
+      <Table>
+        <Caption>
+          <CaptionBox>
+            <Text>투자 종목</Text>
             {edit && (
               <div onClick={handleDeleteChecked}>
                 <Button
@@ -282,50 +198,161 @@ export const Tables = ({ edit, tableName }: IEditType) => {
                 </Button>
               </div>
             )}
-          </Option>
-        </CaptionBox>
-      </Caption>
-      <Thead>
-        <tr>
-          {edit && (
-            <CheckTh>
-              <CheckBox
-                onChange={HeadClick}
-                checked={isArticleHeadCheck}
-                id="head"
-              />
-            </CheckTh>
-          )}
-          <Th width="1460">기사 제목</Th>
-        </tr>
-      </Thead>
-      <Tbody>
-        {articleDatas.map((data, index) => (
-          <tr key={index}>
+          </CaptionBox>
+        </Caption>
+        <Thead>
+          <tr>
             {edit && (
               <CheckTh>
                 <CheckBox
-                  checked={checkedArticles[index]}
-                  onChange={() => CheckClick(index)}
-                  id={`checkbox-${index}`}
+                  onChange={HeadClick}
+                  checked={isInvestHeadCheck}
+                  id="Invest-head"
                 />
               </CheckTh>
             )}
-            <Td width="1460">{data}</Td>
+
+            {headers.map((header) =>
+              !edit && header.text === '현재가' ? null : (
+                <Th key={header.text} width={header.width}>
+                  {header.text}
+                </Th>
+              ),
+            )}
           </tr>
-        ))}
-        {edit && (
+        </Thead>
+        <Tbody>
+          {investDatas.map((data, rowIndex) => (
+            <tr key={rowIndex}>
+              {edit && (
+                <CheckTd>
+                  <CheckBox
+                    checked={checkedInvests[rowIndex]}
+                    onChange={() => CheckClick(rowIndex)}
+                    id={`Invest-checkbox-${rowIndex}`}
+                  />
+                </CheckTd>
+              )}
+
+              {data.details.map((item, index) =>
+                !edit && index === 2 ? null : (
+                  <Td key={index} width={item.width}>
+                    {item.text}
+                  </Td>
+                ),
+              )}
+              {edit
+                ? Array(5)
+                    .fill(null)
+                    .map((item, index) => (
+                      <Td key={`input-${rowIndex * 5 + index}`} width="140">
+                        <Input
+                          value={prices[rowIndex * 5 + index]}
+                          type="text"
+                          placeholder={`${index + 1}차 금액`}
+                          onChange={priceChangeHandler(rowIndex * 5 + index)}
+                          required
+                        />
+                      </Td>
+                    ))
+                : Array(5)
+                    .fill(null)
+                    .map((price, index) => (
+                      <Td key={`input-${rowIndex * 5 + index}`} width="160">
+                        {prices[rowIndex * 5 + index]}
+                      </Td>
+                    ))}
+            </tr>
+          ))}
+          {edit && (
+            <tr>
+              <PlusTd colSpan={9} width="1510" onClick={isOpen}>
+                <PlusField>
+                  <Plus size={20} color="black" />
+                  추가하기
+                </PlusField>
+              </PlusTd>
+            </tr>
+          )}
+        </Tbody>
+      </Table>
+    </>
+  ) : (
+    <>
+      {tableName !== 'invest' && isModal && (
+        <AddArticleItemModal close={isClose} />
+      )}
+      <Table>
+        <Caption>
+          <CaptionBox>
+            <Text>기사 목록</Text>
+            <Option>
+              <SelectBox>
+                <Select
+                  data={['1', '2', '3', '4', '5']}
+                  width={100}
+                  height={40}
+                  padding={{ top: 10, bottom: 10, right: 76, left: 16 }}
+                />
+                차
+              </SelectBox>
+
+              {edit && (
+                <div onClick={handleDeleteChecked}>
+                  <Button
+                    backgroundColor={color.zinc[50]}
+                    borderColor={color.zinc[200]}
+                    hoverBackgroundColor={color.zinc[200]}
+                  >
+                    선택항목 삭제하기
+                  </Button>
+                </div>
+              )}
+            </Option>
+          </CaptionBox>
+        </Caption>
+        <Thead>
           <tr>
-            <PlusTd colSpan={9} width="1510" onClick={addRow}>
-              <PlusField>
-                <Plus size={20} color="black" />
-                추가하기
-              </PlusField>
-            </PlusTd>
+            {edit && (
+              <CheckTh>
+                <CheckBox
+                  onChange={HeadClick}
+                  checked={isArticleHeadCheck}
+                  id="head"
+                />
+              </CheckTh>
+            )}
+            <Th width="1460">기사 제목</Th>
           </tr>
-        )}
-      </Tbody>
-    </Table>
+        </Thead>
+        <Tbody>
+          {articleDatas.map((data, index) => (
+            <tr key={index}>
+              {edit && (
+                <CheckTh>
+                  <CheckBox
+                    checked={checkedArticles[index]}
+                    onChange={() => CheckClick(index)}
+                    id={`checkbox-${index}`}
+                  />
+                </CheckTh>
+              )}
+              <Td width="1460">{data}</Td>
+            </tr>
+          ))}
+          {edit && (
+            <tr>
+              <PlusTd colSpan={9} width="1510" onClick={isOpen}>
+                <PlusField>
+                  <Plus size={20} color="black" />
+                  추가하기
+                </PlusField>
+              </PlusTd>
+            </tr>
+          )}
+        </Tbody>
+      </Table>
+    </>
   );
 };
 
