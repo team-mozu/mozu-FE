@@ -3,10 +3,10 @@ import {
   StockManagementPage,
   SignInPage,
   ClassManagement,
-  ArticleManagementAdd,
+  ArticleManagementAddPage,
   StockManagementAddPage,
   StockManagementEditPage,
-  ArticleManagementEdit,
+  ArticleManagementPage,
 } from '@/pages';
 import { AppLayout } from '@/layout';
 
@@ -24,12 +24,7 @@ export const Router = createBrowserRouter([
           },
           {
             path: ':id',
-            children: [
-              {
-                index: true,
-                element: <StockManagementPage />,
-              },
-            ],
+            element: <StockManagementPage />,
           },
           {
             path: 'add',
@@ -42,12 +37,25 @@ export const Router = createBrowserRouter([
         ],
       },
       {
-        path: 'article-management-add',
-        element: <ArticleManagementAdd />,
-      },
-      {
-        path: 'article-management-edit',
-        element: <ArticleManagementEdit />,
+        path: 'article-management',
+        children: [
+          {
+            index: true,
+            element: <ArticleManagementPage />,
+          },
+          {
+            path: ':id',
+            element: <ArticleManagementPage />,
+          },
+          {
+            path: 'add',
+            element: <ArticleManagementAddPage />,
+          },
+          {
+            path: 'edit',
+            element: <ArticleManagementAddPage />,
+          },
+        ],
       },
       {
         path: 'class-management',

@@ -112,8 +112,6 @@ export const AddArticleItemModal = ({ close }: IArticleModalType) => {
   );
 };
 
-const CancleBtn = styled.div``;
-
 const ItemContents = styled.div`
   overflow: scroll;
   height: 428px;
