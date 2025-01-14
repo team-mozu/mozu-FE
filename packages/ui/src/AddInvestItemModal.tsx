@@ -5,7 +5,11 @@ import { Item } from './Item';
 import { Button } from './Button';
 import { useState, useRef } from 'react';
 
-export const AddInvestItemModal = () => {
+interface IInvestModalType {
+  close: () => void;
+}
+
+export const AddInvestItemModal = ({ close }: IInvestModalType) => {
   const datas = [
     { id: '0', code: '035720', name: '카카오' },
     { id: '1', code: '005380', name: '현대차' },
@@ -38,15 +42,9 @@ export const AddInvestItemModal = () => {
 
   const outSideRef = useRef();
 
-  const closeClick = (e: MouseEvent) => {
-    if (outSideRef.current === e.target) {
-      setIsClose(true);
-    }
-  };
-
   return (
     !isClose && (
-      <ModalBackground ref={outSideRef} onClick={closeClick}>
+      <ModalBackground ref={outSideRef}>
         <InvestItemContainer>
           <SearchContainer>
             <Title isHeader>투자종목 추가</Title>
@@ -82,6 +80,7 @@ export const AddInvestItemModal = () => {
                 backgroundColor={color.zinc[50]}
                 borderColor={color.zinc[200]}
                 color={color.zinc[800]}
+                onClick={close}
               >
                 취소
               </Button>
@@ -97,7 +96,6 @@ export const AddInvestItemModal = () => {
         </InvestItemContainer>
       </ModalBackground>
     )
-
   );
 };
 
@@ -144,12 +142,16 @@ const InvestItemContainer = styled.div`
 `;
 
 export const ModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgb(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.08); // 배경 흐림 효과
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 `;
 
 const ItemContents = styled.div`
