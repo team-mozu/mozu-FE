@@ -20,6 +20,7 @@ interface IButtonType {
   isIcon?: boolean;
   onClick?: () => void;
   onChange?: () => void;
+  disabled?: boolean;
 }
 
 export const Button = ({
@@ -39,6 +40,7 @@ export const Button = ({
   onClick,
   onChange,
   isIcon = false,
+  disabled = false,
 }: IButtonType) => {
   const buttonIconType = {
     startImg: <Start size={iconSize} color={iconColor} />,
@@ -61,6 +63,7 @@ export const Button = ({
       activeBackgroundColor={activeBackgroundColor}
       activeColor={activeColor}
       onClick={onClick}
+      disabled={disabled} // disabled 속성 전달
     >
       {children}
       {isIcon && buttonIconType[type]}
@@ -80,16 +83,23 @@ const ButtonContainer = styled.button<IButtonType>`
   align-items: center;
   gap: 6px;
   font: ${font.b1};
+
   &:hover {
     background-color: ${(props) =>
       props.hoverBackgroundColor || props.backgroundColor};
     color: ${(props) => props.hoverColor || props.color};
     border: 1px solid ${(props) => props.hoverBorderColor || props.borderColor};
   }
+
   &:active {
     background-color: ${(props) =>
       props.activeBackgroundColor || props.backgroundColor};
     color: ${(props) => props.activeColor || props.color};
     border: 1px solid ${(props) => props.activeBorderColor || props.borderColor};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
