@@ -30,6 +30,8 @@ export const CreateClass = () => {
               backgroundColor={color.zinc[50]}
               borderColor={color.zinc[200]}
               color={color.zinc[800]}
+              hoverBackgroundColor={color.zinc[100]}
+              hoverBorderColor={color.zinc[100]}
             >
               취소
             </Button>
@@ -37,6 +39,8 @@ export const CreateClass = () => {
               backgroundColor={color.orange[500]}
               borderColor={color.orange[500]}
               color={color.white}
+              hoverBackgroundColor={color.orange[400]}
+              hoverBorderColor={color.orange[400]}
             >
               생성하기
             </Button>
