@@ -13,7 +13,7 @@ export const Router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       {
-        path: '/stock-management',
+        path: 'stock-management',
         children: [
           {
             index: true,
@@ -23,11 +23,11 @@ export const Router = createBrowserRouter([
             path: ':id',
             children: [
               {
-                path: '/',
+                index: true,
                 element: <StockManagementPage />,
               },
               {
-                path: '/add',
+                path: 'add',
                 element: <StockManagementAddPage />,
               },
             ],
@@ -35,13 +35,13 @@ export const Router = createBrowserRouter([
         ],
       },
       {
-        path: '/class-management',
+        path: 'class-management',
         element: <ClassManagement />,
       },
     ],
   },
   {
-    path: '/signin',
+    path: 'signin',
     element: <SignInPage />,
   },
   {

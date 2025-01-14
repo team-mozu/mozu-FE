@@ -27,7 +27,7 @@ export * from './ArticleDiv';
 export * from './StockSearchSideBar';
 export * from './StockDiv';
 export * from './Input';
-export * from './Title';
+export * from './PageTitle';
 export * from './PostTitle';
 export * from './SelectError';
 export * from './StockManagementDetail';

@@ -88,7 +88,7 @@ const UnderContainer = styled.div`
 const IconDiv = styled.div`
   width: 40px;
   height: 40px;
-  border: 1px solid ${color.red[200]};
+  border: 1px solid ${color.red[200]};s
   background-color: ${color.red[50]};
   border-radius: 8px;
   display: flex;
