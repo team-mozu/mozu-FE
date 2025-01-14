@@ -8,9 +8,9 @@ import {
   StockManagementAddPage,
   StockManagementEditPage,
   ArticleManagementPage,
+  CreateClass,
 } from '@/pages';
 
-import { StockManagementPage, SignInPage, CreateClass } from '@/pages';
 import { AppLayout } from '@/layout';
 
 export const Router = createBrowserRouter([

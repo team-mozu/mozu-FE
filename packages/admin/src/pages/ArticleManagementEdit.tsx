@@ -1,7 +1,7 @@
 import { color } from '@mozu/design-token';
 import { EditDiv, ImgContainer, Input, TextArea } from '@mozu/ui';
 import styled from '@emotion/styled';
-import { useState, React } from 'react';
+import { useState } from 'react';
 
 export const ArticleManagementEdit = () => {
   const [datas, setDatas] = useState<{

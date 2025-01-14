@@ -3,7 +3,7 @@ import { color, font } from '@mozu/design-token';
 
 interface IInputType {
   placeholder: string;
-  label: string;
+  label?: string;
   type?: string;
   width?: string;
   text?: string;

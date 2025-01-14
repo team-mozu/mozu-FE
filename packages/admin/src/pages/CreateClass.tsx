@@ -46,15 +46,7 @@ export const CreateClass = () => {
           <TextField>
             <InputBox>
               수업 이름
-              <Input
-                placeholder="수업 이름을 입력해 주세요.."
-                height="48px"
-                width="1080px"
-                paddingTop="14px"
-                paddingBottom="14px"
-                paddingLeft="16px"
-                paddingRight="16px"
-              />
+              <Input placeholder="수업 이름을 입력해 주세요.." width="1080px" />
             </InputBox>
             <SelectBox>
               투자 차수
