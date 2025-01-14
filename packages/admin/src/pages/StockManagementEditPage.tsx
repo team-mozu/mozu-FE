@@ -2,10 +2,18 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { EditDiv, Input, LogoUploader, TextArea } from '@mozu/ui';
 
-export const StockManagementAddPage = () => {
+export const StockManagementEditPage = () => {
   return (
     <Container>
-      <EditDiv title={'종목 추가'} value1={'취소'} value2={'추가하기'} />
+      <EditDiv
+        title={'종목 수정'}
+        value1={'취소'}
+        value2={'저장하기'}
+        type2={'saveImg'}
+        isIcon2={true}
+        iconSize2={20}
+        iconColor2={color.white}
+      />
       <StockSetting>
         <InnerContainer>
           <div>
