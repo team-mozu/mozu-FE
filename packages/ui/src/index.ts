@@ -34,3 +34,4 @@ export * from './StockManagementDetail';
 export * from './EditDiv';
 export * from './ImgContainer';
 export * from './StockManagementAdd';
+export * from './LogoUploader';
