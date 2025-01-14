@@ -4,7 +4,13 @@ import { Del, Edit } from './assets';
 import { color, font } from '@mozu/design-token';
 import { Accounts } from './Accounts';
 
-export const StockManagementDetail = () => {
+interface IStockManagementDetailProps {
+  onClick?: () => void; // onClick을 옵션으로 추가
+}
+
+export const StockManagementDetail = ({
+  onClick,
+}: IStockManagementDetailProps) => {
   return (
     <Container>
       <UpperContainer>
@@ -18,14 +24,16 @@ export const StockManagementDetail = () => {
           </Text>
         </div>
         <ButtonContainer>
-          <Button
-            backgroundColor={color.zinc[50]}
-            color={color.zinc[800]}
-            borderColor={color.zinc[200]}
-          >
-            <p>삭제하기</p>
-            <Del size={20} color={color.zinc[800]} />
-          </Button>
+          <div onClick={onClick}>
+            <Button
+              backgroundColor={color.zinc[50]}
+              color={color.zinc[800]}
+              borderColor={color.zinc[200]}
+            >
+              <p>삭제하기</p>
+              <Del size={20} color={color.zinc[800]} />
+            </Button>
+          </div>
           <Button
             backgroundColor={color.orange[50]}
             color={color.orange[500]}

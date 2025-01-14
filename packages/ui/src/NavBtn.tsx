@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { color } from '@mozu/design-token';
+import { color, font } from '@mozu/design-token';
 import { ReactNode } from 'react';
 import { ArticleIcon, ClassIcon, StockIcon } from './assets';
 
@@ -39,4 +39,5 @@ const NavContent = styled.button<Pick<INavType, 'isColor'>>`
   padding-left: 20px;
   align-items: center;
   justify-content: start;
+  font: ${font.t3};
 `;

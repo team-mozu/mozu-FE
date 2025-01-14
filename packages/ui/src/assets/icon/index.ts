@@ -13,3 +13,4 @@ export * from './Check';
 export * from './Search';
 export * from './Check';
 export * from './Info';
+export * from './Imglogo';

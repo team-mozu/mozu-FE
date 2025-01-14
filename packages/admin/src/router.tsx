@@ -1,7 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { StockManagementPage, SignInPage } from '@/pages';
+import {
+  StockManagementPage,
+  SignInPage,
+  ClassManagement,
+  ArticleManagementAddPage,
+  StockManagementAddPage,
+  StockManagementEditPage,
+  ArticleManagementPage,
+} from '@/pages';
 import { AppLayout } from '@/layout';
-import { CreateClass } from './pages/CreateClass';
 
 export const Router = createBrowserRouter([
   {
@@ -9,7 +16,7 @@ export const Router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       {
-        path: '/stock-management',
+        path: 'stock-management',
         children: [
           {
             index: true,
@@ -19,16 +26,45 @@ export const Router = createBrowserRouter([
             path: ':id',
             element: <StockManagementPage />,
           },
+          {
+            path: 'add',
+            element: <StockManagementAddPage />,
+          },
+          {
+            path: 'edit',
+            element: <StockManagementEditPage />,
+          },
         ],
       },
       {
-        path: 'create-class',
-        element: <CreateClass />,
+        path: 'article-management',
+        children: [
+          {
+            index: true,
+            element: <ArticleManagementPage />,
+          },
+          {
+            path: ':id',
+            element: <ArticleManagementPage />,
+          },
+          {
+            path: 'add',
+            element: <ArticleManagementAddPage />,
+          },
+          {
+            path: 'edit',
+            element: <ArticleManagementAddPage />,
+          },
+        ],
+      },
+      {
+        path: 'class-management',
+        element: <ClassManagement />,
       },
     ],
   },
   {
-    path: '/signin',
+    path: 'signin',
     element: <SignInPage />,
   },
   {
