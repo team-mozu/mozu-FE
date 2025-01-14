@@ -5,6 +5,7 @@ import {
   ClassManagement,
   ArticleManagementAdd,
   StockManagementAddPage,
+  StockManagementEditPage,
 } from '@/pages';
 import { AppLayout } from '@/layout';
 
@@ -32,6 +33,10 @@ export const Router = createBrowserRouter([
           {
             path: 'add',
             element: <StockManagementAddPage />,
+          },
+          {
+            path: 'edit',
+            element: <StockManagementEditPage />,
           },
         ],
       },

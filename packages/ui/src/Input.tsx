@@ -6,20 +6,30 @@ interface IInputType {
   label: string;
   type?: string;
   width?: string;
+  text?: string;
 }
 
-export const Input = ({ placeholder, label, type, width }: IInputType) => {
-  const defaultValue = type === 'Number' ? 0 : undefined; // type이 number일 경우 0을 기본값으로 설정
+export const Input = ({
+  placeholder,
+  label,
+  type,
+  width,
+  text,
+}: IInputType) => {
+  const defaultValue = type === 'Number' ? 0 : undefined;
 
   return (
     <InputContainer>
       <Label>{label}</Label>
-      <InputContent
-        type={type}
-        placeholder={placeholder}
-        width={width}
-        defaultValue={defaultValue}
-      />
+      <InputWrapper>
+        <InputContent
+          type={type}
+          placeholder={placeholder}
+          width={width}
+          defaultValue={defaultValue}
+        />
+        {text && <Text>{text}</Text>} {/* 텍스트가 있으면 오른쪽에 표시 */}
+      </InputWrapper>
     </InputContainer>
   );
 };
@@ -34,6 +44,12 @@ const InputContainer = styled.div`
 const Label = styled.label`
   font: ${font.b1};
   color: ${color.zinc[800]};
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
 `;
 
 const InputContent = styled.input<{ width?: string }>`
@@ -52,4 +68,10 @@ const InputContent = styled.input<{ width?: string }>`
     color: ${color.zinc[500]};
     font: ${font.b2};
   }
+`;
+
+const Text = styled.span`
+  font: ${font.t4};
+  color: ${color.black};
+  margin-left: 8px;
 `;
