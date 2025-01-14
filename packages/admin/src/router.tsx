@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+
 import {
   StockManagementPage,
   SignInPage,
@@ -8,6 +9,8 @@ import {
   StockManagementEditPage,
   ArticleManagementPage,
 } from '@/pages';
+
+import { StockManagementPage, SignInPage, CreateClass } from '@/pages';
 import { AppLayout } from '@/layout';
 
 export const Router = createBrowserRouter([
@@ -61,12 +64,17 @@ export const Router = createBrowserRouter([
         path: 'class-management',
         element: <ClassManagement />,
       },
+      {
+        path: '/create-class',
+        element: <CreateClass />,
+      },
     ],
   },
   {
     path: 'signin',
     element: <SignInPage />,
   },
+
   {
     path: '*', // 404 페이지
     element: <div>404</div>,

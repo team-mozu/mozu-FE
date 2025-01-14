@@ -115,14 +115,14 @@ export const Tables = ({ edit, tableName }: IEditType) => {
         (a, index) => !checkedInvests[index],
       );
       setInvestDatas(updatedInvestDatas);
-      setCheckedInvests(Array(updatedInvestDatas.length).fill(false)); // 체크박스 초기화
+      setCheckedInvests(Array(updatedInvestDatas.length).fill(false));
       setIsInvestHeadCheck(false);
     } else {
       const updatedArticleDatas = articleDatas.filter(
         (a, index) => !checkedArticles[index],
       );
       setArticleDatas(updatedArticleDatas);
-      setCheckedArticles(Array(updatedArticleDatas.length).fill(false)); // 체크박스 초기화
+      setCheckedArticles(Array(updatedArticleDatas.length).fill(false));
       setIsArticleHeadCheck(false);
     }
   };
