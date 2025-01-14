@@ -24,8 +24,20 @@ export const ClassManagement = () => {
   );
   const [isModal, setIsModal] = useState<boolean>(false);
   const [favoritesId, setFavoritesId] = useState<number[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 상태 관리
+
   const delClick = () => {
     setIsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // 모달 닫기
+  };
+
+  const handleDelete = () => {
+    //삭제 작업 들어가는곳
+    console.log('삭제 작업 실행');
+    setIsModalOpen(false); // 모달 닫기
   };
 
   const starFavoritesClick = (index: number) => {
@@ -48,15 +60,17 @@ export const ClassManagement = () => {
     <>
       {isModal && (
         <DeleteModal
-          titleComment="‘2024년도 모의투자’를 삭제하실 건가요?"
-          subComment="삭제하면 복구가 불가능합니다."
+          titleComment={'‘2024년도 모의투자’를 삭제하실 건가요?'}
+          subComment={'삭제하면 복구가 불가능합니다.'}
+          onCancel={handleCloseModal} // 취소 동작
+          onDelete={handleDelete} // 삭제 동작
         />
       )}
       <ClassManagementContent>
         <TitleContainer>
           <PageTitle
-            mainTitle="수업 관리"
-            subTitle="수업 환경을 만들어 사용해 보세요."
+            mainTitle={'수업 관리'}
+            subTitle={'수업 환경을 만들어 사용해 보세요.'}
           />
           <Button
             type="plusImg"

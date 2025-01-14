@@ -5,6 +5,7 @@ import {
   ClassManagement,
   ArticleManagementAdd,
   StockManagementAddPage,
+  ClassManagement,
 } from '@/pages';
 import { AppLayout } from '@/layout';
 
@@ -14,7 +15,7 @@ export const Router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       {
-        path: '/stock-management',
+        path: 'stock-management',
         children: [
           {
             index: true,
@@ -24,11 +25,11 @@ export const Router = createBrowserRouter([
             path: ':id',
             children: [
               {
-                path: '/',
+                index: true,
                 element: <StockManagementPage />,
               },
               {
-                path: '/add',
+                path: 'add',
                 element: <StockManagementAddPage />,
               },
             ],
@@ -46,7 +47,7 @@ export const Router = createBrowserRouter([
     ],
   },
   {
-    path: '/signin',
+    path: 'signin',
     element: <SignInPage />,
   },
   {

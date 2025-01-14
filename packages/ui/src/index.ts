@@ -33,3 +33,4 @@ export * from './SelectError';
 export * from './StockManagementDetail';
 export * from './EditDiv';
 export * from './ImgContainer';
+export * from './StockManagementAdd';

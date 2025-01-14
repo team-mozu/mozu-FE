@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Star } from './assets';
 import { Button } from '@mozu/ui';
-import { useState } from 'react';
 
 interface IClassPostType {
   title: string;
