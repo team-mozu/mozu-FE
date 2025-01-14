@@ -9,6 +9,7 @@ import {
   StockManagementEditPage,
   ArticleManagementPage,
   CreateClass,
+  ClassEnvironment,
 } from '@/pages';
 
 import { AppLayout } from '@/layout';
@@ -66,7 +67,16 @@ export const Router = createBrowserRouter([
       },
       {
         path: '/create-class',
-        element: <CreateClass />,
+        children: [
+          {
+            index: true,
+            element: <CreateClass />,
+          },
+          {
+            path: ':id',
+            element: <ClassEnvironment />,
+          },
+        ],
       },
     ],
   },

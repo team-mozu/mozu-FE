@@ -16,7 +16,7 @@ interface IEditType {
 export const Tables = ({ edit, tableName }: IEditType) => {
   const headers = [
     { text: '종목코드', value: '종목코드', width: '120px' },
-    { text: '종목이름', value: '종목이름', width: '500px' },
+    { text: '종목이름', value: '종목이름', width: edit ? '500px' : '592px' },
     { text: '현재가', value: '현재가', width: '140px' },
     { text: '1차', value: '1차', width: edit ? '140px' : '160px' },
     { text: '2차', value: '2차', width: edit ? '140px' : '160px' },
@@ -30,7 +30,11 @@ export const Tables = ({ edit, tableName }: IEditType) => {
     {
       details: [
         { text: '000660', value: '종목코드', width: '120px' },
-        { text: 'SK하이닉스', value: '종목이름', width: '500px' },
+        {
+          text: 'SK하이닉스',
+          value: '종목이름',
+          width: edit ? '500px' : '592px',
+        },
         { text: '110,000', value: '현재가', width: '140px' },
       ],
     },
@@ -45,21 +49,29 @@ export const Tables = ({ edit, tableName }: IEditType) => {
     {
       details: [
         { text: '005930', value: '종목코드', width: '120px' },
-        { text: '삼성전자', value: '종목이름', width: '500px' },
+        {
+          text: '삼성전자',
+          value: '종목이름',
+          width: edit ? '500px' : '592px',
+        },
         { text: '53,600', value: '현재가', width: '140px' },
       ],
     },
     {
       details: [
         { text: '000660', value: '종목코드', width: '120px' },
-        { text: 'SK하이닉스', value: '종목이름', width: '500px' },
+        {
+          text: 'SK하이닉스',
+          value: '종목이름',
+          width: edit ? '500px' : '592px',
+        },
         { text: '110,000', value: '현재가', width: '140px' },
       ],
     },
     {
       details: [
         { text: '005380', value: '종목코드', width: '120px' },
-        { text: '현대차', value: '종목이름', width: '500px' },
+        { text: '현대차', value: '종목이름', width: edit ? '500px' : '592px' },
         { text: '200,000', value: '현재가', width: '140px' },
       ],
     },
@@ -296,7 +308,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
               />
             </CheckTh>
           )}
-          <Th width="1460">기사 제목</Th>
+          <Th width="1512">기사 제목</Th>
         </tr>
       </Thead>
       <Tbody>
@@ -311,7 +323,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
                 />
               </CheckTh>
             )}
-            <Td width="1460">{data}</Td>
+            <Td width="1512">{data}</Td>
           </tr>
         ))}
         {edit && (
