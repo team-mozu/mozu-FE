@@ -14,3 +14,6 @@ export * from './Search';
 export * from './Check';
 export * from './Info';
 export * from './Imglogo';
+export * from './Dot';
+export * from './Warning ';
+export * from './Cancel';
