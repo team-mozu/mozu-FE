@@ -34,7 +34,7 @@ const AllContainer = styled.div`
 `;
 
 const InputContainer = styled.div`
-  width: 1200px;
+  width: 1512px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -43,7 +43,7 @@ const InputContainer = styled.div`
 const AddContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 1200px;
+  width: 1560px;
   gap: 8px;
 `;
 
