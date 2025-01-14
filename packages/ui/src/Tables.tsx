@@ -368,6 +368,7 @@ const SelectBox = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  font: ${font.t4};
 `;
 
 const Option = styled.div`
