@@ -35,3 +35,5 @@ export * from './EditDiv';
 export * from './ImgContainer';
 export * from './StockManagementAdd';
 export * from './LogoUploader';
+export * from './ArticleManagementDetail';
+export * from './ArticleMainData';

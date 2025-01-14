@@ -2,7 +2,7 @@ import { color } from '@mozu/design-token';
 import { EditDiv, ImgContainer, Input, TextArea } from '@mozu/ui';
 import styled from '@emotion/styled';
 
-export const ArticleManagementAdd = () => {
+export const ArticleManagementAddPage = () => {
   return (
     <AllContainer>
       <AddContainer>
