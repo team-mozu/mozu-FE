@@ -1,6 +1,5 @@
 export * from './StockManagementPage';
 export * from './SignInPage';
-<<<<<<< Updated upstream
 export * from './ClassManagement';
 export * from './ArticleManagementAdd';
 export * from './StockManagementAddPage';
