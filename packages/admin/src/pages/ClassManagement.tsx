@@ -3,17 +3,24 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState } from 'react';
 
+const datas = [
+  {
+    favorites: [{ title: '2024년도 모의투자', date: '2024-05-05' }],
+    common: [
+      { title: '2024년도 모의투자', date: '2024-05-05' },
+      { title: '2024년도 모의투자', date: '2024-05-05' },
+      { title: '2024년도 모의투자', date: '2024-05-05' },
+      { title: '2024년도 모의투자', date: '2024-05-05' },
+      { title: '2024년도 모의투자', date: '2024-05-05' },
+      { title: '2024년도 모의투자', date: '2024-05-05' },
+      { title: '2024년도 모의투자', date: '2024-05-05' },
+    ],
+  },
+];
+
 export const ClassManagement = () => {
-  const datas = [
-    {
-      favorites: [{ title: '2024년도 모의투자', date: '2024-05-05' }],
-      common: [
-        { title: '2024년도 모의투자', date: '2024-05-05' },
-        { title: '2024년도 모의투자', date: '2024-05-05' },
-        { title: '2024년도 모의투자', date: '2024-05-05' },
-      ],
-    },
-  ];
+  const [isModal, setIsModal] = useState<boolean>(false);
+  const [favoritesId, setFavoritesId] = useState<number[]>([]);
 
   const [isClickFavorites, setIsClickFavorites] = useState<boolean[]>(
     Array(datas[0].favorites.length).fill(false),
@@ -22,22 +29,19 @@ export const ClassManagement = () => {
   const [isClickCommon, setIsClickCommon] = useState<boolean[]>(
     Array(datas[0].common.length).fill(false),
   );
-  const [isModal, setIsModal] = useState<boolean>(false);
-  const [favoritesId, setFavoritesId] = useState<number[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 상태 관리
 
   const delClick = () => {
     setIsModal(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // 모달 닫기
+    setIsModal(false); // 모달 닫기
   };
 
   const handleDelete = () => {
     //삭제 작업 들어가는곳
     console.log('삭제 작업 실행');
-    setIsModalOpen(false); // 모달 닫기
+    setIsModal(false); // 모달 닫기
   };
 
   const starFavoritesClick = (index: number) => {
@@ -133,40 +137,42 @@ export const ClassManagement = () => {
 };
 
 const ClassManagementContent = styled.div`
-  width: 1150px;
+  width: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 40px;
-  margin: 40px;
+  gap: 2.5rem;
+  padding: 2.5rem;
 `;
 
 const PostAllContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  align-items: start;
-  padding: 40px;
-  gap: 40px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 2.5rem;
+  gap: 2.5rem;
 `;
 
 const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  align-items: start;
+  gap: 1rem;
+  align-items: flex-start;
 `;
 
 const TitleContainer = styled.div`
   width: 100%;
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   justify-content: space-between;
 `;
 
 const ContentContainer = styled.div`
+  min-height: calc(100vh - 40px);
+  height: auto;
   width: 100%;
-  height: 824px;
-  border-radius: 24px;
+  border-radius: 1.5rem;
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.white};
 `;
@@ -175,5 +181,5 @@ const PostContents = styled.div`
   width: 100%;
   flex-wrap: wrap;
   display: flex;
-  gap: 20px 20px;
+  gap: 1.25rem;
 `;

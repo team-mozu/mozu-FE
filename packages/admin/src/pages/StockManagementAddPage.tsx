@@ -1,3 +1,12 @@
+import styled from '@emotion/styled';
+import { StockDiv } from '@mozu/ui';
+
 export const StockManagementAddPage = () => {
-  return <div>dasmkdl</div>;
+  return (
+    <Container>
+      <StockDiv></StockDiv>
+    </Container>
+  );
 };
+
+const Container = styled.div``;
