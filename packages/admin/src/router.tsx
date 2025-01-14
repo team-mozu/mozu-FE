@@ -63,6 +63,10 @@ export const Router = createBrowserRouter([
       {
         path: 'class-management',
         element: <ClassManagement />,
+=======
+        path: '/create-class',
+        element: <CreateClass />,
+>>>>>>> Stashed changes
       },
       {
         path: '/create-class',
@@ -75,6 +79,10 @@ export const Router = createBrowserRouter([
     element: <SignInPage />,
   },
 
+  {
+    path: '/create-class',
+    element: <CreateClass />,
+  },
   {
     path: '*', // 404 페이지
     element: <div>404</div>,

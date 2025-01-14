@@ -64,9 +64,23 @@ const InputContent = styled.input<{ width?: string }>`
   background-color: ${color.zinc[50]};
   border: 1px solid ${color.zinc[200]};
   border-radius: 8px;
+<<<<<<< Updated upstream
   padding-left: 16px;
+=======
+  padding-top: ${(props) => props.paddingTop};
+  padding-left: ${(props) => props.paddingLeft};
+  padding-right: ${(props) => props.paddingRight};
+  padding-bottom: ${(props) => props.paddingBottom};
+`;
+
+const InputContent = styled.input`
+  background-color: ${color.zinc[50]};
+  border: none;
+  width: 100%;
+>>>>>>> Stashed changes
   color: ${color.black};
   font: ${font.b2};
+
   :focus {
     outline: none;
   }
