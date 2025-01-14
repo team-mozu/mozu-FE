@@ -24,13 +24,10 @@ export const Tables = ({ edit, tableName }: IEditType) => {
     { text: '4차', value: '4차', width: edit ? '140px' : '160px' },
     { text: '5차', value: '5차', width: edit ? '140px' : '160px' },
   ];
-  const [headCheck, setHeadCheck] = useState<boolean>(false);
 
   const newInvestData = [
     // 추가될 더미 데이터들
     {
-      checked: false,
-
       details: [
         { text: '000660', value: '종목코드', width: '120px' },
         { text: 'SK하이닉스', value: '종목이름', width: '500px' },
@@ -40,17 +37,12 @@ export const Tables = ({ edit, tableName }: IEditType) => {
   ];
 
   const newArticleData = [
-    {
-      checked: false,
-      title: '수학천재 지도현 돌연 은퇴 선언, 세계 수학계 깜짝놀라..',
-    },
+    '수학천재 지도현 돌연 은퇴 선언, 세계 수학계 깜짝놀라..',
   ];
 
   const [investDatas, setInvestDatas] = useState([
     // 현재 추가되어 있는 데이터
     {
-      checked: false,
-
       details: [
         { text: '005930', value: '종목코드', width: '120px' },
         { text: '삼성전자', value: '종목이름', width: '500px' },
@@ -58,8 +50,6 @@ export const Tables = ({ edit, tableName }: IEditType) => {
       ],
     },
     {
-      checked: false,
-
       details: [
         { text: '000660', value: '종목코드', width: '120px' },
         { text: 'SK하이닉스', value: '종목이름', width: '500px' },
@@ -67,7 +57,6 @@ export const Tables = ({ edit, tableName }: IEditType) => {
       ],
     },
     {
-      checked: false,
       details: [
         { text: '005380', value: '종목코드', width: '120px' },
         { text: '현대차', value: '종목이름', width: '500px' },
@@ -77,30 +66,65 @@ export const Tables = ({ edit, tableName }: IEditType) => {
   ]);
 
   const [articleDatas, setArticleDatas] = useState([
-    {
-      checked: false,
-      title: '윤 대통령 측 "탄핵소추 적법성 따질것"...헌재"협조해야"',
-    },
-    {
-      checked: false,
-      title: '윤 대통령 측 "탄핵소추 적법성 따질것"...헌재"협조해야"',
-    },
-    {
-      checked: false,
-      title: '윤 대통령 측 "탄핵소추 적법성 따질것"...헌재"협조해야"',
-    },
+    '윤 대통령 측 "탄핵소추 적법성 따질것"...헌재"협조해야"',
+
+    '윤 대통령 측 "탄핵소추 적법성 따질것"...헌재"협조해야"',
+
+    '윤 대통령 측 "탄핵소추 적법성 따질것"...헌재"협조해야"',
   ]);
+  const [isArticleHeadCheck, setIsArticleHeadCheck] = useState<boolean>(false);
+
+  const [isInvestHeadCheck, setIsInvestHeadCheck] = useState<boolean>(false);
+
+  const [checkedArticles, setCheckedArticles] = useState<boolean[]>(
+    Array(articleDatas.length).fill(false),
+  );
+  const [checkedInvests, setCheckedInvests] = useState<boolean[]>(
+    Array(investDatas.length).fill(false),
+  );
+
+  const CheckClick = (index: number) => {
+    if (tableName === 'invest') {
+      setCheckedInvests((prev) => {
+        const updateCheckItems = [...checkedInvests];
+        updateCheckItems[index] = !updateCheckItems[index];
+        return updateCheckItems;
+      });
+    } else {
+      setCheckedArticles((prev) => {
+        const updateCheckItems = [...checkedArticles];
+        updateCheckItems[index] = !updateCheckItems[index];
+        return updateCheckItems;
+      });
+    }
+  };
+
+  const HeadClick = () => {
+    if (tableName === 'invest') {
+      setIsInvestHeadCheck(!isInvestHeadCheck);
+      setCheckedInvests((prev) => prev.map(() => !isInvestHeadCheck));
+    } else {
+      setIsArticleHeadCheck(!isArticleHeadCheck);
+      setCheckedArticles((prev) => prev.map(() => !isArticleHeadCheck));
+    }
+  };
 
   const handleDeleteChecked = () => {
     if (tableName === 'invest') {
-      const filteredData = investDatas.filter((data) => !data.checked);
-      setInvestDatas(filteredData);
+      const updatedInvestDatas = investDatas.filter(
+        (a, index) => !checkedInvests[index],
+      );
+      setInvestDatas(updatedInvestDatas);
+      setCheckedInvests(Array(updatedInvestDatas.length).fill(false)); // 체크박스 초기화
+      setIsInvestHeadCheck(false);
     } else {
-      const filteredData = articleDatas.filter((data) => !data.checked);
-      setArticleDatas(filteredData);
+      const updatedArticleDatas = articleDatas.filter(
+        (a, index) => !checkedArticles[index],
+      );
+      setArticleDatas(updatedArticleDatas);
+      setCheckedArticles(Array(updatedArticleDatas.length).fill(false)); // 체크박스 초기화
+      setIsArticleHeadCheck(false);
     }
-
-    setHeadCheck(false);
   };
 
   const addRow = () => {
@@ -125,9 +149,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
   const priceChangeHandler = // 숫자를 변경해줌 11111 => 11,111
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
-
       const numericValue = Number(inputValue.replace(/,/g, ''));
-
       const newPrices = [...prices];
 
       if (isNaN(numericValue) || inputValue === '') {
@@ -138,38 +160,6 @@ export const Tables = ({ edit, tableName }: IEditType) => {
 
       setPrices(newPrices);
     };
-
-  const handleCheckboxChange = (index: number) => {
-    if (tableName === 'invest') {
-      const newData = [...investDatas];
-      newData[index].checked = !newData[index].checked;
-      setInvestDatas(newData);
-    } else {
-      const newData = [...articleDatas];
-      newData[index].checked = !newData[index].checked;
-      setArticleDatas(newData);
-    }
-  };
-
-  const headHandleCheckboxChange = () => {
-    const newHeadCheck = !headCheck;
-    setHeadCheck(newHeadCheck);
-    if (tableName === 'invest') {
-      const newData = investDatas.map((data) => ({
-        ...data,
-        checked: newHeadCheck,
-      }));
-
-      setInvestDatas(newData);
-    } else {
-      const newData = articleDatas.map((data) => ({
-        ...data,
-        checked: newHeadCheck,
-      }));
-
-      setArticleDatas(newData);
-    }
-  };
 
   return tableName === 'invest' ? (
     <Table>
@@ -194,9 +184,9 @@ export const Tables = ({ edit, tableName }: IEditType) => {
           {edit && (
             <CheckTh>
               <CheckBox
-                onChange={headHandleCheckboxChange}
-                checked={headCheck}
-                id="head"
+                onChange={HeadClick}
+                checked={isInvestHeadCheck}
+                id="Invest-head"
               />
             </CheckTh>
           )}
@@ -216,9 +206,9 @@ export const Tables = ({ edit, tableName }: IEditType) => {
             {edit && (
               <CheckTd>
                 <CheckBox
-                  checked={data.checked}
-                  onChange={() => handleCheckboxChange(rowIndex)}
-                  id={`checkbox-${rowIndex}`}
+                  checked={checkedInvests[rowIndex]}
+                  onChange={() => CheckClick(rowIndex)}
+                  id={`Invest-checkbox-${rowIndex}`}
                 />
               </CheckTd>
             )}
@@ -255,7 +245,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
         ))}
         {edit && (
           <tr>
-            <PlusTd colSpan={9} width="1520" onClick={addRow}>
+            <PlusTd colSpan={9} width="1510" onClick={addRow}>
               <PlusField>
                 <Plus size={20} color="black" />
                 추가하기
@@ -300,8 +290,8 @@ export const Tables = ({ edit, tableName }: IEditType) => {
           {edit && (
             <CheckTh>
               <CheckBox
-                onChange={headHandleCheckboxChange}
-                checked={headCheck}
+                onChange={HeadClick}
+                checked={isArticleHeadCheck}
                 id="head"
               />
             </CheckTh>
@@ -315,13 +305,13 @@ export const Tables = ({ edit, tableName }: IEditType) => {
             {edit && (
               <CheckTh>
                 <CheckBox
-                  checked={data.checked}
-                  onChange={() => handleCheckboxChange(index)}
+                  checked={checkedArticles[index]}
+                  onChange={() => CheckClick(index)}
                   id={`checkbox-${index}`}
                 />
               </CheckTh>
             )}
-            <Td width="1460">{data.title}</Td>
+            <Td width="1460">{data}</Td>
           </tr>
         ))}
         {edit && (

@@ -1,14 +1,15 @@
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Imglogo } from './assets';
 import { Button } from './Button';
 
 interface IImgType {
   label?: string;
+  img?: string;
 }
 
-export const ImgContainer = ({ label }: IImgType) => {
+export const ImgContainer = ({ label, img }: IImgType) => {
   const imgRef = useRef<HTMLInputElement | null>();
   const [imgUrl, setImgUrl] = useState<string | null>(null);
 
@@ -16,8 +17,14 @@ export const ImgContainer = ({ label }: IImgType) => {
     imgRef.current?.showPicker();
   };
 
+  useEffect(() => {
+    if (img) {
+      setImgUrl(img);
+    }
+  }, [img]);
+
   const delClick = () => {
-    setImgUrl(null);
+    setImgUrl('');
   };
 
   const handleChange = () => {

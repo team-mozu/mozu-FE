@@ -5,15 +5,25 @@ interface ITextAreaType {
   placeholder: string;
   label?: string;
   height?: number;
+  value?: number;
+  onChange?: () => void;
 }
 
-export const TextArea = ({ placeholder, label, height }: ITextAreaType) => {
+export const TextArea = ({
+  placeholder,
+  label,
+  height,
+  value,
+  onChange,
+}: ITextAreaType) => {
   return (
     <TextAreaContainer>
       <Label>{label}</Label>
       <TextAreaContent
+        value={value}
         placeholder={placeholder}
         height={height}
+        onChange={onChange}
       ></TextAreaContent>
     </TextAreaContainer>
   );
