@@ -14,3 +14,5 @@ export * from './Search';
 export * from './Check';
 export * from './Info';
 export * from './Imglogo';
+export * from './ArrowLeft';
+export * from './Play';
