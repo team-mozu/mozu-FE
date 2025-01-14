@@ -6,7 +6,7 @@ import { Button } from './Button';
 interface IDeleteModal {
   titleComment: string;
   subComment: string;
-}
+  
 
 export const DeleteModal = ({ titleComment, subComment }: IDeleteModal) => {
   return (

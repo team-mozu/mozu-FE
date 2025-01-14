@@ -24,6 +24,7 @@ export const ClassManagement = () => {
   );
   const [isModal, setIsModal] = useState<boolean>(false);
   const [favoritesId, setFavoritesId] = useState<number[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 상태 관리
   const delClick = () => {
     setIsModal(true);
   };
@@ -44,12 +45,26 @@ export const ClassManagement = () => {
     });
   };
 
+  const handleDetailClick = () => {
+    setIsModalOpen(true); // 모달 열기
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // 모달 닫기
+  };
+
+  const handleDelete = () => {
+    //삭제 작업 들어가는곳
+    console.log('삭제 작업 실행');
+    setIsModalOpen(false); // 모달 닫기
+  };
+
   return (
     <>
       {isModal && (
         <DeleteModal
-          titleComment="‘2024년도 모의투자’를 삭제하실 건가요?"
-          subComment="삭제하면 복구가 불가능합니다."
+          titleComment={'‘2024년도 모의투자’를 삭제하실 건가요?'}
+          subComment={'삭제하면 복구가 불가능합니다.'}
         />
       )}
       <ClassManagementContent>
