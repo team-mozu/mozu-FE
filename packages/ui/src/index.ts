@@ -31,3 +31,4 @@ export * from './Title';
 export * from './PostTitle';
 export * from './SelectError';
 export * from './StockManagementDetail';
+export * from './StockManagementAdd';
