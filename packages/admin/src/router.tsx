@@ -53,7 +53,7 @@ export const Router = createBrowserRouter([
           },
           {
             path: 'edit',
-            element: <ArticleManagementAddPage />,
+            element: <ArticleManagementAddPage />, //! 여기 수정페이지 컴포넌트로 바꾸시오
           },
         ],
       },

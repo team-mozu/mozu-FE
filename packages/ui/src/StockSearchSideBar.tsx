@@ -7,7 +7,9 @@ export const StockSearchSideBar = () => {
   return (
     <SideBarContainer>
       <UpperWrapper>
-        <p>전체 12</p>
+        <p>
+          전체 <span>12</span>
+        </p>
         <SearchInput inputText="종목 검색.." />
       </UpperWrapper>
       <ArticleWrapper>
@@ -23,7 +25,7 @@ export const StockSearchSideBar = () => {
 };
 
 const SideBarContainer = styled.div`
-  width: 280px;
+  min-width: 280px;
   height: 100%;
   backgroundcolor: white;
   border-right: 1px solid ${color.zinc[200]};
@@ -39,6 +41,9 @@ const UpperWrapper = styled.div`
   padding: 12px;
   background-color: ${color.white};
   border-bottom: 1px solid ${color.zinc[200]};
+  p > span {
+    color: ${color.orange[600]};
+  }
 `;
 
 const ArticleWrapper = styled.div`

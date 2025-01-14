@@ -6,7 +6,9 @@ export const ArticleSearchSideBar = () => {
   return (
     <SideBarContainer>
       <UpperWrapper>
-        <p>전체 4</p>
+        <p>
+          전체 <span>4</span>
+        </p>
         <SearchInput inputText="기사 검색.." />
       </UpperWrapper>
       <ArticleWrapper>
@@ -22,10 +24,12 @@ export const ArticleSearchSideBar = () => {
 };
 
 const SideBarContainer = styled.div`
-  width: 520px;
+  min-width: 520px;
   height: 100%;
-  backgroundcolor: white;
+  background-color: ${color.white};
   border-right: 1px solid ${color.zinc[200]};
+  display: flex;
+  flex-direction: column;
 `;
 
 const UpperWrapper = styled.div`
@@ -35,8 +39,12 @@ const UpperWrapper = styled.div`
   font: ${font.b1};
   padding: 12px;
   border-bottom: 1px solid ${color.zinc[200]};
+  p > span {
+    color: ${color.orange[600]};
+  }
 `;
 
 const ArticleWrapper = styled.div`
-  width: 100%;
+  flex: 1;
+  overflow-y: auto;
 `;
