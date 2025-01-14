@@ -4,3 +4,4 @@ export * from './ClassManagement';
 export * from './ArticleManagementAdd';
 export * from './StockManagementAddPage';
 export * from './StockManagementEditPage';
+export * from './ArticleManagementEdit';

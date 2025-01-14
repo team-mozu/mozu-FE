@@ -7,6 +7,8 @@ interface IInputType {
   type?: string;
   width?: string;
   text?: string;
+  value?: string;
+  onChange?: () => void;
 }
 
 export const Input = ({
@@ -15,6 +17,8 @@ export const Input = ({
   type,
   width,
   text,
+  value,
+  onChange,
 }: IInputType) => {
   const defaultValue = type === 'Number' ? 0 : undefined;
 
@@ -27,6 +31,8 @@ export const Input = ({
           placeholder={placeholder}
           width={width}
           defaultValue={defaultValue}
+          value={value}
+          onChange={onChange}
         />
         {text && <Text>{text}</Text>} {/* 텍스트가 있으면 오른쪽에 표시 */}
       </InputWrapper>
