@@ -7,3 +7,4 @@ export * from './StockManagementEditPage';
 export * from './ArticleManagementPage';
 export * from './ArticleManagementEdit';
 export * from './CreateClass';
+export * from './ClassEnvironment';
