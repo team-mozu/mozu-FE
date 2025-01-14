@@ -2,6 +2,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import {
   StockManagementPage,
   SignInPage,
+  ClassManagement,
+  ArticleManagementAdd,
   StockManagementAddPage,
   ClassManagement,
 } from '@/pages';
@@ -35,7 +37,11 @@ export const Router = createBrowserRouter([
         ],
       },
       {
-        path: 'class-management',
+        path: '/article-management-add',
+        element: <ArticleManagementAdd />,
+      },
+      {
+        path: '/class-management',
         element: <ClassManagement />,
       },
     ],

@@ -19,6 +19,7 @@ interface IButtonType {
   type?: 'startImg' | 'delImg' | 'editImg' | 'plusImg' | 'saveImg';
   isIcon?: boolean;
   onClick?: () => void;
+  onChange?: () => void;
 }
 
 export const Button = ({
@@ -36,6 +37,7 @@ export const Button = ({
   iconColor,
   type = 'startImg',
   onClick,
+  onChange,
   isIcon = false,
 }: IButtonType) => {
   const buttonIconType = {
@@ -48,6 +50,7 @@ export const Button = ({
 
   return (
     <ButtonContainer
+      onChange={onChange}
       backgroundColor={backgroundColor}
       color={color}
       borderColor={borderColor}
