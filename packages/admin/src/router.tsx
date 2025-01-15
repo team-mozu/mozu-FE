@@ -10,6 +10,7 @@ import {
   ArticleManagementPage,
   CreateClass,
   ClassEnvironment,
+  ClassEdit,
 } from '@/pages';
 
 import { AppLayout } from '@/layout';
@@ -80,6 +81,10 @@ export const Router = createBrowserRouter([
           {
             path: ':id',
             element: <ClassEnvironment />,
+          },
+          {
+            path: 'edit',
+            element: <ClassEdit />,
           },
         ],
       },

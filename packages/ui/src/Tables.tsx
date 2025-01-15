@@ -330,7 +330,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
                 />
               </CheckTh>
             )}
-            <Th width="1512">기사 제목</Th>
+            <Th width={edit ? '1460' : '1512'}>기사 제목</Th>
           </tr>
         </Thead>
         <Tbody>
@@ -345,7 +345,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
                   />
                 </CheckTh>
               )}
-              <Td width="1512">{data}</Td>
+              <Td width={edit ? '1460' : '1512'}>{data}</Td>
             </tr>
           ))}
           {edit && (
@@ -368,6 +368,7 @@ const SelectBox = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  font: ${font.t4};
 `;
 
 const Option = styled.div`

@@ -6,5 +6,6 @@ export * from './StockManagementAddPage';
 export * from './StockManagementEditPage';
 export * from './ArticleManagementPage';
 export * from './ArticleManagementEdit';
-export * from './CreateClass';
+export * from './ClassCreate';
 export * from './ClassEnvironment';
+export * from './ClassEdit';
