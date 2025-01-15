@@ -5,8 +5,8 @@ interface ITextAreaType {
   placeholder: string;
   label?: string;
   height?: number;
-  value?: number;
-  onChange?: () => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export const TextArea = ({

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
 import { ManagerLogo } from './assets';
 import { NavBtn } from './NavBtn';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 interface ISideBarType {
@@ -13,23 +13,21 @@ interface ISideBarType {
 
 export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [isClassColor, setIsClassColor] = useState<boolean>(false);
   const [isStockColor, setIsStockColor] = useState<boolean>(false);
   const [isArticleColor, setIsArticleColor] = useState<boolean>(false);
 
   useEffect(() => {
-    if (pathname === '/') {
-      //pathname이 수업관리일 때 (path 나오면 수정)
+    if (pathname.includes('/class-management')) {
       setIsClassColor(true);
       setIsStockColor(false);
       setIsArticleColor(false);
-    } else if (pathname === '/stock-management') {
-      //pathname이 종목관리일 때 (path 나오면 수정)
+    } else if (pathname.includes('/stock-management')) {
       setIsClassColor(false);
       setIsStockColor(true);
       setIsArticleColor(false);
-    } else {
-      //pathname이 기사관리일 때
+    } else if (pathname.includes('/article-management')) {
       setIsClassColor(false);
       setIsStockColor(false);
       setIsArticleColor(true);
@@ -52,13 +50,25 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
         <ContentContainer>
           <NavTitle>{navTitle}</NavTitle>
           <BtnContainer>
-            <NavBtn type={'classIcon'} isColor={isClassColor}>
+            <NavBtn
+              type={'classIcon'}
+              isColor={isClassColor}
+              onClick={() => navigate('/class-management')}
+            >
               수업 관리
             </NavBtn>
-            <NavBtn type={'stockIcon'} isColor={isStockColor}>
+            <NavBtn
+              type={'stockIcon'}
+              isColor={isStockColor}
+              onClick={() => navigate('/stock-management')}
+            >
               종목 관리
             </NavBtn>
-            <NavBtn type={'articleIcon'} isColor={isArticleColor}>
+            <NavBtn
+              type={'articleIcon'}
+              isColor={isArticleColor}
+              onClick={() => navigate('/article-management')}
+            >
               기사 관리
             </NavBtn>
           </BtnContainer>

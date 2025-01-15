@@ -3,7 +3,7 @@ import { EditDiv, ImgContainer, Input, TextArea } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
-export const ArticleManagementEdit = () => {
+export const ArticleManagementEditPage = () => {
   const [datas, setDatas] = useState<{
     title: string;
     content: string;

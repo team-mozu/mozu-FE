@@ -1,23 +1,25 @@
 import { Button, ParticipationContainer, WarningMsg } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
+import { useNavigate } from 'react-router';
+
+const datas = [
+  {
+    code: '587701',
+  },
+  {
+    usedDate: '10일 전',
+  },
+  {
+    teams: [
+      { title: '대마고 화이팅', school: '대덕소프트웨어마이스터고등학교' },
+      { title: '동욱쌤 제자들', school: '대덕소프트웨어마이스터고등학교' },
+    ],
+  },
+];
 
 export const InvestmentPreparation = () => {
-  const datas = [
-    {
-      code: '587701',
-    },
-    {
-      usedDate: '10일 전',
-    },
-    {
-      teams: [
-        { title: '대마고 화이팅', school: '대덕소프트웨어마이스터고등학교' },
-        { title: '동욱쌤 제자들', school: '대덕소프트웨어마이스터고등학교' },
-      ],
-    },
-  ];
-
+  const navigate = useNavigate();
   return (
     <InvestmentPreparationContainer>
       <ContentContainer>
@@ -38,6 +40,7 @@ export const InvestmentPreparation = () => {
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             type="cancelImg"
+            onClick={() => navigate(-1)}
           >
             취소하기
           </Button>

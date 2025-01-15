@@ -2,8 +2,10 @@ import { AddButton, SearchInput } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { StockDiv } from './StockDiv';
+import { useNavigate } from 'react-router-dom';
 
 export const StockSearchSideBar = () => {
+  const navigate = useNavigate();
   return (
     <SideBarContainer>
       <UpperWrapper>
@@ -19,7 +21,7 @@ export const StockSearchSideBar = () => {
         <StockDiv />
         <StockDiv />
       </ArticleWrapper>
-      <AddButton text="종목 추가하기" />
+      <AddButton onClick={() => navigate('add')} text="종목 추가하기" />
     </SideBarContainer>
   );
 };

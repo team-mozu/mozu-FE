@@ -11,8 +11,10 @@ import {
 } from '@mozu/ui';
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export const ClassEnvironment = () => {
+  const navigate = useNavigate();
   const [isModal, setIsModal] = useState<boolean>(false);
   const isOpen = () => {
     setIsModal(true);
@@ -45,7 +47,7 @@ export const ClassEnvironment = () => {
       <Wrapper>
         <Head>
           <Container>
-            <BackBtn>
+            <BackBtn onClick={() => navigate(-1)}>
               <ArrowLeft />
             </BackBtn>
             <TextBox>
@@ -60,6 +62,7 @@ export const ClassEnvironment = () => {
               color="white"
               hoverBackgroundColor={color.orange[400]}
               hoverBorderColor={color.orange[400]}
+              onClick={() => navigate('start')}
             >
               모의주식투자 시작하기
               <Play />
@@ -93,6 +96,7 @@ export const ClassEnvironment = () => {
                 color={color.orange[500]}
                 hoverBackgroundColor={color.orange[100]}
                 hoverBorderColor={color.orange[100]}
+                onClick={() => navigate('edit')}
               >
                 수정하기
                 <Edit color={color.orange[500]} size={20} />
@@ -110,6 +114,7 @@ export const ClassEnvironment = () => {
 };
 
 const TableBox = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -117,6 +122,7 @@ const TableBox = styled.div`
 
 const Option = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
 
 const BtnContainer = styled.div`
@@ -176,9 +182,10 @@ const Wrapper = styled.div`
 `;
 
 const Head = styled.div`
+  width: 100%;
   display: flex;
   align-items: flex-end;
-  gap: 24px;
+  justify-content: space-between;
   > div {
     font: ${font.b1};
   }
