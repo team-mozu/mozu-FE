@@ -13,6 +13,7 @@ import {
 } from '@/pages';
 
 import { AppLayout } from '@/layout';
+import { InvestmentPreparation } from './pages/InvestmentPreparation';
 
 export const Router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ export const Router = createBrowserRouter([
       {
         path: 'class-management',
         element: <ClassManagement />,
+      },
+      {
+        path: 'investment-preparation',
+        element: <InvestmentPreparation />,
       },
       {
         path: '/create-class',

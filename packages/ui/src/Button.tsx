@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { font } from '@mozu/design-token';
-import { Del, Edit, Plus, Save, Start } from './assets';
+import { Cancel, Del, Edit, Plus, Save, Start } from './assets';
 import { ReactNode } from 'react';
 
 interface IButtonType {
@@ -21,9 +21,11 @@ interface IButtonType {
   onClick?: () => void;
   onChange?: () => void;
   disabled?: boolean;
+  width?: number;
 }
 
 export const Button = ({
+  width = undefined,
   children,
   backgroundColor,
   color,
@@ -48,6 +50,7 @@ export const Button = ({
     editImg: <Edit size={iconSize} color={iconColor} />,
     plusImg: <Plus size={iconSize} color={iconColor} />,
     saveImg: <Save size={iconSize} color={iconColor} />,
+    cancelImg: <Cancel size={iconSize} color={iconColor} />,
   };
 
   return (
@@ -64,6 +67,7 @@ export const Button = ({
       activeColor={activeColor}
       onClick={onClick}
       disabled={disabled} // disabled 속성 전달
+      width={width}
     >
       {children}
       {isIcon && buttonIconType[type]}
@@ -72,6 +76,7 @@ export const Button = ({
 };
 
 const ButtonContainer = styled.button<IButtonType>`
+  width: ${({ width }) => width}px;
   cursor: pointer;
   padding: 10px 16px;
   border-radius: 8px;
