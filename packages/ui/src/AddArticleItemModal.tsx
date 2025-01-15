@@ -89,15 +89,15 @@ export const AddArticleItemModal = ({ close }: IArticleModalType) => {
         </TableContainer>
         <FooterContainer>
           <BtnContainer>
-            <div onClick={onClose}>
-              <Button
-                backgroundColor={color.zinc[50]}
-                borderColor={color.zinc[200]}
-                color={color.zinc[800]}
-              >
-                취소
-              </Button>
-            </div>
+            <Button
+              backgroundColor={color.zinc[50]}
+              borderColor={color.zinc[200]}
+              color={color.zinc[800]}
+              onClick={onClose}
+            >
+              취소
+            </Button>
+
             <Button
               backgroundColor={color.orange[500]}
               borderColor={color.orange[500]}
@@ -111,8 +111,6 @@ export const AddArticleItemModal = ({ close }: IArticleModalType) => {
     </ModalBackground>
   );
 };
-
-const CancleBtn = styled.div``;
 
 const ItemContents = styled.div`
   overflow: scroll;

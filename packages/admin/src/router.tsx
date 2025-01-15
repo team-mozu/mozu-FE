@@ -1,13 +1,17 @@
 import { createBrowserRouter } from 'react-router-dom';
+
 import {
   StockManagementPage,
   SignInPage,
   ClassManagement,
-  ArticleManagementAdd,
+  ArticleManagementAddPage,
   StockManagementAddPage,
   StockManagementEditPage,
-  ArticleManagementEdit,
+  ArticleManagementPage,
+  CreateClass,
+  ClassEnvironment,
 } from '@/pages';
+
 import { AppLayout } from '@/layout';
 import { InvestmentPreparation } from './pages/InvestmentPreparation';
 
@@ -25,12 +29,7 @@ export const Router = createBrowserRouter([
           },
           {
             path: ':id',
-            children: [
-              {
-                index: true,
-                element: <StockManagementPage />,
-              },
-            ],
+            element: <StockManagementPage />,
           },
           {
             path: 'add',
@@ -43,12 +42,25 @@ export const Router = createBrowserRouter([
         ],
       },
       {
-        path: 'article-management-add',
-        element: <ArticleManagementAdd />,
-      },
-      {
-        path: 'article-management-edit',
-        element: <ArticleManagementEdit />,
+        path: 'article-management',
+        children: [
+          {
+            index: true,
+            element: <ArticleManagementPage />,
+          },
+          {
+            path: ':id',
+            element: <ArticleManagementPage />,
+          },
+          {
+            path: 'add',
+            element: <ArticleManagementAddPage />,
+          },
+          {
+            path: 'edit',
+            element: <ArticleManagementAddPage />, //! 여기 수정페이지 컴포넌트로 바꾸시오
+          },
+        ],
       },
       {
         path: 'class-management',
@@ -58,12 +70,26 @@ export const Router = createBrowserRouter([
         path: 'investment-preparation',
         element: <InvestmentPreparation />,
       },
+      {
+        path: '/create-class',
+        children: [
+          {
+            index: true,
+            element: <CreateClass />,
+          },
+          {
+            path: ':id',
+            element: <ClassEnvironment />,
+          },
+        ],
+      },
     ],
   },
   {
     path: 'signin',
     element: <SignInPage />,
   },
+
   {
     path: '*', // 404 페이지
     element: <div>404</div>,

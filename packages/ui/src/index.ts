@@ -38,3 +38,5 @@ export * from './LogoUploader';
 export * from './ParticipationContainer';
 export * from './TeamContainer';
 export * from './WarningMsg';
+export * from './ArticleManagementDetail';
+export * from './ArticleMainData';

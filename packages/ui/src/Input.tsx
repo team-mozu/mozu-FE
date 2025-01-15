@@ -3,7 +3,7 @@ import { color, font } from '@mozu/design-token';
 
 interface IInputType {
   placeholder: string;
-  label: string;
+  label?: string;
   type?: string;
   width?: string;
   text?: string;
@@ -68,10 +68,6 @@ const InputContent = styled.input<{ width?: string }>`
   color: ${color.black};
   font: ${font.b2};
   :focus {
-    outline: none;
-  }
-  ::placeholder {
-    color: ${color.zinc[500]};
     font: ${font.b2};
   }
 `;

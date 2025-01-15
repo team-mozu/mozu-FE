@@ -7,7 +7,9 @@ export const ArticleDiv = () => {
 
   return (
     <ArticleDivContiner>
-      <ArticleTitle>목표가 떨어지며 새해 시작한 삼성전자</ArticleTitle>
+      <ArticleTitle>
+        목표가 떨어지며 새해 시작한 삼성전자…52층까지 내려갔다가 반등
+      </ArticleTitle>
       <Date>2024-12-12</Date>
     </ArticleDivContiner>
   );
