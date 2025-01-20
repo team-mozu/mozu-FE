@@ -10,3 +10,4 @@ export * from './ClassCreate';
 export * from './ClassEnvironment';
 export * from './ClassEdit';
 export * from './ArticleManagementEditPage';
+export * from './ClassMonitoringPage';

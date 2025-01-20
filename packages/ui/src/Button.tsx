@@ -1,6 +1,16 @@
 import styled from '@emotion/styled';
 import { font } from '@mozu/design-token';
-import { Cancel, Del, Edit, Plus, Save, Start } from './assets';
+import {
+  Cancel,
+  Del,
+  Edit,
+  LogOut,
+  Plus,
+  Save,
+  Start,
+  ArticleIcon,
+  ClassIcon,
+} from './assets';
 import { ReactNode } from 'react';
 
 interface IButtonType {
@@ -16,7 +26,16 @@ interface IButtonType {
   borderColor?: string;
   iconSize?: number;
   iconColor?: string;
-  type?: 'startImg' | 'delImg' | 'editImg' | 'plusImg' | 'saveImg';
+  type?:
+    | 'startImg'
+    | 'delImg'
+    | 'editImg'
+    | 'plusImg'
+    | 'saveImg'
+    | 'cancleImg'
+    | 'logOutImg'
+    | 'articleImg'
+    | 'classImg';
   isIcon?: boolean;
   onClick?: () => void;
   onChange?: () => void;
@@ -51,6 +70,9 @@ export const Button = ({
     plusImg: <Plus size={iconSize} color={iconColor} />,
     saveImg: <Save size={iconSize} color={iconColor} />,
     cancelImg: <Cancel size={iconSize} color={iconColor} />,
+    logOutImg: <LogOut size={iconSize} color={iconColor} />,
+    articleImg: <ArticleIcon size={iconSize} color={iconColor} />,
+    classImg: <ClassIcon size={iconSize} color={iconColor} />,
   };
 
   return (

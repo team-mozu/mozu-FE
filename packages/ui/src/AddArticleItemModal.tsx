@@ -58,6 +58,7 @@ export const AddArticleItemModal = ({ close }: IArticleModalType) => {
     setIsHeadCheck(!isHeadCheck);
     setCheckedItems((prev) => prev.map(() => !isHeadCheck));
   };
+
   return (
     <ModalBackground>
       <ArticleModal>

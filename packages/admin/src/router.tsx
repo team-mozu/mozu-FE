@@ -12,6 +12,7 @@ import {
   ClassEnvironment,
   ClassEdit,
   ArticleManagementEditPage,
+  ClassMonitoringPage,
 } from '@/pages';
 
 import { AppLayout } from '@/layout';
@@ -86,6 +87,10 @@ export const Router = createBrowserRouter([
               {
                 path: 'start',
                 element: <InvestmentPreparation />,
+              },
+              {
+                path: 'monitoring',
+                element: <ClassMonitoringPage />,
               },
             ],
           },
