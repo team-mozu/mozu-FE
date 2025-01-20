@@ -1,11 +1,13 @@
 import { LogoWithText } from '.';
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
 
 export const Header = () => {
+  const navegate = useNavigate();
   return (
     <HeaderContainer>
-      <LogoContainer>
+      <LogoContainer onClick={() => navegate('/class-management')}>
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>
@@ -18,6 +20,7 @@ const LogoContainer = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+  cursor: pointer;
 `;
 
 const MozuTitle = styled.div`

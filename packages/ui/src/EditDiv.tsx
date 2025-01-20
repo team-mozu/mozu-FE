@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Button } from './Button';
 import { color, font } from '@mozu/design-token';
+import { useNavigate } from 'react-router-dom';
 
 interface IEditType {
   title?: string;
@@ -29,6 +30,7 @@ export const EditDiv = ({
   isIcon1,
   isIcon2,
 }: IEditType) => {
+  const navigate = useNavigate();
   return (
     <EditContainer>
       <Title>{title}</Title>
@@ -41,6 +43,7 @@ export const EditDiv = ({
           iconSize={iconSize1}
           iconColor={iconColor1}
           isIcon={isIcon1}
+          onClick={() => navigate(-1)}
         >
           {value1}
         </Button>

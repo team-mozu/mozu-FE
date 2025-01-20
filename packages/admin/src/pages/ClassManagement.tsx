@@ -2,6 +2,7 @@ import { Button, ClassPost, DeleteModal, PostTitle, PageTitle } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const datas = [
   {
@@ -19,6 +20,7 @@ const datas = [
 ];
 
 export const ClassManagement = () => {
+  const navigate = useNavigate();
   const [isModal, setIsModal] = useState<boolean>(false);
   const [favoritesId, setFavoritesId] = useState<number[]>([]);
 
@@ -83,6 +85,7 @@ export const ClassManagement = () => {
             isIcon={true}
             iconSize={24}
             iconColor={color.white}
+            onClick={() => navigate('create')}
           >
             수업 생성하기
           </Button>
@@ -104,6 +107,7 @@ export const ClassManagement = () => {
                         isClick={isClickFavorites[index]}
                         starOnClick={() => starFavoritesClick(index)}
                         delClick={delClick}
+                        onClick={() => navigate(':1')}
                       />
                     );
                   })}
@@ -124,6 +128,7 @@ export const ClassManagement = () => {
                       isClick={isClickCommon[index]}
                       starOnClick={() => starCommonClick(index)}
                       delClick={delClick}
+                      onClick={() => navigate(':1')}
                     />
                   );
                 })}

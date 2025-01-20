@@ -4,11 +4,12 @@ import { Plus } from './assets';
 
 interface IAddButtonType {
   text: string;
+  onClick?: () => void;
 }
 
-export const AddButton = ({ text }: IAddButtonType) => {
+export const AddButton = ({ text, onClick }: IAddButtonType) => {
   return (
-    <AddButtonContainer>
+    <AddButtonContainer onClick={onClick}>
       <Text>{text}</Text>
       <LogoContainer>
         <Plus size={20} color={color.white} />

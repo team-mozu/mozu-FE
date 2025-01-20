@@ -1,8 +1,10 @@
 import { AddButton, SearchInput, ArticleDiv } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
+import { useNavigate } from 'react-router-dom';
 
 export const ArticleSearchSideBar = () => {
+  const navigate = useNavigate();
   return (
     <SideBarContainer>
       <UpperWrapper>
@@ -18,7 +20,7 @@ export const ArticleSearchSideBar = () => {
         <ArticleDiv />
         <ArticleDiv />
       </ArticleWrapper>
-      <AddButton text="기사 추가하기" />
+      <AddButton text="기사 추가하기" onClick={() => navigate('add')} />
     </SideBarContainer>
   );
 };

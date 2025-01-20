@@ -11,6 +11,7 @@ import {
   CreateClass,
   ClassEnvironment,
   ClassEdit,
+  ArticleManagementEditPage,
 } from '@/pages';
 
 import { AppLayout } from '@/layout';
@@ -59,32 +60,39 @@ export const Router = createBrowserRouter([
           },
           {
             path: 'edit',
-            element: <ArticleManagementAddPage />, //! 여기 수정페이지 컴포넌트로 바꾸시오
+            element: <ArticleManagementEditPage />,
           },
         ],
       },
       {
         path: 'class-management',
-        element: <ClassManagement />,
-      },
-      {
-        path: 'investment-preparation',
-        element: <InvestmentPreparation />,
-      },
-      {
-        path: '/create-class',
         children: [
           {
             index: true,
-            element: <CreateClass />,
+            element: <ClassManagement />,
           },
+
           {
             path: ':id',
-            element: <ClassEnvironment />,
+            children: [
+              {
+                index: true,
+                element: <ClassEnvironment />,
+              },
+              {
+                path: 'edit',
+                element: <ClassEdit />,
+              },
+              {
+                path: 'start',
+                element: <InvestmentPreparation />,
+              },
+            ],
           },
+
           {
-            path: 'edit',
-            element: <ClassEdit />,
+            path: 'create',
+            element: <CreateClass />,
           },
         ],
       },
@@ -94,7 +102,6 @@ export const Router = createBrowserRouter([
     path: 'signin',
     element: <SignInPage />,
   },
-
   {
     path: '*', // 404 페이지
     element: <div>404</div>,

@@ -15,8 +15,10 @@ import {
 } from './ClassCreate';
 import { color } from '@mozu/design-token';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export const ClassEdit = () => {
+  const navigate = useNavigate();
   const [prices, setPrices] = useState<string[]>(['1,000,000']);
 
   const priceChangeHandler = // 숫자를 변경해줌 11111 => 11,111
@@ -36,7 +38,7 @@ export const ClassEdit = () => {
   return (
     <Container>
       <Header>
-        수업 환경 생성
+        수업환경 수정
         <BtnContainer>
           <Button
             backgroundColor={color.zinc[50]}
@@ -44,6 +46,7 @@ export const ClassEdit = () => {
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
             hoverBorderColor={color.zinc[100]}
+            onClick={() => navigate(-1)}
           >
             취소
           </Button>

@@ -9,6 +9,7 @@ interface IClassPostType {
   starOnClick?: () => void;
   isClick?: boolean;
   delClick?: () => void;
+  onClick?: () => void;
 }
 
 export const ClassPost = ({
@@ -17,9 +18,10 @@ export const ClassPost = ({
   starOnClick,
   isClick,
   delClick,
+  onClick,
 }: IClassPostType) => {
   return (
-    <PostContainer>
+    <PostContainer onClick={onClick}>
       <ContentContainer>
         <TitleIconContainer>
           <TilteContainer>
@@ -47,6 +49,7 @@ export const ClassPost = ({
 };
 
 const PostContainer = styled.div`
+  cursor: pointer;
   width: 480px;
   height: 156px;
   border: 1px solid ${color.zinc[200]};

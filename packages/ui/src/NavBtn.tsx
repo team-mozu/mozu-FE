@@ -7,9 +7,10 @@ interface INavType {
   children?: ReactNode;
   isColor?: boolean;
   type?: 'classIcon' | 'stockIcon' | 'articleIcon';
+  onClick?: () => void;
 }
 
-export const NavBtn = ({ children, isColor, type }: INavType) => {
+export const NavBtn = ({ children, isColor, type, onClick }: INavType) => {
   const getIconColor = () => (isColor ? color.orange[600] : color.zinc[500]);
 
   const buttonIconType = {
@@ -19,7 +20,7 @@ export const NavBtn = ({ children, isColor, type }: INavType) => {
   };
 
   return (
-    <NavContent isColor={isColor}>
+    <NavContent isColor={isColor} onClick={onClick}>
       {type ? buttonIconType[type] : null}
       {children}
     </NavContent>

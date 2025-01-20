@@ -122,6 +122,7 @@ const SelectOptions = styled.ul<ISelectOptionsType>`
 
 const Option = styled.li`
   padding: 8px 12px;
+  text-align: start;
   cursor: pointer;
   font: ${font.b2};
   &:hover {

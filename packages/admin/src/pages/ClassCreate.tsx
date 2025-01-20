@@ -2,9 +2,11 @@ import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
 import { Button, Input, Select, Tables } from '@mozu/ui';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export const CreateClass = () => {
   const [prices, setPrices] = useState<string[]>(['1,000,000']);
+  const navigate = useNavigate();
 
   const priceChangeHandler = // 숫자를 변경해줌 11111 => 11,111
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +25,7 @@ export const CreateClass = () => {
   return (
     <Container>
       <Header>
-        수업 환경 생성
+        수업환경 생성
         <BtnContainer>
           <Button
             backgroundColor={color.zinc[50]}
@@ -31,6 +33,7 @@ export const CreateClass = () => {
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
             hoverBorderColor={color.zinc[100]}
+            onClick={() => navigate(-1)}
           >
             취소
           </Button>

@@ -19,3 +19,5 @@ export * from './Warning ';
 export * from './Cancel';
 export * from './ArrowLeft';
 export * from './Play';
+export * from './Eye';
+export * from './EyeOff';
