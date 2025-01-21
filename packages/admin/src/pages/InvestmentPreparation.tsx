@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 
 const datas = [
   {
-    code: '587701',
+    code: 587701,
   },
   {
     usedDate: '10일 전',
