@@ -429,7 +429,7 @@ const PlusTd = styled(Td)`
   }
 `;
 
-const Thead = styled.thead`
+export const Thead = styled.thead`
   > tr {
     background-color: ${color.orange[50]};
     display: flex;
@@ -439,7 +439,7 @@ const Thead = styled.thead`
   }
 `;
 
-const Tbody = styled.tbody`
+export const Tbody = styled.tbody`
   > tr {
     width: 100%;
     background-color: ${color.white};
