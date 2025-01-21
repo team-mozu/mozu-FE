@@ -41,3 +41,4 @@ export * from './WarningMsg';
 export * from './ArticleManagementDetail';
 export * from './ArticleMainData';
 export * from './ArticleInfo';
+export * from './TeamInfoTable';

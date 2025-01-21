@@ -30,21 +30,22 @@ const AllContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  padding: 40px;
+  width: 100%;
 `;
 
 const InputContainer = styled.div`
-  width: 1512px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
 `;
 
 const AddContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 1560px;
   gap: 8px;
+  width: 100%;
 `;
 
 const ContentContainer = styled.div`

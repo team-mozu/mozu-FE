@@ -22,7 +22,7 @@ interface IEditType {
 export const Tables = ({ edit, tableName }: IEditType) => {
   const headers = [
     { text: '종목코드', value: '종목코드', width: '120px' },
-    { text: '종목이름', value: '종목이름', width: edit ? '500px' : '592px' },
+    { text: '종목이름', value: '종목이름', width: edit ? '500px' : '45%' },
     { text: '현재가', value: '현재가', width: '140px' },
     { text: '1차', value: '1차', width: edit ? '140px' : '160px' },
     { text: '2차', value: '2차', width: edit ? '140px' : '160px' },
@@ -64,7 +64,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
         {
           text: '삼성전자',
           value: '종목이름',
-          width: edit ? '500px' : '592px',
+          width: edit ? '500px' : '45%',
         },
         { text: '53,600', value: '현재가', width: '140px' },
       ],
@@ -75,7 +75,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
         {
           text: 'SK하이닉스',
           value: '종목이름',
-          width: edit ? '500px' : '592px',
+          width: edit ? '500px' : '45%',
         },
         { text: '110,000', value: '현재가', width: '140px' },
       ],
@@ -83,7 +83,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
     {
       details: [
         { text: '005380', value: '종목코드', width: '120px' },
-        { text: '현대차', value: '종목이름', width: edit ? '500px' : '592px' },
+        { text: '현대차', value: '종목이름', width: edit ? '500px' : '45%' },
         { text: '200,000', value: '현재가', width: '140px' },
       ],
     },
@@ -330,7 +330,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
                 />
               </CheckTh>
             )}
-            <Th width={edit ? '1460' : '1512'}>기사 제목</Th>
+            <Th width={edit ? '1460' : '100%'}>기사 제목</Th>
           </tr>
         </Thead>
         <Tbody>
@@ -345,7 +345,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
                   />
                 </CheckTh>
               )}
-              <Td width={edit ? '1460' : '1512'}>{data}</Td>
+              <Td width={edit ? '1460' : '100%'}>{data}</Td>
             </tr>
           ))}
           {edit && (
@@ -429,17 +429,19 @@ const PlusTd = styled(Td)`
   }
 `;
 
-const Thead = styled.thead`
+export const Thead = styled.thead`
   > tr {
     background-color: ${color.orange[50]};
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
   }
 `;
 
-const Tbody = styled.tbody`
+export const Tbody = styled.tbody`
   > tr {
+    width: 100%;
     background-color: ${color.white};
     display: flex;
     justify-content: center;
