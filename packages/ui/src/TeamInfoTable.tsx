@@ -171,7 +171,7 @@ export const TeamInfoTable = () => {
   );
 };
 
-const RateDiv = styled.div<IRateType>`
+export const RateDiv = styled.div<IRateType>`
   font: ${font.l1};
   color: ${(props) => props.color};
 `;
