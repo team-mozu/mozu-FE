@@ -42,4 +42,6 @@ export * from './ArticleManagementDetail';
 export * from './ArticleMainData';
 export * from './ArticleInfo';
 export * from './TeamInfoTable';
+export * from './InvestInfoTable';
 export * from './TeamInvestStatusTable';
+

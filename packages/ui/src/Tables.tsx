@@ -385,7 +385,7 @@ const CaptionBox = styled.div`
   justify-content: space-between;
 `;
 
-const Table = styled.table`
+export const Table = styled.table`
   border-radius: 4px;
   border-collapse: separate;
   overflow: hidden;
