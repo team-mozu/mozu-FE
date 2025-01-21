@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Tbody, Thead } from './Tables';
+import { Table, Tbody, Thead } from './Tables';
 
 interface IThProps {
   width: string;
@@ -176,24 +176,18 @@ const RateDiv = styled.div<IRateType>`
   color: ${(props) => props.color};
 `;
 
-const Table = styled.table`
-  border-radius: 4px;
-  border-collapse: collapse;
-  overflow: hidden;
-`;
-
 const Th = styled.th<IThProps>`
   border: 1px solid ${color.zinc[200]};
-  width:${(props) => props.width}
+  width: ${(props) => props.width};
   padding: 26px 0px;
-  padding-left:${(props) => props.padding};
+  padding-left: ${(props) => props.padding};
   height: 72px;
   font: ${font.b1};
-  display:flex;
-  align-items:center;
-  justify-content:${(props) => props.justify};
-  white-space:pre-line;
-  `;
+  display: flex;
+  align-items: center;
+  justify-content: ${(props) => props.justify};
+  white-space: pre-line;
+`;
 
 const Td = styled.td<ITdProps>`
   padding: ${(props) => props.padding};
