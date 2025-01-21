@@ -40,8 +40,9 @@ export * from './TeamContainer';
 export * from './WarningMsg';
 export * from './ArticleManagementDetail';
 export * from './ArticleMainData';
-export * from './ArticleInfo';
+export * from './ArticleInfoModal';
 export * from './TeamInfoTable';
 export * from './InvestInfoTable';
 export * from './TeamInvestStatusTable';
-
+export * from './TeamCurrentModal';
+export * from './ClassInfoModal';

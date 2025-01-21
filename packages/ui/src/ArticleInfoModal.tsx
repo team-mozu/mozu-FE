@@ -3,7 +3,12 @@ import { color, font } from '@mozu/design-token';
 import { useState, useRef } from 'react';
 import { Button } from './Button';
 
-export const ArticleInfo = () => {
+interface IArticleInfoType {
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
   const [datas, setDatas] = useState<
     { isClicked: boolean; articleContent: [{ title: string }] }[]
   >([
@@ -63,15 +68,14 @@ export const ArticleInfo = () => {
       ],
     },
   ]);
-  const [isClose, setIsClose] = useState<boolean>(false);
 
   const outSideRef = useRef();
   const outSideClick = (e: MouseEvent) => {
-    if (outSideRef.current == e.target) setIsClose(true);
+    if (outSideRef.current == e.target) setIsOpen(false);
   };
 
   const cancelClick = () => {
-    setIsClose(true);
+    setIsOpen(true);
   };
 
   const barClick = (index: number) => {
@@ -85,7 +89,7 @@ export const ArticleInfo = () => {
   };
 
   return (
-    !isClose && (
+    isOpen && (
       <BackgroundContainer onClick={outSideClick} ref={outSideRef}>
         <ModalContainer>
           <ContentContainer>
@@ -165,6 +169,7 @@ const BackgroundContainer = styled.div`
   background: rgba(0, 0, 0, 0.08);
   position: fixed;
   top: 0;
+  left: 0;
   z-index: 1;
   display: flex;
   justify-content: center;
@@ -178,7 +183,10 @@ const BarContent = styled.button<{ isClicked: boolean }>`
   color: ${({ isClicked }) =>
     isClicked ? color.orange[500] : color.zinc[700]};
   border-bottom: 1px solid
-    ${({ isClicked }) => (isClicked ? color.orange[500] : 'none')};
+    ${({ isClicked }) => (isClicked ? color.orange[500] : 'transparent')};
+  border-top: none;
+  border-right: none;
+  border-left: none;
   outline: none;
   display: flex;
   justify-content: center;
