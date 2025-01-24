@@ -1,12 +1,43 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Button } from '@mozu/ui';
+import {
+  ArticleInfoModal,
+  Button,
+  TeamCurrentModal,
+  TeamInfoTable,
+  ClassInfoModal,
+} from '@mozu/ui';
 import { useNavigate } from 'react-router';
+import { useState } from 'react';
 
 export const ClassMonitoringPage = () => {
   const navigate = useNavigate();
+  const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
+  const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
+  const [isOpenTeam, setIsOpenTeam] = useState<boolean>(false);
+
+  const articleInfoClick = () => {
+    setIsOpenArticle(true);
+  };
+
+  const teamCurrentClick = () => {
+    setIsOpenTeam(true);
+  };
+
+  const classInfoClick = () => {
+    setIsOpenClass(true);
+  };
   return (
     <Container>
+      {isOpenArticle && (
+        <ArticleInfoModal isOpen={isOpenArticle} setIsOpen={setIsOpenArticle} />
+      )}
+      {isOpenClass && (
+        <ClassInfoModal isOpen={isOpenClass} setIsOpen={setIsOpenClass} />
+      )}
+      {isOpenTeam && (
+        <TeamCurrentModal isOpen={isOpenTeam} setIsOpen={setIsOpenTeam} />
+      )}
       <Header>
         <TitleContainer>
           <Title>모의투자 현황</Title>
@@ -62,6 +93,7 @@ export const ClassMonitoringPage = () => {
               borderColor={color.zinc[200]}
               iconColor={color.zinc[800]}
               iconSize={24}
+              onClick={articleInfoClick}
             >
               기사정보
             </Button>
@@ -73,12 +105,15 @@ export const ClassMonitoringPage = () => {
               borderColor={color.zinc[200]}
               iconColor={color.zinc[800]}
               iconSize={24}
+              onClick={classInfoClick}
             >
               투자정보
             </Button>
           </InfoBtn>
         </InfoContainer>
-        <TableContainer></TableContainer>
+        <TableContainer>
+          <TeamInfoTable width="1512px" />
+        </TableContainer>
       </MainContainer>
     </Container>
   );
