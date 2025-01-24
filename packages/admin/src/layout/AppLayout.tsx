@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 export const AppLayout = () => {
   return (
     <AppContainer>
-      <Header />
+      <Header isAdmin={true} />
       <SideBar
         name={'대전시 진로융합원 창업마을'}
         role={'관리자'}
