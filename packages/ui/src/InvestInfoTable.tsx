@@ -1,9 +1,5 @@
 import { color, font } from '@mozu/design-token';
-import {
-  Table,
-  Tbody,
-  Thead,
-} from '/Users/jidohyun/Desktop/백업/mozu-FE/packages/admin/src/components/common/Tables';
+import { Table, Tbody, Thead } from '../../admin/src/components/common/Tables';
 import styled from '@emotion/styled';
 
 interface IThProps {
