@@ -5,12 +5,11 @@ import {
   ModalBackground,
   TableContainer,
   Title,
-} from './AddInvestItemModal';
+} from '../stock/AddInvestItemModal';
+import { Button, SearchInput } from '../../../../ui/src';
 import { color } from '@mozu/design-token';
-import { SearchInput } from './SearchInput';
-import { ArticleItem } from './ArticleItem';
-import { Button } from './Button';
 import { useState } from 'react';
+import { ArticleItem } from './ArticleItem';
 
 interface IArticleModalType {
   close: () => void;

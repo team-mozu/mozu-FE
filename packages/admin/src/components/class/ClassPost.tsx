@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Star } from './assets';
-import { Button } from '@mozu/ui';
+import { Button, Star } from '@mozu/ui';
 
 interface IClassPostType {
   title: string;

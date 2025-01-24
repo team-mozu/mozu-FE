@@ -1,8 +1,9 @@
-import { Button, ClassPost, DeleteModal, PostTitle, PageTitle } from '@mozu/ui';
+import { Button, DeleteModal, PostTitle, PageTitle } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ClassPost } from '@/components';
 
 const datas = [
   {

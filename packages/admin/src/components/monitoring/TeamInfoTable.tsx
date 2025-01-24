@@ -1,6 +1,6 @@
+import { Table, Tbody, Thead } from '../common/Tables';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Table, Tbody, Thead } from './Tables';
 
 interface IThProps {
   width: string;

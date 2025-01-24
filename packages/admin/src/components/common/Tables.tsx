@@ -1,14 +1,9 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Plus } from './assets';
 import { useEffect, useState } from 'react';
-import {
-  AddArticleItemModal,
-  AddInvestItemModal,
-  Button,
-  CheckBox,
-  Select,
-} from './index';
+import { Button, CheckBox, Plus, Select } from '../../../../ui/src';
+import { AddInvestItemModal } from '../stock/AddInvestItemModal';
+import { AddArticleItemModal } from '../article/AddArticleItemModal';
 
 interface IThProps {
   width: string;

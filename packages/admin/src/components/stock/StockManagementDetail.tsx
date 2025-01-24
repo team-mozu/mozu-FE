@@ -1,8 +1,6 @@
+import { Del, Edit, Button, Accounts } from '@mozu/ui';
 import styled from '@emotion/styled';
-import { Button } from './Button';
-import { Del, Edit } from './assets';
 import { color, font } from '@mozu/design-token';
-import { Accounts } from './Accounts';
 
 interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가

@@ -1,4 +1,4 @@
-import { Button, Input, Save, Select, Tables } from '@mozu/ui';
+import { Button, Input, Save, Select } from '@mozu/ui';
 import {
   AssetBox,
   AssetField,
@@ -16,6 +16,7 @@ import {
 import { color } from '@mozu/design-token';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Tables } from '@/components';
 
 export const ClassEdit = () => {
   const navigate = useNavigate();

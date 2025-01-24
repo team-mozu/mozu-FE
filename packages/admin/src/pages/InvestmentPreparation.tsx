@@ -1,11 +1,12 @@
-import { Button, ParticipationContainer, WarningMsg } from '@mozu/ui';
+import { Button, WarningMsg } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useNavigate } from 'react-router';
+import { ParticipationContainer } from '@/components';
 
 const datas = [
   {
-    code: '587701',
+    code: 587701,
   },
   {
     usedDate: '10일 전',

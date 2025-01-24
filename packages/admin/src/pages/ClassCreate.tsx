@@ -1,6 +1,7 @@
+import { Tables } from '@/components';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
-import { Button, Input, Select, Tables } from '@mozu/ui';
+import { Button, Input, Select } from '@mozu/ui';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 

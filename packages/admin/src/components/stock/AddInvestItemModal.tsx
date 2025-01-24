@@ -1,8 +1,6 @@
+import { Button, Item, SearchInput } from '../../../../ui/src';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
-import { SearchInput } from './SearchInput';
-import { Item } from './Item';
-import { Button } from './Button';
 import { useState, useRef } from 'react';
 
 interface IInvestModalType {

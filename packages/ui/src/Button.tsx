@@ -73,6 +73,7 @@ export const Button = ({
     logOutImg: <LogOut size={iconSize} color={iconColor} />,
     articleImg: <ArticleIcon size={iconSize} color={iconColor} />,
     classImg: <ClassIcon size={iconSize} color={iconColor} />,
+    cancleImg: <Cancel size={iconSize} color={iconColor} />,
   };
 
   return (

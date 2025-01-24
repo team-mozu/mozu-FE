@@ -1,9 +1,7 @@
 import styled from '@emotion/styled';
-import { Button } from './Button';
-import { Edit } from './assets';
 import { color, font } from '@mozu/design-token';
-import { Del } from './assets';
 import { ArticleMainData } from './ArticleMainData';
+import { Button, Del, Edit } from '@mozu/ui';
 
 interface IArticleManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가

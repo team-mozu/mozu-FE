@@ -1,6 +1,7 @@
+import { LogoUploader } from '@/components';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { EditDiv, Input, LogoUploader, TextArea } from '@mozu/ui';
+import { EditDiv, Input, TextArea } from '@mozu/ui';
 
 export const StockManagementAddPage = () => {
   return (
