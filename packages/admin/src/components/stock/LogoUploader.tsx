@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { Button } from './Button';
 import { color, font } from '@mozu/design-token';
-import { Imglogo } from './assets';
+import { Imglogo, Button } from '@mozu/ui';
 
 export const LogoUploader = () => {
   const [logo, setLogo] = useState<string | null>(null);

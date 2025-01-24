@@ -1,6 +1,6 @@
+import { TeamContainer } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { TeamContainer } from './TeamContainer';
 
 interface IParticipationType {
   code: number;

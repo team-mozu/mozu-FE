@@ -1,6 +1,6 @@
+import { CheckBox } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
-import { CheckBox } from './CheckBox';
 
 interface IArticleItemType {
   isHeader?: boolean;

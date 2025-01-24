@@ -1,7 +1,8 @@
-import { AddButton, SearchInput, ArticleDiv } from '@mozu/ui';
+import { AddButton, SearchInput } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useNavigate } from 'react-router-dom';
+import { ArticleDiv } from './ArticleDiv';
 
 export const ArticleSearchSideBar = () => {
   const navigate = useNavigate();

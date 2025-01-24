@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { Tbody, Thead } from './Tables';
 import { color, font } from '@mozu/design-token';
 import { RateDiv } from './TeamInfoTable';
+import { Tbody, Thead } from '../common/Tables';
 
 interface IThProps {
   width: string;

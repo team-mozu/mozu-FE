@@ -1,8 +1,7 @@
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
 import { useRef, useState, useEffect } from 'react';
-import { Imglogo } from './assets';
-import { Button } from './Button';
+import { Imglogo, Button } from '@mozu/ui';
 
 interface IImgType {
   label?: string;

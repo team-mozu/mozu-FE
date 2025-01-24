@@ -1,14 +1,7 @@
+import { Tables } from '@/components';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import {
-  ArrowLeft,
-  Button,
-  Del,
-  DeleteModal,
-  Edit,
-  Play,
-  Tables,
-} from '@mozu/ui';
+import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from '@mozu/ui';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router';

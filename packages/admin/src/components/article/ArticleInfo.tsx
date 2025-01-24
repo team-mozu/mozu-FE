@@ -1,7 +1,7 @@
+import { Button } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState, useRef } from 'react';
-import { Button } from './Button';
 
 export const ArticleInfo = () => {
   const [datas, setDatas] = useState<

@@ -1,10 +1,6 @@
+import { StockManagementDetail, StockSearchSideBar } from '@/components';
 import styled from '@emotion/styled';
-import {
-  SelectError,
-  StockSearchSideBar,
-  StockManagementDetail,
-  DeleteModal,
-} from '@mozu/ui';
+import { SelectError, DeleteModal } from '@mozu/ui';
 import { useState } from 'react';
 
 export const StockManagementPage = () => {

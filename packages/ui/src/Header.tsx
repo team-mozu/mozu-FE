@@ -1,4 +1,4 @@
-import { LogoWithText } from '.';
+import { LogoWithText } from '@mozu/ui';
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';

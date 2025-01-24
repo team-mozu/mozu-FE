@@ -26,5 +26,14 @@
     "outDir": "build"
   },
   "references": [{ "path": "../ui" }],
-  "include": ["src", "vite.config.ts"]
+  "include": [
+    "src",
+    "vite.config.ts",
+    "../ui/src/DeleteModal.tsx",
+    "../ui/src/EditDiv.tsx",
+    "../ui/src/Header.tsx",
+    "../ui/src/Input.tsx",
+    "../ui/src/SearchInput.tsx",
+    "../ui/src/SideBar.tsx"
+  ]
 }
