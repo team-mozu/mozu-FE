@@ -32,7 +32,7 @@ interface IButtonType {
     | 'editImg'
     | 'plusImg'
     | 'saveImg'
-    | 'cancleImg'
+    | 'cancelImg'
     | 'logOutImg'
     | 'articleImg'
     | 'classImg';
@@ -73,7 +73,6 @@ export const Button = ({
     logOutImg: <LogOut size={iconSize} color={iconColor} />,
     articleImg: <ArticleIcon size={iconSize} color={iconColor} />,
     classImg: <ClassIcon size={iconSize} color={iconColor} />,
-    cancleImg: <Cancel size={iconSize} color={iconColor} />,
   };
 
   return (

@@ -1,4 +1,4 @@
-import { CheckBox } from '@mozu/ui';
+import { CheckBox } from '../../../../ui/src';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
 

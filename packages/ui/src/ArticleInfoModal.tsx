@@ -75,7 +75,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
   };
 
   const cancelClick = () => {
-    setIsOpen(true);
+    setIsOpen(false);
   };
 
   const barClick = (index: number) => {

@@ -1,14 +1,9 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import {
-  ArticleInfoModal,
-  Button,
-  TeamCurrentModal,
-  TeamInfoTable,
-  ClassInfoModal,
-} from '@mozu/ui';
+import { ArticleInfoModal, Button, ClassInfoModal } from '@mozu/ui';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
+import { TeamCurrentModal, TeamInfoTable } from '@/components';
 
 export const ClassMonitoringPage = () => {
   const navigate = useNavigate();

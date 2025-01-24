@@ -68,7 +68,7 @@ const EditContainer = styled.div`
   height: 64px;
   display: flex;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 12px 12px 12px 24px;
   align-items: center;
   background-color: ${color.white};
   border: 1px solid ${color.zinc[200]};

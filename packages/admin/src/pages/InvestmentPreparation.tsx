@@ -42,6 +42,8 @@ export const InvestmentPreparation = () => {
             color={color.zinc[800]}
             type="cancelImg"
             onClick={() => navigate(-1)}
+            iconSize={24}
+            iconColor={color.zinc[800]}
           >
             취소하기
           </Button>

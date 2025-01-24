@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState, useRef } from 'react';
-import { Button } from './Button';
+import { Button } from '../../../../ui/src';
 import { TeamInvestStatusTable } from './TeamInvestStatusTable';
 
 interface ITeamCurrentType {
-  teamName: string;
+  teamName?: string;
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
