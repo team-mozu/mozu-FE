@@ -1,20 +1,89 @@
 import { LogoWithText } from '@mozu/ui';
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-export const Header = () => {
+interface IHeaderType {
+  isAdmin: boolean;
+}
+
+export const Header = ({ isAdmin }: IHeaderType) => {
+  const [isNavHome, setIsNavHome] = useState<boolean>(false);
+  const [isNavNews, setIsNavNews] = useState<boolean>(false);
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (pathname === '/news') {
+      setIsNavHome(false);
+      setIsNavNews(true);
+    } else if (pathname === '/') {
+      setIsNavHome(true);
+      setIsNavNews(false);
+    }
+  }, [pathname]);
+
+  const datas = {
+    investmentRound: 3,
+  };
+
   const navegate = useNavigate();
   return (
-    <HeaderContainer>
+    <HeaderContainer isAdmin={isAdmin}>
       <LogoContainer onClick={() => navegate('/class-management')}>
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>
-      <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>
+      {!isAdmin && (
+        <NavContainer>
+          <Nav isColor={isNavHome}>홈</Nav>
+          <Nav isColor={isNavNews}>뉴스</Nav>
+        </NavContainer>
+      )}
+      {!isAdmin && (
+        <InvestmentRoundContainer>
+          <InvestmentRoundContent>
+            {datas.investmentRound}차 투자
+          </InvestmentRoundContent>
+          <InvestmentRoundExplane>진행중</InvestmentRoundExplane>
+        </InvestmentRoundContainer>
+      )}
+      {isAdmin && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
     </HeaderContainer>
   );
 };
+
+const InvestmentRoundContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+const InvestmentRoundExplane = styled.div`
+  font: ${font.b2};
+  color: ${color.zinc[600]};
+`;
+
+const InvestmentRoundContent = styled.div`
+  font: ${font.t1};
+  color: ${color.orange[500]};
+`;
+
+const Nav = styled.div<{ isColor: boolean }>`
+  font: ${font.b1};
+  color: ${({ isColor }) => (isColor ? color.zinc[800] : color.zinc[500])};
+  padding: 10px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NavContainer = styled.nav`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
 
 const LogoContainer = styled.div`
   display: flex;
@@ -33,14 +102,14 @@ const SchoolTag = styled.div`
   color: ${color.zinc[500]};
 `;
 
-const HeaderContainer = styled.header`
+const HeaderContainer = styled.header<Pick<IHeaderType, 'isAdmin'>>`
   position: fixed;
   top: 0;
-  width: calc(100% - 280px);
+  width: ${({ isAdmin }) => (isAdmin ? 'calc(100% - 280px)' : '100%')};
   z-index: 1;
   height: 64px;
   padding: 0 40px;
-  margin-left: 280px;
+  margin-left: ${({ isAdmin }) => (isAdmin ? '280px' : '0')};
   display: flex;
   align-items: center;
   justify-content: space-between;
