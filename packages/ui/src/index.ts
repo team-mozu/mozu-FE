@@ -25,3 +25,4 @@ export * from './InvestInfoTable';
 export * from './ClassInfoModal';
 export * from './InvestInfoTable';
 export * from './Accounts';
+export * from './RankingDiv';
