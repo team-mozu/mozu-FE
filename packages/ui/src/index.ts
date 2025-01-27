@@ -27,3 +27,5 @@ export * from './InvestInfoTable';
 export * from './Accounts';
 export * from './RankingDiv';
 export * from './NewsPost';
+export * from './ItemSidebar';
+export * from './HistorySidebar';
