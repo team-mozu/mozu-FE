@@ -23,3 +23,4 @@ export * from './Eye';
 export * from './EyeOff';
 export * from './LogOut';
 export * from './NoImgIcon';
+export * from './Trophy';
