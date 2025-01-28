@@ -1,3 +1,6 @@
+import noImgIcon from './noImgIcon.svg';
+export { noImgIcon };
+
 export * from './Del';
 export * from './Edit';
 export * from './Plus';
