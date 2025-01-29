@@ -29,5 +29,7 @@ export * from './RankingDiv';
 export * from './NewsPost';
 export * from './ItemSidebar';
 export * from './HistorySidebar';
+export * from './ExitBtn';
 export * from './InvestCompleteModal';
 export * from './TotalProperty';
+export * from './NavBar';
