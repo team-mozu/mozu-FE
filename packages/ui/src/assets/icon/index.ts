@@ -1,6 +1,6 @@
 import noImgIcon from './noImgIcon.svg';
-export { noImgIcon };
 
+export { noImgIcon };
 export * from './Del';
 export * from './Edit';
 export * from './Plus';
@@ -25,5 +25,4 @@ export * from './Play';
 export * from './Eye';
 export * from './EyeOff';
 export * from './LogOut';
-export * from './NoImgIcon';
 export * from './Trophy';
