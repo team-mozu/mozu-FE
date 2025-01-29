@@ -1,1 +1,1 @@
-export * from './rank';
+export * from './result';
