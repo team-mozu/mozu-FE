@@ -27,7 +27,7 @@ const AppContainer = styled.div`
 `;
 
 const MainContent = styled.div`
-  margin-left: 280px;
+  /* margin-left: 280px; */
   margin-top: 64px;
   flex: 1;
 `;
