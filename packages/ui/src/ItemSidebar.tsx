@@ -76,7 +76,7 @@ export const ItemSidebar = () => {
     <SideBarContainer>
       <Title>전체 종목</Title>
       <ItemContentContainer>
-        {datas.map((data) => (
+        {datas.map((data, index) => (
           <ItemContent
             imgUrl={data.logoImg}
             title={data.title}
@@ -85,6 +85,7 @@ export const ItemSidebar = () => {
             isUp={data.isUp}
             upDownPrice={data.upDownPrice}
             upDownPercent={data.upDownPercent}
+            key={index}
           />
         ))}
       </ItemContentContainer>

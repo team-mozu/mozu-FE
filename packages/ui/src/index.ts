@@ -33,3 +33,4 @@ export * from './ExitBtn';
 export * from './InvestCompleteModal';
 export * from './TotalProperty';
 export * from './NavBar';
+export * from './StockStatusBar';
