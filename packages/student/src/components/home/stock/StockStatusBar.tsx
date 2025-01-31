@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Button } from './Button';
+import { Button } from '@mozu/ui';
 
 export const StockStatusBar = () => {
   const rate = '-600원 (-1.1%)';

@@ -100,6 +100,11 @@ const ItemContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 74px;
+  cursor: pointer;
+
+  :hover {
+    background: ${color.zinc[100]};
+  }
 `;
 
 const LogoContainer = styled.div`
@@ -156,8 +161,11 @@ const Logo = styled.img<Pick<IItemContentType, 'imgUrl'>>`
 `;
 
 const SideBarContainer = styled.div`
+  position: fixed;
+  left: 0;
+  border-right: 1px solid ${color.zinc[200]};
   width: 320px;
-  height: 100vh;
+  height: 100%;
   background-color: ${color.white};
   padding: 24px 0;
   display: flex;

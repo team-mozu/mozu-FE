@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { SignInPage } from '@/pages';
+import { HomePage, NewsPage, SignInPage, StockPage, ResultPage } from '@/pages';
 import { AppLayout } from '@/layout';
-import { Test } from './pages/test';
 
 export const Router = createBrowserRouter([
   {
@@ -9,8 +8,31 @@ export const Router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       {
-        index: true,
-        element: <Test />,
+        path: 'home',
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: 'stock/:id',
+            element: <StockPage />,
+            children: [
+              { path: 'quote', element: <StockPage /> },
+              { path: 'stock-info', element: <StockPage /> },
+              { path: 'news', element: <StockPage /> },
+            ],
+          },
+        ],
+      },
+      {
+        path: 'news',
+        element: <NewsPage />,
+        children: [{ path: ':id', element: <div>NewsPage</div> }],
+      },
+      {
+        path: 'result',
+        element: <ResultPage />,
       },
     ],
   },

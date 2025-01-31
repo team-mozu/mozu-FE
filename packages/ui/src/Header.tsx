@@ -77,6 +77,7 @@ const Nav = styled.div<{ isColor: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const NavContainer = styled.nav`

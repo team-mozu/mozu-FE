@@ -1,4 +1,4 @@
-import { SideBar, Header } from '@mozu/ui';
+import { Header, HistorySidebar, ItemSidebar } from '@mozu/ui';
 import { Outlet } from 'react-router-dom';
 import styled from '@emotion/styled';
 
@@ -6,14 +6,13 @@ export const AppLayout = () => {
   return (
     <AppContainer>
       <Header isAdmin={false} />
-      {/* <SideBar
-        name={'대전시 진로융합원 창업마을'}
-        role={'관리자'}
-        navTitle={'관리'}
-      /> */}
-      <MainContent>
-        <Outlet />
-      </MainContent>
+      <Layout>
+        <ItemSidebar />
+        <HistorySidebar />
+        <MainContent>
+          <Outlet />
+        </MainContent>
+      </Layout>
     </AppContainer>
   );
 };
@@ -26,8 +25,12 @@ const AppContainer = styled.div`
   overflow-x: hidden;
 `;
 
-const MainContent = styled.div`
-  /* margin-left: 280px; */
+const Layout = styled.div`
   margin-top: 64px;
+`;
+
+const MainContent = styled.div`
+  margin-left: 320px;
+  margin-right: 360px;
   flex: 1;
 `;
