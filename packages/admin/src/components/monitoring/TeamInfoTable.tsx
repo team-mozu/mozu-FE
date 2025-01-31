@@ -161,7 +161,7 @@ export const TeamInfoTable = () => {
                   >
                     {data.rate}
                   </RateDiv>
-                )}{' '}
+                )}
               </Td>
             ))}
           </tr>
