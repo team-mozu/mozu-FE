@@ -35,3 +35,4 @@ export * from './TotalProperty';
 export * from './NavBar';
 export * from './StockStatusBar';
 export * from './StockTable';
+export * from './BuySellModal';
