@@ -1,9 +1,9 @@
-import { RankModal } from '@/components';
+import { ResultContainer } from '@/components';
 
 export const Test = () => {
   return (
     <>
-      <RankModal />
+      <ResultContainer />
     </>
   );
 };
