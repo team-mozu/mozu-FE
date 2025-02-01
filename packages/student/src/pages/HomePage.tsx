@@ -6,7 +6,7 @@ export const HomePage = () => {
   return (
     <Wrapper>
       <TotalProperty
-        money="1,850,000원"
+        money="1,850,0000"
         rate="+850,000원 (+85%)"
         basicMoney="1,000,000원"
         cash="500,000원"

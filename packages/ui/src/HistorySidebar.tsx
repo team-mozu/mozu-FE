@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
+import { InvestCompleteModal } from './InvestCompleteModal';
+import { useState } from 'react';
 
 interface ITransactionContentType {
   keyword: string; //매수 매도
@@ -148,66 +150,74 @@ export const HistorySidebar = () => {
     totalSell: '931,200',
     buyableAmount: '1,001,600',
   };
+  const [isOpen, setIsOpen] = useState(false);
+
+  const IsOpen = () => {
+    setIsOpen(true);
+  };
 
   return (
-    <SidebarContainer>
-      <UpperContainer>
-        <TeamContainer>
-          <TeamContent>{datas.teamName}</TeamContent>
-        </TeamContainer>
-        <TotalAssetContainer>
-          <Title>총 평가 자산</Title>
-          <TotalAssetPrice isUp={datas.total[0].isUp}>
-            {datas.total[0].totalAssets}원
-          </TotalAssetPrice>
-          <UpDownDiv isUp={datas.total[0].isUp}>
-            {datas.total[0].totalUpDown.upDownPrice}원 (
-            {datas.total[0].totalUpDown.upDownPercent}%)
-          </UpDownDiv>
-        </TotalAssetContainer>
-        <HoldContainer>
-          <HoldContent>
-            <HoldTitle>보유현금</HoldTitle>
-            <HoldPrice>{datas.hold.holdPrice}원</HoldPrice>
-          </HoldContent>
-          <HoldContent>
-            <HoldTitle>보유주식</HoldTitle>
-            <HoldPrice>{datas.hold.holdStock}원</HoldPrice>
-          </HoldContent>
-        </HoldContainer>
-        <p>거래내역</p>
-      </UpperContainer>
-      <TransactionHistoryContents>
-        {datas.transactionHistory.map((data, index) => (
-          <TransactionContent
-            keyword={data.keyword}
-            name={data.name}
-            totalPrice={data.totalPrice}
-            stockPrice={data.stockPrice}
-            isUp={data.isUp}
-            key={index}
-          />
-        ))}
-      </TransactionHistoryContents>
-      <TotalPriceContainer>
-        <PriceTitleContainer>
-          <PriceTitle>총 매수금액</PriceTitle>
-          <UpDownDiv isUp={true}>{datas.totalBuy}원</UpDownDiv>
-        </PriceTitleContainer>
-        <PriceTitleContainer>
-          <PriceTitle>총 매도금액</PriceTitle>
-          <UpDownDiv isUp={false}>{datas.totalSell}원</UpDownDiv>
-        </PriceTitleContainer>
-        <PriceTitleContainer>
-          <PriceTitle>구매가능 금액</PriceTitle>
-          <HoldPrice>{datas.buyableAmount}원</HoldPrice>
-        </PriceTitleContainer>
-      </TotalPriceContainer>
-      <FooterContainer>
-        <Btn>투자 완료</Btn>
-        <FooterContent>© 대덕소프트웨어마이스터고등학교</FooterContent>
-      </FooterContainer>
-    </SidebarContainer>
+    <>
+      <InvestCompleteModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <SidebarContainer>
+        <UpperContainer>
+          <TeamContainer>
+            <TeamContent>{datas.teamName}</TeamContent>
+          </TeamContainer>
+          <TotalAssetContainer>
+            <Title>총 평가 자산</Title>
+            <TotalAssetPrice isUp={datas.total[0].isUp}>
+              {datas.total[0].totalAssets}원
+            </TotalAssetPrice>
+            <UpDownDiv isUp={datas.total[0].isUp}>
+              {datas.total[0].totalUpDown.upDownPrice}원 (
+              {datas.total[0].totalUpDown.upDownPercent}%)
+            </UpDownDiv>
+          </TotalAssetContainer>
+          <HoldContainer>
+            <HoldContent>
+              <HoldTitle>보유현금</HoldTitle>
+              <HoldPrice>{datas.hold.holdPrice}원</HoldPrice>
+            </HoldContent>
+            <HoldContent>
+              <HoldTitle>보유주식</HoldTitle>
+              <HoldPrice>{datas.hold.holdStock}원</HoldPrice>
+            </HoldContent>
+          </HoldContainer>
+          <p>거래내역</p>
+        </UpperContainer>
+        <TransactionHistoryContents>
+          {datas.transactionHistory.map((data, index) => (
+            <TransactionContent
+              keyword={data.keyword}
+              name={data.name}
+              totalPrice={data.totalPrice}
+              stockPrice={data.stockPrice}
+              isUp={data.isUp}
+              key={index}
+            />
+          ))}
+        </TransactionHistoryContents>
+        <TotalPriceContainer>
+          <PriceTitleContainer>
+            <PriceTitle>총 매수금액</PriceTitle>
+            <UpDownDiv isUp={true}>{datas.totalBuy}원</UpDownDiv>
+          </PriceTitleContainer>
+          <PriceTitleContainer>
+            <PriceTitle>총 매도금액</PriceTitle>
+            <UpDownDiv isUp={false}>{datas.totalSell}원</UpDownDiv>
+          </PriceTitleContainer>
+          <PriceTitleContainer>
+            <PriceTitle>구매가능 금액</PriceTitle>
+            <HoldPrice>{datas.buyableAmount}원</HoldPrice>
+          </PriceTitleContainer>
+        </TotalPriceContainer>
+        <FooterContainer>
+          <Btn onClick={IsOpen}>투자 완료</Btn>
+          <FooterContent>© 대덕소프트웨어마이스터고등학교</FooterContent>
+        </FooterContainer>
+      </SidebarContainer>
+    </>
   );
 };
 

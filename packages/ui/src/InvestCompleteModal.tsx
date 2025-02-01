@@ -2,40 +2,61 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Check } from './assets';
 import { Button } from './Button';
+import { useRef } from 'react';
 
-export const InvestCompleteModal = () => {
+interface IInvestCompleteType {
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const InvestCompleteModal = ({
+  isOpen,
+  setIsOpen,
+}: IInvestCompleteType) => {
+  const outSideRef = useRef();
+  const outSideClick = (e: MouseEvent) => {
+    if (outSideRef.current === e.target) setIsOpen(false);
+  };
+
+  const cancelClick = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <BackgroundContainer>
-      <ModalContainer>
-        <Header>
-          <CheckDiv>
-            <Check color={color.orange[500]} size={24} />
-          </CheckDiv>
-          <TitleContainer>
-            <Title>투자를 완료하실 건가요?</Title>
-            <Text>투자를 완료하면 주문을 변경할 수 없어요.</Text>
-          </TitleContainer>
-        </Header>
-        <Footer>
-          <ButtonDiv>
-            <Button
-              borderColor={color.zinc[200]}
-              backgroundColor={color.zinc[50]}
-              color={color.zinc[800]}
-            >
-              취소
-            </Button>
-            <Button
-              backgroundColor={color.orange[500]}
-              borderColor={color.orange[500]}
-              color={color.white}
-            >
-              투자 완료하기
-            </Button>
-          </ButtonDiv>
-        </Footer>
-      </ModalContainer>
-    </BackgroundContainer>
+    isOpen && (
+      <BackgroundContainer onClick={outSideClick} ref={outSideRef}>
+        <ModalContainer>
+          <Header>
+            <CheckDiv>
+              <Check color={color.orange[500]} size={24} />
+            </CheckDiv>
+            <TitleContainer>
+              <Title>투자를 완료하실 건가요?</Title>
+              <Text>투자를 완료하면 주문을 변경할 수 없어요.</Text>
+            </TitleContainer>
+          </Header>
+          <Footer>
+            <ButtonDiv>
+              <Button
+                borderColor={color.zinc[200]}
+                backgroundColor={color.zinc[50]}
+                color={color.zinc[800]}
+                onClick={cancelClick}
+              >
+                취소
+              </Button>
+              <Button
+                backgroundColor={color.orange[500]}
+                borderColor={color.orange[500]}
+                color={color.white}
+              >
+                투자 완료하기
+              </Button>
+            </ButtonDiv>
+          </Footer>
+        </ModalContainer>
+      </BackgroundContainer>
+    )
   );
 };
 
