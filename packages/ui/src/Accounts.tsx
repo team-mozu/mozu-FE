@@ -28,14 +28,16 @@ const Tilte = styled.div`
   color: ${color.zinc[600]};
 `;
 const AccountsContainer = styled.div`
-  width: 596px;
+  max-width: 596px;
+  width: 100%;
+  min-width: 536px;
   height: 108px;
   border-radius: 12px;
   background-color: ${color.zinc[50]};
   display: flex;
   align-items: center;
   justify-content: start;
-  padding-left: 24px;
+  padding: 24px;
 `;
 
 const Content = styled.div`

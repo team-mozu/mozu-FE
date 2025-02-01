@@ -85,7 +85,6 @@ export const StockGraph = () => {
       <ResponsiveContainer>
         <LineChart
           data={data}
-          margin={{ left: 30, right: 80 }} // 왼쪽 마진 추가
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >

@@ -8,7 +8,7 @@ interface IRankModal {
 
 export const RankModal = ({ onCancle }: IRankModal) => {
   return (
-    <ModalBackdrop onClick={onCancel}>
+    <ModalBackdrop onClick={onCancle}>
       <Container onClick={(e) => e.stopPropagation()}>
         <IconDiv>
           <Trophy size={24} color={color.orange[500]} />

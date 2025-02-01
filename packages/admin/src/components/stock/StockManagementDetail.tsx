@@ -174,7 +174,10 @@ const RightSection = styled.div`
 const ContentWrapper = styled.div`
   display: grid;
   gap: 12px;
-  grid-template-columns: 1fr; /* 기본적으로 1열로 설정 */
+  grid-template-columns: 1fr;
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(auto-fit, minmax(596px, 1fr));
+  }
 `;
 
 const Label = styled.label`

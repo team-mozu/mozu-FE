@@ -11,6 +11,7 @@ interface IHeaderType {
 export const Header = ({ isAdmin }: IHeaderType) => {
   const [isNavHome, setIsNavHome] = useState<boolean>(false);
   const [isNavNews, setIsNavNews] = useState<boolean>(false);
+  const [isResultPage, setIsResultPage] = useState<boolean>(false);
 
   const { pathname } = useLocation();
 
@@ -18,9 +19,19 @@ export const Header = ({ isAdmin }: IHeaderType) => {
     if (pathname === '/news') {
       setIsNavHome(false);
       setIsNavNews(true);
-    } else if (pathname === '/') {
+      setIsResultPage(false);
+    } else if (pathname.includes('/home')) {
       setIsNavHome(true);
       setIsNavNews(false);
+      setIsResultPage(false);
+    } else if (pathname === '/result') {
+      setIsNavHome(false);
+      setIsNavNews(false);
+      setIsResultPage(true);
+    } else {
+      setIsNavHome(false);
+      setIsNavNews(false);
+      setIsResultPage(false);
     }
   }, [pathname]);
 
@@ -35,13 +46,17 @@ export const Header = ({ isAdmin }: IHeaderType) => {
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>
-      {!isAdmin && (
+      {!isAdmin && !isResultPage && (
         <NavContainer>
-          <Nav isColor={isNavHome}>홈</Nav>
-          <Nav isColor={isNavNews}>뉴스</Nav>
+          <Nav onClick={() => navegate('/home')} isColor={isNavHome}>
+            홈
+          </Nav>
+          <Nav onClick={() => navegate('/news')} isColor={isNavNews}>
+            뉴스
+          </Nav>
         </NavContainer>
       )}
-      {!isAdmin && (
+      {!isAdmin && !isResultPage && (
         <InvestmentRoundContainer>
           <InvestmentRoundContent>
             {datas.investmentRound}차 투자
@@ -50,6 +65,7 @@ export const Header = ({ isAdmin }: IHeaderType) => {
         </InvestmentRoundContainer>
       )}
       {isAdmin && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
+      {isResultPage && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
     </HeaderContainer>
   );
 };

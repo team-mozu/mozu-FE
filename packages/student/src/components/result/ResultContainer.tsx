@@ -4,10 +4,11 @@ import { Button, HandCoins, Trophy } from '@mozu/ui';
 import { NthDeal, AssetChange } from '@/components';
 
 interface ValueStyleProps {
-  isPositive: boolean;
+  isPositive?: boolean;
+  onRankClick?: () => void;
 }
 
-export const ResultContainer = () => {
+export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
   return (
     <Container>
       <Title>
@@ -46,6 +47,7 @@ export const ResultContainer = () => {
               backgroundColor={color.orange[50]}
               color={color.orange[500]}
               width={205}
+              onClick={onRankClick}
             >
               현재 랭킹 보기
               <Trophy size={24} color={color.orange[500]} />
