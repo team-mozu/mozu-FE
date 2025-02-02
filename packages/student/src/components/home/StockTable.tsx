@@ -3,9 +3,9 @@ import {
   Table,
   Tbody,
   Thead,
-} from '/Users/jidohyun/Desktop/백업/mozu-FE/packages/admin/src/components/common/Tables';
+} from '../../../../admin/src/components/common/Tables';
 import { color, font } from '@mozu/design-token';
-import { RateDiv } from '/Users/jidohyun/Desktop/백업/mozu-FE/packages/admin/src/components/monitoring/TeamInfoTable';
+import { RateDiv } from '../../../../admin/src/components/monitoring/TeamInfoTable';
 
 interface IThType {
   width: string;
