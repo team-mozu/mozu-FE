@@ -31,7 +31,11 @@ export const ClassMonitoringPage = () => {
         <ClassInfoModal isOpen={isOpenClass} setIsOpen={setIsOpenClass} />
       )}
       {isOpenTeam && (
-        <TeamCurrentModal isOpen={isOpenTeam} setIsOpen={setIsOpenTeam} />
+        <TeamCurrentModal
+          isOpen={isOpenTeam}
+          setIsOpen={setIsOpenTeam}
+          teamName="대마고"
+        />
       )}
       <Header>
         <TitleContainer>
@@ -48,6 +52,7 @@ export const ClassMonitoringPage = () => {
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             onClick={() => navigate(-1)}
+            hoverBackgroundColor={color.zinc[100]}
           >
             모의투자 취소
           </Button>
@@ -59,6 +64,7 @@ export const ClassMonitoringPage = () => {
             backgroundColor={color.orange[500]}
             borderColor={color.orange[500]}
             color={color.white}
+            hoverBackgroundColor={color.orange[600]}
           >
             다음 투자 진행
           </Button>
@@ -89,6 +95,7 @@ export const ClassMonitoringPage = () => {
               iconColor={color.zinc[800]}
               iconSize={24}
               onClick={articleInfoClick}
+              hoverBackgroundColor={color.zinc[100]}
             >
               기사정보
             </Button>
@@ -101,6 +108,7 @@ export const ClassMonitoringPage = () => {
               iconColor={color.zinc[800]}
               iconSize={24}
               onClick={classInfoClick}
+              hoverBackgroundColor={color.zinc[100]}
             >
               투자정보
             </Button>

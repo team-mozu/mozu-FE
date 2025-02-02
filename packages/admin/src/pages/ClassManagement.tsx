@@ -87,6 +87,7 @@ export const ClassManagement = () => {
             iconSize={24}
             iconColor={color.white}
             onClick={() => navigate('create')}
+            hoverBackgroundColor={color.orange[600]}
           >
             수업 생성하기
           </Button>
@@ -108,7 +109,7 @@ export const ClassManagement = () => {
                         isClick={isClickFavorites[index]}
                         starOnClick={() => starFavoritesClick(index)}
                         delClick={delClick}
-                        onClick={() => navigate(':1')}
+                        onClick={() => navigate('1')}
                       />
                     );
                   })}

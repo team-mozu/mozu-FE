@@ -11,7 +11,7 @@ import {
   ArticleIcon,
   ClassIcon,
 } from './assets';
-import { ReactNode } from 'react';
+import { ReactNode, MouseEventHandler } from 'react';
 
 interface IButtonType {
   children?: ReactNode;
@@ -37,7 +37,8 @@ interface IButtonType {
     | 'articleImg'
     | 'classImg';
   isIcon?: boolean;
-  onClick?: () => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  event?: MouseEventHandler<HTMLButtonElement>;
   onChange?: () => void;
   disabled?: boolean;
   width?: number;
@@ -62,6 +63,7 @@ export const Button = ({
   onChange,
   isIcon = false,
   disabled = false,
+  event,
 }: IButtonType) => {
   const buttonIconType = {
     startImg: <Start size={iconSize} color={iconColor} />,
@@ -87,8 +89,8 @@ export const Button = ({
       activeBorderColor={activeBorderColor}
       activeBackgroundColor={activeBackgroundColor}
       activeColor={activeColor}
-      onClick={onClick}
-      disabled={disabled} // disabled 속성 전달
+      onClick={event || onClick}
+      disabled={disabled}
       width={width}
     >
       {children}

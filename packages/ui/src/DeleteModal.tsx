@@ -34,12 +34,17 @@ export const DeleteModal = ({
               backgroundColor={color.zinc[50]}
               color={color.zinc[800]}
               borderColor={color.zinc[200]}
+              hoverBackgroundColor={color.zinc[100]}
             >
               취소
             </Button>
           </div>
           <div onClick={onDelete}>
-            <Button backgroundColor={color.red[500]} color={color.white}>
+            <Button
+              backgroundColor={color.red[500]}
+              color={color.white}
+              hoverBackgroundColor={color.red[600]}
+            >
               삭제하기
             </Button>
           </div>

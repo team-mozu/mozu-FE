@@ -32,15 +32,17 @@ export const Router = createBrowserRouter([
           },
           {
             path: ':id',
-            element: <StockManagementPage />,
+            children: [
+              { index: true, element: <StockManagementPage /> },
+              {
+                path: 'edit',
+                element: <StockManagementEditPage />,
+              },
+            ],
           },
           {
             path: 'add',
             element: <StockManagementAddPage />,
-          },
-          {
-            path: 'edit',
-            element: <StockManagementEditPage />,
           },
         ],
       },
@@ -53,15 +55,17 @@ export const Router = createBrowserRouter([
           },
           {
             path: ':id',
-            element: <ArticleManagementPage />,
+            children: [
+              { index: true, element: <ArticleManagementPage /> },
+              {
+                path: 'edit',
+                element: <ArticleManagementEditPage />,
+              },
+            ],
           },
           {
             path: 'add',
             element: <ArticleManagementAddPage />,
-          },
-          {
-            path: 'edit',
-            element: <ArticleManagementEditPage />,
           },
         ],
       },

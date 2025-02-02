@@ -1,6 +1,7 @@
 import { Del, Edit, Button, Accounts } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
+import { useNavigate } from 'react-router';
 
 interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
@@ -9,6 +10,7 @@ interface IStockManagementDetailProps {
 export const StockManagementDetail = ({
   onClick,
 }: IStockManagementDetailProps) => {
+  const navigate = useNavigate();
   return (
     <Container>
       <UpperContainer>
@@ -27,8 +29,9 @@ export const StockManagementDetail = ({
               backgroundColor={color.zinc[50]}
               color={color.zinc[800]}
               borderColor={color.zinc[200]}
+              hoverBackgroundColor={color.zinc[100]}
             >
-              <p>삭제하기</p>
+              삭제하기
               <Del size={20} color={color.zinc[800]} />
             </Button>
           </div>
@@ -36,8 +39,10 @@ export const StockManagementDetail = ({
             backgroundColor={color.orange[50]}
             color={color.orange[500]}
             borderColor={color.orange[200]}
+            hoverBackgroundColor={color.orange[100]}
+            onClick={() => navigate('1/edit')}
           >
-            <p>수정하기</p>
+            수정하기
             <Edit size={20} color={color.orange[500]} />
           </Button>
         </ButtonContainer>

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { useState, useRef } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { Button } from './Button';
 import { InvestInfoTable } from './InvestInfoTable';
 
@@ -10,38 +10,56 @@ interface IClassInfoType {
 }
 
 export const ClassInfoModal = ({ isOpen, setIsOpen }: IClassInfoType) => {
-  const outSideRef = useRef();
-  const outSideClick = (e: MouseEvent) => {
-    if (outSideRef.current == e.target) setIsOpen(false);
-  };
+  const outSideRef = useRef<HTMLDivElement>(null);
 
-  const cancelClick = () => {
-    setIsOpen(false);
-  };
+  const outSideClick = useCallback(
+    (e: MouseEvent) => {
+      if (outSideRef.current === e.target) {
+        setIsOpen?.(false);
+      }
+    },
+    [setIsOpen],
+  );
+
+  const cancelClick = useCallback(() => {
+    setIsOpen?.(false);
+  }, [setIsOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
-    isOpen && (
-      <BackgroundContainer onClick={outSideClick} ref={outSideRef}>
-        <ModalContainer>
-          <ContentContainer>
-            <TitleContainer>
-              <Title>투자 정보</Title>
-            </TitleContainer>
-            <InvestInfoTable width={'1000px'} />
-            <FooterContainer>
-              <Button
-                backgroundColor={color.zinc[50]}
-                borderColor={color.zinc[200]}
-                color={color.zinc[800]}
-                onClick={cancelClick}
-              >
-                닫기
-              </Button>
-            </FooterContainer>
-          </ContentContainer>
-        </ModalContainer>
-      </BackgroundContainer>
-    )
+    <BackgroundContainer onClick={outSideClick as any} ref={outSideRef}>
+      <ModalContainer>
+        <ContentContainer>
+          <TitleContainer>
+            <Title>투자 정보</Title>
+          </TitleContainer>
+          <InvestInfoTable width={'1000px'} />
+          <FooterContainer>
+            <Button
+              backgroundColor={color.zinc[50]}
+              borderColor={color.zinc[200]}
+              color={color.zinc[800]}
+              onClick={cancelClick}
+              hoverBackgroundColor={color.zinc[100]}
+            >
+              닫기
+            </Button>
+          </FooterContainer>
+        </ContentContainer>
+      </ModalContainer>
+    </BackgroundContainer>
   );
 };
 
@@ -59,6 +77,7 @@ const TitleContainer = styled.div`
   width: 100%;
   border-bottom: 1px solid ${color.zinc[200]};
 `;
+
 const ContentContainer = styled.div`
   width: 100%;
 `;

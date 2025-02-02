@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from './Button';
 
 interface IArticleInfoType {
@@ -88,6 +88,17 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
     );
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   return (
     isOpen && (
       <BackgroundContainer onClick={outSideClick} ref={outSideRef}>
@@ -101,6 +112,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
                 <BarContent
                   isClicked={data.isClicked}
                   onClick={() => barClick(index)}
+                  key={index}
                 >
                   {index + 1}차
                 </BarContent>
@@ -111,7 +123,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
                 .filter((data) => data.isClicked)
                 .map((data, index) =>
                   data.articleContent.map((content, idx) => (
-                    <ArticleContent>{content.title}</ArticleContent>
+                    <ArticleContent key={idx}>{content.title}</ArticleContent>
                   )),
                 )}
             </ArticleContainer>
@@ -121,6 +133,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
                 borderColor={color.zinc[200]}
                 color={color.zinc[800]}
                 onClick={cancelClick}
+                hoverBackgroundColor={color.zinc[100]}
               >
                 닫기
               </Button>
@@ -193,6 +206,10 @@ const BarContent = styled.button<{ isClicked: boolean }>`
   align-items: center;
   font: ${font.t3};
   transition: border-bottom 0.5s ease;
+  cursor: pointer;
+  :hover {
+    background-color: ${color.zinc[50]};
+  }
 `;
 
 const BarContainer = styled.div`
