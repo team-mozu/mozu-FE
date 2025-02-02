@@ -16,7 +16,7 @@ export const Header = ({ isAdmin }: IHeaderType) => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    if (pathname === '/news') {
+    if (pathname === '/news' || pathname === '/news/1') {
       setIsNavHome(false);
       setIsNavNews(true);
       setIsResultPage(false);
@@ -42,7 +42,13 @@ export const Header = ({ isAdmin }: IHeaderType) => {
   const navegate = useNavigate();
   return (
     <HeaderContainer isAdmin={isAdmin}>
-      <LogoContainer onClick={() => navegate('/class-management')}>
+      <LogoContainer
+        onClick={
+          isAdmin
+            ? () => navegate('/class-management')
+            : () => navegate('/home')
+        }
+      >
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>

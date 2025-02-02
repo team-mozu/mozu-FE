@@ -6,11 +6,17 @@ interface INewsPostType {
   imgUrl?: string;
   title: string;
   content: string;
+  onClick?: () => void;
 }
 
-export const NewsPost = ({ imgUrl = noImg, title, content }: INewsPostType) => {
+export const NewsPost = ({
+  imgUrl = noImg,
+  title,
+  content,
+  onClick,
+}: INewsPostType) => {
   return (
-    <PostContainer>
+    <PostContainer onClick={onClick}>
       <NewsImg src={imgUrl} alt={title} hasImage={!!imgUrl} />
       <TitleContainer>
         <Title>{title}</Title>

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { NewsPost } from '@/components';
+import { useNavigate } from 'react-router-dom';
 
 export const datas = [
   {
@@ -60,6 +61,7 @@ export const datas = [
 ];
 
 export const News = () => {
+  const navigate = useNavigate();
   return (
     <Container>
       <Label>관련 뉴스</Label>
@@ -70,6 +72,7 @@ export const News = () => {
               title={data.title}
               content={data.content}
               key={data.title}
+              onClick={() => navigate('/news/1')}
             />
           );
         })}

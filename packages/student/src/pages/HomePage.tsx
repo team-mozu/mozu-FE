@@ -1,4 +1,4 @@
-import { StockTable, TotalProperty } from '@mozu/ui';
+import { StockTable, TotalProperty } from '@/components';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 
@@ -25,11 +25,11 @@ const TableDiv = styled.div`
   border: 1px solid ${color.zinc[200]};
   border-radius: 24px;
   font: ${font.t2};
-  padding: 32px 32px 200px 32px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  height: 656px;
+  height: 100%;
 `;
 
 const Wrapper = styled.div`
@@ -37,6 +37,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 24px;
   align-items: center;
-  padding: 40px 0px;
+  padding: 40px;
   width: calc(100dvw - 680px);
+  min-height: calc(100vh - 64px);
+  height: 100%;
 `;

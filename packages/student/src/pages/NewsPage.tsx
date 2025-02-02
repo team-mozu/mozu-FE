@@ -1,8 +1,10 @@
 import { datas, NewsPost } from '@/components';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
+import { useNavigate } from 'react-router-dom';
 
 export const NewsPage = () => {
+  const navigate = useNavigate();
   return (
     <div
       style={{
@@ -21,6 +23,7 @@ export const NewsPage = () => {
                 title={data.title}
                 content={data.content}
                 key={data.title}
+                onClick={() => navigate('1')}
               />
             );
           })}

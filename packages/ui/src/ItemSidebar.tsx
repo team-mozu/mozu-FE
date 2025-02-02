@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { noImgIcon } from './assets';
+import { useNavigate } from 'react-router-dom';
 
 interface IItemContentType {
   imgUrl?: string;
@@ -10,6 +11,7 @@ interface IItemContentType {
   isUp?: boolean;
   upDownPrice: string;
   upDownPercent: string;
+  onClick?: () => void;
 }
 
 const ItemContent = ({
@@ -20,9 +22,10 @@ const ItemContent = ({
   isUp,
   upDownPrice,
   upDownPercent,
+  onClick,
 }: IItemContentType) => {
   return (
-    <ItemContainer>
+    <ItemContainer onClick={onClick}>
       <LogoContainer>
         <Logo src={imgUrl ? imgUrl : noImgIcon} alt={title} imgUrl={imgUrl} />
         <ItemTitleContainer>
@@ -41,6 +44,7 @@ const ItemContent = ({
 };
 
 export const ItemSidebar = () => {
+  const navigate = useNavigate();
   const datas = [
     {
       logoImg:
@@ -86,6 +90,7 @@ export const ItemSidebar = () => {
             upDownPrice={data.upDownPrice}
             upDownPercent={data.upDownPercent}
             key={index}
+            onClick={() => navigate('home/stock/1/price-info')}
           />
         ))}
       </ItemContentContainer>

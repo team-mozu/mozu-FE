@@ -30,6 +30,5 @@ export * from './ItemSidebar';
 export * from './HistorySidebar';
 export * from './ExitBtn';
 export * from './InvestCompleteModal';
-export * from './TotalProperty';
-export * from './StockTable';
+export * from '/Users/jidohyun/Desktop/백업/mozu-FE/packages/student/src/components/home/StockTable';
 export * from './BuySellModal';

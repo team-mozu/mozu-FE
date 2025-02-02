@@ -381,7 +381,7 @@ const CaptionBox = styled.div`
 `;
 
 export const Table = styled.table`
-  border-radius: 4px;
+  border-radius: 8px;
   border-collapse: separate;
   overflow: hidden;
 `;
