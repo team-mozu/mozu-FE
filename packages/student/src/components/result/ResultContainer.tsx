@@ -48,6 +48,8 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               color={color.orange[500]}
               width={205}
               onClick={onRankClick}
+              hoverBackgroundColor={color.orange[100]}
+              hoverBorderColor={color.orange[300]}
             >
               현재 랭킹 보기
               <Trophy size={24} color={color.orange[500]} />
@@ -59,6 +61,7 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               isIcon={true}
               iconColor={color.white}
               iconSize={24}
+              hoverBackgroundColor={color.orange[600]}
             >
               계속하기
             </Button>

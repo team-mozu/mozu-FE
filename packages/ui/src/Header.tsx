@@ -100,6 +100,13 @@ const Nav = styled.div<{ isColor: boolean }>`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  ${({ isColor }) =>
+    !isColor &&
+    `
+    :hover {
+      color: ${color.zinc[600]};
+    }
+  `}
 `;
 
 const NavContainer = styled.nav`

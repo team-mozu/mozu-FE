@@ -44,6 +44,7 @@ export const RankModal = ({ onCancle }: IRankModal) => {
           <Button
             backgroundColor={color.zinc[50]}
             borderColor={color.zinc[200]}
+            hoverBackgroundColor={color.zinc[100]}
           >
             닫기
           </Button>

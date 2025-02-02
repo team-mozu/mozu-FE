@@ -33,6 +33,9 @@ const PostContainer = styled.div`
   width: 100%;
   height: 90px;
   cursor: pointer;
+  :hover {
+    background-color: ${color.zinc[50]};
+  }
 `;
 
 const Title = styled.div`

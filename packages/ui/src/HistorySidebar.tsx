@@ -29,21 +29,7 @@ const TransactionContent = ({
           <UpDownDiv isUp={isUp}>{totalPrice}원</UpDownDiv>
           <StockPrice>{stockPrice}</StockPrice>
         </TransactionPriceContainer>
-        <button
-          style={{
-            padding: '7px 12px',
-            borderRadius: '8px',
-            border: `1px solid ${color.zinc[200]}`,
-            backgroundColor: `${color.zinc[50]}`,
-            fontWeight: 500,
-            fontSize: '14px',
-            lineHeight: '18px',
-            color: `${color.zinc[800]}`,
-            cursor: 'pointer',
-          }}
-        >
-          취소
-        </button>
+        <CancleBtn>취소</CancleBtn>
       </TransactionContentContainer>
     </TransactionContainer>
   );
@@ -221,6 +207,21 @@ export const HistorySidebar = () => {
   );
 };
 
+const CancleBtn = styled.button`
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid ${color.zinc[200]};
+  background-color: ${color.zinc[50]};
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  color: ${color.zinc[800]};
+  cursor: pointer;
+  :hover {
+    background-color: ${color.zinc[100]};
+  }
+`;
+
 const UpperContainer = styled.div`
   padding: 24px 1rem 1rem 1rem;
   width: 100%;
@@ -242,6 +243,10 @@ const Btn = styled.button`
   font: ${font.b1};
   color: ${color.white};
   background-color: ${color.orange[500]};
+  cursor: pointer;
+  :hover {
+    background-color: ${color.orange[600]};
+  }
 `;
 
 const SidebarContainer = styled.div`

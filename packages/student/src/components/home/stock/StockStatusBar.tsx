@@ -32,6 +32,8 @@ export const StockStatusBar = ({
           color="white"
           width={80}
           onClick={() => openModal('매수' /*currentStock*/)}
+          hoverBackgroundColor={color.red[600]}
+          hoverBorderColor={color.red[600]}
         >
           매수
         </Button>
@@ -41,6 +43,8 @@ export const StockStatusBar = ({
           color="white"
           width={80}
           onClick={() => openModal('매도' /*currentStock*/)}
+          hoverBackgroundColor={color.blue[600]}
+          hoverBorderColor={color.blue[600]}
         >
           매도
         </Button>

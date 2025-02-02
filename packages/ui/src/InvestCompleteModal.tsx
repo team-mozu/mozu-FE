@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Check } from './assets';
 import { Button } from './Button';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 interface IInvestCompleteType {
   isOpen?: boolean;
@@ -13,50 +13,61 @@ export const InvestCompleteModal = ({
   isOpen,
   setIsOpen,
 }: IInvestCompleteType) => {
-  const outSideRef = useRef();
-  const outSideClick = (e: MouseEvent) => {
-    if (outSideRef.current === e.target) setIsOpen(false);
-  };
+  const outSideRef = useRef<HTMLDivElement | null>(null);
 
-  const cancelClick = () => {
-    setIsOpen(false);
-  };
+  useEffect(() => {
+    const outSideClick = (e: MouseEvent) => {
+      if (outSideRef.current && outSideRef.current === e.target) {
+        setIsOpen?.(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('click', outSideClick);
+    }
+
+    return () => {
+      document.removeEventListener('click', outSideClick);
+    };
+  }, [isOpen, setIsOpen]);
+
+  if (!isOpen) return null;
 
   return (
-    isOpen && (
-      <BackgroundContainer onClick={outSideClick} ref={outSideRef}>
-        <ModalContainer>
-          <Header>
-            <CheckDiv>
-              <Check color={color.orange[500]} size={24} />
-            </CheckDiv>
-            <TitleContainer>
-              <Title>투자를 완료하실 건가요?</Title>
-              <Text>투자를 완료하면 주문을 변경할 수 없어요.</Text>
-            </TitleContainer>
-          </Header>
-          <Footer>
-            <ButtonDiv>
-              <Button
-                borderColor={color.zinc[200]}
-                backgroundColor={color.zinc[50]}
-                color={color.zinc[800]}
-                onClick={cancelClick}
-              >
-                취소
-              </Button>
-              <Button
-                backgroundColor={color.orange[500]}
-                borderColor={color.orange[500]}
-                color={color.white}
-              >
-                투자 완료하기
-              </Button>
-            </ButtonDiv>
-          </Footer>
-        </ModalContainer>
-      </BackgroundContainer>
-    )
+    <BackgroundContainer ref={outSideRef}>
+      <ModalContainer>
+        <Header>
+          <CheckDiv>
+            <Check color={color.orange[500]} size={24} />
+          </CheckDiv>
+          <TitleContainer>
+            <Title>투자를 완료하실 건가요?</Title>
+            <Text>투자를 완료하면 주문을 변경할 수 없어요.</Text>
+          </TitleContainer>
+        </Header>
+        <Footer>
+          <ButtonDiv>
+            <Button
+              borderColor={color.zinc[200]}
+              backgroundColor={color.zinc[50]}
+              color={color.zinc[800]}
+              onClick={() => setIsOpen?.(false)}
+              hoverBackgroundColor={color.zinc[100]}
+            >
+              취소
+            </Button>
+            <Button
+              backgroundColor={color.orange[500]}
+              borderColor={color.orange[500]}
+              color={color.white}
+              hoverBackgroundColor={color.orange[600]}
+            >
+              투자 완료하기
+            </Button>
+          </ButtonDiv>
+        </Footer>
+      </ModalContainer>
+    </BackgroundContainer>
   );
 };
 
@@ -69,7 +80,6 @@ const Footer = styled.div`
   display: flex;
   justify-content: right;
   border-top: 1px solid ${color.zinc[200]};
-
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
   padding: 12px 12px 12px 0px;
