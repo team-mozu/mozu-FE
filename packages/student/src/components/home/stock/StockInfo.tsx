@@ -58,14 +58,14 @@ const CompanyMain = styled.div`
 `;
 
 const LeftSection = styled.div`
-  flex: 1;
+  flex: 1; /* 동일한 비율로 공간 차지 */
   display: flex;
   gap: 16px;
   flex-direction: column;
 `;
 
 const RightSection = styled.div`
-  flex: 2;
+  flex: 1; /* 동일한 비율로 공간 차지 */
   display: flex;
   gap: 16px;
   flex-direction: column;
@@ -74,7 +74,8 @@ const RightSection = styled.div`
 const ContentWrapper = styled.div`
   display: grid;
   gap: 12px;
-  grid-template-columns: 1fr; /* 기본적으로 1열로 설정 */
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 `;
 
 const Label = styled.label`

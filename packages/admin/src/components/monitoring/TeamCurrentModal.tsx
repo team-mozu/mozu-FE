@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { Button } from '@mozu/ui';
 import { TeamInvestStatusTable } from './TeamInvestStatusTable';
 

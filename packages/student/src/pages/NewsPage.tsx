@@ -7,12 +7,12 @@ export const NewsPage = () => {
   const navigate = useNavigate();
   return (
     <div
-      style={{
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
+    // style={{
+    //   width: '100%',
+    //   display: 'flex',
+    //   justifyContent: 'center',
+    //   alignItems: 'center',
+    // }}
     >
       <Wrapper>
         <Container>
@@ -46,7 +46,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  padding: 40px 0;
+  padding: 40px;
   display: flex;
 `;
 

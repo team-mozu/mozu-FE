@@ -39,12 +39,12 @@ export const StockPage = () => {
 
   return (
     <div
-      style={{
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
+    // style={{
+    //   width: '100%',
+    //   display: 'flex',
+    //   justifyContent: 'center',
+    //   alignItems: 'center',
+    // }}
     >
       <Container>
         <StockStatusBar openModal={openModal} />
@@ -66,7 +66,7 @@ export const StockPage = () => {
 
 const Container = styled.div`
   min-height: calc(100vh - 64px);
-  padding: 40px 0;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   gap: 24px;

@@ -105,6 +105,6 @@ const StockInfo = styled.div`
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 1160px;
+  width: 100%;
   align-items: flex-end;
 `;

@@ -47,13 +47,44 @@ export const StockGraph = () => {
     setTimeout(() => setShouldAnimate(false), 500); // 애니메이션이 실행된 후 비활성화
   }, []);
 
-  const data = [
-    { phase: '1차', price: BASE_PRICE + 200 },
-    { phase: '2차', price: BASE_PRICE - 300 },
-    { phase: '3차', price: BASE_PRICE + 450 },
-    { phase: '4차', price: BASE_PRICE - 700 },
-    { phase: '5차', price: BASE_PRICE + 200 },
-  ];
+  const generateRandomOffset = () => Math.floor(Math.random() * 1500) - 750; // -750 ~ +750 범위 난수
+
+  const generateDataWithFluctuation = (baseData: typeof data) => {
+    const newData = [];
+    for (let i = 0; i < baseData.length - 1; i++) {
+      newData.push(baseData[i]);
+
+      // 현재 가격과 다음 가격 사이에 3개의 중간 포인트 추가
+      for (let j = 1; j <= 4; j++) {
+        const ratio = j / 4;
+        const midPrice =
+          baseData[i].price * (1 - ratio) +
+          baseData[i + 1].price * ratio +
+          generateRandomOffset();
+
+        newData.push({
+          phase: '', // X축 라벨 표시 안함
+          price: midPrice,
+          isMidPoint: true,
+        });
+      }
+    }
+    newData.push(baseData[baseData.length - 1]);
+    return newData;
+  };
+
+  // 데이터 생성 부분 수정
+  const data = useMemo(
+    () =>
+      generateDataWithFluctuation([
+        { phase: '1차', price: BASE_PRICE + 800 },
+        { phase: '2차', price: BASE_PRICE - 300 },
+        { phase: '3차', price: BASE_PRICE + 450 },
+        { phase: '4차', price: BASE_PRICE - 700 },
+        { phase: '5차', price: BASE_PRICE + 200 },
+      ]),
+    [],
+  );
 
   const generateFixedTicks = useMemo(() => {
     const ticks: number[] = [];
@@ -90,6 +121,7 @@ export const StockGraph = () => {
           margin={{ right: 40 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke={color.zinc[200]} />
+          // XAxis 컴포넌트에 다음 prop 추가
           <XAxis
             dataKey="phase"
             axisLine={false}
@@ -97,6 +129,7 @@ export const StockGraph = () => {
             tick={{ fill: '#000' }}
             tickSize={16}
             padding={{ left: 15, right: 15 }}
+            ticks={['1차', '2차', '3차', '4차', '5차']} // 중간 포인트 라벨 숨김
           />
           <YAxis
             orientation="right"
@@ -108,9 +141,7 @@ export const StockGraph = () => {
             tick={{ fill: '#000' }}
             tickSize={16}
           />
-
           <Tooltip content={() => null} />
-
           {activePoint.price && activePoint.phase && (
             <>
               <ReferenceLine
@@ -131,7 +162,6 @@ export const StockGraph = () => {
               />
             </>
           )}
-
           <Line
             type="linear"
             dataKey="price"

@@ -21,6 +21,7 @@ export const HomePage = () => {
 };
 
 const TableDiv = styled.div`
+  width: 100%;
   background-color: ${color.white};
   border: 1px solid ${color.zinc[200]};
   border-radius: 24px;

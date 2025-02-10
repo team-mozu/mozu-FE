@@ -27,16 +27,16 @@ const Tilte = styled.div`
   font: ${font.t3};
   color: ${color.zinc[600]};
 `;
+
 const AccountsContainer = styled.div`
-  max-width: 596px;
+  flex-grow: 1; /* 부모 요소 내에서 동일한 비율로 차지 */
   width: 100%;
-  min-width: 536px;
   height: 108px;
   border-radius: 12px;
   background-color: ${color.zinc[50]};
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: space-between; /* 내용 정렬 */
   padding: 24px;
 `;
 
