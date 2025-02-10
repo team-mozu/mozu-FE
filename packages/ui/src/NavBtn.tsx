@@ -41,4 +41,11 @@ const NavContent = styled.button<Pick<INavType, 'isColor'>>`
   align-items: center;
   justify-content: start;
   font: ${font.t3};
+  ${({ isColor }) =>
+    !isColor &&
+    `
+    :hover {
+      background-color: ${color.zinc[50]};
+    }
+  `}
 `;

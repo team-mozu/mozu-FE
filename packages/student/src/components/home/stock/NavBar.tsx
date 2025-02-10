@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface INavType {
   children: string;
@@ -18,16 +19,24 @@ const Nav = ({ isActive, children, onClick }: INavType) => {
 
 export const NavBar = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const navigate = useNavigate();
 
-  const navName = ['시세정보', '종목정보', '뉴스'];
+  const navItems = ['시세정보', '종목정보', '뉴스'];
+  const navRoutes = ['price-info', 'stock-info', 'news']; // 각 버튼의 경로
 
   const navClick = (index: number) => {
     setActiveIndex(index);
+    navigate(navRoutes[index]);
   };
+
   return (
     <BarContainer>
-      {navName.map((data, index) => (
-        <Nav onClick={() => navClick(index)} isActive={index === activeIndex}>
+      {navItems.map((data, index) => (
+        <Nav
+          key={data}
+          onClick={() => navClick(index)}
+          isActive={index === activeIndex}
+        >
           {data}
         </Nav>
       ))}
@@ -49,8 +58,17 @@ const NavContainer = styled.button<Pick<INavType, 'isActive'>>`
   justify-content: center;
   align-items: center;
   border-radius: 36px;
+  cursor: pointer;
   color: ${({ isActive }) => (isActive ? color.black : color.zinc[600])};
   font: ${font.b1};
   background-color: ${({ isActive }) =>
     isActive ? color.zinc[200] : 'transparent'};
+
+  ${({ isActive }) =>
+    !isActive &&
+    `
+      :hover {
+        background-color: ${color.zinc[100]};
+      }
+    `}
 `;

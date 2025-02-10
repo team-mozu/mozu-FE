@@ -9,7 +9,7 @@ interface IImgType {
 }
 
 export const ImgContainer = ({ label, img }: IImgType) => {
-  const imgRef = useRef<HTMLInputElement | null>();
+  const imgRef = useRef<HTMLInputElement>(null); // 타입 명시적 지정
   const [imgUrl, setImgUrl] = useState<string | null>(null);
 
   const imgClick = () => {
@@ -23,7 +23,10 @@ export const ImgContainer = ({ label, img }: IImgType) => {
   }, [img]);
 
   const delClick = () => {
-    setImgUrl('');
+    setImgUrl(''); // 이미지 URL 초기화
+    if (imgRef.current) {
+      imgRef.current.value = ''; // 파일 입력값 초기화 (핵심 수정 부분)
+    }
   };
 
   const handleChange = () => {
@@ -95,5 +98,8 @@ const FakeImgContent = styled.div<{ imgUrl: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url(${({ imgUrl }) => imgUrl});
+  background-image: ${({ imgUrl }) =>
+    imgUrl ? `url(${imgUrl})` : 'none'}; // 명시적 배경 설정
+  background-size: cover;
+  background-position: center;
 `;

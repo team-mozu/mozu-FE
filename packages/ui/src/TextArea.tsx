@@ -55,6 +55,6 @@ const TextAreaContent = styled.textarea<Pick<ITextAreaType, 'height'>>`
     font: ${font.b2};
   }
   :focus {
-    outline: 1px solid ${color.zinc[200]};
+    outline: 1px solid ${color.orange[300]};
   }
 `;

@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { useState, useRef } from 'react';
-import { Button } from '../../../../ui/src';
+import { useRef, useCallback, useEffect } from 'react';
+import { Button } from '@mozu/ui';
 import { TeamInvestStatusTable } from './TeamInvestStatusTable';
 
 interface ITeamCurrentType {
-  teamName?: string;
-  isOpen?: boolean;
-  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  teamName: string;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 export const TeamCurrentModal = ({
@@ -15,18 +15,36 @@ export const TeamCurrentModal = ({
   isOpen,
   setIsOpen,
 }: ITeamCurrentType) => {
-  const outSideRef = useRef();
-  const outSideClick = (e: MouseEvent) => {
-    if (outSideRef.current == e.target) setIsOpen(false);
-  };
+  const modalRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
 
-  const cancelClick = () => {
-    setIsOpen(true);
-  };
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, [setIsOpen]);
+
+  const handleBackgroundClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (backgroundRef.current === e.target) {
+        setIsOpen(false);
+      }
+    },
+    [setIsOpen],
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   return (
     isOpen && (
-      <BackgroundContainer onClick={outSideClick} ref={outSideRef}>
+      <BackgroundContainer ref={backgroundRef} onClick={handleBackgroundClick}>
         <ModalContainer>
           <ContentContainer>
             <TitleContainer>
@@ -38,7 +56,8 @@ export const TeamCurrentModal = ({
                 backgroundColor={color.zinc[50]}
                 borderColor={color.zinc[200]}
                 color={color.zinc[800]}
-                onClick={cancelClick}
+                onClick={handleClose}
+                hoverBackgroundColor={color.zinc[100]}
               >
                 닫기
               </Button>

@@ -87,6 +87,7 @@ const InputContent = styled.input<{ width?: string }>`
   font: ${font.b2};
   :focus {
     font: ${font.b2};
+    border: 1px solid ${color.orange[300]};
   }
 `;
 

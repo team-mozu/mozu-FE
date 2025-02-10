@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { ArticleMainData } from './ArticleMainData';
 import { Button, Del, Edit } from '@mozu/ui';
+import { useNavigate } from 'react-router';
 
 interface IArticleManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
@@ -10,6 +11,7 @@ interface IArticleManagementDetailProps {
 export const ArticleManagementDetail = ({
   onClick,
 }: IArticleManagementDetailProps) => {
+  const navigate = useNavigate();
   return (
     <Container>
       <UpperContainer>
@@ -20,6 +22,7 @@ export const ArticleManagementDetail = ({
               backgroundColor={color.zinc[50]}
               color={color.zinc[800]}
               borderColor={color.zinc[200]}
+              hoverBackgroundColor={color.zinc[100]}
             >
               <p>삭제하기</p>
               <Del size={20} color={color.zinc[800]} />
@@ -29,6 +32,8 @@ export const ArticleManagementDetail = ({
             backgroundColor={color.orange[50]}
             color={color.orange[500]}
             borderColor={color.orange[200]}
+            hoverBackgroundColor={color.orange[100]}
+            onClick={() => navigate('1/edit')}
           >
             <p>수정하기</p>
             <Edit size={20} color={color.orange[500]} />

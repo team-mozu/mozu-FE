@@ -27,6 +27,9 @@ const AddButtonContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 6px;
+  :hover {
+    background-color: ${color.orange[600]};
+  }
 `;
 
 const LogoContainer = styled.div`

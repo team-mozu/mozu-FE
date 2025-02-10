@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { noImgIcon } from './assets';
+import { useNavigate } from 'react-router-dom';
 
 interface IItemContentType {
   imgUrl?: string;
@@ -10,6 +11,7 @@ interface IItemContentType {
   isUp?: boolean;
   upDownPrice: string;
   upDownPercent: string;
+  onClick?: () => void;
 }
 
 const ItemContent = ({
@@ -20,9 +22,10 @@ const ItemContent = ({
   isUp,
   upDownPrice,
   upDownPercent,
+  onClick,
 }: IItemContentType) => {
   return (
-    <ItemContainer>
+    <ItemContainer onClick={onClick}>
       <LogoContainer>
         <Logo src={imgUrl ? imgUrl : noImgIcon} alt={title} imgUrl={imgUrl} />
         <ItemTitleContainer>
@@ -41,6 +44,7 @@ const ItemContent = ({
 };
 
 export const ItemSidebar = () => {
+  const navigate = useNavigate();
   const datas = [
     {
       logoImg:
@@ -86,6 +90,7 @@ export const ItemSidebar = () => {
             upDownPrice={data.upDownPrice}
             upDownPercent={data.upDownPercent}
             key={index}
+            onClick={() => navigate('home/stock/1/price-info')}
           />
         ))}
       </ItemContentContainer>
@@ -100,6 +105,11 @@ const ItemContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 74px;
+  cursor: pointer;
+
+  :hover {
+    background: ${color.zinc[100]};
+  }
 `;
 
 const LogoContainer = styled.div`
@@ -156,8 +166,11 @@ const Logo = styled.img<Pick<IItemContentType, 'imgUrl'>>`
 `;
 
 const SideBarContainer = styled.div`
+  position: fixed;
+  left: 0;
+  border-right: 1px solid ${color.zinc[200]};
   width: 320px;
-  height: 100vh;
+  height: 100%;
   background-color: ${color.white};
   padding: 24px 0;
   display: flex;

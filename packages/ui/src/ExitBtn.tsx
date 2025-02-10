@@ -3,13 +3,11 @@ import { ArrowLeft } from './assets';
 import styled from '@emotion/styled';
 
 export const ExitBtn = () => {
-  {
-    return (
-      <Btn>
-        <ArrowLeft color={color.zinc[800]}></ArrowLeft>
-      </Btn>
-    );
-  }
+  return (
+    <Btn>
+      <ArrowLeft color={color.zinc[800]}></ArrowLeft>
+    </Btn>
+  );
 };
 
 const Btn = styled.button`
@@ -22,4 +20,7 @@ const Btn = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  :hover {
+    background-color: ${color.zinc[100]};
+  }
 `;

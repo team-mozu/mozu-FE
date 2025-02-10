@@ -2,10 +2,39 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Check } from './assets';
 import { Button } from './Button';
+import { useRef, useEffect } from 'react';
 
-export const InvestCompleteModal = () => {
+interface IInvestCompleteType {
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const InvestCompleteModal = ({
+  isOpen,
+  setIsOpen,
+}: IInvestCompleteType) => {
+  const outSideRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const outSideClick = (e: MouseEvent) => {
+      if (outSideRef.current && outSideRef.current === e.target) {
+        setIsOpen?.(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('click', outSideClick);
+    }
+
+    return () => {
+      document.removeEventListener('click', outSideClick);
+    };
+  }, [isOpen, setIsOpen]);
+
+  if (!isOpen) return null;
+
   return (
-    <BackgroundContainer>
+    <BackgroundContainer ref={outSideRef}>
       <ModalContainer>
         <Header>
           <CheckDiv>
@@ -22,6 +51,8 @@ export const InvestCompleteModal = () => {
               borderColor={color.zinc[200]}
               backgroundColor={color.zinc[50]}
               color={color.zinc[800]}
+              onClick={() => setIsOpen?.(false)}
+              hoverBackgroundColor={color.zinc[100]}
             >
               취소
             </Button>
@@ -29,6 +60,7 @@ export const InvestCompleteModal = () => {
               backgroundColor={color.orange[500]}
               borderColor={color.orange[500]}
               color={color.white}
+              hoverBackgroundColor={color.orange[600]}
             >
               투자 완료하기
             </Button>
@@ -48,7 +80,6 @@ const Footer = styled.div`
   display: flex;
   justify-content: right;
   border-top: 1px solid ${color.zinc[200]};
-
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
   padding: 12px 12px 12px 0px;

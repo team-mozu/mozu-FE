@@ -33,7 +33,6 @@ export const CreateClass = () => {
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
-            hoverBorderColor={color.zinc[100]}
             onClick={() => navigate(-1)}
           >
             취소
@@ -42,8 +41,7 @@ export const CreateClass = () => {
             backgroundColor={color.orange[500]}
             borderColor={color.orange[500]}
             color={color.white}
-            hoverBackgroundColor={color.orange[400]}
-            hoverBorderColor={color.orange[400]}
+            hoverBackgroundColor={color.orange[600]}
           >
             생성하기
           </Button>
@@ -105,10 +103,13 @@ export const AssetInput = styled.input`
   background-color: ${color.zinc[50]};
   border: 1px solid ${color.zinc[200]};
   border-radius: 8px;
-  padding: 14px 110px 14px 16px;
+  padding: 14px 16px;
   height: 48px;
   width: 210px;
   font: ${font.b2};
+  :focus {
+    border: 1px solid ${color.orange[300]};
+  }
 `;
 
 export const AssetBox = styled.div`

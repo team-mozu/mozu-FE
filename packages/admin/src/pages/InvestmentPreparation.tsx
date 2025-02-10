@@ -44,6 +44,7 @@ export const InvestmentPreparation = () => {
             onClick={() => navigate(-1)}
             iconSize={24}
             iconColor={color.zinc[800]}
+            hoverBackgroundColor={color.zinc[100]}
           >
             취소하기
           </Button>
@@ -52,6 +53,7 @@ export const InvestmentPreparation = () => {
             backgroundColor={color.orange[500]}
             borderColor={color.orange[500]}
             color={color.white}
+            hoverBackgroundColor={color.orange[600]}
           >
             진행하기 ({datas[2].teams.length})
           </Button>

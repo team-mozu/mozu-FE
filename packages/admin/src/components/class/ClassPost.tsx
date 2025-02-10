@@ -5,9 +5,9 @@ import { Button, Star } from '@mozu/ui';
 interface IClassPostType {
   title: string;
   creationDate: string;
-  starOnClick?: () => void;
+  starOnClick?: (event: React.MouseEvent) => void;
   isClick?: boolean;
-  delClick?: () => void;
+  delClick?: (event: React.MouseEvent) => void;
   onClick?: () => void;
 }
 
@@ -29,7 +29,10 @@ export const ClassPost = ({
           </TilteContainer>
           <Star
             size={20}
-            onClick={starOnClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              starOnClick && starOnClick(e);
+            }}
             strokeColor={isClick ? color.yellow[400] : color.zinc[600]}
             fillColor={isClick ? color.yellow[400] : 'none'}
           />
@@ -38,7 +41,11 @@ export const ClassPost = ({
           backgroundColor={color.zinc[50]}
           color={color.zinc[800]}
           borderColor={color.zinc[200]}
-          onClick={delClick}
+          onClick={(e) => {
+            e.stopPropagation();
+            delClick && delClick(e);
+          }}
+          hoverBackgroundColor={color.zinc[100]}
         >
           삭제하기
         </Button>

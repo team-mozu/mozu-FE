@@ -6,9 +6,13 @@ import { Button } from './Button';
 
 interface IPropsType {
   modalType: string; // ex) 매도, 매수
+  // stockData: string;
+  isOpen: boolean;
+  onClose: () => void;
+  // onConfirm: (order: OrderData) => void;
 }
 
-export const BuySellModal = ({ modalType }: IPropsType) => {
+export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   const footerData = [
     { text: `${modalType}가능 수량`, value: '8주' },
     { text: '주문가격', value: '53,700원' },
@@ -42,9 +46,11 @@ export const BuySellModal = ({ modalType }: IPropsType) => {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <BackgroundContainer>
-      <Modal>
+    <BackgroundContainer onClick={onClose}>
+      <Modal onClick={(e) => e.stopPropagation()}>
         <Wrapper>
           <Header
             color={modalType === '매도' ? color.blue[500] : color.red[500]}
@@ -79,6 +85,7 @@ export const BuySellModal = ({ modalType }: IPropsType) => {
             <Button
               backgroundColor={color.zinc[50]}
               borderColor={color.zinc[200]}
+              onClick={onClose}
             >
               취소
             </Button>

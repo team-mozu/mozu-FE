@@ -1,19 +1,18 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { color, font } from '@mozu/design-token';
 import { Imglogo, Button } from '@mozu/ui';
 
 export const LogoUploader = () => {
   const [logo, setLogo] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      console.log('파일이 선택되었습니다:', file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogo(reader.result as string);
-        console.log('파일 로드 완료:', reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -21,6 +20,9 @@ export const LogoUploader = () => {
 
   const handleDeleteLogo = () => {
     setLogo(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -29,7 +31,14 @@ export const LogoUploader = () => {
       <div>
         <LogoContainer>
           {logo ? (
-            <LogoImage src={logo} alt="로고 미리보기" />
+            <LogoImage
+              src={logo}
+              alt="로고 미리보기"
+              onError={(e) => {
+                e.currentTarget.src = 'fallback-image-url';
+                setLogo(null);
+              }}
+            />
           ) : (
             <Imglogo size={24} color={color.black} />
           )}
@@ -40,6 +49,7 @@ export const LogoUploader = () => {
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             onClick={() => document.getElementById('fileInput')?.click()}
+            hoverBackgroundColor={color.zinc[100]}
           >
             로고 업로드
           </Button>
@@ -48,6 +58,7 @@ export const LogoUploader = () => {
             color={color.white}
             onClick={handleDeleteLogo}
             disabled={!logo}
+            hoverBackgroundColor={color.red[600]}
           >
             로고 삭제
           </Button>
@@ -58,6 +69,7 @@ export const LogoUploader = () => {
           accept="image/*"
           style={{ display: 'none' }}
           onChange={handleFileChange}
+          ref={fileInputRef} // 추가
         />
       </div>
     </Container>

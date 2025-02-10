@@ -1,17 +1,23 @@
 import styled from '@emotion/styled';
-import { noImg } from './assets';
+import { noImg } from '@mozu/ui';
 import { font, color } from '@mozu/design-token';
 
 interface INewsPostType {
   imgUrl?: string;
   title: string;
   content: string;
+  onClick?: () => void;
 }
 
-export const NewsPost = ({ imgUrl, title, content }: INewsPostType) => {
+export const NewsPost = ({
+  imgUrl = noImg,
+  title,
+  content,
+  onClick,
+}: INewsPostType) => {
   return (
-    <PostContainer>
-      <NewsImg src={imgUrl ? imgUrl : noImg} alt={title} imgUrl={imgUrl} />
+    <PostContainer onClick={onClick}>
+      <NewsImg src={imgUrl} alt={title} hasImage={!!imgUrl} />
       <TitleContainer>
         <Title>{title}</Title>
         <Content>{content}</Content>
@@ -24,8 +30,12 @@ const PostContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 24px;
-  width: 1096px;
+  width: 100%;
   height: 90px;
+  cursor: pointer;
+  :hover {
+    background-color: ${color.zinc[50]};
+  }
 `;
 
 const Title = styled.div`
@@ -54,10 +64,10 @@ const TitleContainer = styled.div`
   width: 912px;
 `;
 
-const NewsImg = styled.img<Pick<INewsPostType, 'imgUrl'>>`
+const NewsImg = styled.img<{ hasImage: boolean }>`
   width: 160px;
   height: 90px;
   border-radius: 12px;
   border: 1px solid
-    ${({ imgUrl }) => (imgUrl ? 'transparent' : color.zinc[200])};
+    ${({ hasImage }) => (hasImage ? 'transparent' : color.zinc[200])};
 `;

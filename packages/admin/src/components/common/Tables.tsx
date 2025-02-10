@@ -195,7 +195,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
                 <Button
                   backgroundColor={color.zinc[50]}
                   borderColor={color.zinc[200]}
-                  hoverBackgroundColor={color.zinc[200]}
+                  hoverBackgroundColor={color.zinc[100]}
                 >
                   선택항목 삭제하기
                 </Button>
@@ -305,7 +305,7 @@ export const Tables = ({ edit, tableName }: IEditType) => {
                   <Button
                     backgroundColor={color.zinc[50]}
                     borderColor={color.zinc[200]}
-                    hoverBackgroundColor={color.zinc[200]}
+                    hoverBackgroundColor={color.zinc[100]}
                   >
                     선택항목 삭제하기
                   </Button>
@@ -381,7 +381,7 @@ const CaptionBox = styled.div`
 `;
 
 export const Table = styled.table`
-  border-radius: 4px;
+  border-radius: 8px;
   border-collapse: separate;
   overflow: hidden;
 `;
@@ -420,7 +420,7 @@ const PlusTd = styled(Td)`
   cursor: pointer;
   background-color: ${color.zinc[50]};
   &:hover {
-    background-color: ${color.zinc[200]};
+    background-color: ${color.zinc[100]};
   }
 `;
 

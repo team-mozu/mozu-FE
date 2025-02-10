@@ -44,6 +44,7 @@ export const EditDiv = ({
           iconColor={iconColor1}
           isIcon={isIcon1}
           onClick={() => navigate(-1)}
+          hoverBackgroundColor={color.zinc[100]}
         >
           {value1}
         </Button>
@@ -55,6 +56,7 @@ export const EditDiv = ({
           iconSize={iconSize2}
           iconColor={iconColor2}
           isIcon={isIcon2}
+          hoverBackgroundColor={color.orange[600]}
         >
           {value2}
         </Button>

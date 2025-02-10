@@ -1,8 +1,12 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Button } from './Button';
+import { Button } from '@mozu/ui';
 
-export const StockStatusBar = () => {
+export const StockStatusBar = ({
+  openModal,
+}: {
+  openModal: (type: '매수' | '매도') => void;
+}) => {
   const rate = '-600원 (-1.1%)';
   return (
     <Wrapper>
@@ -14,7 +18,7 @@ export const StockStatusBar = () => {
             <span>005930</span>
           </StockName>
           <StockPrice
-            color={rate.indexOf('+') !== -1 ? color.red[500] : color.blue[500]}
+            color={rate.includes('+') ? color.red[500] : color.blue[500]}
           >
             53,700원
             <span>{rate}</span>
@@ -27,6 +31,9 @@ export const StockStatusBar = () => {
           backgroundColor={color.red[500]}
           color="white"
           width={80}
+          onClick={() => openModal('매수' /*currentStock*/)}
+          hoverBackgroundColor={color.red[600]}
+          hoverBorderColor={color.red[600]}
         >
           매수
         </Button>
@@ -35,6 +42,9 @@ export const StockStatusBar = () => {
           backgroundColor={color.blue[500]}
           color="white"
           width={80}
+          onClick={() => openModal('매도' /*currentStock*/)}
+          hoverBackgroundColor={color.blue[600]}
+          hoverBorderColor={color.blue[600]}
         >
           매도
         </Button>
@@ -95,6 +105,6 @@ const StockInfo = styled.div`
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 1160px;
+  width: 100%;
   align-items: flex-end;
 `;

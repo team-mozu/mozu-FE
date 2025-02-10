@@ -19,14 +19,14 @@ const CustomLabel = ({ viewBox, value }: any) => {
   if (!viewBox || !value) return null;
 
   // 오른쪽 끝에서 20px 여백
-  const labelX = viewBox.width + 30;
+  const labelX = viewBox.width;
   const labelY = viewBox.y;
 
   return (
     <g transform={`translate(${labelX},${labelY})`}>
-      <rect x={0} y={-12} width={120} height={24} fill={color.blue[500]} />
+      <rect x={0} y={-12} width={110} height={24} fill={color.blue[500]} />
       <text
-        x={50}
+        x={45}
         y={0}
         fill="white"
         fontSize={16}
@@ -47,13 +47,44 @@ export const StockGraph = () => {
     setTimeout(() => setShouldAnimate(false), 500); // 애니메이션이 실행된 후 비활성화
   }, []);
 
-  const data = [
-    { phase: '1차', price: BASE_PRICE + 200 },
-    { phase: '2차', price: BASE_PRICE - 300 },
-    { phase: '3차', price: BASE_PRICE + 450 },
-    { phase: '4차', price: BASE_PRICE - 700 },
-    { phase: '5차', price: BASE_PRICE + 200 },
-  ];
+  const generateRandomOffset = () => Math.floor(Math.random() * 1500) - 750; // -750 ~ +750 범위 난수
+
+  const generateDataWithFluctuation = (baseData: typeof data) => {
+    const newData = [];
+    for (let i = 0; i < baseData.length - 1; i++) {
+      newData.push(baseData[i]);
+
+      // 현재 가격과 다음 가격 사이에 3개의 중간 포인트 추가
+      for (let j = 1; j <= 4; j++) {
+        const ratio = j / 4;
+        const midPrice =
+          baseData[i].price * (1 - ratio) +
+          baseData[i + 1].price * ratio +
+          generateRandomOffset();
+
+        newData.push({
+          phase: '', // X축 라벨 표시 안함
+          price: midPrice,
+          isMidPoint: true,
+        });
+      }
+    }
+    newData.push(baseData[baseData.length - 1]);
+    return newData;
+  };
+
+  // 데이터 생성 부분 수정
+  const data = useMemo(
+    () =>
+      generateDataWithFluctuation([
+        { phase: '1차', price: BASE_PRICE + 800 },
+        { phase: '2차', price: BASE_PRICE - 300 },
+        { phase: '3차', price: BASE_PRICE + 450 },
+        { phase: '4차', price: BASE_PRICE - 700 },
+        { phase: '5차', price: BASE_PRICE + 200 },
+      ]),
+    [],
+  );
 
   const generateFixedTicks = useMemo(() => {
     const ticks: number[] = [];
@@ -85,18 +116,20 @@ export const StockGraph = () => {
       <ResponsiveContainer>
         <LineChart
           data={data}
-          margin={{ left: 30, right: 80 }} // 왼쪽 마진 추가
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
+          margin={{ right: 40 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke={color.zinc[200]} />
+          // XAxis 컴포넌트에 다음 prop 추가
           <XAxis
             dataKey="phase"
             axisLine={false}
             tickLine={false}
             tick={{ fill: '#000' }}
             tickSize={16}
-            padding={{ left: 15, right: 15 }} // X축 패딩 조정
+            padding={{ left: 15, right: 15 }}
+            ticks={['1차', '2차', '3차', '4차', '5차']} // 중간 포인트 라벨 숨김
           />
           <YAxis
             orientation="right"
@@ -108,9 +141,7 @@ export const StockGraph = () => {
             tick={{ fill: '#000' }}
             tickSize={16}
           />
-
           <Tooltip content={() => null} />
-
           {activePoint.price && activePoint.phase && (
             <>
               <ReferenceLine
@@ -127,10 +158,10 @@ export const StockGraph = () => {
                     value={`${activePoint.price.toLocaleString()}`}
                   />
                 }
+                offset={10}
               />
             </>
           )}
-
           <Line
             type="linear"
             dataKey="price"
@@ -142,8 +173,8 @@ export const StockGraph = () => {
               stroke: color.blue[500],
               style: { transition: 'none' },
             }}
-            isAnimationActive={shouldAnimate} // ✅ 처음 렌더링 시에만 애니메이션 실행
-            animationBegin={0} // ✅ 마우스를 움직일 때 불필요한 딜레이 방지
+            isAnimationActive={shouldAnimate}
+            animationBegin={0}
             animationDuration={500}
           />
         </LineChart>
