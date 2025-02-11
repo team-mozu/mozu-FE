@@ -49,6 +49,7 @@
     "../admin/src/components/monitoring/TeamCurrentModal.tsx",
     "src/HistorySidebar.tsx",
     "src/ItemSidebar.tsx",
+    "src/Toast.tsx",
     "../student/src/components/home/stock/StockStatusBar.tsx",
     "../student/src/components/home/stock/NavBar.tsx",
     "../student/src/components/home/stock/NewsPost.tsx",
