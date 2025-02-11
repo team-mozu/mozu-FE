@@ -34,6 +34,7 @@
     "../ui/src/Header.tsx",
     "../ui/src/Input.tsx",
     "../ui/src/SearchInput.tsx",
-    "../ui/src/SideBar.tsx"
+    "../ui/src/SideBar.tsx",
+    "../../configs/util-config/src/utils/api/axios.ts"
   ]
 }
