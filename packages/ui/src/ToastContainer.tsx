@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const CustomToastContainer = styled(ToastContainer)`
-  .Toastif__progress-bar {
+  .Toastify__progress-bar {
     background-color: rgba(0, 0, 0, 0.2);
   }
   .Toastify__close-button:hover {
