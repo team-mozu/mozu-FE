@@ -8,7 +8,7 @@ export const Warning = ({
   width = 19,
   height = 18,
   color = '#71717A',
-}: IWarning) => {
+}: IWarningType) => {
   return (
     <svg
       width={width}
