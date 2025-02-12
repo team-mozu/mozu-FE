@@ -7,6 +7,7 @@
     "admin": "yarn workspaces admin",
     "student": "yarn workspaces student",
     "ui": "yarn workspaces ui",
+    "util": "yarn workspace util",
     "postinstall": "husky install",
     "lint": "eslint packages --ext ts,tsx --report-unused-disable-directives --cache",
     "lint-staged": "lint-staged"
@@ -19,7 +20,8 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "configs/*"
     ]
   },
   "devDependencies": {

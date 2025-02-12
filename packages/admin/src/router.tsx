@@ -1,5 +1,4 @@
 import { createBrowserRouter } from 'react-router-dom';
-
 import {
   StockManagementPage,
   SignInPage,
@@ -13,10 +12,9 @@ import {
   ClassEdit,
   ArticleManagementEditPage,
   ClassMonitoringPage,
+  InvestmentPreparation,
 } from '@/pages';
-
 import { AppLayout } from '@/layout';
-import { InvestmentPreparation } from './pages/InvestmentPreparation';
 
 export const Router = createBrowserRouter([
   {

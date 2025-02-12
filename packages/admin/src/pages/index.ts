@@ -11,3 +11,4 @@ export * from './ClassEnvironment';
 export * from './ClassEdit';
 export * from './ArticleManagementEditPage';
 export * from './ClassMonitoringPage';
+export * from './InvestmentPreparation';
