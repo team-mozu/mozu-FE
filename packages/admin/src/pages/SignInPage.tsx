@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Button, Input, LogoWithText } from '@mozu/ui';
+import { Input, LogoWithText } from '@mozu/ui';
+import { useAdminLogin } from '@/apis';
+import { useForm } from '@/hooks';
+import { isTruthValues } from '@/utils';
 
 export const SignInPage = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const { state, onChangeInputValue } = useForm({
+    code: '',
+    password: '',
+  });
+  const [passwordVisible] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+  const { mutate: adminLogin, isLoading: isAdminLoginLoading } =
+    useAdminLogin();
 
   return (
     <Container>
@@ -22,15 +28,30 @@ export const SignInPage = () => {
           <Input
             placeholder={'기관 코드를 입력해 주세요..'}
             label={'기관 코드'}
+            value={state.code}
+            name="code"
+            onChange={onChangeInputValue}
           />
 
           <Input
             type={passwordVisible ? 'text' : 'password'}
             placeholder={'비밀번호를 입력해 주세요..'}
             label={'비밀번호'}
+            name="password"
+            value={state.password}
+            onChange={onChangeInputValue}
           />
         </div>
-        <LoginButton>로그인</LoginButton>
+        <LoginButton
+          onClick={() =>
+            adminLogin({ code: state.code, password: state.password })
+          }
+          disabled={
+            !isTruthValues([state.code, state.password]) || isAdminLoginLoading
+          }
+        >
+          로그인
+        </LoginButton>
       </SigninContainer>
       <p>© 대덕소프트웨어마이스터고등학교</p>
     </Container>
@@ -88,4 +109,10 @@ const LoginButton = styled.button`
   font: ${font.b1};
   border: none;
   border-radius: 8px;
+  cursor: pointer;
+
+  :disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 `;
