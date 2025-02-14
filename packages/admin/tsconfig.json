@@ -20,12 +20,13 @@
     "paths": {
       "@/*": ["./src/*"],
       "@mozu/ui": ["../ui/src/index.ts"],
-      "@mozu/design-token": ["../design-token/src/index.ts"]
+      "@mozu/design-token": ["../design-token/src/index.ts"],
+      "@configs/util": ["../util-config/src/index.ts"]
     },
     "typeRoots": ["node_modules/@types", "src/@types"],
     "outDir": "build"
   },
-  "references": [{ "path": "../ui" }],
+  "references": [{ "path": "../ui" }, { "path": "../util-config" }],
   "include": [
     "src",
     "vite.config.ts",
@@ -35,6 +36,5 @@
     "../ui/src/Input.tsx",
     "../ui/src/SearchInput.tsx",
     "../ui/src/SideBar.tsx",
-    "../../configs/util-config/src/utils/api/axios.ts"
   ]
 }

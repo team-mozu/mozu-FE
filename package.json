@@ -2,6 +2,7 @@
   "name": "mozu-fe",
   "packageManager": "yarn@4.6.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "start": "node select.js",
     "admin": "yarn workspaces admin",
@@ -20,8 +21,7 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*",
-      "configs/*"
+      "packages/*"
     ]
   },
   "devDependencies": {
@@ -42,6 +42,7 @@
     "@typescript-eslint/parser": "7.5.0"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "inquirer": "^12.3.0"
   }
 }
