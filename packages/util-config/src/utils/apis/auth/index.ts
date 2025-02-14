@@ -1,7 +1,6 @@
 import { instance } from '../axios';
 import { IRefreshResponse } from './types';
-import { COOKIE_DOMAIN } from '@/constant';
-import { removeCookies, setCookies } from '@/utils/cookies';
+import { removeCookies, setCookies } from '../../cookies';
 
 const API_PATH = '/user';
 
@@ -27,7 +26,7 @@ export const setTokens = (accessToken: string, refreshToken: string) =>
     path: '/',
     secure: true,
     sameSite: 'none',
-    domain: COOKIE_DOMAIN,
+    domain: import.meta.env.VITE_COOKIE_DOMAIN,
   });
 
 export const removeTokens = () => {
@@ -35,6 +34,6 @@ export const removeTokens = () => {
     path: '/',
     secure: true,
     sameSite: 'none',
-    domain: COOKIE_DOMAIN,
+    domain: import.meta.env.VITE_COOKIE_DOMAIN,
   });
 };
