@@ -23,7 +23,18 @@ instance.interceptors.request.use(
 );
 
 instance.interceptors.response.use(
-  async (response) => response,
+  async (res) => {
+    console.log('Response Data:', res.data); // ✅ 응답 데이터 로그 출력
+
+    setCookies('accessToken', res.data?.accessToken);
+    setCookies('refreshToken', res.data?.refreshToken);
+
+    console.log(`Access Token: ${res.data?.accessToken}`);
+    console.log(`Refresh Token: ${res.data?.refreshToken}`);
+    console.log(typeof res.data?.refreshToken);
+
+    return res;
+  },
   async (error: AxiosError<AxiosError>) => {
     if (axios.isAxiosError(error) && error.response) {
       const { config } = error;
@@ -39,7 +50,12 @@ instance.interceptors.response.use(
         if (refreshToken) {
           reIssueToken(refreshToken as string)
             .then((res) => {
+              console.log('New Token Response:', res); // ✅ 재발급된 토큰 로그 출력
               setTokens(res.accessToken, res.refreshToken);
+
+              console.log(`Access Token: ${res.accessToken}`);
+              console.log(`Refresh Token: ${res.refreshToken}`);
+
               setCookies(
                 'authority',
                 authority === 'admin' ? 'admin' : 'student',
@@ -68,6 +84,7 @@ instance.interceptors.response.use(
               if (!redirectUrl) {
                 console.error('Redirect URL is undefined!');
               } else {
+                console.log(`Redirecting to: ${redirectUrl}`); // ✅ 리다이렉트 로그
                 window.location.href = redirectUrl;
               }
             });
@@ -80,6 +97,7 @@ instance.interceptors.response.use(
           if (!redirectUrl) {
             console.error('Redirect URL is undefined!');
           } else {
+            console.log(`Redirecting to: ${redirectUrl}`); // ✅ 리다이렉트 로그
             window.location.href = redirectUrl;
           }
         }

@@ -53,13 +53,6 @@ export const useAdminLogin = () => {
       console.log("Redirecting to:", redirectUrl);
 
       window.location.href = redirectUrl;
-      setTokens(res.data?.accessToken, res.data?.refreshToken);
-      setCookies('authority', 'admin', {
-        path: '/',
-        secure: true,
-        sameSite: 'none',
-        domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      });
     },
   });
 };
