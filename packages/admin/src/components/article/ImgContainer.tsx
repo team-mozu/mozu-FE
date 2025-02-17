@@ -11,20 +11,26 @@ interface IImgType {
 
 export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
   const imgRef = useRef<HTMLInputElement>(null); // 타입 명시적 지정
-  const [imgUrl, setImgUrl] = useState<File | null>(null);
+  const [imgUrl, setImgUrl] = useState<string | null>(null);
 
   const imgClick = () => {
     imgRef.current?.click();
   };
 
   useEffect(() => {
-    if (img) {
-      setImgUrl(img);
+    if(img) {
+      if (typeof img === 'string') {
+        setImgUrl(img);
+      } else if (img instanceof File) {
+        const url = URL.createObjectURL(img)
+        setImgUrl(img);
+      }
     }
   }, [img]);
 
   const delClick = () => {
     setImgUrl(null); // 이미지 URL 초기화
+    onImageChange('')
     if (imgRef.current) {
       imgRef.current.value = ''; // 파일 입력값 초기화 (핵심 수정 부분)
     }
@@ -91,7 +97,7 @@ const ImgContent = styled.input`
   height: 320px;
   display: none;
 `;
-const FakeImgContent = styled.div<{ imgUrl: string }>`
+const FakeImgContent = styled.div<{ imgUrl: string | null }>`
   width: 580px;
   height: 320px;
   border-radius: 12px;

@@ -38,6 +38,7 @@ export const ArticleManagementEditPage = () => {
     }
   }, [articleData])
 
+
   const titleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDatas((prev) => ({ ...prev, title: e.target.value }));
   };
@@ -54,7 +55,8 @@ export const ArticleManagementEditPage = () => {
     }
   }
 
-  console.log(datas)
+  const imageStringUrl = datas.imgUrl instanceof File ? URL.createObjectURL(datas.imgUrl) : datas.imgUrl
+
 
   return (
     <AllContainer>
@@ -84,7 +86,7 @@ export const ArticleManagementEditPage = () => {
               value={datas.content}
               onChange={contentChange}
             />
-            <ImgContainer label="기사 이미지" img={datas.imgUrl} onImageChange={(newImgUrl) => setDatas((prev) => ({...prev, imgUrl: newImgUrl}))}/>
+            <ImgContainer label="기사 이미지" img={imageStringUrl} onImageChange={(newImgUrl) => setDatas((prev) => ({...prev, imgUrl: newImgUrl}))}/>
           </InputContainer>
         </ContentContainer>
       </AddContainer>
@@ -96,11 +98,12 @@ const AllContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  width: 100%;
+  padding: 40px;
 `;
 
 const InputContainer = styled.div`
-  width: 1512px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -109,7 +112,7 @@ const InputContainer = styled.div`
 const AddContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 1560px;
+  width: 100%;
   gap: 8px;
 `;
 
