@@ -5,7 +5,7 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()], // react-refresh 대신 사용
   server: {
-    port: 3000,
+    port: 3002,
     host: true, // 네트워크 접근 허용
     cors: true, // CORS 설정
   },

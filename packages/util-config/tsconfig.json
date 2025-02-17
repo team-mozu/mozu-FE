@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "composite": true,
+    "baseUrl": ".",
+    "moduleResolution": "bundler",
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@/*": ["src/*"],
+      "@mozu/ui": ["../../ui/src/index.ts"]
+    }
+  },
+  "include": [
+    "src",
+    "configs/util-config/src",
+    "configs/util-config/src/utils/apis"
+  ]
+}

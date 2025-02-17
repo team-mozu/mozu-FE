@@ -1,6 +1,7 @@
 import App from './App';
 import CreateDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 import { GlobalStyle } from '@mozu/design-token';
 
 const root = CreateDOM.createRoot(
@@ -19,6 +20,7 @@ const queryClient = new QueryClient({
 
 root.render(
   <QueryClientProvider client={queryClient}>
+    <ReactQueryDevtools initialIsOpen={false} />
     <GlobalStyle />
     <App />
   </QueryClientProvider>,

@@ -1,13 +1,13 @@
 import { Toast } from '@mozu/ui';
 import axios, { AxiosError } from 'axios';
-import { SERVER_URL, ADMIN_AUTH_URL, STUDENT_AUTH_URL } from '@/constant';
-import { getCookies, setCookies, removeCookies } from '@/utils';
+import { getCookies, setCookies, removeCookies } from '../cookies';
 import { reIssueToken, removeTokens, setTokens } from './auth';
 
 export const instance = axios.create({
-  baseURL: SERVER_URL,
+  baseURL: import.meta.env.VITE_SERVER_URL,
   timeout: 10_000,
 });
+console.log(import.meta.env.VITE_SERVER_URL);
 
 instance.interceptors.request.use(
   (config) => {
@@ -23,7 +23,18 @@ instance.interceptors.request.use(
 );
 
 instance.interceptors.response.use(
-  async (response) => response,
+  async (res) => {
+    console.log('Response Data:', res.data); // ✅ 응답 데이터 로그 출력
+
+    setCookies('accessToken', res.data?.accessToken);
+    setCookies('refreshToken', res.data?.refreshToken);
+
+    console.log(`Access Token: ${res.data?.accessToken}`);
+    console.log(`Refresh Token: ${res.data?.refreshToken}`);
+    console.log(typeof res.data?.refreshToken);
+
+    return res;
+  },
   async (error: AxiosError<AxiosError>) => {
     if (axios.isAxiosError(error) && error.response) {
       const { config } = error;
@@ -39,15 +50,19 @@ instance.interceptors.response.use(
         if (refreshToken) {
           reIssueToken(refreshToken as string)
             .then((res) => {
+              console.log('New Token Response:', res); // ✅ 재발급된 토큰 로그 출력
               setTokens(res.accessToken, res.refreshToken);
+
+              console.log(`Access Token: ${res.accessToken}`);
+              console.log(`Refresh Token: ${res.refreshToken}`);
+
               setCookies(
                 'authority',
                 authority === 'admin' ? 'admin' : 'student',
               );
 
               if (originalRequest?.headers) {
-                originalRequest.headers['Authorization'] =
-                  `Bearer ${res.accessToken}`;
+                originalRequest.headers.Authorization = `Bearer ${res.accessToken}`;
               }
 
               return axios(originalRequest);
@@ -63,14 +78,28 @@ instance.interceptors.response.use(
               removeCookies('authority');
 
               const redirectUrl =
-                authority === 'admin' ? ADMIN_AUTH_URL : STUDENT_AUTH_URL;
-              window.location.href = redirectUrl;
+                authority === 'admin'
+                  ? import.meta.env.VITE_ADMIN_AUTH_URL
+                  : import.meta.env.VITE_STUDENT_AUTH_URL;
+              if (!redirectUrl) {
+                console.error('Redirect URL is undefined!');
+              } else {
+                console.log(`Redirecting to: ${redirectUrl}`); // ✅ 리다이렉트 로그
+                window.location.href = redirectUrl;
+              }
             });
         } else {
           removeTokens();
           const redirectUrl =
-            authority === 'admin' ? ADMIN_AUTH_URL : STUDENT_AUTH_URL;
-          window.location.href = redirectUrl;
+            authority === 'admin'
+              ? import.meta.env.VITE_ADMIN_AUTH_URL
+              : import.meta.env.VITE_STUDENT_AUTH_URL;
+          if (!redirectUrl) {
+            console.error('Redirect URL is undefined!');
+          } else {
+            console.log(`Redirecting to: ${redirectUrl}`); // ✅ 리다이렉트 로그
+            window.location.href = redirectUrl;
+          }
         }
       } else return Promise.reject(error);
     }

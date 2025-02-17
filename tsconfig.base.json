@@ -7,6 +7,7 @@
     "strict": true,
     "moduleResolution": "node",
     "declarationDir": "dist",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "sourceType": "module"
   }
 }

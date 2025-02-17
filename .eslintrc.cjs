@@ -28,5 +28,6 @@ module.exports = {
   parserOptions: {
     project: true,
     tsconfigRootDir: __dirname,
+    sourceType: 'module',
   },
 };

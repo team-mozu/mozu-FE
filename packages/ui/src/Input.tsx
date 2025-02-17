@@ -10,6 +10,7 @@ interface IInputType {
   width?: string;
   text?: string;
   value?: string;
+  name?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -20,6 +21,7 @@ export const Input = ({
   width,
   text,
   value,
+  name,
   onChange,
 }: IInputType) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -38,6 +40,7 @@ export const Input = ({
           type={inputType}
           placeholder={placeholder}
           width={width}
+          name={name}
           value={value}
           onChange={onChange}
         />
