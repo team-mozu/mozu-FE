@@ -1,11 +1,16 @@
+import { articleManagementDel } from '@/apis';
 import { ArticleSearchSideBar, ArticleManagementDetail } from '@/components';
 import styled from '@emotion/styled';
 import { SelectError, DeleteModal } from '@mozu/ui';
 import { useState } from 'react';
+import { useParams } from 'react-router';
 
 export const ArticleManagementPage = () => {
   const [isSelect, setIsSelect] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 상태 관리
+
+  const {id} = useParams();
+  const articleId = id? parseInt(id) : null;
 
   const handleDetailClick = () => {
     setIsModalOpen(true); // 모달 열기
@@ -15,9 +20,12 @@ export const ArticleManagementPage = () => {
     setIsModalOpen(false); // 모달 닫기
   };
 
-  const handleDelete = () => {
-    //삭제 작업 들어가는곳
-    console.log('삭제 작업 실행');
+  const apiData = articleManagementDel();
+  
+  const handleDelete = (articleId: number) => {
+    if(articleId) {
+      apiData.mutate(articleId);
+    }
     setIsModalOpen(false); // 모달 닫기
   };
 
@@ -34,7 +42,7 @@ export const ArticleManagementPage = () => {
           titleComment={'현재 선택된 기사를 삭제하실건가요?'}
           subComment={'삭제하면 복구가 불가능합니다.'}
           onCancel={handleCloseModal} // 취소 동작
-          onDelete={handleDelete} // 삭제 동작
+          onDelete={() => handleDelete(articleId)} // 삭제 동작
         />
       )}
     </Container>
