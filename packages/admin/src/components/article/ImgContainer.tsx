@@ -6,14 +6,15 @@ import { Imglogo, Button } from '@mozu/ui';
 interface IImgType {
   label?: string;
   img?: string;
+  onImageChange?: (file: File | null) => void
 }
 
-export const ImgContainer = ({ label, img }: IImgType) => {
+export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
   const imgRef = useRef<HTMLInputElement>(null); // 타입 명시적 지정
-  const [imgUrl, setImgUrl] = useState<string | null>(null);
+  const [imgUrl, setImgUrl] = useState<File | null>(null);
 
   const imgClick = () => {
-    imgRef.current?.showPicker();
+    imgRef.current?.click();
   };
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export const ImgContainer = ({ label, img }: IImgType) => {
   }, [img]);
 
   const delClick = () => {
-    setImgUrl(''); // 이미지 URL 초기화
+    setImgUrl(null); // 이미지 URL 초기화
     if (imgRef.current) {
       imgRef.current.value = ''; // 파일 입력값 초기화 (핵심 수정 부분)
     }
@@ -34,6 +35,7 @@ export const ImgContainer = ({ label, img }: IImgType) => {
     if (file) {
       const newUrl = URL.createObjectURL(file);
       setImgUrl(newUrl);
+      onImageChange?.(file)
     }
   };
 
