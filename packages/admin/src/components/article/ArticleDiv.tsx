@@ -2,15 +2,21 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useLocation } from 'react-router-dom';
 
-export const ArticleDiv = () => {
+interface IArticleType {
+  title: string,
+  date: string,
+  onClick: () => void,
+}
+
+export const ArticleDiv = ({title, date, onClick}: IArticleType) => {
   const location = useLocation();
 
   return (
-    <ArticleDivContiner>
+    <ArticleDivContiner onClick={onClick}>
       <ArticleTitle>
-        목표가 떨어지며 새해 시작한 삼성전자…52층까지 내려갔다가 반등
+        {title}
       </ArticleTitle>
-      <Date>2024-12-12</Date>
+      <Date>{date}</Date>
     </ArticleDivContiner>
   );
 };

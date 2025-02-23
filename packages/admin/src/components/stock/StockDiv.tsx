@@ -2,13 +2,20 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useLocation } from 'react-router-dom';
 
-export const StockDiv = () => {
+
+interface IStockType {
+  number: number,
+  name: string,
+  onClick: () => void,
+}
+
+export const StockDiv = ({number, name, onClick} : IStockType) => {
   const location = useLocation();
 
   return (
-    <StockDivContiner>
-      <Number>005930</Number>
-      <Stock>삼성전자</Stock>
+    <StockDivContiner onClick={onClick}>
+      <Number>{number}</Number>
+      <Stock>{name}</Stock>
     </StockDivContiner>
   );
 };

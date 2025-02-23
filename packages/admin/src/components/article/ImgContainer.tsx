@@ -23,16 +23,16 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
         setImgUrl(img);
       } else if (img instanceof File) {
         const url = URL.createObjectURL(img)
-        setImgUrl(img);
+        setImgUrl(url);
       }
     }
   }, [img]);
 
   const delClick = () => {
     setImgUrl(null); // 이미지 URL 초기화
-    onImageChange('')
+    onImageChange(null)
     if (imgRef.current) {
-      imgRef.current.value = ''; // 파일 입력값 초기화 (핵심 수정 부분)
+      imgRef.current.value = null; // 파일 입력값 초기화 (핵심 수정 부분)
     }
   };
 
@@ -50,8 +50,8 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
       <ImgContent type="file" ref={imgRef} onChange={handleChange} />
       <ImgContentContainer>
         <Label>{label}</Label>
-        <FakeImgContent imgUrl={imgUrl}>
-          {!imgUrl && <Imglogo />}
+        <FakeImgContent >
+          {!imgUrl ? <Imglogo /> : <Image src={imgUrl} alt='기사 이미지'/>}
         </FakeImgContent>
       </ImgContentContainer>
       <Button
@@ -67,6 +67,7 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
         color={color.white}
         borderColor={color.red[500]}
         onClick={delClick}
+        disabled={!imgUrl}
       >
         이미지 삭제
       </Button>
@@ -97,7 +98,12 @@ const ImgContent = styled.input`
   height: 320px;
   display: none;
 `;
-const FakeImgContent = styled.div<{ imgUrl: string | null }>`
+
+const Image = styled.img `
+  width: 580px;
+`
+const FakeImgContent = styled.div`
+  overflow: hidden;
   width: 580px;
   height: 320px;
   border-radius: 12px;
@@ -106,8 +112,4 @@ const FakeImgContent = styled.div<{ imgUrl: string | null }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: ${({ imgUrl }) =>
-    imgUrl ? `url(${imgUrl})` : 'none'}; // 명시적 배경 설정
-  background-size: cover;
-  background-position: center;
-`;
+  `;

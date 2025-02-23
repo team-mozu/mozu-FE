@@ -27,6 +27,7 @@ export const ArticleManagementPage = () => {
       apiData.mutate(articleId);
     }
     setIsModalOpen(false); // 모달 닫기
+    setIsSelect(false)
   };
 
   return (

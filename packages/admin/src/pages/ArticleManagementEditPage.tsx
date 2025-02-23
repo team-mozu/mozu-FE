@@ -49,13 +49,19 @@ export const ArticleManagementEditPage = () => {
   const apiData = articleManagementEdit();
 
   const saveClick = () => {
-    if(articleId) {
-      const imageFile = new File([datas.imgUrl], "image.jpg", { type: datas.imgUrl.type });
+      let imageFile = datas.imgUrl;
+
+      if(typeof datas.imgUrl === "string") {
+        imageFile = '';
+      } else if (datas.imgUrl instanceof File) {
+        imageFile = datas.imgUrl
+      }
+
       apiData.mutate({title: datas.title, description: datas.content, image: imageFile, articleId:articleId})
-    }
+    
   }
 
-  const imageStringUrl = datas.imgUrl instanceof File ? URL.createObjectURL(datas.imgUrl) : datas.imgUrl
+
 
 
   return (
@@ -86,7 +92,7 @@ export const ArticleManagementEditPage = () => {
               value={datas.content}
               onChange={contentChange}
             />
-            <ImgContainer label="기사 이미지" img={imageStringUrl} onImageChange={(newImgUrl) => setDatas((prev) => ({...prev, imgUrl: newImgUrl}))}/>
+            <ImgContainer label="기사 이미지" img={datas.imgUrl && datas.imgUrl instanceof File ? URL.createObjectURL(datas.imgUrl) : datas.imgUrl} onImageChange={(newImgUrl) => setDatas((prev) => ({...prev, imgUrl: newImgUrl}))}/>
           </InputContainer>
         </ContentContainer>
       </AddContainer>

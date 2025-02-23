@@ -1,11 +1,16 @@
+import { stockManagementDel } from '@/apis';
 import { StockManagementDetail, StockSearchSideBar } from '@/components';
 import styled from '@emotion/styled';
 import { SelectError, DeleteModal } from '@mozu/ui';
 import { useState } from 'react';
+import { useParams } from 'react-router';
 
 export const StockManagementPage = () => {
   const [isSelect, setIsSelect] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // 모달 상태 관리
+
+  const {id} = useParams();
+  const stockId = id? parseInt(id) : null;
 
   const handleDetailClick = () => {
     setIsModalOpen(true); // 모달 열기
@@ -15,10 +20,14 @@ export const StockManagementPage = () => {
     setIsModalOpen(false); // 모달 닫기
   };
 
+  const delApiData = stockManagementDel();
+
   const handleDelete = () => {
-    //삭제 작업 들어가는곳
-    console.log('삭제 작업 실행');
+    if(stockId) {
+      delApiData.mutate(stockId);
+    }
     setIsModalOpen(false); // 모달 닫기
+    setIsSelect(false); //종목 선택으로 돌아가기
   };
 
   return (

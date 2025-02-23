@@ -1,9 +1,14 @@
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { color, font } from '@mozu/design-token';
 import { Imglogo, Button } from '@mozu/ui';
 
-export const LogoUploader = () => {
+interface ILogoType {
+  img?: string;
+  onImageChange?: (file: File | null) => void
+}
+
+export const LogoUploader = ({img, onImageChange}: ILogoType) => {
   const [logo, setLogo] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -13,6 +18,7 @@ export const LogoUploader = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogo(reader.result as string);
+        onImageChange?.(file)
       };
       reader.readAsDataURL(file);
     }
@@ -21,9 +27,21 @@ export const LogoUploader = () => {
   const handleDeleteLogo = () => {
     setLogo(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = null;
+      onImageChange(null);
     }
   };
+
+  useEffect(() => {
+      if(img) {
+        if (typeof img === 'string') {
+          setLogo(img);
+        } else if (img instanceof File) {
+          const url = URL.createObjectURL(img)
+          setLogo(url);
+        }
+      }
+    }, [img]);
 
   return (
     <Container>
@@ -88,6 +106,7 @@ const Container = styled.div`
 `;
 
 const LogoContainer = styled.div`
+overflow: hidden;
   width: 128px;
   height: 128px;
   background-color: ${color.zinc[50]};
@@ -106,7 +125,6 @@ const ButtonContaienr = styled.div`
 
 const LogoImage = styled.img`
   width: 100%;
-  height: 100%;
   object-fit: contain;
   border-radius: 12px;
 `;
