@@ -29,41 +29,47 @@ export const StockManagementAddPage = () => {
       netProfit: null,})
 
 
-    const nameChange = (e: React.ChangeEvent<HTMLAreaElement>) => { //회사 이름
-      setDatas((prev) => ({ ...prev, name: e.target.value }));
-    };
+      const handleInputChange = (field: keyof StockData) => (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      ) => {
+        setDatas((prev) => ({ ...prev, [field]: e.target.value }));
+       };
 
-    const infoChange = (e: React.ChangeEvent<HTMLAreaElement>) => { //회사 정보
-      setDatas((prev) => ({ ...prev, info: e.target.value }));
-    };
+    //   const infoChange = (e: React.ChangeEvent<HTMLAreaElement>) => { //회사 정보
+    //     setDatas((prev) => ({ ...prev, info: e.target.value }));
+    //   };
 
-    const moneyChange = (e: React.ChangeEvent<HTMLInputElement>) => { //자산
-      setDatas((prev) => ({ ...prev, money: e.target.value }));
-    };
+    //   const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => { //회사 이름
+    //     setDatas((prev) => ({ ...prev, name: e.target.value }));
+    //   };
 
-    const debtChange = (e: React.ChangeEvent<HTMLInputElement>) => { //부채
-      setDatas((prev) => ({ ...prev, debt: e.target.value }));
-    };
+    // const moneyChange = (e: React.ChangeEvent<HTMLInputElement>) => { //자산
+    //   setDatas((prev) => ({ ...prev, money: e.target.value }));
+    // };
 
-    const capitalChange = (e: React.ChangeEvent<HTMLInputElement>) => { //자본금
-      setDatas((prev) => ({ ...prev, capital: e.target.value }));
-    };
+    // const debtChange = (e: React.ChangeEvent<HTMLInputElement>) => { //부채
+    //   setDatas((prev) => ({ ...prev, debt: e.target.value }));
+    // };
 
-    const profitChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출액
-      setDatas((prev) => ({ ...prev, profit: e.target.value }));
-    };
+    // const capitalChange = (e: React.ChangeEvent<HTMLInputElement>) => { //자본금
+    //   setDatas((prev) => ({ ...prev, capital: e.target.value }));
+    // };
 
-    const profitOGChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출 원가
-      setDatas((prev) => ({ ...prev, profitOG: e.target.value }));
-    };
+    // const profitChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출액
+    //   setDatas((prev) => ({ ...prev, profit: e.target.value }));
+    // };
 
-    const profitBenChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출 이익
-      setDatas((prev) => ({ ...prev, profitBen: e.target.value }));
-    };
+    // const profitOGChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출 원가
+    //   setDatas((prev) => ({ ...prev, profitOG: e.target.value }));
+    // };
 
-    const netProfitChange = (e: React.ChangeEvent<HTMLInputElement>) => { //당기순이익
-      setDatas((prev) => ({ ...prev, netProfit: e.target.value }));
-    };
+    // const profitBenChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출 이익
+    //   setDatas((prev) => ({ ...prev, profitBen: e.target.value }));
+    // };
+
+    // const netProfitChange = (e: React.ChangeEvent<HTMLInputElement>) => { //당기순이익
+    //   setDatas((prev) => ({ ...prev, netProfit: e.target.value }));
+    // };
 
     const apiData = stockManagementAdd();
     const addClick = () => {
@@ -95,7 +101,7 @@ export const StockManagementAddPage = () => {
               label={'회사 이름'}
               placeholder={'종목 이름을 입력해 주세요..'}
               width={'480px'}
-              onChange={nameChange}
+              onChange={handleInputChange('name')}
               value={datas.name}
             />
           </div>
@@ -104,7 +110,7 @@ export const StockManagementAddPage = () => {
               placeholder={'회사 정보를 입력해 주세요..'}
               label={'회사 정보'}
               height={260}
-              onChange={infoChange}
+              onChange={handleInputChange('info')}
               value={datas.info}
             ></TextArea>
           </div>
@@ -118,7 +124,7 @@ export const StockManagementAddPage = () => {
               type={'Number'}
               width={'480px'}
               text={'원'}
-              onChange={moneyChange}
+              onChange={handleInputChange('money')}
               value={datas.money}
             />
           </div>
@@ -129,7 +135,7 @@ export const StockManagementAddPage = () => {
               type={'Number'}
               width={'480px'}
               text={'원'}
-              onChange={debtChange}
+              onChange={handleInputChange('debt')}
               value={datas.debt}
             />
           </div>
@@ -140,7 +146,7 @@ export const StockManagementAddPage = () => {
               type={'Number'}
               width={'480px'}
               text={'원'}
-              onChange={capitalChange}
+              onChange={handleInputChange('capital')}
               value={datas.capital}
             />
           </div>
@@ -151,7 +157,7 @@ export const StockManagementAddPage = () => {
               type={'Number'}
               width={'480px'}
               text={'원'}
-              onChange={profitChange}
+              onChange={handleInputChange('profit')}
               value={datas.profit}
             />
           </div>
@@ -162,7 +168,7 @@ export const StockManagementAddPage = () => {
               type={'Number'}
               width={'480px'}
               text={'원'}
-              onChange={profitOGChange}
+              onChange={handleInputChange('profitOG')}
               value={datas.profitOG}
             />
           </div>
@@ -173,7 +179,7 @@ export const StockManagementAddPage = () => {
               type={'Number'}
               width={'480px'}
               text={'원'}
-              onChange={profitBenChange}
+              onChange={handleInputChange('profitBen')}
               value={datas.profitBen}
             />
           </div>
@@ -184,7 +190,7 @@ export const StockManagementAddPage = () => {
               type={'Number'}
               width={'480px'}
               text={'원'}
-              onChange={netProfitChange}
+              onChange={handleInputChange('netProfit')}
               value={datas.netProfit}
             />
           </div>

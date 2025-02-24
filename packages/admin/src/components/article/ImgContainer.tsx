@@ -25,6 +25,10 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
         const url = URL.createObjectURL(img)
         setImgUrl(url);
       }
+      
+      if(img === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg") { //기본 이미지일 때 빈칸으로 넣어서 이미지 삭제 버튼 클릭 불가능하도록
+        setImgUrl('')
+      }
     }
   }, [img]);
 

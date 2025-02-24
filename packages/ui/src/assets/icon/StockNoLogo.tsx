@@ -13,7 +13,7 @@ export const StockNoLogo = ({ size = 40, color = '#D4D4D8' }: IStockType) => {
         <path d="M24.9997 0L34.9997 0L28.333 33.3333H18.333L24.9997 0Z" fill="#D4D4D8"/>
       </g>
       <defs>
-        <clipPath clipPath id="clip0_2322_2778">
+        <clipPath id="clip0_2322_2778">
         <rect width={size}  height={size}  fill="white"/>
         </clipPath>
       </defs>

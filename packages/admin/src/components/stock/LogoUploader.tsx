@@ -33,12 +33,18 @@ export const LogoUploader = ({img, onImageChange}: ILogoType) => {
   };
 
   useEffect(() => {
+    let objectUrl: string;
       if(img) {
         if (typeof img === 'string') {
           setLogo(img);
         } else if (img instanceof File) {
-          const url = URL.createObjectURL(img)
-          setLogo(url);
+          objectUrl = URL.createObjectURL(img)
+          setLogo(objectUrl);
+        }
+      }
+      return () => {
+        if (objectUrl) {
+          URL.revokeObjectURL(objectUrl)
         }
       }
     }, [img]);
@@ -126,7 +132,6 @@ const ButtonContaienr = styled.div`
 const LogoImage = styled.img`
   width: 100%;
   object-fit: contain;
-  border-radius: 12px;
 `;
 
 const UploadButton = styled(Button)`

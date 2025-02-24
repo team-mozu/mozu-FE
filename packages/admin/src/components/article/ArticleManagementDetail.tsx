@@ -31,7 +31,8 @@ export const ArticleManagementDetail = ({
       setDatas({
         title: articleData.data.title || '',
         description: articleData.data.description || '',
-        image: articleData.data.image === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/내 로고.png" ? null : articleData.data.image,
+        image: articleData.data.image === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg" ? null : articleData.data.image,
+        createDate: articleData.data.createDate  || '',
       });
     }
   }, [articleData])

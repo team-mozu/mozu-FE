@@ -1,7 +1,7 @@
 import { Del, Edit, Button, Accounts, StockNoLogo } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { data, useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { stockManagementDetail } from '@/apis';

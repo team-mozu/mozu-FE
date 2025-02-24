@@ -100,6 +100,9 @@ export const articleManagementEdit = () => {
     onSuccess: () => {
       console.log("성공");
       navigate(-1);
+      setTimeout(() => {
+        window.location.reload(); 
+      }, 100);
     },
     onError: (error) => console.log("error", error),
   });

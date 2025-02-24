@@ -44,13 +44,8 @@ const articleDivClick = (id: number) => {
       </UpperWrapper>
       <ArticleWrapper>
          {datas.map((data) => (
-          <ArticleDiv title={data.title} date={data.date} onClick={(id) => articleDivClick(data.id)}/>
+          <ArticleDiv title={data.title} date={data.date} onClick={(id) => articleDivClick(data.id)} key={data.id}/>
          ))}
-        <ArticleDiv />
-        <ArticleDiv />
-        <ArticleDiv />
-        <ArticleDiv />
-        <ArticleDiv />
       </ArticleWrapper>
       <AddButton text="기사 추가하기" onClick={() => navigate('/article-management/add')} />
     </SideBarContainer>

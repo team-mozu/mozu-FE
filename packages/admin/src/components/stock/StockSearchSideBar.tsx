@@ -41,7 +41,7 @@ useEffect(() => {
       </UpperWrapper>
       <ArticleWrapper>
         {datas.map((data) => (
-          <StockDiv name={data.name} number={data.id} onClick={(id) => stockDivClick(data.id)}/>
+          <StockDiv name={data.name} number={data.id} onClick={(id) => stockDivClick(data.id)} key={data.id}/>
         ))
 
         }
