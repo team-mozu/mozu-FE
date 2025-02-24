@@ -37,6 +37,7 @@
     "@mozu/eslint-config": "workspace:^",
     "@mozu/prettier-config": "workspace:^",
     "@mozu/ui": "workspace:^",
+    "@tanstack/react-table": "^8.21.2",
     "@types/hoist-non-react-statics": "^3",
     "@types/node": "^22.10.5",
     "@types/react": "^18.3.18",
@@ -48,8 +49,8 @@
     "eslint": "8.57.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
-    "vite": "^6.0.5"
+    "vite": "^6.0.5",
+    "zustand": "^5.0.3"
   },
-  "prettier": "@mozu/prettier-config",
   "packageManager": "yarn@4.6.0"
 }
