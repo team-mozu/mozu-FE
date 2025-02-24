@@ -138,10 +138,11 @@ const ClassManagementContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
-  padding: 2.5rem;
+  padding: 2.4rem;
 `;
 
 const PostAllContainer = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -155,6 +156,7 @@ const PostContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
   align-items: flex-start;
+  width: 100%;
 `;
 
 const TitleContainer = styled.div`

@@ -15,6 +15,7 @@ interface IEditType {
   iconColor2?: string;
   isIcon1?: boolean;
   isIcon2?: boolean;
+  onClick?:() => void;
 }
 
 export const EditDiv = ({
@@ -29,6 +30,7 @@ export const EditDiv = ({
   iconColor2,
   isIcon1,
   isIcon2,
+  onClick,
 }: IEditType) => {
   const navigate = useNavigate();
   return (
@@ -57,6 +59,7 @@ export const EditDiv = ({
           iconColor={iconColor2}
           isIcon={isIcon2}
           hoverBackgroundColor={color.orange[600]}
+          onClick={onClick}
         >
           {value2}
         </Button>
