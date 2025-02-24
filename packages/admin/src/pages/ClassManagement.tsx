@@ -1,76 +1,73 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, DeleteModal, PostTitle, PageTitle } from '@mozu/ui';
 import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { color } from '@mozu/design-token';
 import { ClassPost } from '@/components';
-
-const datas = [
-  {
-    favorites: [{ title: '2024년도 모의투자', date: '2024-05-05' }],
-    common: [
-      { title: '2024년도 모의투자', date: '2024-05-05' },
-      { title: '2024년도 모의투자', date: '2024-05-05' },
-      { title: '2024년도 모의투자', date: '2024-05-05' },
-      { title: '2024년도 모의투자', date: '2024-05-05' },
-      { title: '2024년도 모의투자', date: '2024-05-05' },
-      { title: '2024년도 모의투자', date: '2024-05-05' },
-      { title: '2024년도 모의투자', date: '2024-05-05' },
-    ],
-  },
-];
+import { ClassItem, useGetClassList } from '@/apis';
 
 export const ClassManagement = () => {
+  const { data } = useGetClassList();
   const navigate = useNavigate();
-  const [isModal, setIsModal] = useState<boolean>(false);
-  const [favoritesId, setFavoritesId] = useState<number[]>([]);
+  const [isModal, setIsModal] = useState(false);
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
 
-  const [isClickFavorites, setIsClickFavorites] = useState<boolean[]>(
-    Array(datas[0].favorites.length).fill(false),
-  );
+  // API 데이터 구조에 맞게 가공
+  const classData: ClassItem[] = data?.classes || [];
+  const favorites = classData.filter((item) => item.starYN);
+  const common = classData.filter((item) => !item.starYN);
 
-  const [isClickCommon, setIsClickCommon] = useState<boolean[]>(
-    Array(datas[0].common.length).fill(false),
-  );
+  // 즐겨찾기 여부를 저장할 state
+  const [isClickFavorites, setIsClickFavorites] = useState<boolean[]>([]);
+  const [isClickCommon, setIsClickCommon] = useState<boolean[]>([]);
 
-  const delClick = () => {
+  // 데이터가 변경될 때 상태 초기화
+  useEffect(() => {
+    setIsClickFavorites(Array(favorites.length).fill(false));
+    setIsClickCommon(Array(common.length).fill(false));
+  }, [data]);
+
+  const openDeleteModal = (id: number) => {
+    setSelectedClassId(id);
     setIsModal(true);
   };
 
   const handleCloseModal = () => {
-    setIsModal(false); // 모달 닫기
+    setIsModal(false);
+    setSelectedClassId(null);
   };
 
   const handleDelete = () => {
-    //삭제 작업 들어가는곳
-    console.log('삭제 작업 실행');
-    setIsModal(false); // 모달 닫기
+    if (selectedClassId !== null) {
+      console.log(`수업 ID ${selectedClassId} 삭제`);
+    }
+    setIsModal(false);
   };
 
-  const starFavoritesClick = (index: number) => {
-    setIsClickFavorites((prev) => {
-      const updateStar = [...isClickFavorites];
-      updateStar[index] = !updateStar[index];
-      return updateStar;
-    });
-  };
-
-  const starCommonClick = (index: number) => {
-    setIsClickCommon((prev) => {
-      const updateStar = [...isClickCommon];
-      updateStar[index] = !updateStar[index];
-      return updateStar;
-    });
+  const toggleFavorite = (index: number, type: 'favorites' | 'common') => {
+    if (type === 'favorites') {
+      setIsClickFavorites((prev) => {
+        const updated = [...prev];
+        updated[index] = !updated[index];
+        return updated;
+      });
+    } else {
+      setIsClickCommon((prev) => {
+        const updated = [...prev];
+        updated[index] = !updated[index];
+        return updated;
+      });
+    }
   };
 
   return (
     <>
       {isModal && (
         <DeleteModal
-          titleComment={'‘2024년도 모의투자’를 삭제하실 건가요?'}
+          titleComment={'이 수업을 삭제하시겠습니까?'}
           subComment={'삭제하면 복구가 불가능합니다.'}
-          onCancel={handleCloseModal} // 취소 동작
-          onDelete={handleDelete} // 삭제 동작
+          onCancel={handleCloseModal}
+          onDelete={handleDelete}
         />
       )}
       <ClassManagementContent>
@@ -83,7 +80,7 @@ export const ClassManagement = () => {
             type="plusImg"
             backgroundColor={color.orange[500]}
             color={color.white}
-            isIcon={true}
+            isIcon
             iconSize={24}
             iconColor={color.white}
             onClick={() => navigate('create')}
@@ -94,46 +91,38 @@ export const ClassManagement = () => {
         </TitleContainer>
         <ContentContainer>
           <PostAllContainer>
-            {datas[0].favorites.length !== 0 && (
+            {favorites.length > 0 && (
               <PostContainer>
-                <PostTitle
-                  title="즐겨찾기"
-                  count={datas[0].favorites.length}
-                ></PostTitle>
+                <PostTitle title="즐겨찾기" count={favorites.length} />
                 <PostContents>
-                  {datas[0].favorites.map((data, index) => {
-                    return (
-                      <ClassPost
-                        title={data.title}
-                        creationDate={data.date}
-                        isClick={isClickFavorites[index]}
-                        starOnClick={() => starFavoritesClick(index)}
-                        delClick={delClick}
-                        onClick={() => navigate('1')}
-                      />
-                    );
-                  })}
+                  {favorites.map((item, index) => (
+                    <ClassPost
+                      key={item.id}
+                      title={item.name}
+                      creationDate={item.date}
+                      isClick={isClickFavorites[index]}
+                      starOnClick={() => toggleFavorite(index, 'favorites')}
+                      delClick={() => openDeleteModal(item.id)}
+                      onClick={() => navigate(`${item.id}`)}
+                    />
+                  ))}
                 </PostContents>
               </PostContainer>
             )}
             <PostContainer>
-              <PostTitle
-                title="전체"
-                count={datas[0].common.length}
-              ></PostTitle>
+              <PostTitle title="전체" count={common.length} />
               <PostContents>
-                {datas[0].common.map((data, index) => {
-                  return (
-                    <ClassPost
-                      title={data.title}
-                      creationDate={data.date}
-                      isClick={isClickCommon[index]}
-                      starOnClick={() => starCommonClick(index)}
-                      delClick={delClick}
-                      onClick={() => navigate(':1')}
-                    />
-                  );
-                })}
+                {common.map((item, index) => (
+                  <ClassPost
+                    key={item.id}
+                    title={item.name}
+                    creationDate={item.date}
+                    isClick={isClickCommon[index]}
+                    starOnClick={() => toggleFavorite(index, 'common')}
+                    delClick={() => openDeleteModal(item.id)}
+                    onClick={() => navigate(`${item.id}`)}
+                  />
+                ))}
               </PostContents>
             </PostContainer>
           </PostAllContainer>

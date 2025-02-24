@@ -15,12 +15,15 @@ import {
 } from './ClassCreate';
 import { color } from '@mozu/design-token';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Tables } from '@/components';
+import { useNavigate, useParams } from 'react-router';
+import { ArticleTables, StockTables } from '@/components';
+import { useGetClassDetail } from '@/apis';
 
 export const ClassEdit = () => {
   const navigate = useNavigate();
   const [prices, setPrices] = useState<string[]>(['1,000,000']);
+  const { classId } = useParams();
+  const { data } = useGetClassDetail(classId);
 
   const priceChangeHandler = // 숫자를 변경해줌 11111 => 11,111
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,8 +97,8 @@ export const ClassEdit = () => {
           </AssetBox>
         </TextField>
         <TableField>
-          <Tables edit={true} tableName="invest" />
-          <Tables edit={true} tableName="article" />
+          <StockTables isEdit={true} data={null} />
+          <ArticleTables isEdit={true} round={1} />
         </TableField>
       </Contents>
     </Container>
