@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { RateDiv } from './TeamInfoTable';
-import { Tbody, Thead } from '../common/Tables';
 
 interface IThProps {
   width: string;
@@ -152,4 +151,24 @@ const Td = styled.td<ITdProps>`
   flex-direction: column;
   text-align: ${(props) => props.textAlign};
   justify-content: center;
+`;
+
+const Thead = styled.thead`
+  > tr {
+    background-color: ${color.orange[50]};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+`;
+
+const Tbody = styled.tbody`
+  > tr {
+    width: 100%;
+    background-color: ${color.white};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;

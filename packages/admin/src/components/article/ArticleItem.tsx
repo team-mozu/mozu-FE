@@ -1,4 +1,4 @@
-import { CheckBox } from '../../../../ui/src';
+import { CheckBox } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
 
@@ -9,6 +9,7 @@ interface IArticleItemType {
   onChange?: () => void;
   checked?: boolean;
   id?: string;
+  onClick?: () => void;
 }
 
 export const ArticleItem = ({
@@ -17,6 +18,7 @@ export const ArticleItem = ({
   title2,
   onChange,
   checked,
+  onClick,
   id,
 }: IArticleItemType) => {
   return (
