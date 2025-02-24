@@ -50,6 +50,7 @@ const CheckBoxLabel = styled.div<ICheckType>`
   justify-content: center;
   align-item: center;
   line-height: 20px;
+  
 `;
 
 const CheckBoxInput = styled.input`
