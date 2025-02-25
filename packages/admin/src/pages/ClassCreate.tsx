@@ -1,4 +1,4 @@
-import { Tables } from '@/components';
+import { ArticleTables, StockTables } from '@/components';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
 import { Button, Input, Select } from '@mozu/ui';
@@ -78,8 +78,8 @@ export const CreateClass = () => {
           </AssetBox>
         </TextField>
         <TableField>
-          <Tables edit={true} tableName="invest" />
-          <Tables edit={true} tableName="article" />
+          <StockTables isEdit={true} data={null} />
+          <ArticleTables isEdit={true} round={1} />
         </TableField>
       </Contents>
     </Container>

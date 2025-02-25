@@ -30,6 +30,7 @@
     "src",
     "vite.config.ts",
     "../ui/src/HistorySidebar.tsx",
-    "../ui/src/ItemSidebar.tsx"
+    "../ui/src/ItemSidebar.tsx",
+    "../admin/src/**/*"
   ]
 }

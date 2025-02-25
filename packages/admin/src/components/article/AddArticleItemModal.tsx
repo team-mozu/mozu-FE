@@ -6,7 +6,7 @@ import {
   TableContainer,
   Title,
 } from '../stock/AddInvestItemModal';
-import { Button, SearchInput } from '../../../../ui/src';
+import { Button, SearchInput } from '@mozu/ui';
 import { color } from '@mozu/design-token';
 import { useState } from 'react';
 import { ArticleItem } from './ArticleItem';

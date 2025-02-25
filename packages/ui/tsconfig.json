@@ -54,7 +54,7 @@
     "../student/src/components/home/stock/NavBar.tsx",
     "../student/src/components/home/stock/NewsPost.tsx",
     "../student/src/components/home/TotalProperty.tsx",
-    "../student/src/components/home/StockTable.tsx"
+    "../student/src/components/home/StockTable.tsx",
   ],
   "exclude": ["node_modules", "dist"]
 }

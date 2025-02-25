@@ -1,14 +1,24 @@
-import { Tables } from '@/components';
+import { StockTables, ArticleTables } from '@/components';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from '@mozu/ui';
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useGetClassDetail } from '@/apis';
+import { useClassStore } from '@/store';
 
 export const ClassEnvironment = () => {
   const navigate = useNavigate();
+  const { data } = useGetClassDetail('5');
   const [isModal, setIsModal] = useState<boolean>(false);
+  const { classData, setClassData } = useClassStore();
+
+  useEffect(() => {
+    if (data) {
+      setClassData(data);
+    }
+  }, [data, setClassData]);
+
   const isOpen = () => {
     setIsModal(true);
   };
@@ -20,11 +30,12 @@ export const ClassEnvironment = () => {
     setIsModal(false);
   };
   const infos = [
-    { kind: '수업 이름', value: '2024년도 모의투자' },
-    { kind: '투자 차수', value: '5차' },
-    { kind: '기초자산', value: '1,000,000원' },
-    { kind: '생성일자', value: '2024-05-05' },
+    { kind: '수업 이름', value: data?.name ?? '정보 없음' },
+    { kind: '투자 차수', value: data?.maxInvDeg ?? '정보 없음' },
+    { kind: '기초자산', value: data?.baseMoney ?? '정보 없음' },
+    { kind: '생성일자', value: data?.createdAt ?? '정보 없음' },
   ];
+
   return (
     <>
       {isModal ? (
@@ -44,8 +55,8 @@ export const ClassEnvironment = () => {
               <ArrowLeft />
             </BackBtn>
             <TextBox>
-              <h2>2024년도 모의투자</h2>
-              <p>2024-05-05</p>
+              <h2>{data?.name ?? '정보 없음'}</h2>
+              <p>{data?.createdAt ?? '날짜 없음'}</p>
             </TextBox>
           </Container>
           <div>
@@ -97,8 +108,8 @@ export const ClassEnvironment = () => {
             </BtnContainer>
           </Option>
           <TableBox>
-            <Tables edit={false} tableName="invest" />
-            <Tables edit={false} tableName="aritlcle" />
+            <StockTables isEdit={false} data={classData?.classItems ?? []} />
+            <ArticleTables isEdit={false} round={1} />
           </TableBox>
         </Content>
       </Wrapper>

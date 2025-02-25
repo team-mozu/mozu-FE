@@ -1,4 +1,3 @@
-import { Table, Tbody, Thead } from '../common/Tables';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 
@@ -199,4 +198,29 @@ const Td = styled.td<ITdProps>`
   font: ${(props) => props.font};
   border: 1px solid ${color.zinc[200]};
   width: ${(props) => props.width};
+`;
+
+const Thead = styled.thead`
+  > tr {
+    background-color: ${color.orange[50]};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+`;
+
+const Tbody = styled.tbody`
+  > tr {
+    width: 100%;
+    background-color: ${color.white};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+const Table = styled.table`
+  border-radius: 8px;
+  border-collapse: separate;
+  overflow: hidden;
 `;

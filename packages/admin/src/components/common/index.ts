@@ -1,1 +1,2 @@
-export * from './Tables';
+export * from './ArticleTables';
+export * from './StockTables';
