@@ -15,7 +15,6 @@ export const ArticleManagementAddPage = () => {
     setDatas((prev) => ({ ...prev, description: e.target.value }));
   };
 
-  console.log(datas)
 
   const apiData = articleManagementAdd();
   const addClick = () => {

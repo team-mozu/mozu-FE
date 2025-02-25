@@ -1,7 +1,10 @@
-import { Del, Edit, Button, Accounts } from '@mozu/ui';
+import { Del, Edit, Button, Accounts, StockNoLogo } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { stockManagementDetail } from '@/apis';
 
 interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
@@ -11,16 +14,83 @@ export const StockManagementDetail = ({
   onClick,
 }: IStockManagementDetailProps) => {
   const navigate = useNavigate();
+
+  const {id} = useParams();
+  const stockId = id? parseInt(id) : null;
+  
+  const [imgUrl, setImgUrl] = useState<string>('')
+   const [datas, setDatas] = useState<{
+      name: string,
+      info: string,
+      logo: File,
+      money: number,
+      debt: number,
+      capital: number,
+      profit: number,
+      profitOG: number,
+      profitBen: number,
+      netProfit: number,}>({
+        name: '',
+        info: '',
+        logo: null,
+        money: null,
+        debt: null,
+        capital: null,
+        profit: null,
+        profitOG: null,
+        profitBen: null,
+        netProfit: null,})
+
+        const {data: stockData, isLoading} = useQuery({
+          queryKey: ['stocks', stockId],
+          queryFn: () => stockManagementDetail(stockId),
+          enabled: !!stockId,
+        })
+    
+      useEffect(() => {
+        if(stockData?.data) {
+          setDatas({
+            name: stockData.data.name || '',
+            info: stockData.data.info || '',
+            logo: stockData.data.logo == "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg" ? null : stockData.data.logo, //사진 없을 시 기본 로고 띄우기 위해
+            money: stockData.data.money || null,
+            debt: stockData.data.debt || null,
+            capital: stockData.data.capital || null,
+            profit: stockData.data.profit || null,
+            profitOG: stockData.data.profitOG || null,
+            profitBen: stockData.data.profitBen || null,
+            netProfit: stockData.data.netProfit || null,
+          });
+        }
+      }, [stockData])
+
+  useEffect(() => {
+    if(datas.logo instanceof File) {
+      const img = URL.createObjectURL(datas.logo || '')
+      setImgUrl(img)
+
+      return () => URL.revokeObjectURL(img)
+    } else {
+      setImgUrl(datas.logo)
+    }
+  },[datas.logo])
+
+
   return (
     <Container>
       <UpperContainer>
         <div>
           <Logo>
-            <img src="" alt="로고" />
+            {imgUrl ? (
+              <LogoImg src={imgUrl} alt="로고" />
+            ) : (
+              <StockNoLogo/>
+            )
+          }
           </Logo>
           <Text>
-            <Title>삼성전자</Title>
-            <Number>005930</Number>
+            <Title>{datas.name}</Title>
+            <Number>{stockId}</Number>
           </Text>
         </div>
         <ButtonContainer>
@@ -40,7 +110,7 @@ export const StockManagementDetail = ({
             color={color.orange[500]}
             borderColor={color.orange[200]}
             hoverBackgroundColor={color.orange[100]}
-            onClick={() => navigate('1/edit')}
+            onClick={() => navigate(`/stock-management/${stockId}/edit`)}
           >
             수정하기
             <Edit size={20} color={color.orange[500]} />
@@ -52,8 +122,7 @@ export const StockManagementDetail = ({
           <Label>회사 정보</Label>
           <div>
             <p>
-              한국 및 DX부문 해외 9개 지역총괄과 DS부문 해외 5개 지역총괄, SDC,
-              Harman 등 229개의 종속기업으로 구성된 글로벌 전자기업이다.
+            {datas.info} 
             </p>
           </div>
         </CompanyInfo>
@@ -61,18 +130,18 @@ export const StockManagementDetail = ({
           <LeftSection>
             <Label>재무상태표</Label>
             <ContentWrapper>
-              <Accounts title={'부채'} content={'1,050,259억'} />
-              <Accounts title={'자본금'} content={'1,050,259억'} />
+              <Accounts title={'부채'} content={datas.debt}  />
+              <Accounts title={'자본금'} content={datas.capital} />
             </ContentWrapper>
           </LeftSection>
 
           <RightSection>
             <Label>손익계산서</Label>
             <ContentWrapper>
-              <Accounts title={'매출액'} content={'1,050,259억'} />
-              <Accounts title={'매출원가'} content={'1,050,259억'} />
-              <Accounts title={'매출이익'} content={'1,050,259억'} />
-              <Accounts title={'당기순이익'} content={'1,050,259억'} />
+              <Accounts title={'매출액'} content={datas.profit} />
+              <Accounts title={'매출원가'} content={datas.profitOG} />
+              <Accounts title={'매출이익'} content={datas.profitBen} />
+              <Accounts title={'당기순이익'} content={datas.netProfit} />
             </ContentWrapper>
           </RightSection>
         </CompanyMain>
@@ -81,6 +150,10 @@ export const StockManagementDetail = ({
   );
 };
 
+const LogoImg = styled.img `
+  width: 64px;
+  `
+
 const Container = styled.div`
   padding: 40px;
   width: 100%;
@@ -88,23 +161,28 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-`;
+  `;
 
 const UpperContainer = styled.div`
   & > div:first-of-type {
     display: flex;
     gap: 12px;
   }
-
+  
   display: flex;
   justify-content: space-between;
-`;
+  `;
 
 const Logo = styled.div`
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 64px;
   height: 64px;
   border-radius: 12px;
-  background: blue;
+  background: ${color.zinc[100]};
+  border: 1px solid ${color.zinc[200]};
 `;
 
 const Text = styled.div`
@@ -132,6 +210,7 @@ const ButtonContainer = styled.div`
 `;
 
 const UnderContainer = styled.div`
+  overflow: scroll;
   padding: 32px;
   background-color: ${color.white};
   width: 100%;
