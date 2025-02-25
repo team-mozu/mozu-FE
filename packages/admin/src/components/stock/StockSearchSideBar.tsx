@@ -3,9 +3,34 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { StockDiv } from './StockDiv';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { stockManagementList } from '@/apis';
 
 export const StockSearchSideBar = () => {
+  const [datas, setDatas] = useState<[{id: number, name: string}]>([])
+  
+  const {data: stockData, isLoading} = useQuery({
+    queryKey: ['stocks'],
+    queryFn: () => stockManagementList(),
+  })
+
+useEffect(() => {
+  if(stockData?.data.items) {
+    setDatas(
+      stockData.data.items.map((item) => ({
+        id: item.id,
+        name: item.name
+      }))
+    );
+  }
+}, [stockData])
+
   const navigate = useNavigate();
+
+  const stockDivClick = (id: number) => {
+    navigate(`/stock-management/${id}`)
+  }
   return (
     <SideBarContainer>
       <UpperWrapper>
@@ -15,13 +40,13 @@ export const StockSearchSideBar = () => {
         <SearchInput inputText="종목 검색.." />
       </UpperWrapper>
       <ArticleWrapper>
-        <StockDiv />
-        <StockDiv />
-        <StockDiv />
-        <StockDiv />
-        <StockDiv />
+        {datas.map((data) => (
+          <StockDiv name={data.name} number={data.id} onClick={(id) => stockDivClick(data.id)} key={data.id}/>
+        ))
+
+        }
       </ArticleWrapper>
-      <AddButton onClick={() => navigate('add')} text="종목 추가하기" />
+      <AddButton onClick={() => navigate('/stock-management/add')} text="종목 추가하기" />
     </SideBarContainer>
   );
 };
