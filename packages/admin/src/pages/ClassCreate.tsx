@@ -9,7 +9,7 @@ export const CreateClass = () => {
   const [prices, setPrices] = useState<string[]>(['1,000,000']);
   const navigate = useNavigate();
 
-  const priceChangeHandler = // 숫자를 변경해줌 11111 => 11,111
+  const priceChangeHandler =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
       const numericValue = Number(inputValue.replace(/,/g, ''));
@@ -79,7 +79,7 @@ export const CreateClass = () => {
         </TextField>
         <TableField>
           <StockTables isEdit={true} data={null} />
-          <ArticleTables isEdit={true} round={1} />
+          <ArticleTables isEdit={true} data={null} round={1} />
         </TableField>
       </Contents>
     </Container>

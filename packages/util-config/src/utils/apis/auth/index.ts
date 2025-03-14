@@ -2,23 +2,23 @@ import { instance } from '../axios';
 import { IRefreshResponse } from './types';
 import { removeCookies, setCookies } from '../../cookies';
 
-const API_PATH = '/user';
+const API_PATH = '/organ/token/re-issue';
 
 export const reIssueToken = async (refreshToken: string) => {
-  try {
-    const { data } = await instance.put<IRefreshResponse>(
-      `${API_PATH}/auth`,
-      null,
-      {
-        headers: { 'X-Refresh-Token': refreshToken },
+  const response = await instance.post<IRefreshResponse>(
+    `${API_PATH}`,
+    {
+      refreshToken: `Bearer ${refreshToken}`,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      withCredentials: true,
+    },
+  );
 
-    return data;
-  } catch (error) {
-    console.error('토큰 재발급 실패', error);
-    throw error;
-  }
+  return response.data;
 };
 
 export const setTokens = (accessToken: string, refreshToken: string) =>

@@ -3,13 +3,12 @@ import { EditDiv, Input, TextArea } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { ImgContainer } from '@/components';
-import { articleManagementDetail, articleManagementEdit } from '@/apis';
+import { useGetArticleDetail, useEditArticle } from '@/apis';
 import { useParams } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
 
 export const ArticleManagementEditPage = () => {
-  const {id} = useParams();
-  const articleId = id? parseInt(id) : null;
+  const { classId, id } = useParams();
+  const articleId = id ? parseInt(id) : null;
 
   const [datas, setDatas] = useState<{
     title: string;
@@ -17,27 +16,21 @@ export const ArticleManagementEditPage = () => {
     imgUrl: File;
   }>({
     title: '',
-    content:
-      '',
+    content: '',
     imgUrl: null,
   });
 
-  const {data: articleData, isLoading} = useQuery({
-    queryKey: ['article', articleId],
-    queryFn: () => articleManagementDetail(articleId),
-    enabled: !!articleId,
-  })
+  const { data: articleData, isLoading } = useGetArticleDetail(articleId);
 
   useEffect(() => {
-    if(articleData?.data) {
+    if (articleData?.data) {
       setDatas({
         title: articleData.data.title || '',
         content: articleData.data.description || '',
         imgUrl: articleData.data.image || null,
       });
     }
-  }, [articleData])
-
+  }, [articleData]);
 
   const titleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDatas((prev) => ({ ...prev, title: e.target.value }));
@@ -46,23 +39,24 @@ export const ArticleManagementEditPage = () => {
     setDatas((prev) => ({ ...prev, content: e.target.value }));
   };
 
-  const apiData = articleManagementEdit();
+  const apiData = useEditArticle();
 
   const saveClick = () => {
-      let imageFile = datas.imgUrl;
+    let imageFile = datas.imgUrl;
 
-      if(typeof datas.imgUrl === "string") {
-        imageFile = '';
-      } else if (datas.imgUrl instanceof File) {
-        imageFile = datas.imgUrl
-      }
+    if (typeof datas.imgUrl === 'string') {
+      imageFile = '';
+    } else if (datas.imgUrl instanceof File) {
+      imageFile = datas.imgUrl;
+    }
 
-      apiData.mutate({title: datas.title, description: datas.content, image: imageFile, articleId:articleId})
-    
-  }
-
-
-
+    apiData.mutate({
+      title: datas.title,
+      description: datas.content,
+      image: imageFile,
+      articleId: articleId,
+    });
+  };
 
   return (
     <AllContainer>
@@ -92,7 +86,17 @@ export const ArticleManagementEditPage = () => {
               value={datas.content}
               onChange={contentChange}
             />
-            <ImgContainer label="기사 이미지" img={datas.imgUrl && datas.imgUrl instanceof File ? URL.createObjectURL(datas.imgUrl) : datas.imgUrl} onImageChange={(newImgUrl) => setDatas((prev) => ({...prev, imgUrl: newImgUrl}))}/>
+            <ImgContainer
+              label="기사 이미지"
+              img={
+                datas.imgUrl && datas.imgUrl instanceof File
+                  ? URL.createObjectURL(datas.imgUrl)
+                  : datas.imgUrl
+              }
+              onImageChange={(newImgUrl) =>
+                setDatas((prev) => ({ ...prev, imgUrl: newImgUrl }))
+              }
+            />
           </InputContainer>
         </ContentContainer>
       </AddContainer>

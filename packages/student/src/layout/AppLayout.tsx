@@ -2,10 +2,17 @@ import { Header, HistorySidebar, ItemSidebar } from '@mozu/ui';
 import { Outlet, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { useGetClassItem } from '@/apis';
 
 export const AppLayout = () => {
   const [isResultPage, setIsResultPage] = useState<boolean>(false);
   const { pathname } = useLocation();
+  const { data: itemSideBarData } = useGetClassItem();
+
+  useEffect(() => {
+    console.log('itemSideBarData:', itemSideBarData ?? 0);
+  }, [itemSideBarData]);
+
   useEffect(() => {
     if (pathname === '/news') {
       setIsResultPage(false);
@@ -23,7 +30,9 @@ export const AppLayout = () => {
       <Layout>
         {!isResultPage && (
           <>
-            <ItemSidebar />
+            <ItemSidebar
+              classData={Array.isArray(itemSideBarData) ? itemSideBarData : []}
+            />
             <HistorySidebar />
           </>
         )}

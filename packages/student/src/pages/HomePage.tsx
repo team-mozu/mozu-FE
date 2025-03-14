@@ -6,11 +6,11 @@ export const HomePage = () => {
   return (
     <Wrapper>
       <TotalProperty
-        money="1,850,0000"
+        money="1,850,000"
         rate="+850,000원 (+85%)"
-        basicMoney="1,000,000원"
-        cash="500,000원"
-        stock="1,350,000원"
+        basicMoney="1,000,000"
+        cash="500,000"
+        stock="1,350,000"
       />
       <TableDiv>
         보유주식

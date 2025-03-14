@@ -1,8 +1,88 @@
 import { create } from 'zustand';
-import { classStore } from './type';
+import { devtools } from 'zustand/middleware';
+import { ClassData, ClassStock, ClassArticle } from './type';
 
-export const useClassStore = create<classStore>((set) => ({
-  classData: null,
-  setClassData: (data) => set({ classData: data }),
-  resetClassData: () => set({ classData: null }),
-}));
+type ClassStore = {
+  classData: ClassData | null;
+  updateStockItems: (items: ClassStock[]) => void;
+  updateArticles: (articles: ClassArticle[]) => void;
+  setClassData: (data: Partial<ClassData>) => void;
+  resetCheckedStates: () => void;
+  resetClassData: () => void;
+};
+
+export const useClassStore = create<ClassStore>()(
+  devtools(
+    (set) => ({
+      classData: {
+        id: 0,
+        name: '',
+        maxInvDeg: 0,
+        curInvDeg: null,
+        baseMoney: 0,
+        classNum: null,
+        progressYN: false,
+        starYN: false,
+        createdAt: '',
+        deleteYN: false,
+        classArticles: [],
+        classItems: [],
+      },
+      inviteCode: null,
+      updateStockItems: (items) =>
+        set(
+          (state) => ({
+            classData: state.classData
+              ? { ...state.classData, classItems: items }
+              : null,
+          }),
+          false,
+          'updateStockItems',
+        ),
+      updateArticles: (articles) =>
+        set(
+          (state) => ({
+            classData: state.classData
+              ? { ...state.classData, classArticles: articles }
+              : null,
+          }),
+          false,
+          'updateArticles',
+        ),
+      setClassData: (data) =>
+        set(
+          (state) => ({
+            classData: state.classData
+              ? { ...state.classData, ...data }
+              : (data as ClassData),
+          }),
+          false,
+          'setClassData',
+        ),
+
+      resetCheckedStates: () =>
+        set(
+          (state) => {
+            if (!state.classData) return state;
+            return {
+              classData: {
+                ...state.classData,
+                classItems: state.classData.classItems.map((item) => ({
+                  ...item,
+                  stockChecked: false,
+                })),
+                classArticles: state.classData.classArticles.map((article) => ({
+                  ...article,
+                  articleGroupChecked: false,
+                })),
+              },
+            };
+          },
+          false,
+          'resetCheckedStates',
+        ),
+      resetClassData: () => set({ classData: null }, false, 'resetClassData'),
+    }),
+    { name: 'class-store' },
+  ),
+);

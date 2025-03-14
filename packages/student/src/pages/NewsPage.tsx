@@ -20,6 +20,7 @@ export const NewsPage = () => {
           {datas.map((data) => {
             return (
               <NewsPost
+                imgUrl={data.imgUrl}
                 title={data.title}
                 content={data.content}
                 key={data.title}

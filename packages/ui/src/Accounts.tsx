@@ -3,7 +3,7 @@ import { color, font } from '@mozu/design-token';
 
 interface IAccountsType {
   title?: string;
-  content: string;
+  content: number | string;
 }
 
 export const Accounts = ({ title, content }: IAccountsType) => {

@@ -1,199 +1,165 @@
-import { stockManagementAdd } from '@/apis';
+import { useAddStock } from '@/apis';
 import { LogoUploader } from '@/components';
+import { useForm, usePriceFormatter } from '@/hooks';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { EditDiv, Input, TextArea } from '@mozu/ui';
-import { useState } from 'react';
+
+type FormState = {
+  name: string;
+  info: string;
+  logo: File | null;
+  money: string;
+  debt: string;
+  capital: string;
+  profit: string;
+  profitOG: string;
+  profitBen: string;
+  netProfit: string;
+};
 
 export const StockManagementAddPage = () => {
-  const [datas, setDatas] = useState<{
-    name: string,
-    info: string,
-    logo: File,
-    money: number,
-    debt: number,
-    capital: number,
-    profit: number,
-    profitOG: number,
-    profitBen: number,
-    netProfit: number,}>({
-      name: '',
-      info: '',
-      logo: null,
-      money: null,
-      debt: null,
-      capital: null,
-      profit: null,
-      profitOG: null,
-      profitBen: null,
-      netProfit: null,})
+  const { state, onChangeInputValue, setState } = useForm<FormState>({
+    name: '',
+    info: '',
+    logo: null,
+    money: '',
+    debt: '',
+    capital: '',
+    profit: '',
+    profitOG: '',
+    profitBen: '',
+    netProfit: '',
+  });
 
+  const { prices: formattedPrices, priceChangeHandler } = usePriceFormatter(
+    [
+      state.money,
+      state.debt,
+      state.capital,
+      state.profit,
+      state.profitOG,
+      state.profitBen,
+      state.netProfit,
+    ],
+    (index, value) => {
+      setState((prev) => {
+        const newState = { ...prev };
+        const keys = [
+          'money',
+          'debt',
+          'capital',
+          'profit',
+          'profitOG',
+          'profitBen',
+          'netProfit',
+        ];
+        newState[keys[index]] = value;
+        return newState;
+      });
+    },
+  );
 
-      const handleInputChange = (field: keyof StockData) => (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      ) => {
-        setDatas((prev) => ({ ...prev, [field]: e.target.value }));
-       };
+  const { mutate: apiData } = useAddStock();
 
-    //   const infoChange = (e: React.ChangeEvent<HTMLAreaElement>) => { //회사 정보
-    //     setDatas((prev) => ({ ...prev, info: e.target.value }));
-    //   };
+  const addClick = () => {
+    apiData({
+      name: state.name,
+      info: state.info,
+      logo: state.logo,
+      money: Number(state.money.replace(/,/g, '')),
+      debt: Number(state.debt.replace(/,/g, '')),
+      capital: Number(state.capital.replace(/,/g, '')),
+      profit: Number(state.profit.replace(/,/g, '')),
+      profitOG: Number(state.profitOG.replace(/,/g, '')),
+      profitBen: Number(state.profitBen.replace(/,/g, '')),
+      netProfit: Number(state.netProfit.replace(/,/g, '')),
+    });
+  };
 
-    //   const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => { //회사 이름
-    //     setDatas((prev) => ({ ...prev, name: e.target.value }));
-    //   };
-
-    // const moneyChange = (e: React.ChangeEvent<HTMLInputElement>) => { //자산
-    //   setDatas((prev) => ({ ...prev, money: e.target.value }));
-    // };
-
-    // const debtChange = (e: React.ChangeEvent<HTMLInputElement>) => { //부채
-    //   setDatas((prev) => ({ ...prev, debt: e.target.value }));
-    // };
-
-    // const capitalChange = (e: React.ChangeEvent<HTMLInputElement>) => { //자본금
-    //   setDatas((prev) => ({ ...prev, capital: e.target.value }));
-    // };
-
-    // const profitChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출액
-    //   setDatas((prev) => ({ ...prev, profit: e.target.value }));
-    // };
-
-    // const profitOGChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출 원가
-    //   setDatas((prev) => ({ ...prev, profitOG: e.target.value }));
-    // };
-
-    // const profitBenChange = (e: React.ChangeEvent<HTMLInputElement>) => { //매출 이익
-    //   setDatas((prev) => ({ ...prev, profitBen: e.target.value }));
-    // };
-
-    // const netProfitChange = (e: React.ChangeEvent<HTMLInputElement>) => { //당기순이익
-    //   setDatas((prev) => ({ ...prev, netProfit: e.target.value }));
-    // };
-
-    const apiData = stockManagementAdd();
-    const addClick = () => {
-      apiData.mutate({
-        name: datas.name,
-        info: datas.info,
-        logo: datas.logo,
-        money: datas.money,
-        debt: datas.debt,
-        capital: datas.capital,
-        profit: datas.profit,
-        profitOG: datas.profitOG,
-        profitBen: datas.profitBen,
-        netProfit: datas.netProfit,
-      })
-    }
-
-      
   return (
     <Container>
-      <EditDiv title={'종목 추가'} value1={'취소'} value2={'추가하기'} onClick={addClick}/>
+      <EditDiv
+        title={'종목 추가'}
+        value1={'취소'}
+        value2={'추가하기'}
+        onClick={addClick}
+      />
       <StockSetting>
         <InnerContainer>
           <div>
-            <LogoUploader img={datas.logo ? URL.createObjectURL(datas.logo) : ""} onImageChange={(file) => setDatas((prev) => ({...prev, logo: file}))}/>
+            <LogoUploader
+              img={state.logo ? URL.createObjectURL(state.logo) : ''}
+              onImageChange={(file) =>
+                setState((prev) => ({ ...prev, logo: file }))
+              }
+            />
           </div>
           <div>
             <Input
               label={'회사 이름'}
               placeholder={'종목 이름을 입력해 주세요..'}
               width={'480px'}
-              onChange={handleInputChange('name')}
-              value={datas.name}
+              name="name"
+              onChange={onChangeInputValue}
+              value={state.name}
             />
           </div>
           <div>
             <TextArea
               placeholder={'회사 정보를 입력해 주세요..'}
               label={'회사 정보'}
+              name="info"
               height={260}
-              onChange={handleInputChange('info')}
-              value={datas.info}
+              onChange={onChangeInputValue}
+              value={state.info}
             ></TextArea>
           </div>
         </InnerContainer>
         <InnerContainer>
           <p>재무상태표 ∙ 손익계산서</p>
-          <div>
-            <Input
-              label={'자산'}
-              placeholder={'자산 정보를 입력해 주세요.'}
-              type={'Number'}
-              width={'480px'}
-              text={'원'}
-              onChange={handleInputChange('money')}
-              value={datas.money}
-            />
-          </div>
-          <div>
-            <Input
-              label={'부채'}
-              placeholder={'부채 정보를 입력해 주세요.'}
-              type={'Number'}
-              width={'480px'}
-              text={'원'}
-              onChange={handleInputChange('debt')}
-              value={datas.debt}
-            />
-          </div>
-          <div>
-            <Input
-              label={'자본금'}
-              placeholder={'자본금 정보를 입력해 주세요.'}
-              type={'Number'}
-              width={'480px'}
-              text={'원'}
-              onChange={handleInputChange('capital')}
-              value={datas.capital}
-            />
-          </div>
-          <div>
-            <Input
-              label={'매출액'}
-              placeholder={'매출액 정보를 입력해 주세요.'}
-              type={'Number'}
-              width={'480px'}
-              text={'원'}
-              onChange={handleInputChange('profit')}
-              value={datas.profit}
-            />
-          </div>
-          <div>
-            <Input
-              label={'매출원가'}
-              placeholder={'매출원가 정보를 입력해 주세요.'}
-              type={'Number'}
-              width={'480px'}
-              text={'원'}
-              onChange={handleInputChange('profitOG')}
-              value={datas.profitOG}
-            />
-          </div>
-          <div>
-            <Input
-              label={'매출이익'}
-              placeholder={'매출이익 정보를 입력해 주세요.'}
-              type={'Number'}
-              width={'480px'}
-              text={'원'}
-              onChange={handleInputChange('profitBen')}
-              value={datas.profitBen}
-            />
-          </div>
-          <div>
-            <Input
-              label={'당기순이익'}
-              placeholder={'당기순이익 정보를 입력해 주세요.'}
-              type={'Number'}
-              width={'480px'}
-              text={'원'}
-              onChange={handleInputChange('netProfit')}
-              value={datas.netProfit}
-            />
-          </div>
+          {[
+            { label: '자산', name: 'money', value: formattedPrices[0] || '' },
+            { label: '부채', name: 'debt', value: formattedPrices[1] || '' },
+            {
+              label: '자본금',
+              name: 'capital',
+              value: formattedPrices[2] || '',
+            },
+            {
+              label: '매출액',
+              name: 'profit',
+              value: formattedPrices[3] || '',
+            },
+            {
+              label: '매출원가',
+              name: 'profitOG',
+              value: formattedPrices[4] || '',
+            },
+            {
+              label: '매출이익',
+              name: 'profitBen',
+              value: formattedPrices[5] || '',
+            },
+            {
+              label: '당기순이익',
+              name: 'netProfit',
+              value: formattedPrices[6] || '',
+            },
+          ].map((item, index) => (
+            <div key={item.name}>
+              <Input
+                label={item.label}
+                placeholder={`${item.label} 정보를 입력해 주세요.`}
+                type={'text'}
+                name={item.name}
+                width={'480px'}
+                text={'원'}
+                onChange={priceChangeHandler(index)}
+                value={item.value}
+              />
+            </div>
+          ))}
         </InnerContainer>
       </StockSetting>
     </Container>

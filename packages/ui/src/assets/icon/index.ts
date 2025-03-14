@@ -1,8 +1,8 @@
 import noImgIcon from './noImgIcon.svg';
 
 export { noImgIcon };
-export * from './NoNewsImg'
-export * from './StockNoLogo'
+export * from './NoNewsImg';
+export * from './StockNoLogo';
 export * from './Del';
 export * from './Edit';
 export * from './Plus';
@@ -30,3 +30,4 @@ export * from './LogOut';
 export * from './Trophy';
 export * from './HandCoins';
 export * from './ArrowRight';
+export * from './Users';

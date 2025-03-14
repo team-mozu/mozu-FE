@@ -14,18 +14,45 @@ import {
   TextField,
 } from './ClassCreate';
 import { color } from '@mozu/design-token';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { ArticleTables, StockTables } from '@/components';
 import { useGetClassDetail } from '@/apis';
+import { useClassStore } from '@/store';
 
 export const ClassEdit = () => {
   const navigate = useNavigate();
   const [prices, setPrices] = useState<string[]>(['1,000,000']);
-  const { classId } = useParams();
-  const { data } = useGetClassDetail(classId);
+  const { classId, id } = useParams();
+  const articleId = id ? parseInt(id) : null;
+  const { data } = useGetClassDetail(articleId);
+  const { classData, setClassData } = useClassStore();
 
-  const priceChangeHandler = // 숫자를 변경해줌 11111 => 11,111
+  useEffect(() => {
+    if (data) {
+      const safeData = {
+        ...data,
+        classItems:
+          data.classItems?.map((item) => ({
+            ...item,
+            stockChecked: false,
+          })) ?? [],
+        classArticles:
+          data.classArticles?.map((article) => ({
+            ...article,
+            articleGroupChecked: false,
+            articles:
+              article.articles?.map((a) => ({
+                ...a,
+                articleChecked: false,
+              })) ?? [],
+          })) ?? [],
+      };
+      setClassData(safeData);
+    }
+  }, [data]);
+
+  const priceChangeHandler =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
       const numericValue = Number(inputValue.replace(/,/g, ''));
@@ -97,8 +124,12 @@ export const ClassEdit = () => {
           </AssetBox>
         </TextField>
         <TableField>
-          <StockTables isEdit={true} data={null} />
-          <ArticleTables isEdit={true} round={1} />
+          <StockTables isEdit={true} data={classData?.classItems ?? []} />
+          <ArticleTables
+            isEdit={true}
+            data={classData?.classArticles ?? []}
+            round={1}
+          />
         </TableField>
       </Contents>
     </Container>

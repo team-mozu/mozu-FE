@@ -2,109 +2,145 @@ import {
   ColumnDef,
   useReactTable,
   getCoreRowModel,
-  Row,
   flexRender,
 } from '@tanstack/react-table';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Button, CheckBox, Select, Plus } from '@mozu/ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AddArticleItemModal } from '../article';
+import { useClassStore } from '@/store';
 
-interface tableData {
-  article: string;
-  checked: boolean;
+interface Article {
+  id: number;
+  title: string;
+  checked?: boolean;
+}
+
+interface ClassArticle {
+  invDeg: number;
+  articles: Article[];
+  checked?: boolean;
 }
 
 interface IPropType {
+  data?: ClassArticle[];
   isEdit: boolean;
   round: number;
 }
 
-export const ArticleTables = ({ isEdit, round }: IPropType) => {
-  const [data, setData] = useState<tableData[]>([
-    { article: '안녕하세요', checked: false },
-    { article: '반갑습니다', checked: false },
-    { article: '반갑습니다', checked: false },
-    { article: '반갑습니다', checked: false },
-    { article: '반갑습니다', checked: false },
-  ]);
+export const ArticleTables = ({ data = [], isEdit, round }: IPropType) => {
+  const [tableData, setTableData] = useState<ClassArticle[]>([]);
   const [isModal, setIsModal] = useState<boolean>(false);
-
-  const hasCheckedItems = data.some((row) => row.checked);
+  const { classData, setClassData, updateArticles } = useClassStore();
 
   const toggleAll = () => {
-    const allChecked = data.every((row) => row.checked);
-    setData((prevData) =>
-      prevData.map((row) => ({ ...row, checked: !allChecked })),
+    if (!classData) return;
+
+    const allChecked = classData.classArticles.every(
+      (row) => row.articleGroupChecked,
     );
+    const updatedData = classData.classArticles.map((row) => ({
+      ...row,
+      articleGroupChecked: !allChecked,
+    }));
+    updateArticles(updatedData);
   };
 
-  const toggleRow = (index: number) => {
-    setData((prevData) => {
-      const newData = [...prevData];
-      newData[index].checked = !newData[index].checked;
-      return newData;
-    });
+  const toggleArticleRow = (index: number) => {
+    if (!classData) return;
+
+    const newArticles = [...classData.classArticles];
+    newArticles[index].articleGroupChecked =
+      !newArticles[index].articleGroupChecked;
+    updateArticles(newArticles);
   };
+
+  const hasCheckedItems = (classData?.classArticles ?? []).some(
+    (row) => row.articleGroupChecked,
+  );
 
   const handleDeleteChecked = () => {
-    setData((prevData) => {
-      const newData = prevData.filter((row) => !row.checked);
-
-      if (newData.length > 0 && !newData.some((row) => row.checked)) {
-        return newData;
-      }
-
-      return newData;
-    });
+    setTableData((prevData) => prevData?.filter((row) => !row.checked) ?? []);
   };
 
-  const columns: ColumnDef<tableData>[] = [
+  useEffect(() => {
+    if (data) {
+      const formattedData = data.map((item) => ({
+        ...item,
+        invDeg: item.invDeg ?? 0,
+        checked: item.articles?.some((article) => article.checked) ?? false,
+      }));
+      setTableData(formattedData);
+    } else {
+      setTableData([]);
+    }
+  }, [data]);
+
+  const columns: ColumnDef<ClassArticle>[] = [
     ...(isEdit
       ? [
           {
-            accessorKey: 'checked',
+            accessorKey: 'articleGroupChecked',
             header: () => (
               <CheckBox
                 onChange={toggleAll}
-                checked={data.length > 0 && data.every((row) => row.checked)}
-                id="header-checkbox"
+                checked={classData.classArticles.every(
+                  (row) => row.articleGroupChecked,
+                )}
+                id={`article-header-checkbox`}
               />
             ),
-            cell: ({ row }: { row: Row<tableData> }) => (
+            cell: ({ row }) => (
               <CheckBox
-                checked={row.original.checked}
-                onChange={() => toggleRow(row.index)}
-                id={`row-checkbox-${row.index}`}
+                checked={row.original.articleGroupChecked}
+                onChange={() => toggleArticleRow(row.index)}
+                id={`article-row-${row.original.id}`}
               />
             ),
             size: 52,
           },
         ]
       : []),
-    { accessorKey: 'article', header: '기사 제목', size: 1460 },
+    {
+      accessorKey: 'articles',
+      header: '기사 제목',
+      cell: ({ row }) =>
+        row.original.articles?.map((a) => a.title).join(', ') ?? '',
+      size: 1460,
+    },
   ];
 
   const table = useReactTable({
-    data,
+    data: classData.classArticles,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-  const isOpen = () => {
-    setIsModal(true);
-  };
 
+  const isOpen = () => setIsModal(true);
   const isClose = () => {
     setIsModal(false);
+    setClassData({
+      ...classData,
+      classItems: classData.classItems.map((item) => ({
+        ...item,
+        checked: false,
+      })),
+      classArticles: classData.classArticles.map((article) => ({
+        ...article,
+        checked: false,
+        articles: article.articles.map((a) => ({ ...a, checked: false })),
+      })),
+    });
   };
+
   return (
     <Table>
       {isModal && <AddArticleItemModal close={isClose} />}
       <Caption>
         <CaptionBox>
           <Text>기사 목록</Text>
-          {isEdit ? (
+          {isEdit && (
             <Option>
               <SelectBox>
                 <Select
@@ -126,8 +162,6 @@ export const ArticleTables = ({ isEdit, round }: IPropType) => {
                 </Button>
               </div>
             </Option>
-          ) : (
-            []
           )}
         </CaptionBox>
       </Caption>
@@ -146,9 +180,10 @@ export const ArticleTables = ({ isEdit, round }: IPropType) => {
               >
                 {header.isPlaceholder
                   ? null
-                  : typeof header.column.columnDef.header === 'function'
-                    ? header.column.columnDef.header(header.getContext())
-                    : header.column.columnDef.header}
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
               </Th>
             ))}
           </tr>
@@ -165,17 +200,15 @@ export const ArticleTables = ({ isEdit, round }: IPropType) => {
             ))}
           </tr>
         ))}
-        {isEdit ? (
+        {isEdit && (
           <tr>
-            <PlusTd colSpan={9} width="1510" onClick={isOpen}>
+            <PlusTd colSpan={columns.length} onClick={isOpen}>
               <PlusField>
                 <Plus size={20} color="black" />
                 추가하기
               </PlusField>
             </PlusTd>
           </tr>
-        ) : (
-          []
         )}
       </tbody>
     </Table>
@@ -192,7 +225,7 @@ const Table = styled.table`
 `;
 
 const Th = styled.th`
-  font: ${font.b1};
+  font: ${font.t2};
   height: 48px;
   background: ${color.orange[50]};
   border-bottom: 1px solid ${color.zinc[200]};
@@ -215,7 +248,7 @@ const Th = styled.th`
 
 const Td = styled.td`
   height: 48px;
-  font: ${font.b2};
+  font: ${font.t4};
   border-bottom: 1px solid ${color.zinc[200]};
   border: 1px solid ${color.zinc[200]};
   padding: 16px 14px;
@@ -245,6 +278,7 @@ const Caption = styled.caption`
 
 const Text = styled.div`
   padding-top: 20px;
+  font: ${font.t2};
 `;
 
 const SelectBox = styled.div`

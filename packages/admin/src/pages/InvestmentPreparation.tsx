@@ -1,36 +1,66 @@
-import { Button, WarningMsg } from '@mozu/ui';
+import { Button, WarningMsg, Toast } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { ParticipationContainer } from '@/components';
-
-const datas = [
-  {
-    code: 587701,
-  },
-  {
-    usedDate: '10일 전',
-  },
-  {
-    teams: [
-      { title: '대마고 화이팅', school: '대덕소프트웨어마이스터고등학교' },
-      { title: '동욱쌤 제자들', school: '대덕소프트웨어마이스터고등학교' },
-    ],
-  },
-];
+import { useSSE } from '@/hooks';
+import { useState } from 'react';
+import { useGetClassDetail, useNextDegree } from '@/apis';
 
 export const InvestmentPreparation = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const classId = id ? parseInt(id) : null;
+  const { data: classNameData } = useGetClassDetail(classId);
+  const [inviteCode, setInviteCode] = useState(
+    () => localStorage.getItem('inviteCode') || '로딩중...',
+  );
+  const [datas, setDatas] = useState({ teams: [] });
+  const { mutate } = useNextDegree(classId);
+
+  useSSE(
+    `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
+    (data) => {
+      Toast(`${data.message}`, { type: 'success' });
+    },
+    (error) => {
+      console.log(error);
+      Toast(`SSE 에러 발생: ${error.message}`, { type: 'error' });
+    },
+    {
+      TEAM_PART_IN: (teamData) => {
+        setDatas((prev) => {
+          const updatedData = {
+            ...prev,
+            teams: [
+              ...(prev?.teams || []),
+              { title: teamData.teamName, school: teamData.schoolName },
+            ],
+          };
+          console.log('업데이트된 데이터:', updatedData);
+          return updatedData;
+        });
+        Toast('새로운 팀이 참가했습니다', { type: 'success' });
+      },
+      TEAM_INV_END: (data) => {
+        Toast('팀 투자가 종료되었습니다', { type: 'info' });
+      },
+      CLASS_NEXT_INV_START: (data) => {
+        Toast('다음 투자가 시작되었습니다', { type: 'info' });
+      },
+    },
+  );
+
   return (
     <InvestmentPreparationContainer>
       <ContentContainer>
         <TitleContainer>
           <Title>모의투자 준비</Title>
-          <UsedDate>2024년도 모의투자 | {datas[1].usedDate} 사용</UsedDate>
+          <UsedDate>{classNameData?.name ?? '로딩중...'}</UsedDate>
         </TitleContainer>
         <ParticipationContainer
-          code={datas[0].code}
-          teamDatas={datas[2].teams}
+          code={inviteCode ?? '로딩중...'}
+          teamDatas={datas.teams}
         />
         <WarningMsg message="모의투자를 시작하면 중도참여가 불가능해요." />
         <BtnContainer>
@@ -41,7 +71,9 @@ export const InvestmentPreparation = () => {
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             type="cancelImg"
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              navigate(-1);
+            }}
             iconSize={24}
             iconColor={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
@@ -54,8 +86,9 @@ export const InvestmentPreparation = () => {
             borderColor={color.orange[500]}
             color={color.white}
             hoverBackgroundColor={color.orange[600]}
+            onClick={mutate}
           >
-            진행하기 ({datas[2].teams.length})
+            진행하기 ({datas.teams.length ?? 0})
           </Button>
         </BtnContainer>
       </ContentContainer>

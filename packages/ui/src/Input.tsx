@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Eye, EyeOff } from './assets';
@@ -9,9 +9,13 @@ interface IInputType {
   type?: string;
   width?: string;
   text?: string;
-  value?: string;
+  maxLength?: number;
+  value?: string | number;
   name?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  max?: number;
+  passwordVisible?: boolean;
+  setPasswordVisible?: (visible: boolean) => void;
 }
 
 export const Input = ({
@@ -22,14 +26,12 @@ export const Input = ({
   text,
   value,
   name,
+  maxLength,
   onChange,
+  max,
+  passwordVisible,
+  setPasswordVisible,
 }: IInputType) => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
   const inputType = type === 'password' && passwordVisible ? 'text' : type;
 
   return (
@@ -42,10 +44,12 @@ export const Input = ({
           width={width}
           name={name}
           value={value}
+          maxLength={type !== 'number' ? maxLength : undefined}
+          max={type === 'number' ? max : undefined}
           onChange={onChange}
         />
-        {type === 'password' && (
-          <PasswordToggle onClick={togglePasswordVisibility}>
+        {type === 'password' && setPasswordVisible && (
+          <PasswordToggle onClick={() => setPasswordVisible(!passwordVisible)}>
             {passwordVisible ? (
               <Eye size={24} color={color.black} />
             ) : (
@@ -53,7 +57,7 @@ export const Input = ({
             )}
           </PasswordToggle>
         )}
-        {text && <Text>{text}</Text>} {/* 텍스트가 있으면 오른쪽에 표시 */}
+        {text && <Text>{text}</Text>}
       </InputWrapper>
     </InputContainer>
   );
@@ -85,7 +89,7 @@ const InputContent = styled.input<{ width?: string }>`
   border: 1px solid ${color.zinc[200]};
   border-radius: 8px;
   padding-left: 16px;
-  padding-right: 40px; /* 아이콘 공간 확보 */
+  padding-right: 40px;
   color: ${color.black};
   font: ${font.b2};
   :focus {

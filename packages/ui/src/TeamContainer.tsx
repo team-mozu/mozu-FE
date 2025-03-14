@@ -4,7 +4,7 @@ import { Dot } from './assets';
 
 interface ITeamType {
   title: string;
-  school: { title: string; school: string }[];
+  school: string;
 }
 
 export const TeamContainer = ({ title, school }: ITeamType) => {

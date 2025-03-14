@@ -22,6 +22,7 @@ export const CheckBox = ({ onChange, checked, id }: IProps) => {
         onChange={onChange}
         id={id}
       />
+
       <label htmlFor={id}>
         <CheckBoxLabel
           borderColor={checked ? color.orange[500] : color.zinc[500]}
@@ -38,6 +39,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const CheckBoxLabel = styled.div<ICheckType>`
@@ -50,7 +52,7 @@ const CheckBoxLabel = styled.div<ICheckType>`
   justify-content: center;
   align-item: center;
   line-height: 20px;
-  
+
 `;
 
 const CheckBoxInput = styled.input`

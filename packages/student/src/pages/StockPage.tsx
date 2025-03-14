@@ -33,7 +33,6 @@ export const StockPage = () => {
   const componentRoute = (currentPath: string): ReactNode => {
     if (currentPath.includes('/price-info')) return <StockGraph />;
     if (currentPath.includes('/stock-info')) return <StockInfo />;
-    if (currentPath.includes('/news')) return <News />;
     return <p>404</p>;
   };
 

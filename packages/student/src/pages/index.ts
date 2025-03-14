@@ -5,3 +5,4 @@ export * from './NewsPage';
 export * from './ResultPage';
 export * from './NewsDetailPage';
 export * from './StockPage';
+export * from './StudentWaitPage';

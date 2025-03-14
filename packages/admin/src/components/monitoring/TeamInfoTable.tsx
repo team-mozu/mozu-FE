@@ -6,6 +6,7 @@ interface IThProps {
   justify: string;
   padding: string;
 }
+
 interface ITdProps {
   width: string;
   align: string;

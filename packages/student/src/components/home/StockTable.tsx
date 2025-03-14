@@ -18,19 +18,27 @@ interface StockData {
 const data: StockData[] = [
   {
     name: '삼성전자',
-    tradePrice: '53,800원',
+    tradePrice: '55,300원',
     quantity: '10',
-    tradeAmount: '538,000원',
-    currentPrice: '51,100원',
-    profit: '51,100원\n-27,000원 (-5.02%)',
+    tradeAmount: '553,000원',
+    currentPrice: '53,700원',
+    profit: '41,100원\n-13,400원 (-5.02%)',
   },
   {
     name: 'LG전자',
-    tradePrice: '85,600원',
+    tradePrice: '30,200원',
     quantity: '3',
-    tradeAmount: '256,800원',
-    currentPrice: '85,800원',
-    profit: '51,100원\n+600원 (+0.23%)',
+    tradeAmount: '97,800원',
+    currentPrice: '32,200원',
+    profit: '21,100원\n+600원 (+0.23%)',
+  },
+  {
+    name: '포스코홀딩스',
+    tradePrice: '165,600원',
+    quantity: '5',
+    tradeAmount: '828,000원',
+    currentPrice: '150,600원',
+    profit: '36,100원\n-3600원 (-4.23%)',
   },
 ];
 
@@ -46,14 +54,13 @@ const columns: ColumnDef<StockData>[] = [
     size: 200,
     cell: ({ row }) => {
       const profitText = row.getValue('profit') as string;
-      const [currentPrice, profit] = profitText.split('\n'); // 줄바꿈 기준으로 분리
+      const [currentPrice, profit] = profitText.split('\n');
       const isProfit = profit.includes('+');
 
       return (
         <RateWrapper>
-          <span>{currentPrice}</span> {/* 현재가는 기본 색 */}
+          <span>{currentPrice}</span>
           <ProfitSpan isProfit={isProfit}>{profit}</ProfitSpan>{' '}
-          {/* 수익 부분만 색 적용 */}
         </RateWrapper>
       );
     },

@@ -44,10 +44,10 @@ export const StockGraph = () => {
   const [shouldAnimate, setShouldAnimate] = useState<boolean>(true);
 
   useEffect(() => {
-    setTimeout(() => setShouldAnimate(false), 500); // 애니메이션이 실행된 후 비활성화
+    setTimeout(() => setShouldAnimate(false), 500);
   }, []);
 
-  const generateRandomOffset = () => Math.floor(Math.random() * 1500) - 750; // -750 ~ +750 범위 난수
+  const generateRandomOffset = () => Math.floor(Math.random() * 1500) - 750;
 
   const generateDataWithFluctuation = (baseData: typeof data) => {
     const newData = [];

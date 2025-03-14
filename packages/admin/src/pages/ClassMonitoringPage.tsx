@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { ArticleInfoModal, Button, ClassInfoModal } from '@mozu/ui';
+import { ArticleInfoModal, Button, ClassInfoModal, Toast } from '@mozu/ui';
 import { useNavigate } from 'react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TeamCurrentModal, TeamInfoTable } from '@/components';
 
 export const ClassMonitoringPage = () => {
@@ -10,6 +10,8 @@ export const ClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [isOpenTeam, setIsOpenTeam] = useState<boolean>(false);
+
+  useEffect(() => {}, []);
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
@@ -40,7 +42,7 @@ export const ClassMonitoringPage = () => {
       <Header>
         <TitleContainer>
           <Title>모의투자 현황</Title>
-          <SubTitle>2024년도 모의투자 | 10일 전 사용</SubTitle>
+          <SubTitle>2024년도 모의투자</SubTitle>
         </TitleContainer>
         <ButtonContainer>
           <Button

@@ -5,10 +5,10 @@ import { Imglogo, Button } from '@mozu/ui';
 
 interface ILogoType {
   img?: string;
-  onImageChange?: (file: File | null) => void
+  onImageChange?: (file: File | null) => void;
 }
 
-export const LogoUploader = ({img, onImageChange}: ILogoType) => {
+export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
   const [logo, setLogo] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -18,7 +18,7 @@ export const LogoUploader = ({img, onImageChange}: ILogoType) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogo(reader.result as string);
-        onImageChange?.(file)
+        onImageChange?.(file);
       };
       reader.readAsDataURL(file);
     }
@@ -34,20 +34,20 @@ export const LogoUploader = ({img, onImageChange}: ILogoType) => {
 
   useEffect(() => {
     let objectUrl: string;
-      if(img) {
-        if (typeof img === 'string') {
-          setLogo(img);
-        } else if (img instanceof File) {
-          objectUrl = URL.createObjectURL(img)
-          setLogo(objectUrl);
-        }
+    if (img) {
+      if (typeof img === 'string') {
+        setLogo(img);
+      } else if (img instanceof File) {
+        objectUrl = URL.createObjectURL(img);
+        setLogo(objectUrl);
       }
-      return () => {
-        if (objectUrl) {
-          URL.revokeObjectURL(objectUrl)
-        }
+    }
+    return () => {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
       }
-    }, [img]);
+    };
+  }, [img]);
 
   return (
     <Container>
@@ -112,7 +112,7 @@ const Container = styled.div`
 `;
 
 const LogoContainer = styled.div`
-overflow: hidden;
+  overflow: hidden;
   width: 128px;
   height: 128px;
   background-color: ${color.zinc[50]};

@@ -12,6 +12,7 @@ export const Header = ({ isAdmin }: IHeaderType) => {
   const [isNavHome, setIsNavHome] = useState<boolean>(false);
   const [isNavNews, setIsNavNews] = useState<boolean>(false);
   const [isResultPage, setIsResultPage] = useState<boolean>(false);
+  const [isWaitPage, setIsWaitPage] = useState<boolean>(false);
 
   const { pathname } = useLocation();
 
@@ -20,17 +21,26 @@ export const Header = ({ isAdmin }: IHeaderType) => {
       setIsNavHome(false);
       setIsNavNews(true);
       setIsResultPage(false);
+      setIsWaitPage(false);
     } else if (pathname.includes('/home')) {
       setIsNavHome(true);
       setIsNavNews(false);
       setIsResultPage(false);
+      setIsWaitPage(false);
     } else if (pathname === '/result') {
       setIsNavHome(false);
       setIsNavNews(false);
       setIsResultPage(true);
+      setIsWaitPage(false);
+    } else if (pathname === 'signin/wait') {
+      setIsWaitPage(true);
+      setIsNavHome(false);
+      setIsNavNews(false);
+      setIsResultPage(false);
     } else {
       setIsNavHome(false);
       setIsNavNews(false);
+      setIsWaitPage(false);
       setIsResultPage(false);
     }
   }, [pathname]);
@@ -52,7 +62,7 @@ export const Header = ({ isAdmin }: IHeaderType) => {
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>
-      {!isAdmin && !isResultPage && (
+      {!isAdmin && !isResultPage && isWaitPage && (
         <NavContainer>
           <Nav onClick={() => navegate('/home')} isColor={isNavHome}>
             홈
@@ -62,7 +72,7 @@ export const Header = ({ isAdmin }: IHeaderType) => {
           </Nav>
         </NavContainer>
       )}
-      {!isAdmin && !isResultPage && (
+      {!isAdmin && !isResultPage && isWaitPage && (
         <InvestmentRoundContainer>
           <InvestmentRoundContent>
             {datas.investmentRound}차 투자
@@ -70,6 +80,7 @@ export const Header = ({ isAdmin }: IHeaderType) => {
           <InvestmentRoundExplane>진행중</InvestmentRoundExplane>
         </InvestmentRoundContainer>
       )}
+      {isWaitPage && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
       {isAdmin && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
       {isResultPage && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
     </HeaderContainer>
@@ -128,7 +139,7 @@ const MozuTitle = styled.div`
 `;
 
 const SchoolTag = styled.div`
-  font: ${font.l2};
+  font: ${font.t4};
   color: ${color.zinc[500]};
 `;
 

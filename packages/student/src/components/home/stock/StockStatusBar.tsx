@@ -7,7 +7,7 @@ export const StockStatusBar = ({
 }: {
   openModal: (type: '매수' | '매도') => void;
 }) => {
-  const rate = '-600원 (-1.1%)';
+  const rate = '-1200원 (-1.12%)';
   return (
     <Wrapper>
       <Stock>

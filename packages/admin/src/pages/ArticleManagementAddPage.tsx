@@ -2,46 +2,64 @@ import { color } from '@mozu/design-token';
 import { EditDiv, Input, TextArea } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { ImgContainer } from '@/components';
-import { useState } from 'react';
-import { articleManagementAdd } from '@/apis';
+import { useAddArticle } from '@/apis';
+import { useForm } from '@/hooks';
+
+type FormState = {
+  title: string;
+  description: string;
+  image?: File | '';
+};
 
 export const ArticleManagementAddPage = () => {
-  const [datas, setDatas] = useState<{title: string,description: string, image: File}>({title: '', description: '', image: null});
+  const { state, onChangeInputValue, setState } = useForm<FormState>({
+    title: '',
+    description: '',
+    image: '',
+  });
 
-  const titleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDatas((prev) => ({ ...prev, title: e.target.value }));
-  };
-  const contentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDatas((prev) => ({ ...prev, description: e.target.value }));
-  };
-
-
-  const apiData = articleManagementAdd();
+  const apiData = useAddArticle();
   const addClick = () => {
-    apiData.mutate({title: datas.title, description: datas.description, image: datas.image})
-  }
-
+    apiData.mutate({
+      title: state.title,
+      description: state.description,
+      image: state.image,
+    });
+  };
 
   return (
     <AllContainer>
       <AddContainer>
-        <EditDiv value1="취소" value2="추가하기" title="기사 추가" onClick={addClick}/>
+        <EditDiv
+          value1="취소"
+          value2="추가하기"
+          title="기사 추가"
+          onClick={addClick}
+        />
         <ContentContainer>
           <InputContainer>
             <Input
-              value={datas.title}
-              onChange={titleChange}
+              value={state.title}
+              name="title"
+              onChange={onChangeInputValue}
               placeholder="기사 제목을 입력해 주세요.."
               label="기사 제목"
             />
             <TextArea
-             value={datas.description}
-             onChange={contentChange}
+              value={state.description}
+              name="description"
+              onChange={onChangeInputValue}
               placeholder="기사 내용을 입력해 주세요.."
               label="기사 내용"
               height={480}
             />
-            <ImgContainer label="기사 이미지" img={datas.image ? URL.createObjectURL(datas.image) : ""} onImageChange={(file) => setDatas((prev) => ({...prev, image: file}))}/>
+            <ImgContainer
+              label="기사 이미지"
+              img={state.image ? URL.createObjectURL(state.image) : ''}
+              onImageChange={(file) =>
+                setState((prev) => ({ ...prev, image: file }))
+              }
+            />
           </InputContainer>
         </ContentContainer>
       </AddContainer>

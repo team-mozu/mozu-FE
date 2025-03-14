@@ -1,22 +1,24 @@
 import { useState } from 'react';
 
-export const usePriceFormatter = (initialPrices: string[] = []) => {
-  const [prices, setPrices] = useState<string[]>(initialPrices);
+export const usePriceFormatter = (
+  initialPrices: string[] = [],
+  onChange: (index: number, value: string) => void,
+) => {
+  const [prices, setPrices] = useState(initialPrices);
 
   const priceChangeHandler =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = e.target.value;
-      const numericValue = Number(inputValue.replace(/,/g, ''));
+      const inputValue = e.target.value.replace(/[^0-9]/g, '');
+      const formattedPrice = inputValue
+        ? Number(inputValue).toLocaleString('ko-KR')
+        : '';
+
       const newPrices = [...prices];
+      newPrices[index] = formattedPrice; // 새로운 값 반영
+      setPrices(newPrices); // 상태 업데이트
 
-      if (isNaN(numericValue) || inputValue === '') {
-        newPrices[index] = '';
-      } else {
-        newPrices[index] = numericValue.toLocaleString('ko-KR');
-      }
-
-      setPrices(newPrices);
+      onChange(index, inputValue); // 원본 값 업데이트
     };
 
-  return { prices, setPrices, priceChangeHandler };
+  return { prices, priceChangeHandler };
 };

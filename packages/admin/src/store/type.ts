@@ -1,29 +1,39 @@
-export type classArticle = {
-  invDeg: number;
-  articles: number[];
+export type Article = {
+  id: number;
+  title: string;
+  articleChecked?: boolean;
 };
 
-export type classItem = {
+export type ClassStock = {
   itemId: number;
-  money: number[];
+  itemName?: string;
+  money?: number[];
+  currentPrice?: number;
+  level1?: number;
+  level2?: number;
+  level3?: number;
+  level4?: number;
+  level5?: number;
+  stockChecked?: boolean;
 };
 
-export type classData = {
+export type ClassArticle = {
+  invDeg: number;
+  articles: Article[];
+  articleGroupChecked?: boolean;
+};
+
+export type ClassData = {
   id: number;
   name: string;
   maxInvDeg: number;
   curInvDeg: number | null;
-  baseMoney: string;
+  baseMoney: number;
   classNum: number | null;
+  progressYN: boolean;
   starYN: boolean;
   createdAt: string;
   deleteYN: boolean;
-  classArticles: classArticle[];
-  classItems: classItem[];
-};
-
-export type classStore = {
-  classData: classData | null;
-  setClassData: (data: classData) => void;
-  resetClassData: () => void;
+  classArticles: ClassArticle[];
+  classItems: ClassStock[];
 };

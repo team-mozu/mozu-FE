@@ -15,9 +15,10 @@ export type ClassDetailResponse = {
   id: number;
   name: string;
   maxInvDeg: number;
-  curInvDeg: null | number;
-  baseMoney: string;
-  classNum: null;
+  curInvDeg: number | null;
+  baseMoney: number;
+  classNum: number | null;
+  progressYN: boolean;
   starYN: boolean;
   createdAt: string;
   deleteYN: boolean;
@@ -27,12 +28,18 @@ export type ClassDetailResponse = {
 
 export type ClassArticle = {
   invDeg: number;
-  articles: number[];
+  articles: Article[];
 };
 
 export type ClassStock = {
   itemId: number;
+  itemName: string;
   money: number[];
+};
+
+export type Article = {
+  id: number;
+  title: string;
 };
 
 // class/create

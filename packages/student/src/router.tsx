@@ -6,12 +6,13 @@ import {
   StockPage,
   ResultPage,
   NewsDetailPage,
+  StudentWaitPage,
 } from '@/pages';
 import { AppLayout } from '@/layout';
 
 export const Router = createBrowserRouter([
   {
-    path: '/',
+    path: '/:id',
     element: <AppLayout />,
     children: [
       {
@@ -28,7 +29,6 @@ export const Router = createBrowserRouter([
               { index: true, element: <Navigate to="price-info" replace /> },
               { path: 'price-info', element: <StockPage /> },
               { path: 'stock-info', element: <StockPage /> },
-              { path: 'news', element: <StockPage /> },
             ],
           },
         ],
@@ -48,7 +48,16 @@ export const Router = createBrowserRouter([
   },
   {
     path: 'signin',
-    element: <SignInPage />,
+    children: [
+      {
+        index: true,
+        element: <SignInPage />,
+      },
+      {
+        path: 'wait',
+        element: <StudentWaitPage />,
+      },
+    ],
   },
   {
     path: '*', // 404 페이지

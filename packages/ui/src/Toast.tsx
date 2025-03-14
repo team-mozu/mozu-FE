@@ -12,6 +12,8 @@ export const Toast = (message: string, { type }: IToastProps) => {
     style: {
       ...ToastType[type].style,
       color: color.white,
+      fontWeight: 500,
+      lineHeight: 1.5
     },
     transition: Flip,
     icon: ToastType[type].icon,
@@ -29,7 +31,7 @@ const ToastType = {
     style: {
       backgroundColor: color.red[500],
     },
-    icon: <Warning width={24} height={24} />,
+    icon: <Warning width={24} height={24} color={color.white} />,
   },
   info: {
     style: {

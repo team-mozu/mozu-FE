@@ -13,34 +13,49 @@ import {
   ArticleManagementEditPage,
   ClassMonitoringPage,
   InvestmentPreparation,
+  Protected,
 } from '@/pages';
 import { AppLayout } from '@/layout';
 
 export const Router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />,
+    element: <Protected element={<AppLayout />} option={true} />,
     children: [
       {
         path: 'stock-management',
         children: [
           {
             index: true,
-            element: <StockManagementPage />,
+            element: (
+              <Protected element={<StockManagementPage />} option={true} />
+            ),
           },
           {
             path: ':id',
             children: [
-              { index: true, element: <StockManagementPage /> },
+              {
+                index: true,
+                element: (
+                  <Protected element={<StockManagementPage />} option={true} />
+                ),
+              },
               {
                 path: 'edit',
-                element: <StockManagementEditPage />,
+                element: (
+                  <Protected
+                    element={<StockManagementEditPage />}
+                    option={true}
+                  />
+                ),
               },
             ],
           },
           {
             path: 'add',
-            element: <StockManagementAddPage />,
+            element: (
+              <Protected element={<StockManagementAddPage />} option={true} />
+            ),
           },
         ],
       },
@@ -49,21 +64,38 @@ export const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <ArticleManagementPage />,
+            element: (
+              <Protected element={<ArticleManagementPage />} option={true} />
+            ),
           },
           {
             path: ':id',
             children: [
-              { index: true, element: <ArticleManagementPage /> },
+              {
+                index: true,
+                element: (
+                  <Protected
+                    element={<ArticleManagementPage />}
+                    option={true}
+                  />
+                ),
+              },
               {
                 path: 'edit',
-                element: <ArticleManagementEditPage />,
+                element: (
+                  <Protected
+                    element={<ArticleManagementEditPage />}
+                    option={true}
+                  />
+                ),
               },
             ],
           },
           {
             path: 'add',
-            element: <ArticleManagementAddPage />,
+            element: (
+              <Protected element={<ArticleManagementAddPage />} option={true} />
+            ),
           },
         ],
       },
@@ -72,7 +104,7 @@ export const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <ClassManagement />,
+            element: <Protected element={<ClassManagement />} option={true} />,
           },
 
           {
@@ -80,26 +112,35 @@ export const Router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <ClassEnvironment />,
+                element: (
+                  <Protected element={<ClassEnvironment />} option={true} />
+                ),
               },
               {
                 path: 'edit',
-                element: <ClassEdit />,
+                element: <Protected element={<ClassEdit />} option={true} />,
               },
               {
                 path: 'start',
-                element: <InvestmentPreparation />,
+                element: (
+                  <Protected
+                    element={<InvestmentPreparation />}
+                    option={true}
+                  />
+                ),
               },
               {
                 path: 'monitoring',
-                element: <ClassMonitoringPage />,
+                element: (
+                  <Protected element={<ClassMonitoringPage />} option={true} />
+                ),
               },
             ],
           },
 
           {
             path: 'create',
-            element: <CreateClass />,
+            element: <Protected element={<CreateClass />} option={true} />,
           },
         ],
       },
@@ -107,7 +148,7 @@ export const Router = createBrowserRouter([
   },
   {
     path: 'signin',
-    element: <SignInPage />,
+    element: <Protected element={<SignInPage />} option={false} />,
   },
   {
     path: '*', // 404 페이지
