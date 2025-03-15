@@ -13,7 +13,7 @@ export const ArticleManagementEditPage = () => {
   const [datas, setDatas] = useState<{
     title: string;
     content: string;
-    imgUrl: File;
+    imgUrl: File | string;
   }>({
     title: '',
     content: '',
@@ -23,11 +23,11 @@ export const ArticleManagementEditPage = () => {
   const { data: articleData, isLoading } = useGetArticleDetail(articleId);
 
   useEffect(() => {
-    if (articleData?.data) {
+    if (articleData) {
       setDatas({
-        title: articleData.data.title || '',
-        content: articleData.data.description || '',
-        imgUrl: articleData.data.image || null,
+        title: articleData.title || '',
+        content: articleData.description || '',
+        imgUrl: articleData.image || null,
       });
     }
   }, [articleData]);

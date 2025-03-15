@@ -49,9 +49,11 @@ export const useDeleteArticle = () => {
 export const useGetArticleDetail = (articleId: number) => {
   return useQuery({
     queryKey: ['getArticle', articleId],
-    queryFn: async (): Promise<ArticleDetailResponse> => {
+    queryFn: async () => {
       if (!articleId) throw new Error('err');
-      const { data } = await instance.get(`${router}/${articleId}`);
+      const { data } = await instance.get<ArticleDetailResponse>(
+        `${router}/${articleId}`,
+      );
       return data;
     },
     enabled: !!articleId,

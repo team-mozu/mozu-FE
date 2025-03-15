@@ -204,7 +204,11 @@ export const StockTables = ({ data = [], isEdit }: IPropType) => {
                     (header.column.columnDef.meta as any)?.align || 'left',
                 }}
               >
-                {header.isPlaceholder ? null : header.column.columnDef.header()}
+                {header.isPlaceholder
+                  ? null
+                  : typeof header.column.columnDef.header === 'function'
+                    ? header.column.columnDef.header()
+                    : header.column.columnDef.header}
               </Th>
             ))}
           </tr>

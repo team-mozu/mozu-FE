@@ -45,13 +45,18 @@ instance.interceptors.response.use(
               setTokens(res.accessToken, refreshToken as string);
               console.log(`Access Token: ${res.accessToken}`);
               console.log(`Refresh Token: ${refreshToken as string}`);
-              if (originalRequest?.headers) {
+              if (originalRequest && originalRequest.headers) {
                 originalRequest.headers.Authorization = `Bearer ${res.accessToken}`;
+                return axios(originalRequest);
+              } else {
+                return Promise.reject(
+                  new Error('Original request is undefined'),
+                );
               }
-              return axios(originalRequest);
             })
             .catch((res: AxiosError<AxiosError>) => {
-              if (+res?.response?.data.code >= 500) {
+              const errorCode = res?.response?.data?.code;
+              if (errorCode !== undefined && +errorCode >= 500) {
                 return Toast('서버 에러 잠시 뒤 시도해 주세요', {
                   type: 'error',
                 });

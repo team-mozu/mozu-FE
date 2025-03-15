@@ -12,29 +12,23 @@
     "resolveJsonModule": true,
     "moduleResolution": "bundler",
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
 
     "jsx": "react-jsx",
     "baseUrl": ".",
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
     "paths": {
       "@/*": ["./src/*"],
-      "@mozu/ui": ["../ui/src/index.ts"],
-      "@mozu/design-token": ["../design-token/src/index.ts"],
+      "@mozu/ui": ["../ui/dist/index.mjs"],
+      "@mozu/design-token": ["../design-token/dist/index.mjs"],
       "@configs/util": ["../util-config/src/index.ts"]
     },
     "typeRoots": ["node_modules/@types", "src/@types"],
-    "outDir": "build"
+    "outDir": "./dist"
   },
-  "references": [{ "path": "../ui" }, { "path": "../util-config" }],
-  "include": [
-    "src",
-    "vite.config.ts",
-    "../ui/src/DeleteModal.tsx",
-    "../ui/src/EditDiv.tsx",
-    "../ui/src/Header.tsx",
-    "../ui/src/Input.tsx",
-    "../ui/src/SearchInput.tsx",
-    "../ui/src/SideBar.tsx"
-  ]
+  "references": [
+    { "path": "../ui", "prebuild": true },
+    { "path": "../util-config", "prebuild": true }
+  ],
+  "include": ["src", "vite.config.ts"]
 }

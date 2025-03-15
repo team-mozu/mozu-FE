@@ -16,7 +16,7 @@ export type ArticleDetailResponse = {
 export type ArticleManagementEditRequest = {
   title?: string;
   description?: string;
-  image?: File;
+  image?: File | string;
   articleId: number;
 };
 

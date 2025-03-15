@@ -3,16 +3,18 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { StockDiv } from './StockDiv';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { useGetStockList } from '@/apis';
+
+interface StockSearchSideBarProps {
+  setSelectedId: Dispatch<SetStateAction<number | null>>;
+  selectedId: number | null;
+}
 
 export const StockSearchSideBar = ({
   setSelectedId,
   selectedId,
-}: {
-  setSelectedId: number;
-  selectedId: number;
-}) => {
+}: StockSearchSideBarProps) => {
   const { classId, id } = useParams<{ classId: string; id: string }>();
   const [datas, setDatas] = useState<{ id: number; name: string }[]>([]);
   const { data: stockData } = useGetStockList();

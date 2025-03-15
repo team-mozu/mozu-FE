@@ -15,11 +15,12 @@ export default defineConfig({
     sourcemap: true, // 소스맵 생성
   },
   resolve: {
+    preserveSymlinks: true,
     alias: {
       '@': path.resolve(process.cwd(), './src'),
       '@mozu/design-token': path.resolve(
         __dirname,
-        '../design-token/src/index.ts',
+        '../design-token/dist/index.mjs',
       ),
     },
   },
