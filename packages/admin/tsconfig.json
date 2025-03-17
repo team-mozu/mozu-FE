@@ -15,20 +15,21 @@
     "noEmit": false,
 
     "jsx": "react-jsx",
+    "outDir": "./dist",
     "baseUrl": ".",
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["src/*"],
       "@mozu/ui": ["../ui/dist/index.mjs"],
       "@mozu/design-token": ["../design-token/dist/index.mjs"],
       "@configs/util": ["../util-config/src/index.ts"]
     },
-    "typeRoots": ["node_modules/@types", "src/@types"],
-    "outDir": "./dist"
+    "typeRoots": ["node_modules/@types", "src/@types"]
   },
   "references": [
     { "path": "../ui", "prebuild": true },
     { "path": "../util-config", "prebuild": true }
   ],
-  "include": ["src", "vite.config.ts"]
+  "include": ["src/**/*", "vite.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }

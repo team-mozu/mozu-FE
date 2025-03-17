@@ -6,16 +6,15 @@
     "jsx": "react-jsx",
     "composite": true,
     "baseUrl": ".",
+    "outDir": "./dist",
     "moduleResolution": "bundler",
     "types": ["vite/client", "node"],
+    "sourceMap": true,
     "paths": {
       "@/*": ["src/*"],
       "@mozu/ui": ["../../ui/src/index.ts"]
     }
   },
-  "include": [
-    "src",
-    "configs/util-config/src",
-    "configs/util-config/src/utils/apis"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

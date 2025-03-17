@@ -5,6 +5,9 @@
   "main": "index.ts",
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "build": "tsc --build"
+  },
   "exports": {
     ".": "./src/index.ts"
   },

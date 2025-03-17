@@ -14,6 +14,8 @@
 #!.yarn/cache
 .pnp.*
 
+.dist
+
 dist
 .DS_Store
 

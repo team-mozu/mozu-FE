@@ -30,7 +30,6 @@ export * from './ItemSidebar';
 export * from './HistorySidebar';
 export * from './ExitBtn';
 export * from './InvestCompleteModal';
-export * from '../../student/src/components/home/StockTable';
 export * from './BuySellModal';
 export * from './Toast';
 export * from './ToastContainer';
