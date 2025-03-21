@@ -3,14 +3,17 @@ import { StockManagementDetail, StockSearchSideBar } from '@/components';
 import styled from '@emotion/styled';
 import { SelectError, DeleteModal } from '@mozu/ui';
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 export const StockManagementPage = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const stockId = id ? parseInt(id) : null;
+
+  const { mutate: stockDelete } = useDeleteStock(selectedId);
 
   const handleDetailClick = () => {
     setIsModalOpen(true);
@@ -20,14 +23,15 @@ export const StockManagementPage = () => {
     setIsModalOpen(false);
   };
 
-  const delApiData = useDeleteStock();
-
   const handleDelete = () => {
-    if (stockId) {
-      delApiData.mutate(stockId);
+    if (selectedId) {
+      stockDelete(undefined, {
+        onSuccess: () => {
+          setIsModalOpen(false);
+          setSelectedId(null); // 선택 해제
+        },
+      });
     }
-    setIsModalOpen(false);
-    setSelectedId(null);
   };
 
   return (

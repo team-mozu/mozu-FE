@@ -8,6 +8,8 @@
     "baseUrl": ".",
     "outDir": "./dist",
     "moduleResolution": "bundler",
+    "declaration": true,
+    "emitDeclarationOnly": false,
     "types": ["vite/client", "node"],
     "sourceMap": true,
     "paths": {

@@ -2,128 +2,84 @@ import { LogoWithText } from '@mozu/ui';
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 
-interface IHeaderType {
+interface IHeaderProps {
   isAdmin: boolean;
 }
 
-export const Header = ({ isAdmin }: IHeaderType) => {
-  const [isNavHome, setIsNavHome] = useState<boolean>(false);
-  const [isNavNews, setIsNavNews] = useState<boolean>(false);
-  const [isResultPage, setIsResultPage] = useState<boolean>(false);
-  const [isWaitPage, setIsWaitPage] = useState<boolean>(false);
-
+export const Header = ({ isAdmin }: IHeaderProps) => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (pathname === '/news' || pathname === '/news/1') {
-      setIsNavHome(false);
-      setIsNavNews(true);
-      setIsResultPage(false);
-      setIsWaitPage(false);
-    } else if (pathname.includes('/home')) {
-      setIsNavHome(true);
-      setIsNavNews(false);
-      setIsResultPage(false);
-      setIsWaitPage(false);
-    } else if (pathname === '/result') {
-      setIsNavHome(false);
-      setIsNavNews(false);
-      setIsResultPage(true);
-      setIsWaitPage(false);
-    } else if (pathname === 'signin/wait') {
-      setIsWaitPage(true);
-      setIsNavHome(false);
-      setIsNavNews(false);
-      setIsResultPage(false);
-    } else {
-      setIsNavHome(false);
-      setIsNavNews(false);
-      setIsWaitPage(false);
-      setIsResultPage(false);
-    }
+  /** 📌 현재 페이지 상태를 useMemo로 계산 */
+  const currentPage = useMemo(() => {
+    if (pathname.startsWith('/:id/home')) return 'home';
+    if (pathname.startsWith('/:id/news')) return 'news';
+    if (pathname === '/:id/result') return 'result';
+    if (pathname === '/signin/wait') return 'wait';
+    return 'default';
   }, [pathname]);
 
-  const datas = {
-    investmentRound: 3,
-  };
+  const isNavHome = currentPage === 'home';
+  const isNavNews = currentPage === 'news';
+  const isResultPage = currentPage === 'result';
+  const isWaitPage = currentPage === 'wait';
 
-  const navegate = useNavigate();
+  const datas = { investmentRound: 3 };
+
   return (
     <HeaderContainer isAdmin={isAdmin}>
       <LogoContainer
-        onClick={
-          isAdmin
-            ? () => navegate('/class-management')
-            : () => navegate('/home')
-        }
+        onClick={() => navigate(isAdmin ? '/class-management' : '/home')}
       >
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>
-      {!isAdmin && !isResultPage && isWaitPage && (
+
+      {!isAdmin && !isResultPage && !isWaitPage && (
         <NavContainer>
-          <Nav onClick={() => navegate('/home')} isColor={isNavHome}>
+          <Nav onClick={() => navigate('/home')} isActive={isNavHome}>
             홈
           </Nav>
-          <Nav onClick={() => navegate('/news')} isColor={isNavNews}>
+          <Nav onClick={() => navigate('/news')} isActive={isNavNews}>
             뉴스
           </Nav>
         </NavContainer>
       )}
-      {!isAdmin && !isResultPage && isWaitPage && (
+
+      {!isAdmin && !isResultPage && !isWaitPage && (
         <InvestmentRoundContainer>
           <InvestmentRoundContent>
             {datas.investmentRound}차 투자
           </InvestmentRoundContent>
-          <InvestmentRoundExplane>진행중</InvestmentRoundExplane>
+          <InvestmentRoundExplain>진행중</InvestmentRoundExplain>
         </InvestmentRoundContainer>
       )}
-      {isWaitPage && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
-      {isAdmin && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
-      {isResultPage && <SchoolTag>© 대덕소프트웨어마이스터고등학교</SchoolTag>}
+
+      {(isWaitPage || isAdmin || isResultPage) && (
+        <SchoolTag href="https://dsmhs.djsch.kr/main.do" target="_blank">
+          © 대덕소프트웨어마이스터고등학교
+        </SchoolTag>
+      )}
     </HeaderContainer>
   );
 };
 
-const InvestmentRoundContainer = styled.div`
+/** 스타일 */
+const HeaderContainer = styled.header<{ isAdmin: boolean }>`
+  position: fixed;
+  top: 0;
+  width: ${({ isAdmin }) => (isAdmin ? 'calc(100% - 280px)' : '100%')};
+  margin-left: ${({ isAdmin }) => (isAdmin ? '280px' : '0')};
+  height: 64px;
+  padding: 0 40px;
   display: flex;
-  gap: 8px;
   align-items: center;
-`;
-
-const InvestmentRoundExplane = styled.div`
-  font: ${font.b2};
-  color: ${color.zinc[600]};
-`;
-
-const InvestmentRoundContent = styled.div`
-  font: ${font.t1};
-  color: ${color.orange[500]};
-`;
-
-const Nav = styled.div<{ isColor: boolean }>`
-  font: ${font.b1};
-  color: ${({ isColor }) => (isColor ? color.zinc[800] : color.zinc[500])};
-  padding: 10px 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  ${({ isColor }) =>
-    !isColor &&
-    `
-    :hover {
-      color: ${color.zinc[600]};
-    }
-  `}
-`;
-
-const NavContainer = styled.nav`
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  justify-content: space-between;
+  background-color: ${color.white};
+  border-bottom: 1px solid ${color.zinc[200]};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const LogoContainer = styled.div`
@@ -138,22 +94,46 @@ const MozuTitle = styled.div`
   color: ${color.zinc[500]};
 `;
 
-const SchoolTag = styled.div`
-  font: ${font.t4};
-  color: ${color.zinc[500]};
+const NavContainer = styled.nav`
+  display: flex;
+  gap: 8px;
+  align-items: center;
 `;
 
-const HeaderContainer = styled.header<Pick<IHeaderType, 'isAdmin'>>`
-  position: fixed;
-  top: 0;
-  width: ${({ isAdmin }) => (isAdmin ? 'calc(100% - 280px)' : '100%')};
-  z-index: 1;
-  height: 64px;
-  padding: 0 40px;
-  margin-left: ${({ isAdmin }) => (isAdmin ? '280px' : '0')};
+const Nav = styled.div<{ isActive: boolean }>`
+  font: ${font.b1};
+  color: ${({ isActive }) => (isActive ? color.zinc[800] : color.zinc[500])};
+  padding: 10px 16px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  background-color: ${color.white};
-  border-bottom: 1px solid ${color.zinc[200]};
+  cursor: pointer;
+  ${({ isActive }) =>
+    !isActive &&
+    `
+    :hover {
+      color: ${color.zinc[600]};
+    }
+  `}
+`;
+
+const InvestmentRoundContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+const InvestmentRoundExplain = styled.div`
+  font: ${font.b2};
+  color: ${color.zinc[600]};
+`;
+
+const InvestmentRoundContent = styled.div`
+  font: ${font.t1};
+  color: ${color.orange[500]};
+`;
+
+const SchoolTag = styled.a`
+  font: ${font.t4};
+  color: ${color.zinc[500]};
 `;

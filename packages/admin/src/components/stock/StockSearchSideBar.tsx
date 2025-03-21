@@ -41,11 +41,11 @@ export const StockSearchSideBar = ({
         <SearchInput inputText="종목 검색.." />
       </UpperWrapper>
       <ArticleWrapper>
-        {datas.map((data) => (
+        {datas.map((data, index) => (
           <StockDiv
             key={data.id}
             name={data.name}
-            number={data.id}
+            number={index + 1}
             selected={selectedId === data.id}
             onClick={() => {
               setSelectedId(data.id);
@@ -54,6 +54,7 @@ export const StockSearchSideBar = ({
           />
         ))}
       </ArticleWrapper>
+
       <AddButton
         onClick={() => navigate('/stock-management/add')}
         text="종목 추가하기"

@@ -13,10 +13,10 @@ export const NthDeal = ({ deal }: IProp) => {
       <div>
         {/* <History type="buy" /> */}
         <TestContainer>
-          <BS type={'buy'}>매수</BS>
+          <BS>매수</BS>
           <Stock>삼성전자</Stock>
           <Price>
-            <Amount type={'buy'}>429,600원</Amount>
+            <Amount>429,600원</Amount>
             <Total>53,700원 (8주)</Total>
           </Price>
         </TestContainer>
@@ -54,8 +54,9 @@ const TestContainer = styled.div`
   align-items: center;
 `;
 
-const BS = styled.p<IHistoryProps>`
-  color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+/* color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])}; */
+const BS = styled.p`
+  color: ${color.red[500]}
   font: ${font.b1};
 `;
 
@@ -70,10 +71,12 @@ const Price = styled.div`
   flex-direction: column;
 `;
 
+/* color: ${({ type }) =>
+type === 'buy' ? color.red[500] : color.blue[500]}; */
 // 금액도 type에 따라 색상 변경
-const Amount = styled.p<IHistoryProps>`
+const Amount = styled.p`
   font: ${font.b1};
-  color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+  color: ${color.red[500]};
 `;
 
 const Total = styled.p`

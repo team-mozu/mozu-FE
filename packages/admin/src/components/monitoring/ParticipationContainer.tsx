@@ -99,6 +99,7 @@ const TeamContent = styled.div`
   align-items: start;
   gap: 8px;
 `;
+
 const ParticipationAllContainer = styled.div`
   width: 1000px;
   height: 400px;

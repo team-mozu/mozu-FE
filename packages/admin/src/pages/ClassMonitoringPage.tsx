@@ -117,7 +117,7 @@ export const ClassMonitoringPage = () => {
           </InfoBtn>
         </InfoContainer>
         <TableContainer>
-          <TeamInfoTable width="1512px" />
+          <TeamInfoTable />
         </TableContainer>
       </MainContainer>
     </Container>

@@ -22,6 +22,7 @@ const StockDivContainer = styled.div<{ selected: boolean }>`
   padding: 12px 16px;
   display: flex;
   align-items: center;
+  border-bottom: 1px solid #e4e4e7;
   gap: 14px;
   cursor: pointer;
   background-color: ${({ selected }) =>

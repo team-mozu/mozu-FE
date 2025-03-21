@@ -1,23 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const usePriceFormatter = (
-  initialPrices: string[] = [],
-  onChange: (index: number, value: string) => void,
+  initialPrices: number[] = [],
+  onChange: (index: number, value: number) => void,
 ) => {
-  const [prices, setPrices] = useState(initialPrices);
+  const formatPrice = (value: number) => value.toLocaleString('ko-KR');
+
+  const [prices, setPrices] = useState(initialPrices.map(formatPrice));
+
+  useEffect(() => {
+    setPrices((prev) => {
+      const newFormattedPrices = initialPrices.map(formatPrice);
+      if (JSON.stringify(prev) === JSON.stringify(newFormattedPrices)) {
+        return prev;
+      }
+      return newFormattedPrices;
+    });
+  }, [initialPrices]);
 
   const priceChangeHandler =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value.replace(/[^0-9]/g, '');
-      const formattedPrice = inputValue
-        ? Number(inputValue).toLocaleString('ko-KR')
-        : '';
+      const numericValue = inputValue ? Number(inputValue) : 0;
+      const formattedPrice = formatPrice(numericValue);
 
       const newPrices = [...prices];
-      newPrices[index] = formattedPrice; // 새로운 값 반영
-      setPrices(newPrices); // 상태 업데이트
+      newPrices[index] = formattedPrice;
+      setPrices(newPrices);
 
-      onChange(index, inputValue); // 원본 값 업데이트
+      onChange(index, numericValue);
     };
 
   return { prices, priceChangeHandler };

@@ -23,7 +23,6 @@ export * from './WarningMsg';
 export * from './ArticleInfoModal';
 export * from './InvestInfoTable';
 export * from './ClassInfoModal';
-export * from './InvestInfoTable';
 export * from './Accounts';
 export * from './RankingDiv';
 export * from './ItemSidebar';

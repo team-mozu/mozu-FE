@@ -1,33 +1,28 @@
+import { useGetStockList } from '@/apis';
 import { Button, Item, SearchInput } from '../../../../ui/src';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 interface IInvestModalType {
   close: () => void;
 }
 
 export const AddInvestItemModal = ({ close }: IInvestModalType) => {
-  const datas = [
-    { id: '0', code: '035720', name: '카카오' },
-    { id: '1', code: '005380', name: '현대차' },
-    { id: '2', code: '000270', name: '기아' },
-    { id: '3', code: '035420', name: 'NAVER' },
-    { id: '4', code: '259960', name: '크래프톤' },
-    { id: '5', code: '247540', name: '에코프로비엠' },
-    { id: '6', code: '068270', name: '셀트리온' },
-    { id: '7', code: '006400', name: '삼성SDI' },
-    { id: '8', code: '373220', name: 'LG에너지솔루션' },
-  ];
+  const { data: stockData } = useGetStockList();
+
+  const items = stockData?.items || []; // 데이터가 없을 경우 빈 배열로 설정
+
   const [checkedItems, setCheckedItems] = useState<boolean[]>(
-    Array(datas.length).fill(false),
+    Array(items.length).fill(false),
   );
+
   const [isHeadCheck, setIsHeadCheck] = useState<boolean>(false);
   const [isClose, setIsClose] = useState<boolean>(false);
 
   const checkClick = (index: number) => {
     setCheckedItems((prev) => {
-      const updateCheckItems = [...checkedItems];
+      const updateCheckItems = [...prev];
       updateCheckItems[index] = !updateCheckItems[index];
       return updateCheckItems;
     });
@@ -38,11 +33,9 @@ export const AddInvestItemModal = ({ close }: IInvestModalType) => {
     setCheckedItems((prev) => prev.map(() => !isHeadCheck));
   };
 
-  const outSideRef = useRef();
-
   return (
     !isClose && (
-      <ModalBackground ref={outSideRef}>
+      <ModalBackground>
         <InvestItemContainer>
           <SearchContainer>
             <Title isHeader>투자종목 추가</Title>
@@ -58,18 +51,16 @@ export const AddInvestItemModal = ({ close }: IInvestModalType) => {
               onChange={headClick}
             />
             <ItemContents>
-              {datas.map((data, index) => {
-                return (
-                  <Item
-                    title1={data.code}
-                    title2={data.name}
-                    onChange={() => checkClick(index)}
-                    checked={checkedItems[index]}
-                    id={data.id}
-                    key={index}
-                  />
-                );
-              })}
+              {items.map((data, index) => (
+                <Item
+                  title1={data.id}
+                  title2={data.name}
+                  onChange={() => checkClick(index)}
+                  checked={checkedItems[index]}
+                  id={String(data.id)}
+                  key={data.id}
+                />
+              ))}
             </ItemContents>
           </TableContainer>
           <FooterContainer>

@@ -116,9 +116,10 @@ export const StockTables = ({ data = [], isEdit }: IPropType) => {
       : []),
     {
       accessorKey: 'itemId',
-      header: () => <>종목 코드</>,
+      header: () => <>순번</>,
       size: 120,
       meta: { align: 'center' }, // 정렬 정보 추가
+      cell: ({ row }) => row.index + 1,
     },
     {
       accessorKey: 'itemName',
@@ -207,7 +208,7 @@ export const StockTables = ({ data = [], isEdit }: IPropType) => {
                 {header.isPlaceholder
                   ? null
                   : typeof header.column.columnDef.header === 'function'
-                    ? header.column.columnDef.header()
+                    ? header.column.columnDef.header(header.getContext())
                     : header.column.columnDef.header}
               </Th>
             ))}

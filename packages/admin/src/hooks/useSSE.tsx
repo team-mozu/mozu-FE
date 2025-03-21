@@ -76,7 +76,7 @@ export const useSSE = (
       }
     };
 
-    eventSource.addEventListener('TEAM_PART_IN', (e) => {
+    eventSource.addEventListener('TEAM_PART_IN', (e: MessageEvent) => {
       console.log(e);
 
       const eventData = JSON.parse(e.data);

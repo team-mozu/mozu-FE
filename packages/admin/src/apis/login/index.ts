@@ -1,9 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
 import { instance, setTokens, setCookies } from '@configs/util';
+import { useMutation } from '@tanstack/react-query';
+import { checkLocalPort } from '@/utils';
 import { AuthResponse } from './type';
 import { AxiosError } from 'axios';
 import { Toast } from '@mozu/ui';
-import { checkLocalPort } from '@/utils';
 
 interface AdminLoginProps {
   code: string;
@@ -18,6 +18,26 @@ export const useAdminLogin = () => {
         password,
       });
       return response.data;
+    },
+    onSuccess: async (res) => {
+      let redirectUrl: string;
+      if (import.meta.env.VITE_ADMIN_COOKIE_DOMAIN === 'localhost') {
+        const isLocalPortOpen = checkLocalPort(3002);
+        console.log('Redirecting to:', redirectUrl);
+        redirectUrl = import.meta.env.VITE_ADMIN_AUTH_URL;
+      } else {
+        redirectUrl = import.meta.env.VITE_ADMIN_AUTH_URL;
+        console.log('Redirecting to:', redirectUrl);
+      }
+      console.log('Redirecting to:', redirectUrl);
+      setTokens(res.accessToken, res.refreshToken, 'admin');
+      setCookies('authority', 'admin', {
+        path: '/',
+        secure: true,
+        sameSite: 'none',
+        domain: import.meta.env.VITE_ADMIN_COOKIE_DOMAIN,
+      });
+      window.location.href = redirectUrl;
     },
     onError: (res: AxiosError<AxiosError>) => {
       if (res.response) {
@@ -36,29 +56,6 @@ export const useAdminLogin = () => {
           type: 'error',
         });
       }
-    },
-    onSuccess: async (res) => {
-      let redirectUrl: string;
-      if (import.meta.env.VITE_COOKIE_DOMAIN === 'localhost') {
-        const isLocalPortOpen = checkLocalPort(3002);
-        console.log('Redirecting to:', redirectUrl);
-        redirectUrl = isLocalPortOpen
-          ? import.meta.env.VITE_ADMIN_AUTH_URL
-          : import.meta.env.VITE_STUDENT_AUTH_URL;
-      } else {
-        console.log('Redirecting to:', redirectUrl);
-
-        redirectUrl = import.meta.env.VITE_ADMIN_AUTH_URL;
-      }
-      console.log('Redirecting to:', redirectUrl);
-      setTokens(res.accessToken, res.refreshToken);
-      setCookies('authority', 'admin', {
-        path: '/',
-        secure: true,
-        sameSite: 'none',
-        domain: import.meta.env.VITE_COOKIE_DOMAIN,
-      });
-      window.location.href = redirectUrl;
     },
   });
 };

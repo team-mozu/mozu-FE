@@ -28,10 +28,10 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
             <div>
               {/* <History type="buy" /> */}
               <TestContainer>
-                <BS type={'sell'}>매도</BS>
+                <BS>매도</BS>
                 <Stock>LG전자</Stock>
                 <Price>
-                  <Amount type={'sell'}>104,00원</Amount>
+                  <Amount>104,00원</Amount>
                   <Total>52,000 (2주)</Total>
                 </Price>
               </TestContainer>
@@ -42,18 +42,18 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
             <div>
               {/* <History type="buy" /> */}
               <TestContainer>
-                <BS type={'buy'}>매수</BS>
+                <BS>매수</BS>
                 <Stock>LG전자</Stock>
                 <Price>
-                  <Amount type={'buy'}>98,100원</Amount>
+                  <Amount>98,100원</Amount>
                   <Total>32,700원 (3주)</Total>
                 </Price>
               </TestContainer>
               <TestContainer>
-                <BS type={'sell'}>매도</BS>
+                <BS>매도</BS>
                 <Stock>삼성전자</Stock>
                 <Price>
-                  <Amount type={'sell'}>147,000원</Amount>
+                  <Amount>147,000원</Amount>
                   <Total>49,000원 (3주)</Total>
                 </Price>
               </TestContainer>
@@ -64,18 +64,18 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
             <div>
               {/* <History type="buy" /> */}
               <TestContainer>
-                <BS type={'buy'}>매수</BS>
+                <BS>매수</BS>
                 <Stock>포스코홀딩스</Stock>
                 <Price>
-                  <Amount type={'buy'}>130,200원</Amount>
+                  <Amount>130,200원</Amount>
                   <Total>130,200 (1주)</Total>
                 </Price>
               </TestContainer>
               <TestContainer>
-                <BS type={'buy'}>매수</BS>
+                <BS>매수</BS>
                 <Stock>삼성전자</Stock>
                 <Price>
-                  <Amount type={'buy'}>429,600원</Amount>
+                  <Amount>429,600원</Amount>
                   <Total>53,700원 (8주)</Total>
                 </Price>
               </TestContainer>
@@ -163,9 +163,10 @@ const TestContainer = styled.div`
   align-items: center;
 `;
 
-const BS = styled.p<IHistoryProps>`
-  color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+// color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+const BS = styled.p`
   font: ${font.b1};
+  color: ${color.red[500]};
 `;
 
 const Stock = styled.p`
@@ -179,10 +180,11 @@ const Price = styled.div`
   flex-direction: column;
 `;
 
+// color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
 // 금액도 type에 따라 색상 변경
-const Amount = styled.p<IHistoryProps>`
+const Amount = styled.p`
   font: ${font.b1};
-  color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+  color: ${color.red[500]};
 `;
 
 const Total = styled.p`

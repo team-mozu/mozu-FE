@@ -50,7 +50,7 @@ export const TeamCurrentModal = ({
             <TitleContainer>
               <Title>‘{teamName}’ 팀 거래 현황</Title>
             </TitleContainer>
-            <TeamInvestStatusTable width="1000px" />
+            <TeamInvestStatusTable />
             <FooterContainer>
               <Button
                 backgroundColor={color.zinc[50]}

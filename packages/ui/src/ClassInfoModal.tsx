@@ -45,7 +45,7 @@ export const ClassInfoModal = ({ isOpen, setIsOpen }: IClassInfoType) => {
           <TitleContainer>
             <Title>투자 정보</Title>
           </TitleContainer>
-          <InvestInfoTable width={'1000px'} />
+          <InvestInfoTable />
           <FooterContainer>
             <Button
               backgroundColor={color.zinc[50]}

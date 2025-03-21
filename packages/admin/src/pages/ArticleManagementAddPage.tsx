@@ -8,14 +8,14 @@ import { useForm } from '@/hooks';
 type FormState = {
   title: string;
   description: string;
-  image?: File | '';
+  image?: File | null;
 };
 
 export const ArticleManagementAddPage = () => {
   const { state, onChangeInputValue, setState } = useForm<FormState>({
     title: '',
     description: '',
-    image: '',
+    image: null,
   });
 
   const apiData = useAddArticle();
@@ -57,7 +57,7 @@ export const ArticleManagementAddPage = () => {
               label="기사 이미지"
               img={state.image ? URL.createObjectURL(state.image) : ''}
               onImageChange={(file) =>
-                setState((prev) => ({ ...prev, image: file }))
+                setState((prev) => ({ ...prev, image: file as File | null }))
               }
             />
           </InputContainer>

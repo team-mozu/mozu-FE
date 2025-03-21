@@ -40,7 +40,7 @@ export const StockManagementEditPage = () => {
 
   const { mutate: apiData } = useEditStock();
   const { data: stockData, isLoading } = useGetStockDetail(stockId);
-  const handlePriceChange = (index: number, value: string) => {
+  const handlePriceChange = (index: number, value: number) => {
     const fieldMap = [
       'money',
       'debt',
@@ -101,7 +101,7 @@ export const StockManagementEditPage = () => {
         onClick={editClick}
       />
       <StockSetting>
-        <InnerContainer>
+        <LeftContainer>
           <div>
             <LogoUploader
               img={
@@ -131,13 +131,13 @@ export const StockManagementEditPage = () => {
               placeholder={'회사 정보를 입력해 주세요..'}
               label={'회사 정보'}
               name="info"
-              height={260}
+              height={320}
               onChange={onChangeInputValue}
               value={state.info}
             ></TextArea>
           </div>
-        </InnerContainer>
-        <InnerContainer>
+        </LeftContainer>
+        <RightContainer>
           <p>재무상태표 ∙ 손익계산서</p>
           {[
             { label: '자산', name: 'money', value: state.money },
@@ -163,7 +163,7 @@ export const StockManagementEditPage = () => {
               />
             </div>
           ))}
-        </InnerContainer>
+        </RightContainer>
       </StockSetting>
     </Container>
   );
@@ -184,9 +184,26 @@ const StockSetting = styled.div`
   gap: 8px;
 `;
 
-const InnerContainer = styled.div`
+const LeftContainer = styled.div`
   overflow: scroll;
-  width: 50%;
+  width: 60%;
+  height: 100%;
+  padding: 24px;
+  background-color: ${color.white};
+  border-radius: 1rem;
+  border: 1px solid ${color.zinc[200]};
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  > p {
+    color: ${color.black};
+    font: ${font.t1};
+  }
+`;
+
+const RightContainer = styled.div`
+  overflow: scroll;
+  width: 40%;
   height: 100%;
   padding: 24px;
   background-color: ${color.white};

@@ -42,7 +42,7 @@ instance.interceptors.response.use(
           return reIssueToken(refreshToken as string)
             .then((res) => {
               console.log('New Token Response:', res);
-              setTokens(res.accessToken, refreshToken as string);
+              setTokens(res.accessToken, refreshToken as string, 'admin');
               console.log(`Access Token: ${res.accessToken}`);
               console.log(`Refresh Token: ${refreshToken as string}`);
               if (originalRequest && originalRequest.headers) {
@@ -61,11 +61,11 @@ instance.interceptors.response.use(
                   type: 'error',
                 });
               }
-              removeTokens();
+              removeTokens('admin');
               removeCookies('authority');
             });
         } else {
-          removeTokens();
+          removeTokens('admin');
         }
       } else return Promise.reject(error);
     }

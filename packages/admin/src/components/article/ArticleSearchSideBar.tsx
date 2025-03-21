@@ -3,16 +3,18 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArticleDiv } from './ArticleDiv';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import { useGetArticleList } from '@/apis';
+
+interface ArticleSearchSideBarProps {
+  setSelectedId: Dispatch<SetStateAction<number | null>>;
+  selectedId: number | null;
+}
 
 export const ArticleSearchSideBar = ({
   setSelectedId,
   selectedId,
-}: {
-  setSelectedId: number;
-  selectedId: number;
-}) => {
+}: ArticleSearchSideBarProps) => {
   const { id } = useParams<{ id: string }>();
   const [datas, setDatas] = useState<
     { id: number; title: string; date: string }[]
@@ -45,9 +47,10 @@ export const ArticleSearchSideBar = ({
         <SearchInput inputText="기사 검색.." />
       </UpperWrapper>
       <ArticleWrapper>
-        {datas.map((data) => (
+        {datas.map((data, index) => (
           <ArticleDiv
             key={data.id}
+            articleNumber={index + 1}
             title={data.title}
             date={data.date}
             selected={selectedId === data.id}

@@ -3,24 +3,37 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from '@mozu/ui';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useClassStart, useGetClassDetail } from '@/apis';
 import { useClassStore } from '@/store';
+import { usePriceFormatter } from '@/hooks';
 
 export const ClassEnvironment = () => {
   const { classId, id } = useParams();
   const articleId = id ? parseInt(id) : null;
   const navigate = useNavigate();
-  const { data } = useGetClassDetail(articleId);
+  const location = useLocation();
+  const { data, refetch } = useGetClassDetail(articleId);
   const [isModal, setIsModal] = useState<boolean>(false);
   const { classData, setClassData } = useClassStore();
   const { mutate } = useClassStart(articleId);
 
+  const { prices, priceChangeHandler } = usePriceFormatter(
+    [data?.baseMoney ?? 0],
+    (index, value) => {
+      console.log(`입력값 변경됨: index ${index}, value ${value}`);
+    },
+  );
+
   useEffect(() => {
-    if (data) {
+    refetch();
+  }, [location.pathname, refetch]);
+
+  useEffect(() => {
+    if (data && JSON.stringify(classData) !== JSON.stringify(data)) {
       setClassData(data);
     }
-  }, [data, setClassData]);
+  }, [data, classData, setClassData]);
 
   const isOpen = () => {
     setIsModal(true);
@@ -37,8 +50,11 @@ export const ClassEnvironment = () => {
 
   const infos = [
     { kind: '수업 이름', value: data?.name ?? '정보 없음' },
-    { kind: '투자 차수', value: data?.maxInvDeg ?? '정보 없음' },
-    { kind: '기초자산', value: data?.baseMoney ?? '정보 없음' },
+    {
+      kind: '투자 차수',
+      value: data?.maxInvDeg ? `${data.maxInvDeg}차` : '정보 없음',
+    },
+    { kind: '기초자산', value: prices[0] ? `${prices[0]}원` : '정보 없음' },
     { kind: '생성일자', value: data?.createdAt ?? '정보 없음' },
   ];
 

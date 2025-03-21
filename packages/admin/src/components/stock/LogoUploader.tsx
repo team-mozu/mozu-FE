@@ -33,15 +33,17 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
   };
 
   useEffect(() => {
-    let objectUrl: string;
+    let objectUrl: string | undefined;
+
     if (img) {
       if (typeof img === 'string') {
         setLogo(img);
-      } else if (img instanceof File) {
-        objectUrl = URL.createObjectURL(img);
+      } else if (img && 'name' in img && 'size' in img && 'type' in img) {
+        objectUrl = URL.createObjectURL(img as File);
         setLogo(objectUrl);
       }
     }
+
     return () => {
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl);

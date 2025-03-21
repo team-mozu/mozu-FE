@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import { useGetStockDetail } from '@/apis';
+import { useDeleteStock, useGetStockDetail } from '@/apis';
 import { usePriceFormatter } from '@/hooks';
 
 interface IStockManagementDetailProps {
@@ -52,6 +52,7 @@ export const StockManagementDetail = ({
   ];
 
   const { data: stockData, isLoading } = useGetStockDetail(stockId);
+  const { mutate: stockDelete } = useDeleteStock(stockId);
 
   if (isLoading) {
     <div>로딩중...</div>;
@@ -102,7 +103,6 @@ export const StockManagementDetail = ({
           </Logo>
           <Text>
             <Title>{datas.name}</Title>
-            <Number>{stockId}</Number>
           </Text>
         </div>
         <ButtonContainer>
@@ -137,23 +137,24 @@ export const StockManagementDetail = ({
           </div>
         </CompanyInfo>
         <CompanyMain>
-          <LeftSection>
-            <Label>재무상태표</Label>
-            <ContentWrapper>
-              <Accounts title={'부채'} content={datas.debt} />
-              <Accounts title={'자본금'} content={datas.capital} />
-            </ContentWrapper>
-          </LeftSection>
-
-          <RightSection>
-            <Label>손익계산서</Label>
-            <ContentWrapper>
-              <Accounts title={'매출액'} content={datas.profit} />
-              <Accounts title={'매출원가'} content={datas.profitOG} />
-              <Accounts title={'매출이익'} content={datas.profitBen} />
-              <Accounts title={'당기순이익'} content={datas.netProfit} />
-            </ContentWrapper>
-          </RightSection>
+          <Section>
+            <div>
+              <Label>재무상태표</Label>
+              <ContentWrapper>
+                <Accounts title={'부채'} content={datas.debt} />
+                <Accounts title={'자본금'} content={datas.capital} />
+              </ContentWrapper>
+            </div>
+            <div>
+              <Label>손익계산서</Label>
+              <ContentWrapper>
+                <Accounts title={'매출액'} content={datas.profit} />
+                <Accounts title={'매출원가'} content={datas.profitOG} />
+                <Accounts title={'매출이익'} content={datas.profitBen} />
+                <Accounts title={'당기순이익'} content={datas.netProfit} />
+              </ContentWrapper>
+            </div>
+          </Section>
         </CompanyMain>
       </UnderContainer>
     </Container>
@@ -219,6 +220,11 @@ const ButtonContainer = styled.div`
   align-items: end;
 `;
 
+const Label = styled.label`
+  color: ${color.black};
+  font: ${font.t3};
+`;
+
 const UnderContainer = styled.div`
   overflow: scroll;
   padding: 32px;
@@ -227,15 +233,16 @@ const UnderContainer = styled.div`
   height: 95%;
   border: 1px solid ${color.zinc[200]};
   border-radius: 16px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 50% 1fr;
   gap: 52px;
 `;
 
 const CompanyInfo = styled.div`
+  grid-column: 1;
   display: flex;
-  gap: 16px;
   flex-direction: column;
+  gap: 16px;
   & > div {
     width: 100%;
     padding: 16px;
@@ -247,32 +254,25 @@ const CompanyInfo = styled.div`
 `;
 
 const CompanyMain = styled.div`
+  grid-column: 2; /* 두 번째 열에 배치 */
   display: flex;
+  flex-direction: column;
   gap: 24px;
 `;
 
-const LeftSection = styled.div`
-  flex: 1; /* 동일한 비율로 공간 차지 */
+const Section = styled.div`
   display: flex;
-  gap: 16px;
   flex-direction: column;
-`;
-
-const RightSection = styled.div`
-  flex: 1; /* 기존 2에서 1로 변경 */
-  display: flex;
-  gap: 16px;
-  flex-direction: column;
+  gap: 24px;
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 `;
 
 const ContentWrapper = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-`;
-
-const Label = styled.label`
-  color: ${color.black};
-  font: ${font.t3};
 `;

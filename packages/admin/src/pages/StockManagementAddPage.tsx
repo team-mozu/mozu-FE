@@ -34,13 +34,13 @@ export const StockManagementAddPage = () => {
 
   const { prices: formattedPrices, priceChangeHandler } = usePriceFormatter(
     [
-      state.money,
-      state.debt,
-      state.capital,
-      state.profit,
-      state.profitOG,
-      state.profitBen,
-      state.netProfit,
+      Number(state.money.replace(/,/g, '')),
+      Number(state.debt.replace(/,/g, '')),
+      Number(state.capital.replace(/,/g, '')),
+      Number(state.profit.replace(/,/g, '')),
+      Number(state.profitOG.replace(/,/g, '')),
+      Number(state.profitBen.replace(/,/g, '')),
+      Number(state.netProfit.replace(/,/g, '')),
     ],
     (index, value) => {
       setState((prev) => {
@@ -54,7 +54,7 @@ export const StockManagementAddPage = () => {
           'profitBen',
           'netProfit',
         ];
-        newState[keys[index]] = value;
+        newState[keys[index]] = value.toString();
         return newState;
       });
     },

@@ -13,13 +13,16 @@
     "strict": true,
     "skipLibCheck": true,
     "baseUrl": ".",
+    "jsxImportSource": "@emotion/react",
     "rootDir": ".",
+    "emitDeclarationOnly": false,
+
     "paths": {
       "@/*": ["./src/*"],
       "@mozu/design-token": ["../design-token"]
     }
   },
   "references": [{ "path": "../design-token" }],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "./declarations.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

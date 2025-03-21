@@ -6,15 +6,22 @@ import { useForm, useSSE } from '@/hook';
 import { useStudentLogin } from '@/apis';
 
 export const SignInPage = () => {
-  const { state, onChangeInputValue, setState } = useForm({
-    classNum: null,
+  const { state, onChangeInputValue, setState } = useForm<{
+    classNum: number;
+    schoolName: string;
+    teamName: string;
+  }>({
+    classNum: 0,
     schoolName: '',
     teamName: '',
   });
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [datas, setDatas] = useState([]);
+  const [datas, setDatas] = useState<
+    { teams: { classId: number; nextInvDeg: number }[] }[]
+  >([]);
+
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const { mutate: studentLogin, isPending: isStudentLoginLoading } =
@@ -38,10 +45,10 @@ export const SignInPage = () => {
           {
             CLASS_NEXT_INV_START: (teamData) => {
               setDatas((prevDatas) => [
-                prevDatas[0],
+                prevDatas.length > 0 ? prevDatas[0] : { teams: [] },
                 {
                   teams: [
-                    ...(prevDatas[1]?.teams || []),
+                    ...(prevDatas.length > 1 ? prevDatas[1].teams : []),
                     {
                       classId: teamData.classId,
                       nextInvDeg: teamData.nextInvDeg,
@@ -49,6 +56,7 @@ export const SignInPage = () => {
                   ],
                 },
               ]);
+
               Toast('새로운 팀이 참가했습니다', { type: 'success' });
             },
           },
@@ -56,7 +64,7 @@ export const SignInPage = () => {
       },
       onError: () => {
         setErrorMessage('형식을 다시 확인해주세요.');
-        setState({ classNum: null, schoolName: '', teamName: '' });
+        setState({ classNum: 0, schoolName: '', teamName: '' });
       },
       onSettled: () => {
         setIsLoggingIn(false); // 로그인 요청이 끝나면 다시 false로 설정

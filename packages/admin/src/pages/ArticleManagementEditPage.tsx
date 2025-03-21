@@ -3,7 +3,7 @@ import { EditDiv, Input, TextArea } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { ImgContainer } from '@/components';
-import { useGetArticleDetail, useEditArticle } from '@/apis';
+import { useGetArticleDetail, useEditArticle, useGetClassDetail } from '@/apis';
 import { useParams } from 'react-router';
 
 export const ArticleManagementEditPage = () => {

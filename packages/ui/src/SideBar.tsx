@@ -152,4 +152,5 @@ const SideBarContainer = styled.div`
   align-items: center;
   border-right: 1px solid ${color.zinc[200]};
   justify-content: start;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
 `;

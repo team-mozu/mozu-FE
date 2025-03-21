@@ -6,7 +6,12 @@ export const useForm = <T extends object>(initState: T) => {
   const onChangeInputValue = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setState({ ...state, [e.target.name]: e.target.value });
+    const { name, value, type, files } = e.target as HTMLInputElement;
+
+    setState((prev) => ({
+      ...prev,
+      [name]: type === 'file' ? (files?.[0] ?? null) : value,
+    }));
   };
   return {
     state,

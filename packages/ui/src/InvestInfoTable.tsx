@@ -1,7 +1,7 @@
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
 
-interface IThProps {
+interface IThProp {
   width: string;
 }
 
@@ -57,12 +57,11 @@ export const InvestInfoTable = () => {
   );
 };
 
-const Th = styled.th<IThProps>`
+const Th = styled.th<IThProp>`
   font: ${font.b1};
   border: 1px solid ${color.zinc[200]};
   height: 48px;
   display: flex;
-  width: ${(props) => props.width};
   align-items: center;
   padding-left: 16px;
 `;
@@ -75,6 +74,7 @@ const Table = styled.table`
   border-radius: 8px;
   border-collapse: separate;
   overflow: hidden;
+  width: 1000px;
 `;
 const Thead = styled.thead`
   > tr {

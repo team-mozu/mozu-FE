@@ -1,8 +1,8 @@
-import { checkLocalPort } from '../../../../admin/src/utils';
-import { AuthResponse } from './type';
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { instance, setCookies, setTokens } from '@configs/util';
+import { checkLocalPort } from '../../../../admin/src/utils';
+import { useMutation } from '@tanstack/react-query';
+import { AuthResponse } from './type';
+import { AxiosError } from 'axios';
 import { Toast } from '@mozu/ui';
 
 interface StudentLoginProps {
@@ -22,28 +22,41 @@ export const useStudentLogin = () => {
       return response.data;
     },
     onSuccess: async (res) => {
+      console.log(`res => ${res.accessToken}`);
+      const accessToken = res.accessToken; // 여기가 정확한지 확인
+
+      if (!accessToken) {
+        console.error('토큰이 없습니다!', res);
+        Toast('로그인 응답에 문제가 있습니다.', { type: 'error' });
+        return;
+      }
       let redirectUrl: string;
-      if (import.meta.env.VITE_COOKIE_DOMAIN === 'localhost') {
+      if (import.meta.env.VITE_STUDENT_COOKIE_DOMAIN === '192.168.1.6') {
         const isLocalPortOpen = checkLocalPort(3001);
-        console.log('Redirecting to:', redirectUrl);
-        redirectUrl = isLocalPortOpen
-          ? import.meta.env.VITE_STUDENT_AUTH_URL
-          : import.meta.env.VITE_ADMIN_AUTH_URL;
+        redirectUrl = import.meta.env.VITE_STUDENT_AUTH_URL;
       } else {
         redirectUrl = import.meta.env.VITE_STUDENT_AUTH_URL;
         console.log('Redirecting to:', redirectUrl);
       }
       console.log('Redirecting to:', redirectUrl);
-      setTokens(res.accessToken, res.accessToken);
+      setTokens(accessToken, '', 'student');
       setCookies('authority', 'student', {
         path: '/',
         secure: true,
         sameSite: 'none',
-        domain: import.meta.env.VITE_COOKIE_DOMAIN,
+        domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
       });
+
+      // setCookies('accessToken', res.accessToken, {
+      //   path: '/',
+      //   secure: true,
+      //   sameSite: 'none',
+      //   domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
+      //   expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      // });
       window.location.href = redirectUrl;
     },
-    onError: (res: AxiosError<AxiosError>) => {
+    onError: (res: AxiosError<unknown>) => {
       if (res.response) {
         switch (res.response?.status) {
           case 401:
@@ -59,6 +72,7 @@ export const useStudentLogin = () => {
         Toast('네트워크 연결을 확인해주세요.', {
           type: 'error',
         });
+        console.log(res);
       }
     },
   });

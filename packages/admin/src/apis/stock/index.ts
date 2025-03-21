@@ -30,18 +30,18 @@ export const useAddStock = () => {
   });
 };
 
-export const useDeleteStock = () => {
+export const useDeleteStock = (stockId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (stockId: number) => {
+    mutationFn: async () => {
       return await instance.delete(`${router}/delete/${stockId}`);
     },
-    onSuccess: () => {
-      console.log('성공');
-      queryClient.invalidateQueries({ queryKey: ['useStock'] });
+    onSuccess: (stockId) => {
+      console.log('삭제 성공:', stockId);
+      queryClient.invalidateQueries({ queryKey: ['getStock'] });
     },
-    onError: (error) => console.log('error', error),
+    onError: (error) => console.log('삭제 실패:', error),
   });
 };
 

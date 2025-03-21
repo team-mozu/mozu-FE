@@ -16,7 +16,7 @@ export const InvestmentPreparation = () => {
     () => localStorage.getItem('inviteCode') || '로딩중...',
   );
   const [datas, setDatas] = useState({ teams: [] });
-  const { mutate } = useNextDegree(classId);
+  const { mutate: nextDegree } = useNextDegree(classId);
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
@@ -44,9 +44,6 @@ export const InvestmentPreparation = () => {
       },
       TEAM_INV_END: (data) => {
         Toast('팀 투자가 종료되었습니다', { type: 'info' });
-      },
-      CLASS_NEXT_INV_START: (data) => {
-        Toast('다음 투자가 시작되었습니다', { type: 'info' });
       },
     },
   );
@@ -86,7 +83,7 @@ export const InvestmentPreparation = () => {
             borderColor={color.orange[500]}
             color={color.white}
             hoverBackgroundColor={color.orange[600]}
-            onClick={mutate}
+            onClick={() => nextDegree}
           >
             진행하기 ({datas.teams.length ?? 0})
           </Button>

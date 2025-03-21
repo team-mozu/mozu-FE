@@ -22,14 +22,22 @@ import { useClassStore } from '@/store';
 
 export const ClassEdit = () => {
   const navigate = useNavigate();
-  const [prices, setPrices] = useState<string[]>(['1,000,000']);
   const { classId, id } = useParams();
   const articleId = id ? parseInt(id) : null;
   const { data } = useGetClassDetail(articleId);
   const { classData, setClassData } = useClassStore();
+  const [prices, setPrices] = useState<string[]>([
+    classData?.baseMoney ? classData.baseMoney.toLocaleString('ko-KR') : '',
+  ]);
 
   useEffect(() => {
-    if (data) {
+    if (classData?.baseMoney !== undefined) {
+      setPrices([classData.baseMoney.toLocaleString('ko-KR')]);
+    }
+  }, [classData]);
+
+  useEffect(() => {
+    if (data && JSON.stringify(classData) !== JSON.stringify(data)) {
       const safeData = {
         ...data,
         classItems:
@@ -97,7 +105,14 @@ export const ClassEdit = () => {
         <TextField>
           <InputBox>
             수업 이름
-            <Input placeholder="수업 이름을 입력해 주세요.." width="1080px" />
+            <Input
+              value={classData?.name ?? ''}
+              onChange={(e) =>
+                setClassData({ ...classData, name: e.target.value })
+              }
+              placeholder="수업 이름을 입력해 주세요.."
+              width="1080px"
+            />
           </InputBox>
           <SelectBox>
             투자 차수

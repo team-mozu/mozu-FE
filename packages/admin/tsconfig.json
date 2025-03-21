@@ -13,16 +13,15 @@
     "moduleResolution": "bundler",
     "isolatedModules": true,
     "noEmit": false,
-
     "jsx": "react-jsx",
     "outDir": "./dist",
     "baseUrl": ".",
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
     "paths": {
       "@/*": ["src/*"],
-      "@mozu/ui": ["../ui/dist/index.mjs"],
-      "@mozu/design-token": ["../design-token/dist/index.mjs"],
-      "@configs/util": ["../util-config/src/index.ts"]
+      "@mozu/ui": ["../ui/dist"],
+      "@mozu/design-token": ["../design-token/dist"],
+      "@configs/util": ["../util-config/dist"]
     },
     "typeRoots": ["node_modules/@types", "src/@types"]
   },

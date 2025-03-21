@@ -6,6 +6,7 @@ interface IArticleType {
   date: string;
   onClick: () => void | boolean;
   selected: boolean;
+  articleNumber: number;
 }
 
 export const ArticleDiv = ({
@@ -13,10 +14,14 @@ export const ArticleDiv = ({
   date,
   onClick,
   selected,
+  articleNumber,
 }: IArticleType) => {
   return (
     <ArticleDivContiner onClick={onClick} selected={selected}>
-      <ArticleTitle selected={selected}>{title}</ArticleTitle>
+      <div>
+        <ArticleNumber>{articleNumber}</ArticleNumber>
+        <ArticleTitle selected={selected}>{title}</ArticleTitle>
+      </div>
       <Date selected={selected}>{date}</Date>
     </ArticleDivContiner>
   );
@@ -26,9 +31,14 @@ const ArticleDivContiner = styled.div<{ selected: boolean }>`
   width: 100%;
   padding: 11px 16px;
   display: flex;
+  border-bottom: 1px solid #e4e4e7;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  > div {
+    display: flex;
+    gap: 20px;
+  }
   background-color: ${({ selected }) =>
     selected ? color.orange[50] : 'transparent'};
   ${({ selected }) =>
@@ -52,4 +62,12 @@ const ArticleTitle = styled.p<{ selected: boolean }>`
 const Date = styled.p<{ selected: boolean }>`
   font: ${font.l2};
   color: ${({ selected }) => (selected ? color.orange[600] : color.zinc[600])};
+`;
+
+const ArticleNumber = styled.p`
+  text-align: center;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: #52525b;
 `;
