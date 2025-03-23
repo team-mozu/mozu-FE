@@ -5,6 +5,7 @@ import { Input, LogoWithText } from '@mozu/ui';
 import { useAdminLogin } from '@/apis';
 import { useForm } from '@/hooks';
 import { isTruthValues } from '@/utils';
+import { useNavigate } from 'react-router';
 
 export const SignInPage = () => {
   const { state, onChangeInputValue, setState } = useForm({
@@ -13,12 +14,16 @@ export const SignInPage = () => {
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const { mutate: adminLogin, isPending: isAdminLoginLoading } =
     useAdminLogin();
 
   const handleLogin = () => {
     adminLogin(state, {
+      onSuccess: () => {
+        navigate('/class-management');
+      },
       onError: () => {
         setErrorMessage('기관코드 혹은 비밀번호가 잘못되었습니다.');
         setState({ code: '', password: '' });

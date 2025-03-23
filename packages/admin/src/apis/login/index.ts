@@ -20,16 +20,6 @@ export const useAdminLogin = () => {
       return response.data;
     },
     onSuccess: async (res) => {
-      let redirectUrl: string;
-      if (import.meta.env.VITE_ADMIN_COOKIE_DOMAIN === 'localhost') {
-        const isLocalPortOpen = checkLocalPort(3002);
-        console.log('Redirecting to:', redirectUrl);
-        redirectUrl = import.meta.env.VITE_ADMIN_AUTH_URL;
-      } else {
-        redirectUrl = import.meta.env.VITE_ADMIN_AUTH_URL;
-        console.log('Redirecting to:', redirectUrl);
-      }
-      console.log('Redirecting to:', redirectUrl);
       setTokens(res.accessToken, res.refreshToken, 'admin');
       setCookies('authority', 'admin', {
         path: '/',
@@ -37,7 +27,6 @@ export const useAdminLogin = () => {
         sameSite: 'none',
         domain: import.meta.env.VITE_ADMIN_COOKIE_DOMAIN,
       });
-      window.location.href = redirectUrl;
     },
     onError: (res: AxiosError<AxiosError>) => {
       if (res.response) {

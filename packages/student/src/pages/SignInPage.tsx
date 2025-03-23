@@ -4,6 +4,7 @@ import { color, font } from '@mozu/design-token';
 import { Input, LogoWithText, Toast } from '@mozu/ui';
 import { useForm, useSSE } from '@/hook';
 import { useStudentLogin } from '@/apis';
+import { useNavigate } from 'react-router-dom';
 
 export const SignInPage = () => {
   const { state, onChangeInputValue, setState } = useForm<{
@@ -16,11 +17,11 @@ export const SignInPage = () => {
     teamName: '',
   });
 
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [datas, setDatas] = useState<
-    { teams: { classId: number; nextInvDeg: number }[] }[]
-  >([]);
+  const [datas, setDatas] = useState<{ classId: number; nextInvDeg: number }[]>(
+    [],
+  );
+  const navigate = useNavigate();
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -45,15 +46,10 @@ export const SignInPage = () => {
           {
             CLASS_NEXT_INV_START: (teamData) => {
               setDatas((prevDatas) => [
-                prevDatas.length > 0 ? prevDatas[0] : { teams: [] },
+                ...prevDatas,
                 {
-                  teams: [
-                    ...(prevDatas.length > 1 ? prevDatas[1].teams : []),
-                    {
-                      classId: teamData.classId,
-                      nextInvDeg: teamData.nextInvDeg,
-                    },
-                  ],
+                  classId: teamData.classId,
+                  nextInvDeg: teamData.nextInvDeg,
                 },
               ]);
 
@@ -61,6 +57,7 @@ export const SignInPage = () => {
             },
           },
         );
+        navigate(`/${datas[0].classId}/home`);
       },
       onError: () => {
         setErrorMessage('형식을 다시 확인해주세요.');
