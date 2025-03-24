@@ -33,7 +33,7 @@ export const useStudentLogin = () => {
         return;
       }
       let redirectUrl: string;
-      redirectUrl = import.meta.env.VITE_STUDENT_AUTH_URL;
+      redirectUrl = 'wait';
       setTokens(accessToken, '', 'student');
       setCookies('authority', 'student', {
         path: '/',
@@ -49,7 +49,7 @@ export const useStudentLogin = () => {
       //   domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
       //   expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       // });
-      navigate(redirectUrl);
+      redirectUrl;
     },
     onError: (res: AxiosError<unknown>) => {
       if (res.response) {
