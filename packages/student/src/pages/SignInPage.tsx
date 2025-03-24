@@ -34,6 +34,7 @@ export const SignInPage = () => {
 
     studentLogin(state, {
       onSuccess: () => {
+        console.log('student signin에서 실행되었음.');
         useSSE(
           `${import.meta.env.VITE_SERVER_URL}/team/sse`,
           (data) => {

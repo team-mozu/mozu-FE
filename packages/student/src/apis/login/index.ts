@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { AuthResponse } from './type';
 import { AxiosError } from 'axios';
 import { Toast } from '@mozu/ui';
+import { useNavigate } from 'react-router-dom';
 
 interface StudentLoginProps {
   classNum: number | null;
@@ -12,6 +13,7 @@ interface StudentLoginProps {
 }
 
 export const useStudentLogin = () => {
+  const navigate = useNavigate();
   return useMutation<AuthResponse, AxiosError, StudentLoginProps>({
     mutationFn: async ({ classNum, schoolName, teamName }) => {
       const response = await instance.post<AuthResponse>('/team/participate', {
@@ -31,14 +33,7 @@ export const useStudentLogin = () => {
         return;
       }
       let redirectUrl: string;
-      if (import.meta.env.VITE_STUDENT_COOKIE_DOMAIN === '192.168.1.6') {
-        const isLocalPortOpen = checkLocalPort(3001);
-        redirectUrl = import.meta.env.VITE_STUDENT_AUTH_URL;
-      } else {
-        redirectUrl = import.meta.env.VITE_STUDENT_AUTH_URL;
-        console.log('Redirecting to:', redirectUrl);
-      }
-      console.log('Redirecting to:', redirectUrl);
+      redirectUrl = import.meta.env.VITE_STUDENT_AUTH_URL;
       setTokens(accessToken, '', 'student');
       setCookies('authority', 'student', {
         path: '/',
@@ -54,7 +49,7 @@ export const useStudentLogin = () => {
       //   domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
       //   expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       // });
-      window.location.href = redirectUrl;
+      navigate(redirectUrl);
     },
     onError: (res: AxiosError<unknown>) => {
       if (res.response) {

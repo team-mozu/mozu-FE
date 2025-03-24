@@ -117,7 +117,7 @@ export const StockTables = ({ data = [], isEdit }: IPropType) => {
     {
       accessorKey: 'itemId',
       header: () => <>순번</>,
-      size: 120,
+      size: 80,
       meta: { align: 'center' }, // 정렬 정보 추가
       cell: ({ row }) => row.index + 1,
     },
@@ -261,6 +261,7 @@ const Table = styled.table`
   border-spacing: 0;
   border-radius: 8px;
   overflow: hidden;
+  table-layout: auto;
 `;
 
 const Thead = styled.thead`
@@ -277,6 +278,7 @@ const Th = styled.th<{ width: string }>`
   vertical-align: middle;
   border: 1px solid ${color.zinc[200]};
   padding: 16px 14px;
+  min-width: 80px;
   width: ${(props) => props.width};
   &:first-of-type {
     border-top-left-radius: 8px;
