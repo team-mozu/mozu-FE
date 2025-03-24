@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Search } from './assets';
-import React, { useState } from 'react'; // useState import
+import { useState } from 'react'; // useState import
 
 interface ISearchInputType {
   inputText: string;
@@ -48,12 +48,12 @@ const Input = styled.input`
   background-color: ${color.zinc[50]};
   color: ${color.black};
   font: ${font.b2};
-  font-weight: ${font.b2.fontWeight};
+  font-weight: ${font.b2};
   border: none;
   outline: none;
   ::placeholder {
     color: ${color.zinc[500]};
     font: ${font.b2};
-    font-weight: ${font.b2.fontWeight};
+    font-weight: ${font.b2};
   }
 `;

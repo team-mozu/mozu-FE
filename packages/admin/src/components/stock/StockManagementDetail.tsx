@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { stockManagementDetail } from '@/apis';
+import { useDeleteStock, useGetStockDetail } from '@/apis';
+import { usePriceFormatter } from '@/hooks';
 
 interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
@@ -15,82 +15,94 @@ export const StockManagementDetail = ({
 }: IStockManagementDetailProps) => {
   const navigate = useNavigate();
 
-  const {id} = useParams();
-  const stockId = id? parseInt(id) : null;
-  
-  const [imgUrl, setImgUrl] = useState<string>('')
-   const [datas, setDatas] = useState<{
-      name: string,
-      info: string,
-      logo: File,
-      money: number,
-      debt: number,
-      capital: number,
-      profit: number,
-      profitOG: number,
-      profitBen: number,
-      netProfit: number,}>({
-        name: '',
-        info: '',
-        logo: null,
-        money: null,
-        debt: null,
-        capital: null,
-        profit: null,
-        profitOG: null,
-        profitBen: null,
-        netProfit: null,})
+  const { id } = useParams();
+  const stockId = id ? parseInt(id) : null;
 
-        const {data: stockData, isLoading} = useQuery({
-          queryKey: ['stocks', stockId],
-          queryFn: () => stockManagementDetail(stockId),
-          enabled: !!stockId,
-        })
-    
-      useEffect(() => {
-        if(stockData?.data) {
-          setDatas({
-            name: stockData.data.name || '',
-            info: stockData.data.info || '',
-            logo: stockData.data.logo == "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg" ? null : stockData.data.logo, //사진 없을 시 기본 로고 띄우기 위해
-            money: stockData.data.money || null,
-            debt: stockData.data.debt || null,
-            capital: stockData.data.capital || null,
-            profit: stockData.data.profit || null,
-            profitOG: stockData.data.profitOG || null,
-            profitBen: stockData.data.profitBen || null,
-            netProfit: stockData.data.netProfit || null,
-          });
-        }
-      }, [stockData])
+  // const [imgUrl, setImgUrl] = useState<string>('');
+  const [datas, setDatas] = useState<{
+    name: string;
+    info: string;
+    logo: string;
+    money: number;
+    debt: number;
+    capital: number;
+    profit: number;
+    profitOG: number;
+    profitBen: number;
+    netProfit: number;
+  }>({
+    name: '',
+    info: '',
+    logo: null,
+    money: null,
+    debt: null,
+    capital: null,
+    profit: null,
+    profitOG: null,
+    profitBen: null,
+    netProfit: null,
+  });
+  const initialPrices = [
+    datas.debt?.toString() || '',
+    datas.capital?.toString() || '',
+    datas.profit?.toString() || '',
+    datas.profitOG?.toString() || '',
+    datas.profitBen?.toString() || '',
+    datas.netProfit?.toString() || '',
+  ];
+
+  const { data: stockData, isLoading } = useGetStockDetail(stockId);
+  const { mutate: stockDelete } = useDeleteStock(stockId);
+
+  if (isLoading) {
+    <div>로딩중...</div>;
+  }
 
   useEffect(() => {
-    if(datas.logo instanceof File) {
-      const img = URL.createObjectURL(datas.logo || '')
-      setImgUrl(img)
-
-      return () => URL.revokeObjectURL(img)
-    } else {
-      setImgUrl(datas.logo)
+    if (stockData) {
+      setDatas({
+        name: stockData.name || '',
+        info: stockData.info || '',
+        logo:
+          stockData.logo ==
+          'https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg'
+            ? null
+            : stockData.logo,
+        money: stockData.money || null,
+        debt: stockData.debt || null,
+        capital: stockData.capital || null,
+        profit: stockData.profit || null,
+        profitOG: stockData.profitOG || null,
+        profitBen: stockData.profitBen || null,
+        netProfit: stockData.netProfit || null,
+      });
     }
-  },[datas.logo])
+  }, [stockData]);
 
+  // useEffect(() => {
+  //   if (datas.logo) {
+  //     const img = URL.createObjectURL(datas.logo || '');
+  //     setImgUrl(img);
+
+  //     return () => URL.revokeObjectURL(img);
+  //   } else {
+  //     setImgUrl(datas.logo);
+  //   }
+  // }, [datas.logo]);
 
   return (
     <Container>
       <UpperContainer>
         <div>
           <Logo>
-            {imgUrl ? (
-              <LogoImg src={imgUrl} alt="로고" />
+            {datas.logo ? (
+              <LogoImg src={datas.logo} alt="로고" />
             ) : (
-              <StockNoLogo/>
-            )
-          }
+              <StockNoLogo />
+            )}
           </Logo>
           <Text>
             <Title>{datas.name}</Title>
-            <Number>{stockId}</Number>
           </Text>
         </div>
         <ButtonContainer>
@@ -121,38 +133,37 @@ export const StockManagementDetail = ({
         <CompanyInfo>
           <Label>회사 정보</Label>
           <div>
-            <p>
-            {datas.info} 
-            </p>
+            <p>{datas.info}</p>
           </div>
         </CompanyInfo>
         <CompanyMain>
-          <LeftSection>
-            <Label>재무상태표</Label>
-            <ContentWrapper>
-              <Accounts title={'부채'} content={datas.debt}  />
-              <Accounts title={'자본금'} content={datas.capital} />
-            </ContentWrapper>
-          </LeftSection>
-
-          <RightSection>
-            <Label>손익계산서</Label>
-            <ContentWrapper>
-              <Accounts title={'매출액'} content={datas.profit} />
-              <Accounts title={'매출원가'} content={datas.profitOG} />
-              <Accounts title={'매출이익'} content={datas.profitBen} />
-              <Accounts title={'당기순이익'} content={datas.netProfit} />
-            </ContentWrapper>
-          </RightSection>
+          <Section>
+            <div>
+              <Label>재무상태표</Label>
+              <ContentWrapper>
+                <Accounts title={'부채'} content={datas.debt} />
+                <Accounts title={'자본금'} content={datas.capital} />
+              </ContentWrapper>
+            </div>
+            <div>
+              <Label>손익계산서</Label>
+              <ContentWrapper>
+                <Accounts title={'매출액'} content={datas.profit} />
+                <Accounts title={'매출원가'} content={datas.profitOG} />
+                <Accounts title={'매출이익'} content={datas.profitBen} />
+                <Accounts title={'당기순이익'} content={datas.netProfit} />
+              </ContentWrapper>
+            </div>
+          </Section>
         </CompanyMain>
       </UnderContainer>
     </Container>
   );
 };
 
-const LogoImg = styled.img `
+const LogoImg = styled.img`
   width: 64px;
-  `
+`;
 
 const Container = styled.div`
   padding: 40px;
@@ -161,17 +172,17 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  `;
+`;
 
 const UpperContainer = styled.div`
   & > div:first-of-type {
     display: flex;
     gap: 12px;
   }
-  
+
   display: flex;
   justify-content: space-between;
-  `;
+`;
 
 const Logo = styled.div`
   overflow: hidden;
@@ -209,6 +220,11 @@ const ButtonContainer = styled.div`
   align-items: end;
 `;
 
+const Label = styled.label`
+  color: ${color.black};
+  font: ${font.t3};
+`;
+
 const UnderContainer = styled.div`
   overflow: scroll;
   padding: 32px;
@@ -217,52 +233,46 @@ const UnderContainer = styled.div`
   height: 95%;
   border: 1px solid ${color.zinc[200]};
   border-radius: 16px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 50% 1fr;
   gap: 52px;
 `;
 
 const CompanyInfo = styled.div`
+  grid-column: 1;
   display: flex;
-  gap: 16px;
   flex-direction: column;
+  gap: 16px;
   & > div {
     width: 100%;
     padding: 16px;
     background-color: ${color.zinc[50]};
-    font: ${font.b2};
+    font: ${font.t2};
     color: ${color.black};
     border-radius: 12px;
   }
 `;
 
 const CompanyMain = styled.div`
+  grid-column: 2; /* 두 번째 열에 배치 */
   display: flex;
+  flex-direction: column;
   gap: 24px;
 `;
 
-const LeftSection = styled.div`
-  flex: 1; /* 동일한 비율로 공간 차지 */
+const Section = styled.div`
   display: flex;
-  gap: 16px;
   flex-direction: column;
-`;
-
-const RightSection = styled.div`
-  flex: 1; /* 기존 2에서 1로 변경 */
-  display: flex;
-  gap: 16px;
-  flex-direction: column;
+  gap: 24px;
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 `;
 
 const ContentWrapper = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-`;
-
-const Label = styled.label`
-  color: ${color.black};
-  font: ${font.t3};
 `;

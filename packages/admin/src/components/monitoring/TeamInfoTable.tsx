@@ -6,6 +6,7 @@ interface IThProps {
   justify: string;
   padding: string;
 }
+
 interface ITdProps {
   width: string;
   align: string;
@@ -223,4 +224,5 @@ const Table = styled.table`
   border-radius: 8px;
   border-collapse: separate;
   overflow: hidden;
+  width: 1512px;
 `;

@@ -5,8 +5,8 @@ import { Imglogo, Button } from '@mozu/ui';
 
 interface IImgType {
   label?: string;
-  img?: string;
-  onImageChange?: (file: File | null) => void
+  img?: string | File;
+  onImageChange?: (file: File | string | null) => void;
 }
 
 export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
@@ -18,25 +18,30 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
   };
 
   useEffect(() => {
-    if(img) {
+    if (img) {
       if (typeof img === 'string') {
         setImgUrl(img);
       } else if (img instanceof File) {
-        const url = URL.createObjectURL(img)
+        const url = URL.createObjectURL(img);
         setImgUrl(url);
       }
-      
-      if(img === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg") { //기본 이미지일 때 빈칸으로 넣어서 이미지 삭제 버튼 클릭 불가능하도록
-        setImgUrl('')
+
+      if (
+        img ===
+        'https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg'
+      ) {
+        setImgUrl('');
       }
     }
   }, [img]);
 
   const delClick = () => {
-    setImgUrl(null); // 이미지 URL 초기화
-    onImageChange(null)
+    setImgUrl(null);
+    if (onImageChange) {
+      onImageChange(null);
+    }
     if (imgRef.current) {
-      imgRef.current.value = null; // 파일 입력값 초기화 (핵심 수정 부분)
+      imgRef.current.value = '';
     }
   };
 
@@ -45,7 +50,7 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
     if (file) {
       const newUrl = URL.createObjectURL(file);
       setImgUrl(newUrl);
-      onImageChange?.(file)
+      onImageChange?.(file);
     }
   };
 
@@ -54,8 +59,8 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
       <ImgContent type="file" ref={imgRef} onChange={handleChange} />
       <ImgContentContainer>
         <Label>{label}</Label>
-        <FakeImgContent >
-          {!imgUrl ? <Imglogo /> : <Image src={imgUrl} alt='기사 이미지'/>}
+        <FakeImgContent>
+          {!imgUrl ? <Imglogo /> : <Image src={imgUrl} alt="기사 이미지" />}
         </FakeImgContent>
       </ImgContentContainer>
       <Button
@@ -103,9 +108,9 @@ const ImgContent = styled.input`
   display: none;
 `;
 
-const Image = styled.img `
+const Image = styled.img`
   width: 580px;
-`
+`;
 const FakeImgContent = styled.div`
   overflow: hidden;
   width: 580px;
@@ -116,4 +121,4 @@ const FakeImgContent = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  `;
+`;

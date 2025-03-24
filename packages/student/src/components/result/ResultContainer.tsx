@@ -20,7 +20,67 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
       <Main>
         <Transaction>
           <label>거래내역</label>
-          <NthDeal />
+          {/* <NthDeal deal={3} />
+          <NthDeal deal={2} />
+          <NthDeal deal={1} /> */}
+          <_TestContainer>
+            <label>3차 거래</label>
+            <div>
+              {/* <History type="buy" /> */}
+              <TestContainer>
+                <BS>매도</BS>
+                <Stock>LG전자</Stock>
+                <Price>
+                  <Amount>104,00원</Amount>
+                  <Total>52,000 (2주)</Total>
+                </Price>
+              </TestContainer>
+            </div>
+          </_TestContainer>
+          <_TestContainer>
+            <label>2차 거래</label>
+            <div>
+              {/* <History type="buy" /> */}
+              <TestContainer>
+                <BS>매수</BS>
+                <Stock>LG전자</Stock>
+                <Price>
+                  <Amount>98,100원</Amount>
+                  <Total>32,700원 (3주)</Total>
+                </Price>
+              </TestContainer>
+              <TestContainer>
+                <BS>매도</BS>
+                <Stock>삼성전자</Stock>
+                <Price>
+                  <Amount>147,000원</Amount>
+                  <Total>49,000원 (3주)</Total>
+                </Price>
+              </TestContainer>
+            </div>
+          </_TestContainer>
+          <_TestContainer>
+            <label>1차 거래</label>
+            <div>
+              {/* <History type="buy" /> */}
+              <TestContainer>
+                <BS>매수</BS>
+                <Stock>포스코홀딩스</Stock>
+                <Price>
+                  <Amount>130,200원</Amount>
+                  <Total>130,200 (1주)</Total>
+                </Price>
+              </TestContainer>
+              <TestContainer>
+                <BS>매수</BS>
+                <Stock>삼성전자</Stock>
+                <Price>
+                  <Amount>429,600원</Amount>
+                  <Total>53,700원 (8주)</Total>
+                </Price>
+              </TestContainer>
+            </div>
+          </_TestContainer>
         </Transaction>
         <RightContainer>
           <Result>
@@ -37,7 +97,7 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               </Return>
               <TotalDeal>
                 <label>총 거래 횟수</label>
-                <p>3회</p>
+                <p>6회</p>
               </TotalDeal>
             </Sub>
           </Result>
@@ -71,6 +131,68 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
     </Container>
   );
 };
+
+// !
+
+const _TestContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  > label {
+    font: ${font.b1};
+    color: ${color.zinc[600]};
+  }
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid ${color.zinc[100]};
+    border-radius: 8px;
+    background-color: ${color.zinc[50]};
+  }
+`;
+
+// !
+
+const TestContainer = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+`;
+
+// color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+const BS = styled.p`
+  font: ${font.b1};
+  color: ${color.red[500]};
+`;
+
+const Stock = styled.p`
+  color: ${color.black};
+  font: ${font.b1};
+  flex: 1;
+`;
+
+const Price = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+// color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+// 금액도 type에 따라 색상 변경
+const Amount = styled.p`
+  font: ${font.b1};
+  color: ${color.red[500]};
+`;
+
+const Total = styled.p`
+  font: ${font.l2};
+  color: ${color.zinc[600]};
+`;
+
+// !
 
 const Container = styled.div`
   width: 848px;

@@ -4,7 +4,7 @@ import { CheckBox } from './CheckBox';
 
 interface IItemType {
   isHeader?: boolean;
-  title1?: string;
+  title1?: string | number;
   title2?: string;
   onChange?: () => void;
   checked?: boolean;
@@ -35,6 +35,7 @@ export const Item = ({
 const Title = styled.div<{ isHeader: boolean }>`
   font: ${({ isHeader }) => (isHeader ? font.b1 : font.b2)};
   color: ${color.black};
+  min-width: 60px;
 `;
 
 const TableContent = styled.div<{ isHeader: boolean }>`

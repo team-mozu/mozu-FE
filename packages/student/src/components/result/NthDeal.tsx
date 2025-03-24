@@ -2,12 +2,24 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { History } from './History';
 
-export const NthDeal = () => {
+interface IProp {
+  deal: number;
+}
+
+export const NthDeal = ({ deal }: IProp) => {
   return (
     <Container>
-      <label>1차 거래</label>
+      <label>{deal}차 거래</label>
       <div>
-        <History type="buy" />
+        {/* <History type="buy" /> */}
+        <TestContainer>
+          <BS>매수</BS>
+          <Stock>삼성전자</Stock>
+          <Price>
+            <Amount>429,600원</Amount>
+            <Total>53,700원 (8주)</Total>
+          </Price>
+        </TestContainer>
       </div>
     </Container>
   );
@@ -31,4 +43,43 @@ const Container = styled.div`
     border-radius: 8px;
     background-color: ${color.zinc[50]};
   }
+`;
+
+// !
+
+const TestContainer = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+`;
+
+/* color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])}; */
+const BS = styled.p`
+  color: ${color.red[500]}
+  font: ${font.b1};
+`;
+
+const Stock = styled.p`
+  color: ${color.black};
+  font: ${font.b1};
+  flex: 1;
+`;
+
+const Price = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+/* color: ${({ type }) =>
+type === 'buy' ? color.red[500] : color.blue[500]}; */
+// 금액도 type에 따라 색상 변경
+const Amount = styled.p`
+  font: ${font.b1};
+  color: ${color.red[500]};
+`;
+
+const Total = styled.p`
+  font: ${font.l2};
+  color: ${color.zinc[600]};
 `;

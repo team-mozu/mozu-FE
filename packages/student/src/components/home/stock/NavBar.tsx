@@ -21,8 +21,8 @@ export const NavBar = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const navigate = useNavigate();
 
-  const navItems = ['시세정보', '종목정보', '뉴스'];
-  const navRoutes = ['price-info', 'stock-info', 'news']; // 각 버튼의 경로
+  const navItems = ['시세정보', '종목정보'];
+  const navRoutes = ['price-info', 'stock-info']; // 각 버튼의 경로
 
   const navClick = (index: number) => {
     setActiveIndex(index);

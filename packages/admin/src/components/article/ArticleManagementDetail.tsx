@@ -4,38 +4,47 @@ import { ArticleMainData } from './ArticleMainData';
 import { Button, Del, Edit } from '@mozu/ui';
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { articleManagementDetail } from '../../apis/article/index';
+import { useGetArticleDetail } from '@/apis';
 
 interface IArticleManagementDetailProps {
-  onClick?: () => void; // onClick을 옵션으로 추가
+  onClick?: () => void;
 }
 
 export const ArticleManagementDetail = ({
   onClick,
 }: IArticleManagementDetailProps) => {
   const navigate = useNavigate();
-  const {id} = useParams();
-  const articleId = id? parseInt(id) : null;
 
-  const [datas, setDatas] = useState<{title: string, description: string, image: File, createDate: string}>({title: '', description: '', image: '', createDate: ''})
+  const { id } = useParams<{ id: string }>();
+  const articleId = id ? parseInt(id, 10) : null;
 
-  const {data: articleData, isLoading} = useQuery({
-    queryKey: ['article', articleId],
-    queryFn: () => articleManagementDetail(articleId),
-    enabled: !!articleId,
-  })
+  const [datas, setDatas] = useState<{
+    title: string;
+    description: string;
+    image: string;
+    createDate: string;
+  }>({ title: '', description: '', image: '', createDate: '' });
+
+  const { data: articleData, isLoading } = useGetArticleDetail(articleId);
+
+  if (isLoading) {
+    <div>로딩중...</div>;
+  }
 
   useEffect(() => {
-    if(articleData?.data) {
+    if (articleData) {
       setDatas({
-        title: articleData.data.title || '',
-        description: articleData.data.description || '',
-        image: articleData.data.image === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg" ? null : articleData.data.image,
-        createDate: articleData.data.createDate  || '',
+        title: articleData.title || '',
+        description: articleData.description || '',
+        image:
+          articleData.image ===
+          'https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg'
+            ? null
+            : articleData.image,
+        createDate: articleData.createDate || '',
       });
     }
-  }, [articleData])
+  }, [articleData]);
 
   return (
     <Container>
@@ -68,7 +77,11 @@ export const ArticleManagementDetail = ({
       </UpperContainer>
       <MainArticle>
         <ArticleContainer>
-          <ArticleMainData img={datas.image} title={datas.title} main={datas.description} />
+          <ArticleMainData
+            img={datas.image}
+            title={datas.title}
+            main={datas.description}
+          />
         </ArticleContainer>
       </MainArticle>
     </Container>

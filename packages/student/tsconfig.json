@@ -12,7 +12,12 @@
     "resolveJsonModule": true,
     "moduleResolution": "bundler",
     "isolatedModules": true,
-    "noEmit": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "incremental": true,
+    "strict": true,
 
     "jsx": "react-jsx",
     "baseUrl": ".",
@@ -22,15 +27,9 @@
       "@mozu/ui": ["../ui/src/index.ts"],
       "@mozu/design-token": ["../design-token/src/index.ts"]
     },
-    "typeRoots": ["node_modules/@types", "src/@types"],
-    "outDir": "build"
+    "typeRoots": ["node_modules/@types", "src/@types"]
   },
   "references": [{ "path": "../ui" }],
-  "include": [
-    "src",
-    "vite.config.ts",
-    "../ui/src/HistorySidebar.tsx",
-    "../ui/src/ItemSidebar.tsx",
-    "../admin/src/**/*"
-  ]
+  "include": ["src/**/*", "vite.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }

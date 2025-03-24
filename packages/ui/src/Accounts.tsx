@@ -3,19 +3,23 @@ import { color, font } from '@mozu/design-token';
 
 interface IAccountsType {
   title?: string;
-  content: string;
+  content: number | string;
 }
 
 export const Accounts = ({ title, content }: IAccountsType) => {
+  const formattedContent =
+    typeof content === 'number' ? content.toLocaleString('ko-KR') : content;
+
   return (
     <AccountsContainer>
       <ContentContainer>
-        <Tilte>{title}</Tilte>
-        <Content>{content}</Content>
+        <Title>{title}</Title>
       </ContentContainer>
+      <Content>{formattedContent} 원</Content>
     </AccountsContainer>
   );
 };
+
 const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -23,24 +27,25 @@ const ContentContainer = styled.div`
   align-items: start;
 `;
 
-const Tilte = styled.div`
+const Title = styled.div`
   font: ${font.t3};
   color: ${color.zinc[600]};
 `;
 
 const AccountsContainer = styled.div`
-  flex-grow: 1; /* 부모 요소 내에서 동일한 비율로 차지 */
+  flex-grow: 1;
   width: 100%;
   height: 108px;
   border-radius: 12px;
   background-color: ${color.zinc[50]};
   display: flex;
   align-items: center;
-  justify-content: space-between; /* 내용 정렬 */
+  justify-content: space-between;
   padding: 24px;
 `;
 
 const Content = styled.div`
   font: ${font.h4};
   color: ${color.black};
+  margin-left: auto;
 `;

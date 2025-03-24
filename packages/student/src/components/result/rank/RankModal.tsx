@@ -17,27 +17,27 @@ export const RankModal = ({ onCancle }: IRankModal) => {
         <RankingContainer>
           <RankingDiv
             rank={1}
-            teamName="동욱쌤 제자들"
-            schoolName="대덕소프트웨어마이스터고등학교"
-            price={1400000}
+            teamName="따따봉"
+            schoolName="대전둔산여자중학교"
+            price={1522000}
           />
           <RankingDiv
             rank={2}
-            teamName="동욱쌤 제자들"
-            schoolName="대덕소프트웨어마이스터고등학교"
-            price={1400000}
+            teamName="할수있다우리팀"
+            schoolName="대전둔산여자중학교"
+            price={1102000}
           />
           <RankingDiv
             rank={3}
-            teamName="동욱쌤 제자들"
-            schoolName="대덕소프트웨어마이스터고등학교"
-            price={1400000}
+            teamName="4반최고"
+            schoolName="대전둔산여자중학교"
+            price={922000}
           />
           <RankingDiv
             rank={4}
-            teamName="동욱쌤 제자들"
-            schoolName="대덕소프트웨어마이스터고등학교"
-            price={1400000}
+            teamName="1등 가보자"
+            schoolName="대전둔산여자중학교"
+            price={820000}
           />
         </RankingContainer>
         <ButtonDiv onClick={onCancle}>

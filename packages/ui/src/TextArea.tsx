@@ -6,6 +6,7 @@ interface ITextAreaType {
   label?: string;
   height?: number;
   value?: string;
+  name?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
@@ -15,6 +16,7 @@ export const TextArea = ({
   height,
   value,
   onChange,
+  name
 }: ITextAreaType) => {
   return (
     <TextAreaContainer>
@@ -23,6 +25,7 @@ export const TextArea = ({
         value={value}
         placeholder={placeholder}
         height={height}
+        name={name}
         onChange={onChange}
       ></TextAreaContent>
     </TextAreaContainer>
@@ -50,6 +53,7 @@ const TextAreaContent = styled.textarea<Pick<ITextAreaType, 'height'>>`
   background-color: ${color.zinc[50]};
   border-radius: 8px;
   resize: none;
+  font-family: 'Pretendard', sans-serif;
   ::placeholder {
     color: ${color.zinc[500]};
     font: ${font.b2};

@@ -12,3 +12,4 @@ export * from './ClassEdit';
 export * from './ArticleManagementEditPage';
 export * from './ClassMonitoringPage';
 export * from './InvestmentPreparation';
+export * from './Protected';

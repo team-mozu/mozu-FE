@@ -3,36 +3,58 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from '@mozu/ui';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useGetClassDetail } from '@/apis';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { useClassStart, useGetClassDetail } from '@/apis';
 import { useClassStore } from '@/store';
+import { usePriceFormatter } from '@/hooks';
 
 export const ClassEnvironment = () => {
+  const { classId, id } = useParams();
+  const articleId = id ? parseInt(id) : null;
   const navigate = useNavigate();
-  const { data } = useGetClassDetail('5');
+  const location = useLocation();
+  const { data, refetch } = useGetClassDetail(articleId);
   const [isModal, setIsModal] = useState<boolean>(false);
   const { classData, setClassData } = useClassStore();
+  const { mutate } = useClassStart(articleId);
+
+  const { prices, priceChangeHandler } = usePriceFormatter(
+    [data?.baseMoney ?? 0],
+    (index, value) => {
+      console.log(`입력값 변경됨: index ${index}, value ${value}`);
+    },
+  );
 
   useEffect(() => {
-    if (data) {
+    refetch();
+  }, [location.pathname, refetch]);
+
+  useEffect(() => {
+    if (data && JSON.stringify(classData) !== JSON.stringify(data)) {
       setClassData(data);
     }
-  }, [data, setClassData]);
+  }, [data, classData, setClassData]);
 
   const isOpen = () => {
     setIsModal(true);
   };
+
   const isCancle = () => {
     setIsModal(false);
   };
+
   const isDelete = () => {
     console.log('삭제');
     setIsModal(false);
   };
+
   const infos = [
     { kind: '수업 이름', value: data?.name ?? '정보 없음' },
-    { kind: '투자 차수', value: data?.maxInvDeg ?? '정보 없음' },
-    { kind: '기초자산', value: data?.baseMoney ?? '정보 없음' },
+    {
+      kind: '투자 차수',
+      value: data?.maxInvDeg ? `${data.maxInvDeg}차` : '정보 없음',
+    },
+    { kind: '기초자산', value: prices[0] ? `${prices[0]}원` : '정보 없음' },
     { kind: '생성일자', value: data?.createdAt ?? '정보 없음' },
   ];
 
@@ -66,7 +88,7 @@ export const ClassEnvironment = () => {
               color="white"
               hoverBackgroundColor={color.orange[400]}
               hoverBorderColor={color.orange[400]}
-              onClick={() => navigate('start')}
+              onClick={() => mutate()}
             >
               모의주식투자 시작하기
               <Play />
@@ -109,7 +131,11 @@ export const ClassEnvironment = () => {
           </Option>
           <TableBox>
             <StockTables isEdit={false} data={classData?.classItems ?? []} />
-            <ArticleTables isEdit={false} round={1} />
+            <ArticleTables
+              isEdit={false}
+              round={1}
+              data={classData?.classArticles ?? []}
+            />
           </TableBox>
         </Content>
       </Wrapper>
@@ -136,7 +162,7 @@ const BtnContainer = styled.div`
 
 const Info = styled.div`
   display: flex;
-  font: ${font.b2};
+  font: ${font.t2};
   > span {
     width: 120px;
     color: ${color.zinc[600]};

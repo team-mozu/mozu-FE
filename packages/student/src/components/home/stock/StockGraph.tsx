@@ -44,17 +44,18 @@ export const StockGraph = () => {
   const [shouldAnimate, setShouldAnimate] = useState<boolean>(true);
 
   useEffect(() => {
-    setTimeout(() => setShouldAnimate(false), 500); // 애니메이션이 실행된 후 비활성화
+    setTimeout(() => setShouldAnimate(false), 500);
   }, []);
 
-  const generateRandomOffset = () => Math.floor(Math.random() * 1500) - 750; // -750 ~ +750 범위 난수
+  const generateRandomOffset = () => Math.floor(Math.random() * 1500) - 750;
 
-  const generateDataWithFluctuation = (baseData: typeof data) => {
+  const generateDataWithFluctuation = (
+    baseData: Array<{ phase: string; price: number }>,
+  ) => {
     const newData = [];
     for (let i = 0; i < baseData.length - 1; i++) {
       newData.push(baseData[i]);
 
-      // 현재 가격과 다음 가격 사이에 3개의 중간 포인트 추가
       for (let j = 1; j <= 4; j++) {
         const ratio = j / 4;
         const midPrice =
@@ -63,7 +64,7 @@ export const StockGraph = () => {
           generateRandomOffset();
 
         newData.push({
-          phase: '', // X축 라벨 표시 안함
+          phase: '',
           price: midPrice,
           isMidPoint: true,
         });

@@ -5,16 +5,31 @@ import { Input, LogoWithText } from '@mozu/ui';
 import { useAdminLogin } from '@/apis';
 import { useForm } from '@/hooks';
 import { isTruthValues } from '@/utils';
+import { useNavigate } from 'react-router';
 
 export const SignInPage = () => {
-  const { state, onChangeInputValue } = useForm({
+  const { state, onChangeInputValue, setState } = useForm({
     code: '',
     password: '',
   });
-  const [passwordVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
-  const { mutate: adminLogin, isLoading: isAdminLoginLoading } =
+  const { mutate: adminLogin, isPending: isAdminLoginLoading } =
     useAdminLogin();
+
+  const handleLogin = () => {
+    adminLogin(state, {
+      onSuccess: () => {
+        navigate('/class-management');
+      },
+      onError: () => {
+        setErrorMessage('기관코드 혹은 비밀번호가 잘못되었습니다.');
+        setState({ code: '', password: '' });
+      },
+    });
+  };
 
   return (
     <Container>
@@ -24,28 +39,45 @@ export const SignInPage = () => {
       </LogoWrapper>
       <SigninContainer>
         <p>관리자 로그인</p>
-        <div>
+        <div
+          onKeyDown={(e) => {
+            if (
+              e.key === 'Enter' &&
+              isTruthValues([state.code, state.password]) &&
+              !isAdminLoginLoading
+            ) {
+              handleLogin();
+            }
+          }}
+        >
           <Input
-            placeholder={'기관 코드를 입력해 주세요..'}
-            label={'기관 코드'}
+            placeholder="기관 코드를 입력해 주세요.."
+            label="기관 코드"
             value={state.code}
             name="code"
-            onChange={onChangeInputValue}
+            onChange={(e) => {
+              onChangeInputValue(e);
+              setErrorMessage('');
+            }}
           />
 
           <Input
-            type={passwordVisible ? 'text' : 'password'}
-            placeholder={'비밀번호를 입력해 주세요..'}
-            label={'비밀번호'}
+            type="password"
+            placeholder="비밀번호를 입력해 주세요.."
+            label="비밀번호"
             name="password"
             value={state.password}
-            onChange={onChangeInputValue}
+            onChange={(e) => {
+              onChangeInputValue(e);
+              setErrorMessage('');
+            }}
+            passwordVisible={passwordVisible}
+            setPasswordVisible={setPasswordVisible}
           />
+          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </div>
         <LoginButton
-          onClick={() =>
-            adminLogin({ code: state.code, password: state.password })
-          }
+          onClick={handleLogin}
           disabled={
             !isTruthValues([state.code, state.password]) || isAdminLoginLoading
           }
@@ -115,4 +147,10 @@ const LoginButton = styled.button`
     cursor: not-allowed;
     opacity: 0.5;
   }
+`;
+
+const ErrorMessage = styled.p`
+  color: ${color.red[500]};
+  font: ${font.b2};
+  margin-top: 8px;
 `;

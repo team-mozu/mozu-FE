@@ -2,51 +2,63 @@ import { AddButton, SearchInput } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { StockDiv } from './StockDiv';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { stockManagementList } from '@/apis';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState, Dispatch, SetStateAction } from 'react';
+import { useGetStockList } from '@/apis';
 
-export const StockSearchSideBar = () => {
-  const [datas, setDatas] = useState<[{id: number, name: string}]>([])
-  
-  const {data: stockData, isLoading} = useQuery({
-    queryKey: ['stocks'],
-    queryFn: () => stockManagementList(),
-  })
+interface StockSearchSideBarProps {
+  setSelectedId: Dispatch<SetStateAction<number | null>>;
+  selectedId: number | null;
+}
 
-useEffect(() => {
-  if(stockData?.data.items) {
-    setDatas(
-      stockData.data.items.map((item) => ({
-        id: item.id,
-        name: item.name
-      }))
-    );
-  }
-}, [stockData])
-
+export const StockSearchSideBar = ({
+  setSelectedId,
+  selectedId,
+}: StockSearchSideBarProps) => {
+  const { classId, id } = useParams<{ classId: string; id: string }>();
+  const [datas, setDatas] = useState<{ id: number; name: string }[]>([]);
+  const { data: stockData } = useGetStockList();
   const navigate = useNavigate();
 
-  const stockDivClick = (id: number) => {
-    navigate(`/stock-management/${id}`)
-  }
+  useEffect(() => {
+    if (!stockData?.items) return;
+
+    const mappedData = stockData.items.map(({ id, name }) => ({ id, name }));
+    setDatas(mappedData);
+
+    if (!id && mappedData.length > 0) {
+      navigate(`/stock-management/${mappedData[0].id}`, { replace: true });
+      setSelectedId(mappedData[0].id);
+    }
+  }, [stockData, id, navigate, setSelectedId]);
+
   return (
     <SideBarContainer>
       <UpperWrapper>
         <p>
-          전체 <span>12</span>
+          전체 <span>{datas.length}</span>
         </p>
         <SearchInput inputText="종목 검색.." />
       </UpperWrapper>
       <ArticleWrapper>
-        {datas.map((data) => (
-          <StockDiv name={data.name} number={data.id} onClick={(id) => stockDivClick(data.id)} key={data.id}/>
-        ))
-
-        }
+        {datas.map((data, index) => (
+          <StockDiv
+            key={data.id}
+            name={data.name}
+            number={index + 1}
+            selected={selectedId === data.id}
+            onClick={() => {
+              setSelectedId(data.id);
+              navigate(`/stock-management/${data.id}`, { replace: true });
+            }}
+          />
+        ))}
       </ArticleWrapper>
-      <AddButton onClick={() => navigate('/stock-management/add')} text="종목 추가하기" />
+
+      <AddButton
+        onClick={() => navigate('/stock-management/add')}
+        text="종목 추가하기"
+      />
     </SideBarContainer>
   );
 };

@@ -128,6 +128,7 @@ const Table = styled.table`
   border-radius: 4px;
   border-collapse: separate;
   overflow: hidden;
+  width: 1000px;
 `;
 
 const Th = styled.th<IThProps>`

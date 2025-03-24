@@ -5,9 +5,8 @@
     "lib": ["ESNext", "DOM"],
     "declaration": true,
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "declarationDir": "dist",
-    "jsx": "react-jsx",
-    "sourceType": "module"
+    "jsx": "react-jsx"
   }
 }

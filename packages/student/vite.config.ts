@@ -3,16 +3,16 @@ import react from '@vitejs/plugin-react'; // 새로운 권장 플러그인
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react()], // react-refresh 대신 사용
+  plugins: [react()],
   server: {
     port: 3001,
-    host: true, // 네트워크 접근 허용
-    cors: true, // CORS 설정
+    host: true,
+    cors: true,
   },
   build: {
     outDir: 'build',
     chunkSizeWarningLimit: 3500,
-    sourcemap: true, // 소스맵 생성
+    sourcemap: true,
   },
   resolve: {
     alias: {

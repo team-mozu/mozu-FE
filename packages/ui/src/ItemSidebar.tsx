@@ -4,95 +4,92 @@ import { noImgIcon } from './assets';
 import { useNavigate } from 'react-router-dom';
 
 interface IItemContentType {
-  imgUrl?: string;
-  title: string;
-  code: string;
-  price: string;
-  isUp?: boolean;
-  upDownPrice: string;
-  upDownPercent: string;
+  itemId?: number;
+  itemName: string;
+  itemLogo: string;
+  nowMoney: number;
+  profitMoney: number;
+  profitNum: string;
+  isUp: boolean;
   onClick?: () => void;
 }
 
+interface IClassProp {
+  classData: ClassResponse[];
+}
+
+interface ClassResponse {
+  itemId: number;
+  itemName: string;
+  itemLogo: string;
+  nowMoney: number;
+  profitMoney: number;
+  profitNum: string;
+}
+
 const ItemContent = ({
-  imgUrl,
-  title,
-  code,
-  price,
-  isUp,
-  upDownPrice,
-  upDownPercent,
+  itemId,
+  itemName,
+  itemLogo,
+  nowMoney,
+  profitMoney,
+  profitNum,
   onClick,
 }: IItemContentType) => {
   return (
     <ItemContainer onClick={onClick}>
       <LogoContainer>
-        <Logo src={imgUrl ? imgUrl : noImgIcon} alt={title} imgUrl={imgUrl} />
+        <Logo
+          src={itemLogo ? itemLogo : noImgIcon}
+          alt={itemName}
+          itemLogo={itemLogo}
+        />
         <ItemTitleContainer>
-          <ItemTitle>{title}</ItemTitle>
-          <ItemCode>{code}</ItemCode>
+          <ItemTitle>{itemName}</ItemTitle>
+          <ItemCode>{itemId}</ItemCode>
         </ItemTitleContainer>
       </LogoContainer>
       <ItemPriceContainer>
-        <Price>{price}원</Price>
-        <Percent isUp={isUp}>
-          {upDownPrice}원 ({upDownPercent}%)
+        <Price>{nowMoney}원</Price>
+        <Percent isUp={true}>
+          {profitMoney}원 ({[profitNum]}%)
         </Percent>
       </ItemPriceContainer>
     </ItemContainer>
   );
 };
 
-export const ItemSidebar = () => {
+export const ItemSidebar = ({
+  classData = [],
+}: {
+  classData: ClassResponse[];
+}) => {
   const navigate = useNavigate();
-  const datas = [
-    {
-      logoImg:
-        'https://i.pinimg.com/236x/4e/9e/9a/4e9e9af1e2efd78c2776c60225fcd6e5.jpg',
-      title: '삼성전자',
-      code: '005930',
-      price: '53,700',
-      isUp: false,
-      upDownPrice: '-600',
-      upDownPercent: '-1.1',
-    },
-    {
-      logoImg:
-        'https://i.pinimg.com/236x/4e/9e/9a/4e9e9af1e2efd78c2776c60225fcd6e5.jpg',
-      title: '삼성전자',
-      code: '005930',
-      price: '53,700',
-      isUp: true,
-      upDownPrice: '+600',
-      upDownPercent: '+1.1',
-    },
-    {
-      logoImg: '',
-      title: '삼성전자',
-      code: '005930',
-      price: '53,700',
-      isUp: false,
-      upDownPrice: '-600',
-      upDownPercent: '-1.1',
-    },
-  ];
   return (
     <SideBarContainer>
       <Title>전체 종목</Title>
       <ItemContentContainer>
-        {datas.map((data, index) => (
-          <ItemContent
-            imgUrl={data.logoImg}
-            title={data.title}
-            code={data.code}
-            price={data.price}
-            isUp={data.isUp}
-            upDownPrice={data.upDownPrice}
-            upDownPercent={data.upDownPercent}
-            key={index}
-            onClick={() => navigate('home/stock/1/price-info')}
-          />
-        ))}
+        {Array.isArray(classData) && classData.length > 0 ? (
+          classData.map((data, id) => (
+            <ItemContent
+              key={id}
+              itemId={data.itemId}
+              itemName={data.itemName}
+              itemLogo={data.itemLogo}
+              nowMoney={data.nowMoney ?? 0}
+              isUp={true}
+              profitMoney={data.profitMoney ?? 0}
+              profitNum={
+                data.profitNum && !isNaN(parseFloat(data.profitNum))
+                  ? data.profitNum
+                  : '0%'
+              }
+              onClick={() => navigate('home/stock/1/price-info')}
+            />
+          ))
+        ) : (
+          <p>데이터가 없습니다.</p>
+        )}
       </ItemContentContainer>
     </SideBarContainer>
   );
@@ -152,14 +149,14 @@ const Percent = styled.div<Pick<IItemContentType, 'isUp'>>`
   color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
 `;
 
-const Logo = styled.img<Pick<IItemContentType, 'imgUrl'>>`
+const Logo = styled.img<Pick<IItemContentType, 'itemLogo'>>`
   width: 36px;
   height: 36px;
   border-radius: 18px;
   border: 1px solid
-    ${({ imgUrl }) => (imgUrl ? 'transparent' : color.zinc[200])};
-  background-color: ${({ imgUrl }) =>
-    imgUrl ? 'transparent' : color.zinc[50]};
+    ${({ itemLogo }) => (itemLogo ? 'transparent' : color.zinc[200])};
+  background-color: ${({ itemLogo }) =>
+    itemLogo ? 'transparent' : color.zinc[50]};
   display: flex;
   justify-content: center;
   align-items: center;

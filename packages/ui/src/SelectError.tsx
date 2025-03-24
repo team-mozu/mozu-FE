@@ -2,7 +2,11 @@ import styled from '@emotion/styled';
 import { Info } from './assets';
 import { color, font } from '@mozu/design-token';
 
-export const SelectError = () => {
+interface IProp {
+  isStock: boolean;
+}
+
+export const SelectError = ({isStock}: IProp) => {
   return (
     <Container>
       <IconContainer>
@@ -10,7 +14,7 @@ export const SelectError = () => {
       </IconContainer>
       <TitleText>선택 필요</TitleText>
       <SubText>
-        관리하고자 하는 종목을 선택하거나, 종목을 추가해 주세요.
+        관리하고자 하는 {isStock ? "종목을" : "기사를"} 선택하거나, {isStock ? "종목을" : "기사를"} 추가해 주세요.
       </SubText>
     </Container>
   );

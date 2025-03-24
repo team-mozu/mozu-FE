@@ -4,7 +4,7 @@ import { Dot } from './assets';
 
 interface ITeamType {
   title: string;
-  school: { title: string; school: string }[];
+  school: string;
 }
 
 export const TeamContainer = ({ title, school }: ITeamType) => {
@@ -22,7 +22,7 @@ export const TeamContainer = ({ title, school }: ITeamType) => {
 };
 
 const TeamContent = styled.div`
-  width: 568px;
+  width: 100%;
   height: 100px;
   border-radius: 4px;
   border: 1px solid ${color.zinc[100]};

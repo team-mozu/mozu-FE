@@ -10,16 +10,17 @@ export default defineConfig({
     cors: true, // CORS 설정
   },
   build: {
-    outDir: 'build',
+    outDir: 'dist',
     chunkSizeWarningLimit: 3500,
     sourcemap: true, // 소스맵 생성
   },
   resolve: {
+    preserveSymlinks: true,
     alias: {
       '@': path.resolve(process.cwd(), './src'),
       '@mozu/design-token': path.resolve(
         __dirname,
-        '../design-token/src/index.ts',
+        '../design-token/dist/index.js',
       ),
     },
   },

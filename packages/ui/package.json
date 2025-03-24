@@ -2,15 +2,20 @@
   "name": "@mozu/ui",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "build": "tsc --build"
+  },
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@mozu/admin": "workspace:^",
     "@mozu/design-token": "workspace:^",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -23,6 +28,5 @@
     "@types/react-dom": "18.3.5",
     "prettier": "^3.4.2",
     "typescript": "5.7.3"
-  },
-  "prettier": "@mozu/prettier-config"
+  }
 }

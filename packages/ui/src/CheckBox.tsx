@@ -3,9 +3,9 @@ import { color } from '@mozu/design-token';
 import { Check } from './assets';
 
 interface IProps {
-  onChange: () => void;
-  checked: boolean;
-  id: string;
+  onChange?: () => void;
+  checked?: boolean;
+  id?: string;
 }
 
 interface ICheckType {

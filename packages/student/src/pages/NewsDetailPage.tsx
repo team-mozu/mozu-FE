@@ -11,7 +11,9 @@ export const NewsDetailPage = () => {
       <Wrapper>
         <Container>
           <ArticleDiv>
-            <NewsDetail />
+            <NewsDetail
+              img={'https://image.lawtimes.co.kr/images/186732.jpg'}
+            />
           </ArticleDiv>
         </Container>
         <BtnWrapper onClick={() => navigate(-1)}>

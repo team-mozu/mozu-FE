@@ -23,7 +23,7 @@ export const TotalProperty = ({
         <Money
           color={rate.indexOf('+') !== -1 ? color.red[500] : color.blue[500]}
         >
-          {money}원
+          {money} 원
         </Money>
         <MoneyRate
           color={rate.indexOf('+') !== -1 ? color.red[500] : color.blue[500]}
@@ -35,15 +35,15 @@ export const TotalProperty = ({
         <Details>
           <BasicMoney>
             기초자산
-            <span>{basicMoney}원</span>
+            <span>{basicMoney} 원</span>
           </BasicMoney>
           <Cash>
             보유현금
-            <span>{cash}원</span>
+            <span>{cash} 원</span>
           </Cash>
           <Stock>
             보유주식
-            <span>{stock}원</span>
+            <span>{stock} 원</span>
           </Stock>
         </Details>
       </DetailBox>

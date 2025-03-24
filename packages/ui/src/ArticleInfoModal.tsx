@@ -10,81 +10,31 @@ interface IArticleInfoType {
 
 export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
   const [datas, setDatas] = useState<
-    { isClicked: boolean; articleContent: [{ title: string }] }[]
-  >([
-    {
-      isClicked: true,
-      articleContent: [
-        { title: '1' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-      ],
-    },
-    {
-      isClicked: false,
-      articleContent: [
-        { title: '2' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-      ],
-    },
-    {
-      isClicked: false,
-      articleContent: [
-        { title: '3' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-      ],
-    },
-    {
-      isClicked: false,
-      articleContent: [
-        { title: '4' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-      ],
-    },
-    {
-      isClicked: false,
-      articleContent: [
-        { title: '5' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-        { title: '윤 대통령 측 "탄핵소추 적법성 따질 것"...헌재 "협조해야"' },
-      ],
-    },
-  ]);
+    { isClicked: boolean; articleContent: { title: string }[] }[]
+  >([]);
 
-  const outSideRef = useRef();
-  const outSideClick = (e: MouseEvent) => {
-    if (outSideRef.current == e.target) setIsOpen(false);
+  const outSideRef = useRef<HTMLDivElement | null>(null);
+  const outSideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (outSideRef.current === e.target && setIsOpen) {
+      setIsOpen(false);
+    }
   };
 
   const cancelClick = () => {
-    setIsOpen(false);
+    if (setIsOpen) {
+      setIsOpen(false);
+    }
   };
 
   const barClick = (index: number) => {
     setDatas((prev) =>
-      prev.map((data, idx) =>
-        idx === index
-          ? { ...data, isClicked: true }
-          : { ...data, isClicked: false },
-      ),
+      prev
+        ? prev.map((data, idx) =>
+            idx === index
+              ? { ...data, isClicked: true }
+              : { ...data, isClicked: false },
+          )
+        : [],
     );
   };
 

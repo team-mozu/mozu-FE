@@ -20,17 +20,17 @@ export const StockInfo = () => {
           <Label>재무상태표</Label>
           <ContentWrapper>
             <Accounts title={'부채'} content={'1,050,259억'} />
-            <Accounts title={'자본금'} content={'1,050,259억'} />
+            <Accounts title={'자본금'} content={'3,862,813억'} />
           </ContentWrapper>
         </LeftSection>
 
         <RightSection>
           <Label>손익계산서</Label>
           <ContentWrapper>
-            <Accounts title={'매출액'} content={'1,050,259억'} />
-            <Accounts title={'매출원가'} content={'1,050,259억'} />
-            <Accounts title={'매출이익'} content={'1,050,259억'} />
-            <Accounts title={'당기순이익'} content={'1,050,259억'} />
+            <Accounts title={'매출액'} content={'790,987억'} />
+            <Accounts title={'매출원가'} content={'490,950억'} />
+            <Accounts title={'매출이익'} content={'300,036억'} />
+            <Accounts title={'당기순이익'} content={'101,009억'} />
           </ContentWrapper>
         </RightSection>
       </CompanyMain>
