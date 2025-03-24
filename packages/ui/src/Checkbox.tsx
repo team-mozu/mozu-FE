@@ -48,9 +48,8 @@ const CheckBoxLabel = styled.div<ICheckType>`
   border-radius: 4px;
   display: flex;
   justify-content: center;
-  align-item: center;
+  align-items: center;
   line-height: 20px;
-  
 `;
 
 const CheckBoxInput = styled.input`
