@@ -49,7 +49,7 @@ export const useStudentLogin = () => {
       //   domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
       //   expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       // });
-      redirectUrl;
+      navigate(redirectUrl);
     },
     onError: (res: AxiosError<unknown>) => {
       if (res.response) {
