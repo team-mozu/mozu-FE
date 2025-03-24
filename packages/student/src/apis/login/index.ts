@@ -6,7 +6,7 @@ import { AxiosError } from 'axios';
 import { Toast } from '@mozu/ui';
 
 interface StudentLoginProps {
-  classNum: number;
+  classNum: number | null;
   schoolName: string;
   teamName: string;
 }
