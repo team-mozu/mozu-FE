@@ -34,30 +34,6 @@ export const SignInPage = () => {
 
     studentLogin(state, {
       onSuccess: () => {
-        console.log('student signin에서 실행되었음.');
-        useSSE(
-          `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-          (data) => {
-            Toast(`${data.message}`, { type: 'success' });
-          },
-          (error) => {
-            console.log(error);
-            Toast(`SSE 에러 발생: ${error.message}`, { type: 'error' });
-          },
-          {
-            CLASS_NEXT_INV_START: (teamData) => {
-              setDatas((prevDatas) => [
-                ...prevDatas,
-                {
-                  classId: teamData.classId,
-                  nextInvDeg: teamData.nextInvDeg,
-                },
-              ]);
-
-              Toast('새로운 팀이 참가했습니다', { type: 'success' });
-            },
-          },
-        );
         navigate(`/${datas[0].classId}/home`);
       },
       onError: () => {
