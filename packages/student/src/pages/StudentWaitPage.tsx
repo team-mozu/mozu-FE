@@ -22,7 +22,7 @@ export const StudentWaitPage = () => {
       CLASS_NEXT_INV_START: (data) => {
         Toast('다음 투자가 시작되었습니다', { type: 'info' });
         setData(data);
-        navigate(`/${data.id}/home`);
+        navigate(`/${data.classId}/home`);
       },
     },
   );

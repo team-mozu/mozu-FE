@@ -83,7 +83,7 @@ export const InvestmentPreparation = () => {
             borderColor={color.orange[500]}
             color={color.white}
             hoverBackgroundColor={color.orange[600]}
-            onClick={() => nextDegree}
+            onClick={() => nextDegree()}
           >
             진행하기 ({datas.teams.length ?? 0})
           </Button>
