@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface INavType {
   children: string;
@@ -18,15 +17,25 @@ const Nav = ({ isActive, children, onClick }: INavType) => {
 };
 
 export const NavBar = () => {
-  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const navItems = ['시세정보', '종목정보'];
-  const navRoutes = ['price-info', 'stock-info']; // 각 버튼의 경로
+  const navItems = ['종목정보', '시세정보'];
+  const navRoutes = ['/stock-info', '/price-info'];
+
+  const currentPath = location.pathname;
+  const activeIndex = navRoutes.findIndex((route) =>
+    currentPath.includes(route),
+  );
 
   const navClick = (index: number) => {
-    setActiveIndex(index);
-    navigate(navRoutes[index]);
+    const newPath = currentPath.replace(
+      /\/(price-info|stock-info)/,
+      navRoutes[index],
+    );
+    if (newPath !== currentPath) {
+      navigate(newPath);
+    }
   };
 
   return (

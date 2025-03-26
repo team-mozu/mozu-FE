@@ -1,11 +1,5 @@
 import styled from '@emotion/styled';
-import {
-  NavBar,
-  News,
-  StockGraph,
-  StockInfo,
-  StockStatusBar,
-} from '@/components';
+import { NavBar, StockGraph, StockInfo, StockStatusBar } from '@/components';
 import { color } from '@mozu/design-token';
 import { useLocation } from 'react-router-dom';
 import { ReactNode, useState } from 'react';
@@ -29,6 +23,7 @@ export const StockPage = () => {
   const closeModal = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }));
   };
+
   const location = useLocation();
   const componentRoute = (currentPath: string): ReactNode => {
     if (currentPath.includes('/price-info')) return <StockGraph />;

@@ -1,27 +1,39 @@
-import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Button } from '@mozu/ui';
+import styled from '@emotion/styled';
+import { Button, noImgIcon } from '@mozu/ui';
+import { useGetStockDetail } from '@/apis';
+import { useParams } from 'react-router-dom';
 
 export const StockStatusBar = ({
   openModal,
 }: {
   openModal: (type: '매수' | '매도') => void;
 }) => {
-  const rate = '-1200원 (-1.12%)';
+  const { stockId } = useParams();
+  const ItemId = stockId ? parseInt(stockId) : null;
+
+  const { data } = useGetStockDetail(ItemId);
+
   return (
     <Wrapper>
       <Stock>
-        <Logo src="https://logo-resources.thevc.kr/organizations/200x200/bd4dd5dd2e42ebb15490840c66957e4c42bb2348448ed636ebe08528f22773d2_1646618385259179.jpg" />
+        <Logo
+          src={data?.itemLogo ?? ''}
+          onError={(e) => {
+            e.currentTarget.src = noImgIcon;
+          }}
+        />
         <StockInfo>
           <StockName>
-            삼성전자
-            <span>005930</span>
+            {data?.itemName ?? ''}
+            <span>{data?.itemId ?? 0}</span>
           </StockName>
           <StockPrice
-            color={rate.includes('+') ? color.red[500] : color.blue[500]}
+            color={
+              data?.profitNum.includes('+') ? color.red[500] : color.blue[500]
+            }
           >
-            53,700원
-            <span>{rate}</span>
+            {data?.money.toLocaleString()}원 <span>{data?.profitNum}</span>
           </StockPrice>
         </StockInfo>
       </Stock>

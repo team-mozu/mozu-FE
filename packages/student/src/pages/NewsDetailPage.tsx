@@ -1,18 +1,25 @@
 import { color } from '@mozu/design-token';
 import styled from '@emotion/styled';
 import { NewsDetail } from '@/components';
-import { ExitBtn } from '@mozu/ui';
-import { useNavigate } from 'react-router-dom';
+import { ExitBtn, noImgIcon } from '@mozu/ui';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useGetArticleList, useGetStockDetail } from '@/apis';
 
 export const NewsDetailPage = () => {
   const navigate = useNavigate();
+  const { data: newsData } = useGetArticleList();
+  const { newsId } = useParams();
+  const targetId = parseInt(newsId);
+  const index = newsData?.find((article) => article.articleId === targetId);
   return (
     <PageContainer>
       <Wrapper>
         <Container>
           <ArticleDiv>
             <NewsDetail
-              img={'https://image.lawtimes.co.kr/images/186732.jpg'}
+              img={index?.image ?? ''}
+              title={index?.title ?? ''}
+              main={index?.description ?? ''}
             />
           </ArticleDiv>
         </Container>

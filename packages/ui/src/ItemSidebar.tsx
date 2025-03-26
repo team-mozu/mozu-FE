@@ -20,8 +20,8 @@ interface IClassProp {
 
 interface ClassResponse {
   itemId: number;
-  itemName: string;
   itemLogo: string;
+  itemName: string;
   nowMoney: number;
   profitMoney: number;
   profitNum: string;
@@ -40,9 +40,11 @@ const ItemContent = ({
     <ItemContainer onClick={onClick}>
       <LogoContainer>
         <Logo
-          src={itemLogo ? itemLogo : noImgIcon}
+          src={itemLogo}
           alt={itemName}
-          itemLogo={itemLogo}
+          onError={(e) => {
+            e.currentTarget.src = noImgIcon;
+          }}
         />
         <ItemTitleContainer>
           <ItemTitle>{itemName}</ItemTitle>
@@ -50,9 +52,9 @@ const ItemContent = ({
         </ItemTitleContainer>
       </LogoContainer>
       <ItemPriceContainer>
-        <Price>{nowMoney}원</Price>
+        <Price>{nowMoney.toLocaleString()}원</Price>
         <Percent isUp={true}>
-          {profitMoney}원 ({[profitNum]}%)
+          {profitMoney.toLocaleString()}원 ({[profitNum]})
         </Percent>
       </ItemPriceContainer>
     </ItemContainer>
@@ -65,6 +67,7 @@ export const ItemSidebar = ({
   classData: ClassResponse[];
 }) => {
   const navigate = useNavigate();
+
   return (
     <SideBarContainer>
       <Title>전체 종목</Title>
@@ -84,7 +87,7 @@ export const ItemSidebar = ({
                   ? data.profitNum
                   : '0%'
               }
-              onClick={() => navigate('home/stock/1/price-info')}
+              onClick={() => navigate(`home/stock/${data.itemId}/stock-info`)}
             />
           ))
         ) : (
@@ -149,14 +152,12 @@ const Percent = styled.div<Pick<IItemContentType, 'isUp'>>`
   color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
 `;
 
-const Logo = styled.img<Pick<IItemContentType, 'itemLogo'>>`
+const Logo = styled.img`
   width: 36px;
   height: 36px;
   border-radius: 18px;
-  border: 1px solid
-    ${({ itemLogo }) => (itemLogo ? 'transparent' : color.zinc[200])};
-  background-color: ${({ itemLogo }) =>
-    itemLogo ? 'transparent' : color.zinc[50]};
+  border: 1px solid ${color.zinc[200]};
+  background-color: ${color.zinc[50]};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -173,6 +174,7 @@ const SideBarContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
 `;
 
 const ItemContentContainer = styled.div`

@@ -11,6 +11,15 @@ interface ITransactionContentType {
   isUp?: boolean; // 매수인지 매도인지 확인 기능
 }
 
+interface ITeamDataProp {
+  name: string;
+  totalMoney: number;
+  cashMoney: number;
+  valueMoney: number;
+  valueProfit: number;
+  profitNum: string;
+}
+
 const TransactionContent = ({
   keyword,
   name,
@@ -35,22 +44,27 @@ const TransactionContent = ({
   );
 };
 
-export const HistorySidebar = () => {
+export const HistorySidebar = ({
+  name,
+  totalMoney,
+  cashMoney,
+  valueMoney,
+  valueProfit,
+  profitNum,
+}: ITeamDataProp) => {
   const datas = {
-    teamName: '대마고 화이팅',
-    total: [
-      {
-        isUp: true,
-        totalAssets: '1,850,000',
-        totalUpDown: {
-          upDownPrice: '+850,000',
-          upDownPercent: '+85',
-        },
+    teamName: name,
+    total: {
+      isUp: true,
+      totalMoney: totalMoney.toLocaleString(),
+      totalUpDown: {
+        valueProfit: valueProfit,
+        profitNum: profitNum,
       },
-    ],
+    },
     hold: {
-      holdPrice: '500,000',
-      holdStock: '1,350,000',
+      cashMoney: cashMoney.toLocaleString(),
+      valueMoney: valueMoney,
     },
     transactionHistory: [
       {
@@ -80,7 +94,7 @@ export const HistorySidebar = () => {
         totalPrice: '150,600',
         stockPrice: '150,600원 (1주)',
         isUp: false,
-      }
+      },
     ],
     totalBuy: '107,400',
     totalSell: '687,600',
@@ -102,22 +116,22 @@ export const HistorySidebar = () => {
           </TeamContainer>
           <TotalAssetContainer>
             <Title>총 평가 자산</Title>
-            <TotalAssetPrice isUp={datas.total[0].isUp}>
-              {datas.total[0].totalAssets}원
+            <TotalAssetPrice isUp={datas.total.isUp}>
+              {datas.total.totalMoney}원
             </TotalAssetPrice>
-            <UpDownDiv isUp={datas.total[0].isUp}>
-              {datas.total[0].totalUpDown.upDownPrice}원 (
-              {datas.total[0].totalUpDown.upDownPercent}%)
+            <UpDownDiv isUp={datas.total.isUp}>
+              {datas.total.totalUpDown.valueProfit}원 (
+              {datas.total.totalUpDown.profitNum})
             </UpDownDiv>
           </TotalAssetContainer>
           <HoldContainer>
             <HoldContent>
               <HoldTitle>보유현금</HoldTitle>
-              <HoldPrice>{datas.hold.holdPrice}원</HoldPrice>
+              <HoldPrice>{datas.hold.cashMoney}원</HoldPrice>
             </HoldContent>
             <HoldContent>
               <HoldTitle>보유주식</HoldTitle>
-              <HoldPrice>{datas.hold.holdStock}원</HoldPrice>
+              <HoldPrice>{datas.hold.valueMoney}원</HoldPrice>
             </HoldContent>
           </HoldContainer>
           <p>거래내역</p>
@@ -150,7 +164,6 @@ export const HistorySidebar = () => {
         </TotalPriceContainer>
         <FooterContainer>
           <Btn onClick={IsOpen}>투자 완료</Btn>
-          <FooterContent>© 대덕소프트웨어마이스터고등학교</FooterContent>
         </FooterContainer>
       </SidebarContainer>
     </>
@@ -209,11 +222,7 @@ const SidebarContainer = styled.div`
   flex-direction: column;
   align-items: center;
   border-left: 1px solid ${color.zinc[200]};
-`;
-
-const FooterContent = styled.div`
-  font: ${font.l2};
-  color: ${color.zinc[500]};
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
 `;
 
 const FooterContainer = styled.div`

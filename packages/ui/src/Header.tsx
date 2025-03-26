@@ -1,7 +1,7 @@
 import { LogoWithText } from '@mozu/ui';
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useMemo } from 'react';
 
 interface IHeaderProps {
@@ -11,11 +11,12 @@ interface IHeaderProps {
 export const Header = ({ isAdmin }: IHeaderProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { classId, newsId } = useParams();
 
   /** 📌 현재 페이지 상태를 useMemo로 계산 */
   const currentPage = useMemo(() => {
-    if (pathname.startsWith('/:id/home')) return 'home';
-    if (pathname.startsWith('/:id/news')) return 'news';
+    if (pathname.startsWith('/:classId/home')) return 'home';
+    if (pathname.startsWith('/:classId/news')) return 'news';
     if (pathname === '/:id/result') return 'result';
     if (pathname === '/signin/wait') return 'wait';
     return 'default';
@@ -31,7 +32,9 @@ export const Header = ({ isAdmin }: IHeaderProps) => {
   return (
     <HeaderContainer isAdmin={isAdmin}>
       <LogoContainer
-        onClick={() => navigate(isAdmin ? '/class-management' : '/home')}
+        onClick={() =>
+          navigate(isAdmin ? '/class-management' : `/${classId}/home`)
+        }
       >
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
@@ -39,10 +42,16 @@ export const Header = ({ isAdmin }: IHeaderProps) => {
 
       {!isAdmin && !isResultPage && !isWaitPage && (
         <NavContainer>
-          <Nav onClick={() => navigate('/home')} isActive={isNavHome}>
+          <Nav
+            onClick={() => navigate(`/${classId}/home`)}
+            isActive={isNavHome}
+          >
             홈
           </Nav>
-          <Nav onClick={() => navigate('/news')} isActive={isNavNews}>
+          <Nav
+            onClick={() => navigate(`/${classId}/news`)}
+            isActive={isNavNews}
+          >
             뉴스
           </Nav>
         </NavContainer>
@@ -50,10 +59,15 @@ export const Header = ({ isAdmin }: IHeaderProps) => {
 
       {!isAdmin && !isResultPage && !isWaitPage && (
         <InvestmentRoundContainer>
-          <InvestmentRoundContent>
-            {datas.investmentRound}차 투자
-          </InvestmentRoundContent>
-          <InvestmentRoundExplain>진행중</InvestmentRoundExplain>
+          <div>
+            <InvestmentRoundContent>
+              {datas.investmentRound}차 투자
+            </InvestmentRoundContent>
+            <InvestmentRoundExplain>진행중</InvestmentRoundExplain>
+          </div>
+          <SchoolTag href="https://dsmhs.djsch.kr/main.do" target="_blank">
+            © 대덕소프트웨어마이스터고등학교
+          </SchoolTag>
         </InvestmentRoundContainer>
       )}
 
@@ -95,6 +109,9 @@ const MozuTitle = styled.div`
 `;
 
 const NavContainer = styled.nav`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 8px;
   align-items: center;
@@ -119,8 +136,14 @@ const Nav = styled.div<{ isActive: boolean }>`
 
 const InvestmentRoundContainer = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 50px;
   align-items: center;
+  > div {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 const InvestmentRoundExplain = styled.div`

@@ -92,7 +92,7 @@ import { AppLayout } from '@/layout';
 
 export const Router = createBrowserRouter([
   {
-    path: '/:id',
+    path: '/:classId',
     element: <AppLayout />,
     children: [
       {
@@ -103,7 +103,7 @@ export const Router = createBrowserRouter([
             element: <HomePage />,
           },
           {
-            path: 'stock/:id',
+            path: 'stock/:stockId',
             element: <StockPage />,
             children: [
               { index: true, element: <Navigate to="price-info" replace /> },
@@ -117,7 +117,7 @@ export const Router = createBrowserRouter([
         path: 'news',
         children: [
           { index: true, element: <NewsPage /> },
-          { path: ':id', element: <NewsDetailPage /> },
+          { path: ':newsId', element: <NewsDetailPage /> },
         ],
       },
       {

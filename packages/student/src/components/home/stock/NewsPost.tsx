@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { noImg } from '@mozu/ui';
+import { noImg, noImgIcon } from '@mozu/ui';
 import { font, color } from '@mozu/design-token';
 
 interface INewsPostType {
@@ -17,7 +17,14 @@ export const NewsPost = ({
 }: INewsPostType) => {
   return (
     <PostContainer onClick={onClick}>
-      <NewsImg src={imgUrl} alt={title} hasImage={!!imgUrl} />
+      <NewsImg
+        src={imgUrl}
+        alt={title}
+        hasImage={!!imgUrl}
+        onError={(e) => {
+          e.currentTarget.src = noImgIcon;
+        }}
+      />
       <TitleContainer>
         <Title>{title}</Title>
         <Content>{content}</Content>
@@ -70,4 +77,6 @@ const NewsImg = styled.img<{ hasImage: boolean }>`
   border-radius: 12px;
   border: 1px solid
     ${({ hasImage }) => (hasImage ? 'transparent' : color.zinc[200])};
+
+  background-color: ${color.zinc[50]};
 `;

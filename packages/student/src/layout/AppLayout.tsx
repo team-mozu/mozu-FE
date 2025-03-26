@@ -2,12 +2,13 @@ import { Header, HistorySidebar, ItemSidebar } from '@mozu/ui';
 import { Outlet, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { useGetClassItem } from '@/apis';
+import { useGetClassItem, useGetTeamDetail } from '@/apis';
 
 export const AppLayout = () => {
   const [isResultPage, setIsResultPage] = useState<boolean>(false);
   const { pathname } = useLocation();
   const { data: itemSideBarData } = useGetClassItem();
+  const { data: teamData } = useGetTeamDetail();
 
   useEffect(() => {
     console.log('itemSideBarData:', itemSideBarData ?? 0);
@@ -24,6 +25,7 @@ export const AppLayout = () => {
       setIsResultPage(false);
     }
   }, [pathname]);
+
   return (
     <AppContainer>
       <Header isAdmin={false} />
@@ -33,7 +35,14 @@ export const AppLayout = () => {
             <ItemSidebar
               classData={Array.isArray(itemSideBarData) ? itemSideBarData : []}
             />
-            <HistorySidebar />
+            <HistorySidebar
+              name={teamData?.name ?? ''}
+              totalMoney={teamData?.totalMoney ?? 0}
+              cashMoney={teamData?.cashMoney ?? 0}
+              valueProfit={teamData?.valueProfit ?? 0}
+              valueMoney={teamData?.valueMoney ?? 0}
+              profitNum={teamData?.profitNum ?? ''}
+            />
           </>
         )}
         <MainContent isResultPage={isResultPage}>
