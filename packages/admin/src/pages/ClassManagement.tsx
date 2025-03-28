@@ -4,7 +4,7 @@ import { Button, DeleteModal, PostTitle, PageTitle } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color } from '@mozu/design-token';
 import { ClassPost } from '@/components';
-import { ClassItem, useGetClassList } from '@/apis';
+import { ClassItem, useClassStar, useGetClassList } from '@/apis';
 
 export const ClassManagement = () => {
   const { data } = useGetClassList();
@@ -44,13 +44,18 @@ export const ClassManagement = () => {
     setIsModal(false);
   };
 
-  const toggleFavorite = (index: number, type: 'favorites' | 'common') => {
+  const toggleFavorite = (
+    index: number,
+    type: 'favorites' | 'common',
+    id?: number,
+  ) => {
     if (type === 'favorites') {
       setIsClickFavorites((prev) => {
         const updated = [...prev];
         updated[index] = !updated[index];
         return updated;
       });
+      useClassStar(id);
     } else {
       setIsClickCommon((prev) => {
         const updated = [...prev];
@@ -101,7 +106,9 @@ export const ClassManagement = () => {
                       title={item.name}
                       creationDate={item.date}
                       isClick={isClickFavorites[index]}
-                      starOnClick={() => toggleFavorite(index, 'favorites')}
+                      starOnClick={() =>
+                        toggleFavorite(index, 'favorites', item.id)
+                      }
                       delClick={() => openDeleteModal(item.id)}
                       onClick={() => navigate(`${item.id}`)}
                     />
