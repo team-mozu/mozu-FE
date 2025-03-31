@@ -222,7 +222,7 @@ const ButtonContainer = styled.div`
 
 const Label = styled.label`
   color: ${color.black};
-  font: ${font.t3};
+  font: ${font.t1};
 `;
 
 const UnderContainer = styled.div`
@@ -250,6 +250,9 @@ const CompanyInfo = styled.div`
     font: ${font.t2};
     color: ${color.black};
     border-radius: 12px;
+  }
+  & > div > p {
+    line-height: 1.7;
   }
 `;
 

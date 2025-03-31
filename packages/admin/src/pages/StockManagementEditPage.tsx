@@ -1,5 +1,5 @@
 import { useGetStockDetail, useEditStock } from '@/apis';
-import { LogoUploader } from '@/components';
+import { LogoUploader, MoneyInput } from '@/components';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { EditDiv, Input, TextArea } from '@mozu/ui';
@@ -149,7 +149,7 @@ export const StockManagementEditPage = () => {
             { label: '당기순이익', name: 'netProfit', value: state.netProfit },
           ].map((item, index) => (
             <div key={item.name}>
-              <Input
+              <MoneyInput
                 label={item.label}
                 placeholder={`${item.label} 정보를 입력해 주세요.`}
                 type={'text'}
@@ -186,7 +186,7 @@ const StockSetting = styled.div`
 
 const LeftContainer = styled.div`
   overflow: scroll;
-  width: 60%;
+  width: 95%;
   height: 100%;
   padding: 24px;
   background-color: ${color.white};
