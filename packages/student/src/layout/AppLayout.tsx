@@ -1,8 +1,9 @@
-import { Header, HistorySidebar, ItemSidebar } from '@mozu/ui';
+import { Header } from '@mozu/ui';
 import { Outlet, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useGetClassItem, useGetTeamDetail } from '@/apis';
+import { ItemSidebar, HistorySidebar } from '@/components';
 
 export const AppLayout = () => {
   const [isResultPage, setIsResultPage] = useState<boolean>(false);
@@ -37,7 +38,8 @@ export const AppLayout = () => {
             />
             <HistorySidebar
               name={teamData?.name ?? ''}
-              totalMoney={teamData?.totalMoney ?? 0}
+              totalMoney={teamData?.totalMoney.toLocaleString() ?? '0'}
+              basicMoney={teamData?.baseMoney.toLocaleString() ?? '0'}
               cashMoney={teamData?.cashMoney ?? 0}
               valueProfit={teamData?.valueProfit ?? 0}
               valueMoney={teamData?.valueMoney ?? 0}

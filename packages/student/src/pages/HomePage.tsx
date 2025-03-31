@@ -1,16 +1,19 @@
+import { useGetTeamDetail } from '@/apis';
 import { StockTable, TotalProperty } from '@/components';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 
 export const HomePage = () => {
+  const { data: teamData } = useGetTeamDetail();
   return (
     <Wrapper>
       <TotalProperty
-        money="1,850,000"
-        rate="+850,000원 (+85%)"
-        basicMoney="1,000,000"
-        cash="500,000"
-        stock="1,350,000"
+        totalMoney={teamData?.totalMoney.toLocaleString() ?? '0'}
+        profitNum={teamData?.profitNum ?? '0'}
+        valueProfit={teamData?.valueProfit ?? 0}
+        basicMoney={teamData?.baseMoney.toLocaleString() ?? '0'}
+        cashMoney={teamData?.cashMoney.toLocaleString() ?? '0'}
+        valueMoney={teamData?.valueMoney.toLocaleString() ?? '0'}
       />
       <TableDiv>
         보유주식

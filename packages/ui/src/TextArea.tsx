@@ -16,7 +16,7 @@ export const TextArea = ({
   height,
   value,
   onChange,
-  name
+  name,
 }: ITextAreaType) => {
   return (
     <TextAreaContainer>

@@ -9,3 +9,16 @@ export type TeamDeatilResponse = {
   valueProfit: number;
   profitNum: string;
 };
+
+export type HoldItemsResponse = {
+  id: number;
+  itemId: number;
+  itemName: string;
+  itemCnt: number;
+  buyMoney: number;
+  totalMoney: number;
+  nowMoney: number;
+  valMoney: number;
+  valProfit: number;
+  profitNum: number;
+};

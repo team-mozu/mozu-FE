@@ -3,3 +3,5 @@ export * from './StockStatusBar';
 export * from './NavBar';
 export * from './StockInfo';
 export * from './NewsPost';
+export * from './ItemSidebar';
+export * from './HistorySidebar';

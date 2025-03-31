@@ -1,49 +1,67 @@
+import { useUnchangedValue } from '@/hook';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 
 interface IPropsType {
-  money: string;
-  rate: string;
+  totalMoney: string;
+  profitNum: string;
+  valueProfit: number;
   basicMoney: string;
-  cash: string;
-  stock: string;
+  cashMoney: string;
+  valueMoney: string;
 }
 
 export const TotalProperty = ({
-  money,
-  rate,
+  totalMoney,
+  profitNum,
+  valueProfit,
   basicMoney,
-  cash,
-  stock,
+  cashMoney,
+  valueMoney,
 }: IPropsType) => {
+  const sameValue: boolean = useUnchangedValue(totalMoney, basicMoney);
   return (
     <Wrapper>
       <TitleBox>
         <Title>총 평가 자산</Title>
         <Money
-          color={rate.indexOf('+') !== -1 ? color.red[500] : color.blue[500]}
+          color={
+            sameValue
+              ? color.green[600]
+              : profitNum.indexOf('+') !== -1
+                ? color.red[500]
+                : color.blue[500]
+          }
         >
-          {money} 원
+          {totalMoney}원
         </Money>
-        <MoneyRate
-          color={rate.indexOf('+') !== -1 ? color.red[500] : color.blue[500]}
-        >
-          {rate}
-        </MoneyRate>
+        {!valueProfit ? null : (
+          <MoneyRate
+            color={
+              sameValue
+                ? color.green[600]
+                : profitNum.indexOf('+') !== -1
+                  ? color.red[500]
+                  : color.blue[500]
+            }
+          >
+            {valueProfit}원 ({profitNum})
+          </MoneyRate>
+        )}
       </TitleBox>
       <DetailBox>
         <Details>
           <BasicMoney>
             기초자산
-            <span>{basicMoney} 원</span>
+            <span>{basicMoney}원</span>
           </BasicMoney>
           <Cash>
             보유현금
-            <span>{cash} 원</span>
+            <span>{cashMoney}원</span>
           </Cash>
           <Stock>
             보유주식
-            <span>{stock} 원</span>
+            <span>{valueMoney}원</span>
           </Stock>
         </Details>
       </DetailBox>

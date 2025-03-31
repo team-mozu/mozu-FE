@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { InvestCompleteModal } from './InvestCompleteModal';
+import { InvestCompleteModal } from '@mozu/ui';
 import { useState } from 'react';
+import { useUnchangedValue } from '@/hook';
 
 interface ITransactionContentType {
   keyword: string; //매수 매도
@@ -13,7 +14,8 @@ interface ITransactionContentType {
 
 interface ITeamDataProp {
   name: string;
-  totalMoney: number;
+  totalMoney: string;
+  basicMoney: string;
   cashMoney: number;
   valueMoney: number;
   valueProfit: number;
@@ -49,13 +51,13 @@ export const HistorySidebar = ({
   totalMoney,
   cashMoney,
   valueMoney,
+  basicMoney,
   valueProfit,
   profitNum,
 }: ITeamDataProp) => {
   const datas = {
     teamName: name,
     total: {
-      isUp: true,
       totalMoney: totalMoney.toLocaleString(),
       totalUpDown: {
         valueProfit: valueProfit,
@@ -100,6 +102,8 @@ export const HistorySidebar = ({
     totalSell: '687,600',
     buyableAmount: '480,600',
   };
+
+  const sameValue: boolean = useUnchangedValue(totalMoney, basicMoney);
   const [isOpen, setIsOpen] = useState(false);
 
   const IsOpen = () => {
@@ -116,13 +120,23 @@ export const HistorySidebar = ({
           </TeamContainer>
           <TotalAssetContainer>
             <Title>총 평가 자산</Title>
-            <TotalAssetPrice isUp={datas.total.isUp}>
+            <TotalAssetPrice
+              color={
+                sameValue
+                  ? color.green[600]
+                  : profitNum.indexOf('+') !== -1
+                    ? color.red[500]
+                    : color.blue[500]
+              }
+            >
               {datas.total.totalMoney}원
             </TotalAssetPrice>
-            <UpDownDiv isUp={datas.total.isUp}>
-              {datas.total.totalUpDown.valueProfit}원 (
-              {datas.total.totalUpDown.profitNum})
-            </UpDownDiv>
+            {!datas.total.totalUpDown.valueProfit ? null : (
+              <UpDownDiv>
+                {datas.total.totalUpDown.valueProfit}원 (
+                {datas.total.totalUpDown.profitNum})
+              </UpDownDiv>
+            )}
           </TotalAssetContainer>
           <HoldContainer>
             <HoldContent>
@@ -272,9 +286,9 @@ const UpDownDiv = styled.div<Pick<ITransactionContentType, 'isUp'>>`
   color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
 `;
 
-const TotalAssetPrice = styled.div<Pick<ITransactionContentType, 'isUp'>>`
+const TotalAssetPrice = styled.div<{ color?: string }>`
   font: ${font.h3};
-  color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
+  color: ${({ color }) => color};
 `;
 
 const TransactionName = styled.div`

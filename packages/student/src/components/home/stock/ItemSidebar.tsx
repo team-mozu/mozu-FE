@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { noImgIcon } from './assets';
+import { noImgIcon } from '@mozu/ui';
 import { useNavigate } from 'react-router-dom';
+import { useUnchangedValue } from '@/hook';
 
 interface IItemContentType {
   itemId?: number;
@@ -67,7 +68,6 @@ export const ItemSidebar = ({
   classData: ClassResponse[];
 }) => {
   const navigate = useNavigate();
-
   return (
     <SideBarContainer>
       <Title>전체 종목</Title>

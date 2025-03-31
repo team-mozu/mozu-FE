@@ -15,7 +15,7 @@ export const Accounts = ({ title, content }: IAccountsType) => {
       <ContentContainer>
         <Title>{title}</Title>
       </ContentContainer>
-      <Content>{formattedContent} 원</Content>
+      <Content>{formattedContent}원</Content>
     </AccountsContainer>
   );
 };
@@ -28,7 +28,7 @@ const ContentContainer = styled.div`
 `;
 
 const Title = styled.div`
-  font: ${font.t3};
+  font: ${font.h4};
   color: ${color.zinc[600]};
 `;
 

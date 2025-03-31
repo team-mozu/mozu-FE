@@ -89,7 +89,7 @@ const InputContent = styled.input<{ width?: string }>`
   border: 1px solid ${color.zinc[200]};
   border-radius: 8px;
   padding-left: 16px;
-  padding-right: 40px;
+  padding-right: 16px;
   color: ${color.black};
   font: ${font.b2};
   :focus {
