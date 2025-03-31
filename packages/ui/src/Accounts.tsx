@@ -29,6 +29,7 @@ const ContentContainer = styled.div`
 
 const Title = styled.div`
   font: ${font.h4};
+
   color: ${color.zinc[600]};
 `;
 
@@ -46,6 +47,7 @@ const AccountsContainer = styled.div`
 
 const Content = styled.div`
   font: ${font.h4};
+
   color: ${color.black};
   margin-left: auto;
 `;

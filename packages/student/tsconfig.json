@@ -22,8 +22,8 @@
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
     "paths": {
       "@/*": ["./src/*"],
-      "@mozu/ui": ["../ui/src/index.ts"],
-      "@mozu/design-token": ["../design-token/src/index.ts"]
+      "@mozu/ui": ["../ui/dist"],
+      "@mozu/design-token": ["../design-token/dist"]
     },
     "typeRoots": ["node_modules/@types", "src/@types"]
   },

@@ -222,7 +222,7 @@ const ButtonContainer = styled.div`
 
 const Label = styled.label`
   color: ${color.black};
-  font: ${font.t1};
+  font: ${font.h4};
 `;
 
 const UnderContainer = styled.div`
