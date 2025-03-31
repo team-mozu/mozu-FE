@@ -16,7 +16,7 @@
     "declarationMap": true,
     "emitDeclarationOnly": false,
 
-    "outDir": "./dist",
+    "outDir": "./build",
     "jsx": "react-jsx",
     "baseUrl": ".",
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
