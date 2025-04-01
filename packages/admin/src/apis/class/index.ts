@@ -65,9 +65,13 @@ export const useClassUpdate = (id: string) => {
 
 export const useClassStar = (id: number) => {
   return useMutation({
-    mutationFn: () => instance.post(`${router}/star/${id}`),
-    onSuccess: () => {},
-    onError: () => {},
+    mutationFn: async () => await instance.post(`${router}/star/${id}`),
+    onSuccess: () => {
+      Toast('즐겨찾기 추가에 성공 했습니다.', { type: 'success' });
+    },
+    onError: () => {
+      Toast('즐겨찾기 추가에 실패 했습니다.', { type: 'error' });
+    },
   });
 };
 
