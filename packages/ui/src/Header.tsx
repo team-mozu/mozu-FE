@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 
 interface IHeaderProps {
   isAdmin: boolean;
-  invDeg: number;
+  invDeg?: number;
 }
 
 export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
