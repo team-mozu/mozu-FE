@@ -21,6 +21,7 @@ export const useGetHoldItems = () => {
       const { data } = await instance.get<HoldItemsResponse>(
         `${router}/holditems`,
       );
+      console.log('data:', data);
       return data;
     },
   });

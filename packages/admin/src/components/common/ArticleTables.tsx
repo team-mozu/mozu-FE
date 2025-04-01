@@ -40,19 +40,22 @@ export const ArticleTables = ({ data = [], isEdit, round }: IPropType) => {
     const allChecked = classData.classArticles.every(
       (row) => row.articleGroupChecked,
     );
+
     const updatedData = classData.classArticles.map((row) => ({
       ...row,
       articleGroupChecked: !allChecked,
     }));
+
     updateArticles(updatedData);
   };
 
-  const toggleArticleRow = (index: number) => {
+  const toggleArticleRow = (invDeg: number) => {
     if (!classData) return;
-
-    const newArticles = [...classData.classArticles];
-    newArticles[index].articleGroupChecked =
-      !newArticles[index].articleGroupChecked;
+    const newArticles = classData.classArticles.map((article) =>
+      article.invDeg === invDeg
+        ? { ...article, articleGroupChecked: !article.articleGroupChecked }
+        : article,
+    );
     updateArticles(newArticles);
   };
 
@@ -61,21 +64,26 @@ export const ArticleTables = ({ data = [], isEdit, round }: IPropType) => {
   );
 
   const handleDeleteChecked = () => {
-    setTableData((prevData) => prevData?.filter((row) => !row.checked) ?? []);
+    if (!classData) return;
+    const filtered = classData.classArticles.filter(
+      (row) => !row.articleGroupChecked,
+    );
+    updateArticles(filtered);
   };
 
   useEffect(() => {
-    if (data) {
-      const formattedData = data.map((item) => ({
+    if (classData?.classArticles) {
+      const formattedData = classData.classArticles.map((item) => ({
         ...item,
         invDeg: item.invDeg ?? 0,
-        checked: item.articles?.some((article) => article.checked) ?? false,
+        checked:
+          item.articles?.some((article) => article.articleChecked) ?? false,
       }));
       setTableData(formattedData);
     } else {
       setTableData([]);
     }
-  }, [data]);
+  }, [classData?.classArticles]);
 
   const columns: ColumnDef<ClassArticle>[] = [
     ...(isEdit
@@ -85,17 +93,21 @@ export const ArticleTables = ({ data = [], isEdit, round }: IPropType) => {
             header: () => (
               <CheckBox
                 onChange={toggleAll}
-                checked={classData.classArticles.every(
-                  (row) => row.articleGroupChecked,
-                )}
+                checked={
+                  classData?.classArticles && classData.classArticles.length > 0
+                    ? classData.classArticles.every(
+                        (row) => row.articleGroupChecked,
+                      )
+                    : false
+                }
                 id={`article-header-checkbox`}
               />
             ),
             cell: ({ row }) => (
               <CheckBox
                 checked={row.original.articleGroupChecked}
-                onChange={() => toggleArticleRow(row.index)}
-                id={`article-row-${row.original.id}`}
+                onChange={() => toggleArticleRow(row.original.invDeg)}
+                id={`article-row-${row.original.invDeg}`}
               />
             ),
             size: 52,
@@ -191,15 +203,23 @@ export const ArticleTables = ({ data = [], isEdit, round }: IPropType) => {
       </thead>
 
       <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <Td key={cell.id} style={{ width: cell.column.getSize() }}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </Td>
-            ))}
+        {table.getRowModel().rows.length ? (
+          table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <Td key={cell.id} style={{ width: cell.column.getSize() }}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Td>
+              ))}
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <Td colSpan={columns.length} style={{ textAlign: 'center' }}>
+              데이터가 없습니다.
+            </Td>
           </tr>
-        ))}
+        )}
         {isEdit && (
           <tr>
             <PlusTd colSpan={columns.length} onClick={isOpen}>

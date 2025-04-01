@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { InvestCompleteModal } from '@mozu/ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUnchangedValue } from '@/hook';
+import { db } from '@/db';
+import { liveQuery } from 'dexie';
 
 interface ITransactionContentType {
   keyword: string; //매수 매도
@@ -13,13 +15,20 @@ interface ITransactionContentType {
 }
 
 interface ITeamDataProp {
-  name: string;
-  totalMoney: string;
-  basicMoney: string;
+  teamName: string;
+  totalMoney: number;
+  basicMoney: number;
   cashMoney: number;
   valueMoney: number;
   valueProfit: number;
-  profitNum: string;
+  profitNum: number;
+  totalBuy: number;
+  totalSell: number;
+  buyableAmount: number;
+}
+
+interface TransactionData extends ITransactionContentType {
+  id: number;
 }
 
 const TransactionContent = ({
@@ -47,63 +56,62 @@ const TransactionContent = ({
 };
 
 export const HistorySidebar = ({
-  name,
+  teamName,
   totalMoney,
+  basicMoney,
   cashMoney,
   valueMoney,
-  basicMoney,
   valueProfit,
   profitNum,
+  totalBuy,
+  totalSell,
+  buyableAmount,
 }: ITeamDataProp) => {
-  const datas = {
-    teamName: name,
-    total: {
-      totalMoney: totalMoney.toLocaleString(),
-      totalUpDown: {
-        valueProfit: valueProfit,
-        profitNum: profitNum,
+  const [transactions, setTransactions] = useState<ITransactionContentType[]>(
+    [],
+  );
+
+  useEffect(() => {
+    const observable = liveQuery(async () => {
+      return await db.tradeHistory.orderBy('timestamp').reverse().toArray();
+    });
+
+    const subscription = observable.subscribe({
+      next: (history) => {
+        const mapped = history.map((trade) => ({
+          id: trade.id!,
+          keyword: trade.orderType === 'BUY' ? '매수' : '매도',
+          name: trade.itemName,
+          totalPrice: (trade.itemMoney * trade.orderCount).toLocaleString(),
+          stockPrice: `${trade.itemMoney.toLocaleString()}원 (${trade.orderCount}주)`,
+          isUp: trade.orderType === 'BUY',
+        }));
+        setTransactions(mapped);
       },
-    },
-    hold: {
-      cashMoney: cashMoney.toLocaleString(),
-      valueMoney: valueMoney,
-    },
-    transactionHistory: [
-      {
-        keyword: '매수',
-        name: '삼성전자',
-        totalPrice: '107,400',
-        stockPrice: '53,700원 (2주)',
-        isUp: true,
-      },
-      {
-        keyword: '매도',
-        name: 'LG전자',
-        totalPrice: '107,400',
-        stockPrice: '53,700원 (3주)',
-        isUp: false,
-      },
-      {
-        keyword: '매도',
-        name: '삼성전자',
-        totalPrice: '429,600',
-        stockPrice: '53,700원 (2주)',
-        isUp: false,
-      },
-      {
-        keyword: '매도',
-        name: '포스코홀딩스',
-        totalPrice: '150,600',
-        stockPrice: '150,600원 (1주)',
-        isUp: false,
-      },
-    ],
-    totalBuy: '107,400',
-    totalSell: '687,600',
-    buyableAmount: '480,600',
+      error: (error) => console.error('실시간 업데이트 오류:', error),
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const datas = { transactionHistory: transactions };
+
+  const formattedData = {
+    teamName: teamName,
+    totalMoney: totalMoney.toLocaleString(),
+    cashMoney: cashMoney.toLocaleString(),
+    valueMoney: valueMoney.toLocaleString(),
+    valueProfit: valueProfit.toLocaleString(),
+    profitNum: `${profitNum > 0 ? '+' : ''}${profitNum.toFixed(2)}%`,
+    totalBuy: totalBuy.toLocaleString(),
+    totalSell: totalSell.toLocaleString(),
+    buyableAmount: buyableAmount.toLocaleString(),
   };
 
-  const sameValue: boolean = useUnchangedValue(totalMoney, basicMoney);
+  const sameValue: boolean = useUnchangedValue(
+    totalMoney.toLocaleString(),
+    basicMoney.toLocaleString(),
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const IsOpen = () => {
@@ -116,7 +124,7 @@ export const HistorySidebar = ({
       <SidebarContainer>
         <UpperContainer>
           <TeamContainer>
-            <TeamContent>{datas.teamName}</TeamContent>
+            <TeamContent>{formattedData.teamName}</TeamContent>
           </TeamContainer>
           <TotalAssetContainer>
             <Title>총 평가 자산</Title>
@@ -124,28 +132,27 @@ export const HistorySidebar = ({
               color={
                 sameValue
                   ? color.green[600]
-                  : profitNum.indexOf('+') !== -1
+                  : profitNum > 0 // 숫자 비교로 변경
                     ? color.red[500]
                     : color.blue[500]
               }
             >
-              {datas.total.totalMoney}원
+              {formattedData.totalMoney}원
             </TotalAssetPrice>
-            {!datas.total.totalUpDown.valueProfit ? null : (
+            {!formattedData.valueProfit ? null : (
               <UpDownDiv>
-                {datas.total.totalUpDown.valueProfit}원 (
-                {datas.total.totalUpDown.profitNum})
+                {formattedData.valueProfit}원 ({formattedData.profitNum})
               </UpDownDiv>
             )}
           </TotalAssetContainer>
           <HoldContainer>
             <HoldContent>
               <HoldTitle>보유현금</HoldTitle>
-              <HoldPrice>{datas.hold.cashMoney}원</HoldPrice>
+              <HoldPrice>{formattedData.cashMoney}원</HoldPrice>
             </HoldContent>
             <HoldContent>
               <HoldTitle>보유주식</HoldTitle>
-              <HoldPrice>{datas.hold.valueMoney}원</HoldPrice>
+              <HoldPrice>{formattedData.valueMoney}원</HoldPrice>
             </HoldContent>
           </HoldContainer>
           <p>거래내역</p>
@@ -153,27 +160,27 @@ export const HistorySidebar = ({
         <TransactionHistoryContents>
           {datas.transactionHistory.map((data, index) => (
             <TransactionContent
+              key={index}
               keyword={data.keyword}
               name={data.name}
               totalPrice={data.totalPrice}
               stockPrice={data.stockPrice}
               isUp={data.isUp}
-              key={index}
             />
           ))}
         </TransactionHistoryContents>
         <TotalPriceContainer>
           <PriceTitleContainer>
             <PriceTitle>총 매수금액</PriceTitle>
-            <UpDownDiv isUp={true}>{datas.totalBuy}원</UpDownDiv>
+            <UpDownDiv isUp={true}>{formattedData.totalBuy}원</UpDownDiv>
           </PriceTitleContainer>
           <PriceTitleContainer>
             <PriceTitle>총 매도금액</PriceTitle>
-            <UpDownDiv isUp={false}>{datas.totalSell}원</UpDownDiv>
+            <UpDownDiv isUp={false}>{formattedData.totalSell}원</UpDownDiv>
           </PriceTitleContainer>
           <PriceTitleContainer>
             <PriceTitle>구매가능 금액</PriceTitle>
-            <HoldPrice>{datas.buyableAmount}원</HoldPrice>
+            <HoldPrice>{formattedData.buyableAmount}원</HoldPrice>
           </PriceTitleContainer>
         </TotalPriceContainer>
         <FooterContainer>

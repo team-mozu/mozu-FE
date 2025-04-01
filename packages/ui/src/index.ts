@@ -27,6 +27,5 @@ export * from './Accounts';
 export * from './RankingDiv';
 export * from './ExitBtn';
 export * from './InvestCompleteModal';
-export * from './BuySellModal';
 export * from './Toast';
 export * from './ToastContainer';

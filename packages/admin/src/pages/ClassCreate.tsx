@@ -23,6 +23,7 @@ export const CreateClass = () => {
 
       setPrices(newPrices);
     };
+
   return (
     <Container>
       <Header>

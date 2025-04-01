@@ -49,10 +49,13 @@ export const StockTables = ({ data = [], isEdit }: IPropType) => {
     updateStockItems(updatedData);
   };
 
-  const toggleStockRow = (index: number) => {
+  const toggleStockRow = (itemId: number) => {
     if (!classData) return;
-    const newItems = [...classData.classItems];
-    newItems[index].stockChecked = !newItems[index].stockChecked;
+    const newItems = classData.classItems.map((item) =>
+      item.itemId === itemId
+        ? { ...item, stockChecked: !item.stockChecked }
+        : item,
+    );
     updateStockItems(newItems);
   };
 
@@ -99,17 +102,22 @@ export const StockTables = ({ data = [], isEdit }: IPropType) => {
             header: () => (
               <CheckBox
                 onChange={toggleAll}
-                checked={classData?.classItems.every((row) => row.stockChecked)}
+                checked={
+                  classData?.classItems && classData.classItems.length > 0
+                    ? classData.classItems.every((row) => row.stockChecked)
+                    : false
+                }
                 id={`stock-header-checkbox`}
               />
             ),
             cell: ({ row }) => (
               <CheckBox
                 checked={row.original.stockChecked}
-                onChange={() => toggleStockRow(row.index)}
+                onChange={() => toggleStockRow(row.original.itemId)}
                 id={`stock-row-${row.original.itemId}`}
               />
             ),
+
             size: 52,
           },
         ]

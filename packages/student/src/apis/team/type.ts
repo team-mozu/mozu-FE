@@ -10,7 +10,9 @@ export type TeamDeatilResponse = {
   profitNum: string;
 };
 
-export type HoldItemsResponse = {
+export type HoldItemsResponse = ItemType[];
+
+export type ItemType = {
   id: number;
   itemId: number;
   itemName: string;

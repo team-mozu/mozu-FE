@@ -18,7 +18,6 @@ const MAX_PRICE = BASE_PRICE + 3500;
 const CustomLabel = ({ viewBox, value }: any) => {
   if (!viewBox || !value) return null;
 
-  // 오른쪽 끝에서 20px 여백
   const labelX = viewBox.width;
   const labelY = viewBox.y;
 

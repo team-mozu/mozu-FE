@@ -11,7 +11,7 @@ export const StockInfo = () => {
   const { data } = useGetStockDetail(itemId);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '52px' }}>
+    <Container>
       <CompanyInfo>
         <Label>회사 정보</Label>
         <div>
@@ -19,44 +19,52 @@ export const StockInfo = () => {
         </div>
       </CompanyInfo>
       <CompanyMain>
-        <LeftSection>
-          <Label>재무상태표</Label>
-          <ContentWrapper>
-            <Accounts title={'부채'} content={data?.debt ?? 0} />
-            <Accounts title={'자본금'} content={data?.capital ?? 0} />
-          </ContentWrapper>
-        </LeftSection>
+        <Section>
+          <div>
+            <Label>재무상태표</Label>
+            <ContentWrapper>
+              <Accounts title={'부채'} content={data?.debt ?? 0} />
+              <Accounts title={'자본금'} content={data?.capital ?? 0} />
+            </ContentWrapper>
+          </div>
 
-        <RightSection>
-          <Label>손익계산서</Label>
-          <ContentWrapper>
-            <Accounts title={'매출액'} content={data?.profit ?? 0} />
-            <Accounts title={'매출원가'} content={data?.profitOG ?? 0} />
-            <Accounts title={'매출이익'} content={data?.profitBen ?? 0} />
-            <Accounts title={'당기순이익'} content={data?.netProfit ?? 0} />
-          </ContentWrapper>
-        </RightSection>
+          <div>
+            <Label>손익계산서</Label>
+            <ContentWrapper>
+              <Accounts title={'매출액'} content={data?.profit ?? 0} />
+              <Accounts title={'매출원가'} content={data?.profitOG ?? 0} />
+              <Accounts title={'매출이익'} content={data?.profitBen ?? 0} />
+              <Accounts title={'당기순이익'} content={data?.netProfit ?? 0} />
+            </ContentWrapper>
+          </div>
+        </Section>
       </CompanyMain>
-    </div>
+    </Container>
   );
 };
 
 const CompanyInfo = styled.div`
+  grid-column: 1;
   display: flex;
-  gap: 16px;
   flex-direction: column;
+  gap: 16px;
   & > div {
     width: 100%;
     padding: 16px;
     background-color: ${color.zinc[50]};
-    font: ${font.b2};
+    font: ${font.t2};
     color: ${color.black};
     border-radius: 12px;
+  }
+  & > div > p {
+    line-height: 1.7;
   }
 `;
 
 const CompanyMain = styled.div`
+  grid-column: 2; /* 두 번째 열에 배치 */
   display: flex;
+  flex-direction: column;
   gap: 24px;
 `;
 
@@ -75,13 +83,36 @@ const RightSection = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 `;
 
 const Label = styled.label`
   color: ${color.black};
   font: ${font.t3};
+`;
+
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+`;
+
+const Container = styled.div`
+  overflow: scroll;
+  padding: 32px;
+  background-color: ${color.white};
+  width: 100%;
+  height: 95%;
+  border: 1px solid ${color.zinc[200]};
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: 50% 1fr;
+  gap: 52px;
 `;

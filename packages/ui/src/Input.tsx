@@ -16,6 +16,7 @@ interface IInputType {
   max?: number;
   passwordVisible?: boolean;
   setPasswordVisible?: (visible: boolean) => void;
+  disabled?: boolean;
 }
 
 export const Input = ({
@@ -30,6 +31,7 @@ export const Input = ({
   onChange,
   max,
   passwordVisible,
+  disabled,
   setPasswordVisible,
 }: IInputType) => {
   const inputType = type === 'password' && passwordVisible ? 'text' : type;
@@ -44,6 +46,7 @@ export const Input = ({
           width={width}
           name={name}
           value={value}
+          disabled={disabled}
           maxLength={type !== 'number' ? maxLength : undefined}
           max={type === 'number' ? max : undefined}
           onChange={onChange}

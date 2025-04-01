@@ -1,11 +1,21 @@
 import styled from '@emotion/styled';
-import { NavBar, StockGraph, StockInfo, StockStatusBar } from '@/components';
-import { color } from '@mozu/design-token';
-import { useLocation } from 'react-router-dom';
+import {
+  NavBar,
+  StockGraph,
+  StockInfo,
+  StockStatusBar,
+  BuySellModal,
+} from '@/components';
+import { useLocation, useParams } from 'react-router-dom';
 import { ReactNode, useState } from 'react';
-import { BuySellModal } from '@mozu/ui';
+import { useGetStockDetail, useGetTeamDetail } from '@/apis';
+import { TradeHistory } from '@/db/type';
+import { Toast } from '@mozu/ui';
 
 export const StockPage = () => {
+  const { stockId } = useParams();
+  const ItemId = stockId ? parseInt(stockId) : null;
+
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: '매수' | '매도';
@@ -23,6 +33,23 @@ export const StockPage = () => {
   const closeModal = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }));
   };
+
+  const handleTradeConfirm = (trade: TradeHistory) => {
+    if (trade.id) {
+      // ID가 있으면 성공
+      Toast(
+        `성공적으로 ${trade.orderType === 'BUY' ? '매수' : '매도'}되었습니다`,
+        {
+          type: 'success',
+        },
+      );
+    } else {
+      Toast('거래 처리에 실패했습니다', { type: 'error' });
+    }
+  };
+
+  const { data: stockData } = useGetStockDetail(ItemId);
+  const { data: teamData } = useGetTeamDetail();
 
   const location = useLocation();
   const componentRoute = (currentPath: string): ReactNode => {
@@ -44,14 +71,20 @@ export const StockPage = () => {
         <StockStatusBar openModal={openModal} />
         <MainWrapper>
           <NavBar />
-          <MainContainer>{componentRoute(location.pathname)}</MainContainer>
+          <div>{componentRoute(location.pathname)}</div>
         </MainWrapper>
       </Container>
       {modalState.isOpen && (
         <BuySellModal
+          invDeg={teamData.invDeg}
+          itemId={stockData.itemId}
+          itemName={stockData.itemName}
+          onConfirm={handleTradeConfirm}
+          nowMoney={stockData.money}
           modalType={modalState.type}
           onClose={closeModal}
           isOpen={modalState.isOpen}
+          cashMoney={teamData.cashMoney}
         />
       )}
     </div>
@@ -73,15 +106,6 @@ const MainWrapper = styled.div`
   align-items: start;
   gap: 1rem;
   width: 100%;
-`;
-
-const MainContainer = styled.div`
-  flex-grow: 1;
-  width: 100%;
-  padding: 32px;
-  background-color: ${color.white};
-  border: 1px solid ${color.zinc[200]};
-  border-radius: 24px;
 `;
 
 export const ModalBackground = styled.div`

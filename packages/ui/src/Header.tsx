@@ -6,9 +6,10 @@ import { useMemo } from 'react';
 
 interface IHeaderProps {
   isAdmin: boolean;
+  invDeg: number;
 }
 
-export const Header = ({ isAdmin }: IHeaderProps) => {
+export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { classId, newsId } = useParams();
@@ -26,8 +27,6 @@ export const Header = ({ isAdmin }: IHeaderProps) => {
   const isNavNews = currentPage === 'news';
   const isResultPage = currentPage === 'result';
   const isWaitPage = currentPage === 'wait';
-
-  const datas = { investmentRound: 3 };
 
   return (
     <HeaderContainer isAdmin={isAdmin}>
@@ -60,9 +59,7 @@ export const Header = ({ isAdmin }: IHeaderProps) => {
       {!isAdmin && !isResultPage && !isWaitPage && (
         <InvestmentRoundContainer>
           <div>
-            <InvestmentRoundContent>
-              {datas.investmentRound}차 투자
-            </InvestmentRoundContent>
+            <InvestmentRoundContent>{invDeg}차 투자</InvestmentRoundContent>
             <InvestmentRoundExplain>진행중</InvestmentRoundExplain>
           </div>
           <SchoolTag href="https://dsmhs.djsch.kr/main.do" target="_blank">
