@@ -8,6 +8,12 @@ import { useNavigate } from 'react-router';
 export const CreateClass = () => {
   const [prices, setPrices] = useState<string[]>(['1,000,000']);
   const navigate = useNavigate();
+  const [selectedRound, setSelectedRound] = useState(1);
+
+  const handleRoundChange = (value: string) => {
+    const round = parseInt(value);
+    setSelectedRound(round);
+  };
 
   const priceChangeHandler =
     (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +68,8 @@ export const CreateClass = () => {
                 width={120}
                 height={48}
                 padding={{ top: 14, bottom: 14, left: 16, right: 94 }}
+                value={selectedRound.toString()}
+                onChange={handleRoundChange}
               />
               차
             </SelectField>
@@ -79,8 +87,12 @@ export const CreateClass = () => {
           </AssetBox>
         </TextField>
         <TableField>
-          <StockTables isEdit={true} data={null} />
-          <ArticleTables isEdit={true} data={null} round={1} />
+          <StockTables
+            isEdit={true}
+            data={null}
+            selectedRound={selectedRound}
+          />
+          <ArticleTables isEdit={true} data={null} />
         </TableField>
       </Contents>
     </Container>
