@@ -108,7 +108,7 @@ const Container = styled.div`
   overflow: scroll;
   padding: 32px;
   background-color: ${color.white};
-  width: 100%;
+  width: 1500px;
   height: 95%;
   border: 1px solid ${color.zinc[200]};
   border-radius: 16px;

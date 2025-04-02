@@ -26,13 +26,19 @@ interface ClassArticle {
 interface IPropType {
   data?: ClassArticle[];
   isEdit: boolean;
-  round: number;
 }
 
-export const ArticleTables = ({ data = [], isEdit, round }: IPropType) => {
+export const ArticleTables = ({ data = [], isEdit }: IPropType) => {
   const [tableData, setTableData] = useState<ClassArticle[]>([]);
   const [isModal, setIsModal] = useState<boolean>(false);
   const { classData, setClassData, updateArticles } = useClassStore();
+  const [selectedRound, setSelectedRound] = useState(1); // 기본값 1차
+
+  // 차수 변경 핸들러
+  const handleRoundChange = (value: string) => {
+    const round = parseInt(value);
+    setSelectedRound(round);
+  };
 
   const toggleAll = () => {
     if (!classData) return;
@@ -130,6 +136,7 @@ export const ArticleTables = ({ data = [], isEdit, round }: IPropType) => {
   });
 
   const isOpen = () => setIsModal(true);
+
   const isClose = () => {
     setIsModal(false);
     setClassData({
@@ -159,7 +166,9 @@ export const ArticleTables = ({ data = [], isEdit, round }: IPropType) => {
                   data={['1', '2', '3', '4', '5']}
                   width={100}
                   height={40}
-                  padding={{ top: 10, bottom: 10, right: 76, left: 16 }}
+                  value={selectedRound.toString()}
+                  onChange={handleRoundChange}
+                  padding={{ top: 10, bottom: 10, right: 10, left: 16 }}
                 />
                 차
               </SelectBox>

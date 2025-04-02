@@ -7,7 +7,7 @@ import {
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { CheckBox, Plus } from '@mozu/ui';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { AddInvestItemModal } from '@/components';
 import { useClassStore } from '@/store';
 
@@ -21,77 +21,214 @@ interface stockData {
   level3?: number;
   level4?: number;
   level5?: number;
-  checked?: boolean;
+  stockChecked?: boolean;
 }
 
 interface IPropType {
   isEdit: boolean;
   data: stockData[];
+  selectedRound: number;
 }
 
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  formattedValue: string;
+}
+
+const CustomInput = forwardRef<HTMLInputElement, InputProps>(
+  ({ formattedValue, onChange, ...props }, ref) => {
+    const [rawValue, setRawValue] = useState(formattedValue.replace(/,/g, ''));
+    const [isFocused, setIsFocused] = useState(false);
+
+    useEffect(() => {
+      if (!isFocused) {
+        setRawValue(formattedValue.replace(/,/g, ''));
+      }
+    }, [formattedValue, isFocused]);
+
+    const handleFocus = () => {
+      setIsFocused(true);
+      setRawValue(formattedValue.replace(/,/g, ''));
+    };
+
+    const handleBlur = () => {
+      setIsFocused(false);
+      const numericValue = Number(rawValue.replace(/[^0-9]/g, '')) || 0;
+      setRawValue(numericValue.toLocaleString('ko-KR'));
+    };
+
+    return (
+      <Input
+        {...props}
+        ref={ref}
+        value={isFocused ? rawValue : formattedValue}
+        onChange={(e) => {
+          setRawValue(e.target.value);
+          onChange?.(e);
+        }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      />
+    );
+  },
+);
+
 const formatPrice = (value: string | number): string => {
-  const numericValue = String(value).replace(/[^0-9]/g, '');
+  if (typeof value === 'number') {
+    return value.toLocaleString('ko-KR');
+  }
+  const numericValue = value.replace(/[^0-9]/g, '');
   return numericValue ? Number(numericValue).toLocaleString('ko-KR') : '';
 };
 
-export const StockTables = ({ data = [], isEdit }: IPropType) => {
+export const StockTables = ({
+  data = [],
+  isEdit,
+  selectedRound,
+}: IPropType) => {
   const [moneyData, setMoneyData] = useState<stockData[]>([]);
   const [isModal, setIsModal] = useState<boolean>(false);
   const { classData, setClassData, updateStockItems } = useClassStore();
+  type NumericField = 'currentPrice' | `level${number}`;
 
   const toggleAll = () => {
     if (!classData) return;
+
     const allChecked = classData.classItems.every((row) => row.stockChecked);
     const updatedData = classData.classItems.map((row) => ({
       ...row,
       stockChecked: !allChecked,
     }));
+
     updateStockItems(updatedData);
+
+    setMoneyData((prev) =>
+      prev.map((row) => ({ ...row, stockChecked: !allChecked })),
+    );
   };
+
+  const dynamicColumns = useMemo(() => {
+    const columns = ['currentPrice'];
+    for (let i = 1; i <= selectedRound; i++) {
+      columns.push(`level${i}`);
+    }
+    return columns;
+  }, [selectedRound]);
 
   const toggleStockRow = (itemId: number) => {
     if (!classData) return;
+
     const newItems = classData.classItems.map((item) =>
       item.itemId === itemId
         ? { ...item, stockChecked: !item.stockChecked }
         : item,
     );
+
     updateStockItems(newItems);
-  };
 
-  useEffect(() => {
-    if (data) {
-      const formattedData = data.map((item) => ({
-        itemId: item.itemId,
-        itemName: item.itemName,
-        money: item.money ?? [],
-        currentPrice: item.money?.[0] ?? 0,
-        level1: item.money?.[1] ?? 0,
-        level2: item.money?.[2] ?? 0,
-        level3: item.money?.[3] ?? 0,
-        level4: item.money?.[4] ?? 0,
-        level5: item.money?.[5] ?? 0,
-        stockChecked: item.checked ?? false,
-      }));
-      setMoneyData(formattedData);
-    } else {
-      setMoneyData([]);
-    }
-  }, [data]);
-
-  const handlePriceChange = (
-    itemId: number,
-    field: keyof stockData,
-    value: string,
-  ) => {
-    const numericValue = value.replace(/[^0-9]/g, '');
-    setMoneyData((prevData) =>
-      prevData.map((row) =>
+    setMoneyData((prev) =>
+      prev.map((row) =>
         row.itemId === itemId
-          ? { ...row, [field]: Number(numericValue) || 0 }
+          ? { ...row, stockChecked: !row.stockChecked }
           : row,
       ),
     );
+  };
+
+  useEffect(() => {
+    const formattedData = data.map((item) => {
+      const baseMoney = item.money || [];
+      const extendedMoney = [
+        ...baseMoney,
+        ...Array(Math.max(selectedRound + 1 - baseMoney.length, 0)).fill(0),
+      ];
+
+      return {
+        ...item,
+        money: extendedMoney.slice(0, selectedRound + 1),
+        currentPrice: extendedMoney[0],
+        ...Object.fromEntries(
+          Array(selectedRound)
+            .fill(0)
+            .map((_, i) => [`level${i + 1}`, extendedMoney[i + 1]]),
+        ),
+      };
+    });
+    setMoneyData(formattedData);
+  }, [data, selectedRound]);
+
+  useEffect(() => {
+    if (data) {
+      const formattedData = data.map((item) => {
+        // 기존 money 배열을 최대 selectedRound+1 길이로 확장
+        const baseMoney = item.money || [];
+        const extendedMoney = [
+          ...baseMoney,
+          ...Array(Math.max(selectedRound + 1 - baseMoney.length, 0)).fill(0),
+        ];
+
+        return {
+          ...item,
+          money: extendedMoney.slice(0, selectedRound + 1),
+          currentPrice: extendedMoney[0] || 0,
+          level1: extendedMoney[1] || 0,
+          level2: extendedMoney[2] || 0,
+          level3: extendedMoney[3] || 0,
+          level4: extendedMoney[4] || 0,
+          level5: extendedMoney[5] || 0,
+        };
+      });
+      setMoneyData(formattedData);
+    }
+  }, [data, selectedRound]);
+
+  const handlePriceChange = (
+    itemId: number,
+    field: NumericField,
+    value: string,
+  ) => {
+    // 입력값이 빈 문자열인 경우 0으로 처리
+    if (value === '') {
+      updateValue(itemId, field, 0);
+      return;
+    }
+
+    // 숫자만 추출
+    const numericValue = Number(value.replace(/[^0-9]/g, '')) || 0;
+    updateValue(itemId, field, numericValue);
+  };
+
+  const updateValue = (itemId: number, field: NumericField, value: number) => {
+    const level =
+      field === 'currentPrice' ? 0 : parseInt(field.replace('level', ''));
+
+    // 로컬 상태 업데이트
+    setMoneyData((prev) =>
+      prev.map((row) => {
+        if (row.itemId === itemId) {
+          const newMoney = [...(row.money || [])];
+          newMoney[level] = value;
+          return {
+            ...row,
+            [field]: value,
+            money: newMoney,
+          };
+        }
+        return row;
+      }),
+    );
+
+    // 전역 상태 업데이트
+    if (classData) {
+      const updatedItems = classData.classItems.map((item) => {
+        if (item.itemId === itemId) {
+          const newMoney = [...(item.money || [])];
+          newMoney[level] = value;
+          return { ...item, money: newMoney };
+        }
+        return item;
+      });
+      updateStockItems(updatedItems);
+    }
   };
 
   const columns: ColumnDef<stockData>[] = [
@@ -103,9 +240,8 @@ export const StockTables = ({ data = [], isEdit }: IPropType) => {
               <CheckBox
                 onChange={toggleAll}
                 checked={
-                  classData?.classItems && classData.classItems.length > 0
-                    ? classData.classItems.every((row) => row.stockChecked)
-                    : false
+                  moneyData.length > 0 &&
+                  moneyData.every((row) => row.stockChecked)
                 }
                 id={`stock-header-checkbox`}
               />
@@ -135,44 +271,55 @@ export const StockTables = ({ data = [], isEdit }: IPropType) => {
       size: 500,
       meta: { align: 'left' }, // 정렬 정보 추가
     },
-    ...['currentPrice', 'level1', 'level2', 'level3', 'level4', 'level5'].map(
-      (key) => ({
-        accessorKey: key,
-        header: () => (
-          <>
-            {key.replace('level', '') === 'currentPrice'
-              ? '현재가'
-              : key.replace('level', '') + '차'}
-          </>
-        ),
-        size: 140,
-        meta: { align: 'right' }, // 정렬 정보 추가
-        cell: ({ row }) => {
-          const value = row.original[key as keyof stockData] || 0;
-          return isEdit ? (
-            <Input
-              type="text"
-              value={formatPrice(value)}
-              onChange={(e) =>
-                handlePriceChange(
-                  row.original.itemId,
-                  key as keyof stockData,
-                  e.target.value,
-                )
-              }
-            />
-          ) : (
-            formatPrice(value)
-          );
-        },
-      }),
-    ),
+    ...dynamicColumns.map((key) => ({
+      accessorKey: key,
+      header: () => (
+        <>
+          {key === 'currentPrice' ? '현재가' : `${key.replace('level', '')}차`}
+        </>
+      ),
+      size: 140,
+      meta: { align: 'right' },
+      cell: ({ row }) => {
+        const value = row.original[key as NumericField] || 0;
+        if (key === 'currentPrice') {
+          return formatPrice(value);
+        }
+        return isEdit ? (
+          <Input
+            type="text"
+            value={formatPrice(value)}
+            onChange={(e) =>
+              handlePriceChange(
+                row.original.itemId,
+                key as NumericField,
+                e.target.value,
+              )
+            }
+          />
+        ) : (
+          formatPrice(value)
+        );
+      },
+    })),
   ];
 
   const table = useReactTable({
     data: moneyData || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: {
+        ...Object.fromEntries(
+          columns
+            .filter((col) => col.id?.startsWith('level'))
+            .map((col) => [
+              col.id,
+              parseInt(col.id.replace('level', '')) <= selectedRound,
+            ]),
+        ),
+      },
+    },
   });
 
   const isOpen = () => setIsModal(true);
@@ -350,5 +497,5 @@ const Input = styled.input`
   outline: none;
   font: ${font.b2};
   width: 110px;
-  text-align: right; /* 입력 필드도 오른쪽 정렬 */
+  text-align: right;
 `;

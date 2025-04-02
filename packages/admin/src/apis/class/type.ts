@@ -59,3 +59,24 @@ export type ClassArticleRequest = {
   invDeg: number;
   article: number[];
 };
+
+// class/edit
+
+export type ClassData = {
+  id?: number;
+  name: string;
+  maxInvDeg: number;
+  baseMoney: number;
+  classItems: {
+    itemId: number;
+    itemName: string;
+    money: number[];
+  }[];
+  classArticles: {
+    invDeg: number;
+    articles: {
+      id: number;
+      title: string;
+    }[];
+  }[];
+};

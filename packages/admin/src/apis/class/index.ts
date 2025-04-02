@@ -1,9 +1,8 @@
 import { instance } from '@configs/util';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ClassDetailResponse, ClassResponse } from '@/apis';
+import { ClassData, ClassDetailResponse, ClassResponse } from '@/apis';
 import { Toast } from '@mozu/ui';
 import { useLocation, useNavigate } from 'react-router';
-import { useClassStore } from '@/store';
 
 const router = '/class';
 
@@ -119,6 +118,20 @@ export const useNextDegree = (id: number) => {
     },
     onError: (err) => {
       Toast(`수업 진행에 실패했습니다. ${err}`, { type: 'error' });
+    },
+  });
+};
+
+export const useEditClass = (classId: number) => {
+  return useMutation({
+    mutationFn: async (payload: ClassData) => {
+      await instance.post(`${router}/update/${classId}`, payload);
+    },
+    onSuccess: () => {
+      Toast(`수업이 수정되었습니다.`, { type: 'success' });
+    },
+    onError: (err) => {
+      Toast(`수업 수정에 실패했습니다. ${err}`, { type: 'error' });
     },
   });
 };

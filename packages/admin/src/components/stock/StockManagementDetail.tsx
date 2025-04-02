@@ -179,7 +179,6 @@ const UpperContainer = styled.div`
     display: flex;
     gap: 12px;
   }
-
   display: flex;
   justify-content: space-between;
 `;

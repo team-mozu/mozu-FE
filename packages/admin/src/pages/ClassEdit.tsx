@@ -17,18 +17,30 @@ import { color } from '@mozu/design-token';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { ArticleTables, StockTables } from '@/components';
-import { useGetClassDetail } from '@/apis';
+import { useEditClass, useGetClassDetail } from '@/apis';
 import { useClassStore } from '@/store';
 
 export const ClassEdit = () => {
   const navigate = useNavigate();
   const { classId, id } = useParams();
   const articleId = id ? parseInt(id) : null;
+
   const { data } = useGetClassDetail(articleId);
   const { classData, setClassData } = useClassStore();
+  const [investmentDegree, setInvestmentDegree] = useState(
+    classData?.maxInvDeg?.toString() || '3',
+  );
   const [prices, setPrices] = useState<string[]>([
     classData?.baseMoney ? classData.baseMoney.toLocaleString('ko-KR') : '',
   ]);
+  const [selectedRound, setSelectedRound] = useState(1); // 기본값 1차
+  const { mutate: editClass } = useEditClass(articleId);
+
+  // 차수 변경 핸들러
+  const handleRoundChange = (value: string) => {
+    const round = parseInt(value);
+    setSelectedRound(round);
+  };
 
   useEffect(() => {
     if (classData?.baseMoney !== undefined) {
@@ -60,20 +72,42 @@ export const ClassEdit = () => {
     }
   }, [data]);
 
-  const priceChangeHandler =
-    (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = e.target.value;
-      const numericValue = Number(inputValue.replace(/,/g, ''));
-      const newPrices = [...prices];
+  const priceChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const numericValue = Number(e.target.value.replace(/[^0-9]/g, ''));
+    setClassData({
+      ...classData,
+      baseMoney: numericValue,
+    });
+    setPrices([numericValue.toLocaleString('ko-KR')]);
+  };
 
-      if (isNaN(numericValue) || inputValue === '') {
-        newPrices[index] = '';
-      } else {
-        newPrices[index] = numericValue.toLocaleString('ko-KR');
-      }
-
-      setPrices(newPrices);
+  const handleSubmit = () => {
+    if (!classData) return;
+    const payload = {
+      ...classData,
+      classNum: null, // 추가
+      curInvDeg: null, // 추가
+      maxInvDeg: selectedRound,
+      baseMoney: Number(prices[0]?.replace(/[^0-9]/g, '')) || 0,
+      classItems: classData.classItems.map((item) => ({
+        itemId: item.itemId,
+        itemName: item.itemName,
+        money: item.money?.slice(0, selectedRound + 1) || [],
+      })),
+      classArticles: classData.classArticles.map((article) => ({
+        invDeg: article.invDeg,
+        articles: article.articles.map((a) => ({
+          id: a.id,
+          title: a.title,
+        })),
+      })),
     };
+
+    editClass(payload, {
+      onSuccess: () => navigate(-1),
+    });
+  };
+
   return (
     <Container>
       <Header>
@@ -95,6 +129,7 @@ export const ClassEdit = () => {
             color={color.white}
             hoverBackgroundColor={color.orange[400]}
             hoverBorderColor={color.orange[400]}
+            onClick={handleSubmit}
           >
             저장하기
             <Save size={20} color="white" />
@@ -121,7 +156,9 @@ export const ClassEdit = () => {
                 data={['1', '2', '3', '4', '5']}
                 width={120}
                 height={48}
-                padding={{ top: 14, bottom: 14, left: 16, right: 94 }}
+                padding={{ top: 14, bottom: 14, left: 16, right: 10 }}
+                value={selectedRound.toString()}
+                onChange={handleRoundChange}
               />
               차
             </SelectField>
@@ -132,19 +169,19 @@ export const ClassEdit = () => {
               <AssetInput
                 type="text"
                 value={prices}
-                onChange={priceChangeHandler(0)}
+                onChange={priceChangeHandler}
               />
               원
             </AssetField>
           </AssetBox>
         </TextField>
         <TableField>
-          <StockTables isEdit={true} data={classData?.classItems ?? []} />
-          <ArticleTables
+          <StockTables
             isEdit={true}
-            data={classData?.classArticles ?? []}
-            round={1}
+            data={classData?.classItems ?? []}
+            selectedRound={selectedRound}
           />
+          <ArticleTables isEdit={true} data={classData?.classArticles ?? []} />
         </TableField>
       </Contents>
     </Container>

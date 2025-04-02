@@ -7,7 +7,6 @@ import {
   ArticleListResponse,
 } from './type';
 import { useNavigate } from 'react-router';
-import { error } from 'console';
 
 const router = '/article';
 
@@ -99,3 +98,5 @@ export const useEditArticle = () => {
     onError: (error) => console.log('error', error),
   });
 };
+
+export const useClassEdit = () => {};

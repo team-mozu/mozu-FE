@@ -17,6 +17,13 @@ export const ClassEnvironment = () => {
   const [isModal, setIsModal] = useState<boolean>(false);
   const { classData, setClassData } = useClassStore();
   const { mutate } = useClassStart(articleId);
+  const [selectedRound, setSelectedRound] = useState(classData?.maxInvDeg ?? 1);
+
+  useEffect(() => {
+    if (classData?.maxInvDeg) {
+      setSelectedRound(classData.maxInvDeg);
+    }
+  }, [classData?.maxInvDeg]);
 
   const { prices, priceChangeHandler } = usePriceFormatter(
     [data?.baseMoney ?? 0],
@@ -25,15 +32,33 @@ export const ClassEnvironment = () => {
     },
   );
 
+  const handleRoundChange = (value: string) => {
+    const round = parseInt(value);
+    setSelectedRound(round);
+  };
+
   useEffect(() => {
     refetch();
   }, [location.pathname, refetch]);
 
   useEffect(() => {
     if (data && JSON.stringify(classData) !== JSON.stringify(data)) {
-      setClassData(data);
+      const safeData = {
+        ...data,
+        classItems:
+          data.classItems?.map((item) => ({
+            ...item,
+            money: [
+              ...item.money,
+              ...Array(
+                Math.max(data.maxInvDeg - item.money.length + 1, 0),
+              ).fill(0),
+            ].slice(0, data.maxInvDeg + 1),
+          })) ?? [],
+      };
+      setClassData(safeData);
     }
-  }, [data, classData, setClassData]);
+  }, [data]);
 
   const isOpen = () => {
     setIsModal(true);
@@ -130,10 +155,13 @@ export const ClassEnvironment = () => {
             </BtnContainer>
           </Option>
           <TableBox>
-            <StockTables isEdit={false} data={classData?.classItems ?? []} />
+            <StockTables
+              isEdit={false}
+              data={classData?.classItems ?? []}
+              selectedRound={selectedRound}
+            />
             <ArticleTables
               isEdit={false}
-              round={1}
               data={classData?.classArticles ?? []}
             />
           </TableBox>
