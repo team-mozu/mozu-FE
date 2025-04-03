@@ -12,7 +12,7 @@ export const CreateClass = () => {
 
   const handleRoundChange = (value: string) => {
     const round = parseInt(value);
-    setSelectedRound(round);
+    if (!isNaN(round)) setSelectedRound(round); // NaN 방지
   };
 
   const priceChangeHandler =
@@ -67,7 +67,7 @@ export const CreateClass = () => {
                 data={['1', '2', '3', '4', '5']}
                 width={120}
                 height={48}
-                padding={{ top: 14, bottom: 14, left: 16, right: 94 }}
+                padding={{ top: 14, bottom: 14, left: 16, right: 10 }}
                 value={selectedRound.toString()}
                 onChange={handleRoundChange}
               />
@@ -87,11 +87,7 @@ export const CreateClass = () => {
           </AssetBox>
         </TextField>
         <TableField>
-          <StockTables
-            isEdit={true}
-            data={null}
-            selectedRound={selectedRound}
-          />
+          <StockTables isEdit={true} data={[]} selectedRound={selectedRound} />
           <ArticleTables isEdit={true} data={null} />
         </TableField>
       </Contents>

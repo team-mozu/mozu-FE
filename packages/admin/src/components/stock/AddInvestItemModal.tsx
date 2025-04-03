@@ -3,6 +3,7 @@ import { Button, Item, SearchInput } from '../../../../ui/src';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
 import { useState } from 'react';
+import { useClassStore } from '@/store';
 
 interface IInvestModalType {
   close: () => void;
@@ -10,8 +11,10 @@ interface IInvestModalType {
 
 export const AddInvestItemModal = ({ close }: IInvestModalType) => {
   const { data: stockData } = useGetStockList();
+  const { updateStockItems, classData } = useClassStore();
+  const [selectedRound, setSelectedRound] = useState(1);
 
-  const items = stockData?.items || []; // 데이터가 없을 경우 빈 배열로 설정
+  const items = stockData?.items || [];
 
   const [checkedItems, setCheckedItems] = useState<boolean[]>(
     Array(items.length).fill(false),
@@ -26,6 +29,29 @@ export const AddInvestItemModal = ({ close }: IInvestModalType) => {
       updateCheckItems[index] = !updateCheckItems[index];
       return updateCheckItems;
     });
+  };
+
+  const handleSubmit = () => {
+    const selectedItems = items.filter((_, index) => checkedItems[index]);
+
+    const newStockItems = selectedItems.map((item) => ({
+      itemId: item.id,
+      itemName: item.name,
+      money: Array(selectedRound + 1).fill(0),
+      currentPrice: 0,
+      stockChecked: false,
+    }));
+
+    const currentItems = classData?.classItems || [];
+    const existingIds = new Set(currentItems.map((item) => item.itemId));
+
+    const uniqueNewItems = newStockItems.filter(
+      (item) => !existingIds.has(item.itemId),
+    );
+
+    updateStockItems([...currentItems, ...uniqueNewItems]);
+
+    close();
   };
 
   const headClick = () => {
@@ -77,6 +103,7 @@ export const AddInvestItemModal = ({ close }: IInvestModalType) => {
                 backgroundColor={color.orange[500]}
                 borderColor={color.orange[500]}
                 color={color.white}
+                onClick={handleSubmit}
               >
                 선택 종목 추가
               </Button>
@@ -152,28 +179,4 @@ export const Title = styled.div<{ isHeader: boolean }>`
   font: ${font.b1};
   color: ${color.black};
   margin-left: 4px;
-`;
-
-const TableContent = styled.div<{ isHeader: boolean }>`
-  width: 100%;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  padding-left: 16px;
-  background-color: ${({ isHeader }) =>
-    isHeader ? color.zinc[50] : 'transparent'};
-  border-bottom: 1px solid
-    ${({ isHeader }) => (isHeader ? color.zinc[200] : 'transparent')};
-  border-top: 1px solid
-    ${({ isHeader }) => (isHeader ? color.zinc[200] : 'transparent')};
-`;
-
-const TitleContainer = styled.div`
-  display: flex;
-  gap: 64px;
-`;
-
-const ContentContainer = styled.div`
-  display: flex;
-  gap: 24px;
 `;

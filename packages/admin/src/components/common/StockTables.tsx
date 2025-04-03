@@ -81,11 +81,12 @@ const formatPrice = (value: string | number): string => {
 };
 
 export const StockTables = ({
-  data = [],
+  data: propData,
   isEdit,
   selectedRound,
 }: IPropType) => {
-  const [moneyData, setMoneyData] = useState<stockData[]>([]);
+  const data = propData || [];
+  const [moneyData, setMoneyData] = useState<stockData[]>(data);
   const [isModal, setIsModal] = useState<boolean>(false);
   const { classData, setClassData, updateStockItems } = useClassStore();
   type NumericField = 'currentPrice' | `level${number}`;
@@ -135,6 +136,8 @@ export const StockTables = ({
   };
 
   useEffect(() => {
+    if (!data) return;
+
     const formattedData = data.map((item) => {
       const baseMoney = item.money || [];
       const extendedMoney = [
@@ -145,40 +148,15 @@ export const StockTables = ({
       return {
         ...item,
         money: extendedMoney.slice(0, selectedRound + 1),
-        currentPrice: extendedMoney[0],
-        ...Object.fromEntries(
-          Array(selectedRound)
-            .fill(0)
-            .map((_, i) => [`level${i + 1}`, extendedMoney[i + 1]]),
-        ),
+        currentPrice: extendedMoney[0] || 0,
+        level1: extendedMoney[1] || 0,
+        level2: extendedMoney[2] || 0,
+        level3: extendedMoney[3] || 0,
+        level4: extendedMoney[4] || 0,
+        level5: extendedMoney[5] || 0,
       };
     });
     setMoneyData(formattedData);
-  }, [data, selectedRound]);
-
-  useEffect(() => {
-    if (data) {
-      const formattedData = data.map((item) => {
-        // 기존 money 배열을 최대 selectedRound+1 길이로 확장
-        const baseMoney = item.money || [];
-        const extendedMoney = [
-          ...baseMoney,
-          ...Array(Math.max(selectedRound + 1 - baseMoney.length, 0)).fill(0),
-        ];
-
-        return {
-          ...item,
-          money: extendedMoney.slice(0, selectedRound + 1),
-          currentPrice: extendedMoney[0] || 0,
-          level1: extendedMoney[1] || 0,
-          level2: extendedMoney[2] || 0,
-          level3: extendedMoney[3] || 0,
-          level4: extendedMoney[4] || 0,
-          level5: extendedMoney[5] || 0,
-        };
-      });
-      setMoneyData(formattedData);
-    }
   }, [data, selectedRound]);
 
   const handlePriceChange = (
@@ -262,14 +240,14 @@ export const StockTables = ({
       accessorKey: 'itemId',
       header: () => <>순번</>,
       size: 80,
-      meta: { align: 'center' }, // 정렬 정보 추가
+      meta: { align: 'center' },
       cell: ({ row }) => row.index + 1,
     },
     {
       accessorKey: 'itemName',
       header: () => <>종목 이름</>,
       size: 500,
-      meta: { align: 'left' }, // 정렬 정보 추가
+      meta: { align: 'left' },
     },
     ...dynamicColumns.map((key) => ({
       accessorKey: key,
