@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Button, HandCoins, Trophy } from '@mozu/ui';
 import { NthDeal, AssetChange } from '@/components';
+import { History } from '@/components';
+import { useTeamOrders, useTeamResult } from '@/apis';
 
 interface ValueStyleProps {
   isPositive?: boolean;
@@ -9,95 +11,70 @@ interface ValueStyleProps {
 }
 
 export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
+  const { data: teamOrders } = useTeamOrders();
+  const { data: teamResult } = useTeamResult();
+
   return (
     <Container>
       <Title>
         <Logo>
           <HandCoins size={24} color={color.orange[500]} />
         </Logo>
-        <p>3차 투자 종료</p>
+        <p>
+          {teamOrders &&
+            teamOrders.length > 0 &&
+            teamOrders[teamOrders.length - 1]?.invDeg}
+          차 투자 종료
+        </p>
       </Title>
       <Main>
         <Transaction>
           <label>거래내역</label>
-          {/* <NthDeal deal={3} />
-          <NthDeal deal={2} />
-          <NthDeal deal={1} /> */}
-          <_TestContainer>
-            <label>3차 거래</label>
-            <div>
-              {/* <History type="buy" /> */}
-              <TestContainer>
-                <BS>매도</BS>
-                <Stock>LG전자</Stock>
-                <Price>
-                  <Amount>104,00원</Amount>
-                  <Total>52,000 (2주)</Total>
-                </Price>
-              </TestContainer>
-            </div>
-          </_TestContainer>
-          <_TestContainer>
-            <label>2차 거래</label>
-            <div>
-              {/* <History type="buy" /> */}
-              <TestContainer>
-                <BS>매수</BS>
-                <Stock>LG전자</Stock>
-                <Price>
-                  <Amount>98,100원</Amount>
-                  <Total>32,700원 (3주)</Total>
-                </Price>
-              </TestContainer>
-              <TestContainer>
-                <BS>매도</BS>
-                <Stock>삼성전자</Stock>
-                <Price>
-                  <Amount>147,000원</Amount>
-                  <Total>49,000원 (3주)</Total>
-                </Price>
-              </TestContainer>
-            </div>
-          </_TestContainer>
-          <_TestContainer>
-            <label>1차 거래</label>
-            <div>
-              {/* <History type="buy" /> */}
-              <TestContainer>
-                <BS>매수</BS>
-                <Stock>포스코홀딩스</Stock>
-                <Price>
-                  <Amount>130,200원</Amount>
-                  <Total>130,200 (1주)</Total>
-                </Price>
-              </TestContainer>
-              <TestContainer>
-                <BS>매수</BS>
-                <Stock>삼성전자</Stock>
-                <Price>
-                  <Amount>429,600원</Amount>
-                  <Total>53,700원 (8주)</Total>
-                </Price>
-              </TestContainer>
-            </div>
-          </_TestContainer>
+          {teamOrders &&
+          teamOrders.length > 0 &&
+          teamOrders[teamOrders.length - 1]?.invDeg
+            ? [...Array(teamOrders[teamOrders.length - 1].invDeg)]
+                .map((_, i) => teamOrders.length - 1 - i)
+                .map((revIndex) => (
+                  <NthDeal
+                    key={revIndex}
+                    deal={teamOrders[revIndex].invDeg}
+                    orderHistory={
+                      <History
+                        type={teamOrders[revIndex].orderType}
+                        totalMoney={teamOrders[
+                          revIndex
+                        ]?.totalMoney.toLocaleString()}
+                        itemMoney={teamOrders[
+                          revIndex
+                        ]?.itemMoney.toLocaleString()}
+                        itemCount={teamOrders[revIndex]?.orderCount}
+                        itemName={teamOrders[revIndex]?.itemName}
+                      />
+                    }
+                  />
+                ))
+            : null}
         </Transaction>
         <RightContainer>
           <Result>
             <label>결과 요약</label>
-            <AssetChange />
+            <AssetChange
+              baseMoney={teamResult?.baseMoney}
+              totalMoney={teamResult?.totalMoney}
+            />
             <Sub>
               <Proceeds isPositive={true}>
                 <label>수익금</label>
-                <p>+850,000원</p>
+                <p>+{teamResult?.valueProfit ?? 0}원</p>
               </Proceeds>
               <Return isPositive={true}>
                 <label>수익률</label>
-                <p>+85%</p>
+                <p>+{teamResult?.profitNum ?? '0%'}</p>
               </Return>
               <TotalDeal>
                 <label>총 거래 횟수</label>
-                <p>6회</p>
+                <p>{teamResult?.orderCount ?? 0}회</p>
               </TotalDeal>
             </Sub>
           </Result>

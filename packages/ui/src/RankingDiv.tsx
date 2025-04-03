@@ -24,7 +24,7 @@ export const RankingDiv = ({
         <School>{schoolName}</School>
       </Team>
       <Price>
-        <span>{price}</span>원
+        <span>{price.toLocaleString()}</span>원
       </Price>
     </Wrapper>
   );
@@ -63,7 +63,7 @@ const Team = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 326px;
+  min-width: 300px;
 `;
 
 const TeamName = styled.p`
@@ -79,4 +79,7 @@ const School = styled.p`
 const Price = styled.p`
   font: ${font.t1};
   color: ${color.zinc[800]};
+  > span {
+    width: 100%;
+  }
 `;

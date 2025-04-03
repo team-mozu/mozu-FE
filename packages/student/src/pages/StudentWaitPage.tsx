@@ -3,8 +3,7 @@ import { color, font } from '@mozu/design-token';
 import { Header, Users, Info, Toast } from '@mozu/ui';
 import { useSSE } from '@/hook';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useTeamEnd } from '@/apis';
+import { useState } from 'react';
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();

@@ -39,7 +39,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>
 
-      {!isAdmin && !isResultPage && !isWaitPage && (
+      {!isAdmin && !isResultPage && isWaitPage && (
         <NavContainer>
           <Nav
             onClick={() => navigate(`/${classId}/home`)}
@@ -56,7 +56,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
         </NavContainer>
       )}
 
-      {!isAdmin && !isResultPage && !isWaitPage && (
+      {!isAdmin && !isResultPage && isWaitPage && (
         <InvestmentRoundContainer>
           <div>
             <InvestmentRoundContent>{invDeg}차 투자</InvestmentRoundContent>
@@ -68,7 +68,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
         </InvestmentRoundContainer>
       )}
 
-      {(isWaitPage || isAdmin || isResultPage) && (
+      {(!isWaitPage || isAdmin || isResultPage) && (
         <SchoolTag href="https://dsmhs.djsch.kr/main.do" target="_blank">
           © 대덕소프트웨어마이스터고등학교
         </SchoolTag>
@@ -81,6 +81,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
 const HeaderContainer = styled.header<{ isAdmin: boolean }>`
   position: fixed;
   top: 0;
+  z-index: 1;
   width: ${({ isAdmin }) => (isAdmin ? 'calc(100% - 280px)' : '100%')};
   margin-left: ${({ isAdmin }) => (isAdmin ? '280px' : '0')};
   height: 64px;

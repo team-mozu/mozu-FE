@@ -59,14 +59,7 @@ export const StockPage = () => {
   };
 
   return (
-    <div
-    // style={{
-    //   width: '100%',
-    //   display: 'flex',
-    //   justifyContent: 'center',
-    //   alignItems: 'center',
-    // }}
-    >
+    <div>
       <Container>
         <StockStatusBar openModal={openModal} />
         <MainWrapper>
@@ -80,7 +73,7 @@ export const StockPage = () => {
           itemId={stockData.itemId}
           itemName={stockData.itemName}
           onConfirm={handleTradeConfirm}
-          nowMoney={stockData.money}
+          nowMoney={stockData.moneyList[1]}
           modalType={modalState.type}
           onClose={closeModal}
           isOpen={modalState.isOpen}
@@ -93,6 +86,7 @@ export const StockPage = () => {
 
 const Container = styled.div`
   min-height: calc(100vh - 64px);
+  width: 100%;
   padding: 40px;
   display: flex;
   flex-direction: column;
@@ -105,7 +99,10 @@ const MainWrapper = styled.div`
   flex-direction: column;
   align-items: start;
   gap: 1rem;
-  width: 100%;
+  /* width: 100%; */
+  > div:last-child {
+    width: 100%;
+  }
 `;
 
 export const ModalBackground = styled.div`

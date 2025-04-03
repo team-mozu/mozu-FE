@@ -54,7 +54,7 @@ export const AppLayout = () => {
       setIsResultPage(false);
     } else if (pathname.includes('/home')) {
       setIsResultPage(false);
-    } else if (pathname === '/result') {
+    } else if (pathname.includes('/result')) {
       setIsResultPage(true);
     } else {
       setIsResultPage(false);
@@ -77,7 +77,7 @@ export const AppLayout = () => {
               cashMoney={teamData?.cashMoney ?? 0}
               valueProfit={teamData?.valueProfit ?? 0}
               valueMoney={teamData?.valueMoney ?? 0}
-              profitNum={Number(teamData?.profitNum) ?? 0}
+              profitNum={teamData?.profitNum ?? ''}
               totalBuy={totalBuy}
               totalSell={totalSell}
               buyableAmount={buyableAmount > 0 ? buyableAmount : 0}

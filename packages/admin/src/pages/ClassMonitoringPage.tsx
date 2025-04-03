@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { ArticleInfoModal, Button, ClassInfoModal, Toast } from '@mozu/ui';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import { TeamCurrentModal, TeamInfoTable } from '@/components';
+import { useNextDegree } from '@/apis';
 
 export const ClassMonitoringPage = () => {
   const navigate = useNavigate();
@@ -11,7 +12,10 @@ export const ClassMonitoringPage = () => {
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [isOpenTeam, setIsOpenTeam] = useState<boolean>(false);
 
-  useEffect(() => {}, []);
+  const { id } = useParams();
+  const classId = id ? parseInt(id) : null;
+
+  const { mutate: nextDegree } = useNextDegree(classId);
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
@@ -67,6 +71,7 @@ export const ClassMonitoringPage = () => {
             borderColor={color.orange[500]}
             color={color.white}
             hoverBackgroundColor={color.orange[600]}
+            onClick={() => nextDegree()}
           >
             다음 투자 진행
           </Button>

@@ -1,8 +1,14 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { instance } from '@configs/util';
-import { HoldItemsResponse, TeamDeatilResponse, TeamEndResponse } from './type';
+import {
+  HoldItemsResponse,
+  TeamDeatilResponse,
+  TeamEndProps,
+  TeamOrdersResponse,
+  TeamRankResponse,
+  TeamResultResponse,
+} from './type';
 import { AxiosError } from 'axios';
-import { Toast } from '@mozu/ui';
 
 const router = '/team';
 
@@ -30,30 +36,50 @@ export const useGetHoldItems = () => {
 };
 
 export const useTeamEnd = () => {
-  return useMutation<TeamEndResponse, AxiosError>({
-    mutationFn: async () => {
-      const response = await instance.post<TeamEndResponse>(`${router}/end`);
+  return useMutation<void, AxiosError, TeamEndProps>({
+    mutationFn: async (teamData) => {
+      const response = await instance.post('/team/end', teamData);
       return response.data;
     },
-    onSuccess: () => {},
-    onError: (res: AxiosError<unknown>) => {
-      if (res.response) {
-        switch (res.response?.status) {
-          case 401:
-            Toast('참가 코드 혹은 학교를 다시 확인해주세요.', {
-              type: 'error',
-            });
-            break;
-          default:
-            Toast('로그인에 실패하였습니다.', { type: 'error' });
-            break;
-        }
-      } else {
-        Toast('네트워크 연결을 확인해주세요.', {
-          type: 'error',
-        });
-        console.log(res);
-      }
+    onSuccess: () => {
+      console.log('팀 종료 성공');
+    },
+    onError: (error) => {
+      console.error('팀 종료 실패:', error);
+    },
+  });
+};
+
+export const useTeamOrders = () => {
+  return useQuery({
+    queryKey: ['getTeamOrder'],
+    queryFn: async () => {
+      const { data } = await instance.get<TeamOrdersResponse>(
+        `${router}/orders`,
+      );
+      return data;
+    },
+  });
+};
+
+export const useTeamResult = () => {
+  return useQuery({
+    queryKey: ['getTeamResult'],
+    queryFn: async () => {
+      const { data } = await instance.get<TeamResultResponse>(
+        `${router}/result`,
+      );
+      return data;
+    },
+  });
+};
+
+export const useTeamRank = () => {
+  return useQuery({
+    queryKey: ['getTeamRank'],
+    queryFn: async () => {
+      const { data } = await instance.get<TeamRankResponse>(`${router}/rank`);
+      return data;
     },
   });
 };

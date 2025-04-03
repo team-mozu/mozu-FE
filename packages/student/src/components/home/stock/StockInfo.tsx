@@ -15,7 +15,11 @@ export const StockInfo = () => {
       <CompanyInfo>
         <Label>회사 정보</Label>
         <div>
-          <p>{data?.itemInfo ?? ''}</p>
+          <StyledText>
+            {data?.itemInfo
+              ? JSON.parse(`"${data.itemInfo.replace(/"/g, '\\"')}"`)
+              : ''}
+          </StyledText>
         </div>
       </CompanyInfo>
       <CompanyMain>
@@ -56,9 +60,12 @@ const CompanyInfo = styled.div`
     color: ${color.black};
     border-radius: 12px;
   }
-  & > div > p {
-    line-height: 1.7;
-  }
+`;
+
+const StyledText = styled.p`
+  white-space: pre-line;
+  line-height: 1.7;
+  word-break: keep-all;
 `;
 
 const CompanyMain = styled.div`

@@ -26,6 +26,7 @@ interface ClassResponse {
   nowMoney: number;
   profitMoney: number;
   profitNum: string;
+  isUp: boolean;
 }
 
 const ItemContent = ({
@@ -36,6 +37,7 @@ const ItemContent = ({
   profitMoney,
   profitNum,
   onClick,
+  isUp,
 }: IItemContentType) => {
   return (
     <ItemContainer onClick={onClick}>
@@ -54,7 +56,7 @@ const ItemContent = ({
       </LogoContainer>
       <ItemPriceContainer>
         <Price>{nowMoney.toLocaleString()}원</Price>
-        <Percent isUp={true}>
+        <Percent isUp={isUp}>
           {profitMoney.toLocaleString()}원 ({[profitNum]})
         </Percent>
       </ItemPriceContainer>
@@ -80,8 +82,13 @@ export const ItemSidebar = ({
               itemName={data.itemName}
               itemLogo={data.itemLogo}
               nowMoney={data.nowMoney ?? 0}
-              isUp={true}
-              profitMoney={data.nowMoney ?? 0}
+              isUp={
+                typeof data.profitNum === 'string' &&
+                data.profitNum.includes('-')
+                  ? false
+                  : true
+              }
+              profitMoney={data.profitMoney ?? 0}
               profitNum={
                 data.profitNum && !isNaN(parseFloat(data.profitNum))
                   ? data.profitNum

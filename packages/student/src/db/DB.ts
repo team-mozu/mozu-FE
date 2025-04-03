@@ -17,4 +17,8 @@ class StudentDB extends Dexie {
   }
 }
 
+export const fetchTradeHistory = async () => {
+  return await db.tradeHistory.reverse().toArray();
+};
+
 export const db = new StudentDB();

@@ -29,16 +29,28 @@ export const useClassStore = create<ClassStore>()(
         classItems: [],
       },
       inviteCode: null,
-      updateStockItems: (items) =>
-        set(
-          (state) => ({
-            classData: state.classData
-              ? { ...state.classData, classItems: items }
-              : null,
-          }),
-          false,
-          'updateStockItems',
-        ),
+      updateStockItems: (newItems) =>
+        new Promise<void>((resolve) => {
+          set((state) => {
+            if (!state.classData) return state;
+
+            const filteredItems = newItems.filter(
+              (newItem) =>
+                !state.classData!.classItems.some(
+                  (existing) => existing.itemId === newItem.itemId,
+                ),
+            );
+
+            return {
+              classData: {
+                ...state.classData,
+                classItems: [...state.classData.classItems, ...filteredItems],
+              },
+            };
+          });
+          resolve();
+        }),
+
       updateArticles: (articles) =>
         set(
           (state) => ({

@@ -2,17 +2,22 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { ArrowRight } from '@mozu/ui';
 
-export const AssetChange = () => {
+interface IProp {
+  baseMoney: number;
+  totalMoney: number;
+}
+
+export const AssetChange = ({ baseMoney = 0, totalMoney = 0 }: IProp) => {
   return (
     <Container>
       <Beginning>
         <label>초기 자산</label>
-        <p>1,000,000원</p>
+        <p>{baseMoney.toLocaleString() ?? '0'}</p>
       </Beginning>
       <ArrowRight size={24} color={color.black} />
       <Final>
         <label>최종 자산</label>
-        <p>1,850,000원</p>
+        <p>{totalMoney.toLocaleString() ?? '0'}원</p>
       </Final>
     </Container>
   );

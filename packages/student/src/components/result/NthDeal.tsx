@@ -1,26 +1,16 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { History } from './History';
 
 interface IProp {
   deal: number;
+  orderHistory: React.ReactNode;
 }
 
-export const NthDeal = ({ deal }: IProp) => {
+export const NthDeal = ({ deal, orderHistory }: IProp) => {
   return (
     <Container>
       <label>{deal}차 거래</label>
-      <div>
-        {/* <History type="buy" /> */}
-        <TestContainer>
-          <BS>매수</BS>
-          <Stock>삼성전자</Stock>
-          <Price>
-            <Amount>429,600원</Amount>
-            <Total>53,700원 (8주)</Total>
-          </Price>
-        </TestContainer>
-      </div>
+      <div>{orderHistory}</div>
     </Container>
   );
 };

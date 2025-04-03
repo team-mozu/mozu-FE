@@ -2,18 +2,30 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 
 interface IHistoryProps {
-  type: 'buy' | 'sell';
+  type: 'BUY' | 'SELL';
+  totalMoney: string;
+  itemMoney: string;
+  itemCount: number;
+  itemName: string;
 }
 
 // 사용하실땐 값을 다 prop으로 받아오셔서 사용하세용
-export const History = ({ type }: IHistoryProps) => {
+export const History = ({
+  type,
+  totalMoney,
+  itemMoney,
+  itemCount,
+  itemName,
+}: IHistoryProps) => {
   return (
     <Container>
-      <BS type={type}>{type === 'buy' ? '매수' : '매도'}</BS>
-      <Stock>삼성전자</Stock>
+      <BS type={type}>{type === 'BUY' ? '매수' : '매도'}</BS>
+      <Stock>{itemName}</Stock>
       <Price>
-        <Amount type={type}>429,600원</Amount>
-        <Total>53,700원 (8주)</Total>
+        <Amount type={type}>{totalMoney}원</Amount>
+        <Total>
+          {itemMoney}원 ({itemCount}주)
+        </Total>
       </Price>
     </Container>
   );
@@ -26,8 +38,8 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const BS = styled.p<IHistoryProps>`
-  color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+const BS = styled.p<{ type: 'BUY' | 'SELL' }>`
+  color: ${({ type }) => (type === 'BUY' ? color.red[500] : color.blue[500])};
   font: ${font.b1};
 `;
 
@@ -42,10 +54,10 @@ const Price = styled.div`
   flex-direction: column;
 `;
 
-// 금액도 type에 따라 색상 변경
-const Amount = styled.p<IHistoryProps>`
+const Amount = styled.p<{ type: 'BUY' | 'SELL' }>`
   font: ${font.b1};
-  color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
+  color: ${({ type }) => (type === 'BUY' ? color.red[500] : color.blue[500])};
+  text-align: end;
 `;
 
 const Total = styled.p`

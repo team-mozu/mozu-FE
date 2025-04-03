@@ -25,11 +25,47 @@ export type ItemType = {
   profitNum: number;
 };
 
-export type TeamEndResponse = {
+export type TeamEndProps = TeamEndData[];
+
+export type TeamEndData = {
   itemId: number;
   itemName: string;
   itemMoney: number;
   orderCount: number;
   totalMoney: number;
   orderType: string;
+};
+
+export type TeamOrdersResponse = TeamOrdersData[];
+
+export type TeamOrdersData = {
+  id: number;
+  itemId: number;
+  itemName: string;
+  itemMoney: number;
+  orderCount: number;
+  totalMoney: number;
+  orderType: 'BUY' | 'SELL';
+  invDeg: number;
+};
+
+export type TeamResultResponse = {
+  id: number;
+  name: string;
+  baseMoney: number;
+  totalMoney: number;
+  invDeg: number;
+  valueProfit: number;
+  profitNum: string;
+  orderCount: number;
+};
+
+export type TeamRankResponse = TeamRank[];
+
+export type TeamRank = {
+  id: number;
+  name: string;
+  schoolName: string;
+  totalMoney: number;
+  isMyTeam: boolean;
 };

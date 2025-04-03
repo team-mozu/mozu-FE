@@ -26,6 +26,6 @@ export * from './ClassInfoModal';
 export * from './Accounts';
 export * from './RankingDiv';
 export * from './ExitBtn';
-export * from './InvestCompleteModal';
+export * from '/Users/jidohyun/Desktop/백업/mozu-FE/packages/student/src/components/result/InvestCompleteModal';
 export * from './Toast';
 export * from './ToastContainer';

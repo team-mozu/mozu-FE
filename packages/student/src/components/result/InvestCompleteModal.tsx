@@ -1,8 +1,10 @@
+import { useTeamEnd } from '@/apis';
+import { useTradeHistory } from '@/hook';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Check } from './assets';
-import { Button } from './Button';
+import { Check, Button } from '@mozu/ui';
 import { useRef, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface IInvestCompleteType {
   isOpen?: boolean;
@@ -13,23 +15,32 @@ export const InvestCompleteModal = ({
   isOpen,
   setIsOpen,
 }: IInvestCompleteType) => {
+  const navigate = useNavigate();
   const outSideRef = useRef<HTMLDivElement | null>(null);
-
+  const { classId } = useParams();
+  const { mutate: teamEnd } = useTeamEnd();
+  const { history } = useTradeHistory();
   useEffect(() => {
     const outSideClick = (e: MouseEvent) => {
       if (outSideRef.current && outSideRef.current === e.target) {
         setIsOpen?.(false);
       }
     };
-
     if (isOpen) {
       document.addEventListener('click', outSideClick);
     }
-
     return () => {
       document.removeEventListener('click', outSideClick);
     };
   }, [isOpen, setIsOpen]);
+
+  const invDeg = () => {
+    console.log(history);
+
+    teamEnd(history);
+    navigate(`/${classId}/result`);
+    setIsOpen(false);
+  };
 
   if (!isOpen) return null;
 
@@ -61,6 +72,7 @@ export const InvestCompleteModal = ({
               borderColor={color.orange[500]}
               color={color.white}
               hoverBackgroundColor={color.orange[600]}
+              onClick={() => invDeg()}
             >
               투자 완료하기
             </Button>

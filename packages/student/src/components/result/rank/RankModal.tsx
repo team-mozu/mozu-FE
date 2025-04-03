@@ -1,3 +1,4 @@
+import { useTeamRank } from '@/apis';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Button, RankingDiv, Trophy } from '@mozu/ui';
@@ -7,6 +8,8 @@ interface IRankModal {
 }
 
 export const RankModal = ({ onCancle }: IRankModal) => {
+  const { data: rankData } = useTeamRank();
+
   return (
     <ModalBackdrop onClick={onCancle}>
       <Container onClick={(e) => e.stopPropagation()}>
@@ -15,30 +18,15 @@ export const RankModal = ({ onCancle }: IRankModal) => {
         </IconDiv>
         <p>현재 모둠 랭킹</p>
         <RankingContainer>
-          <RankingDiv
-            rank={1}
-            teamName="따따봉"
-            schoolName="대전둔산여자중학교"
-            price={1522000}
-          />
-          <RankingDiv
-            rank={2}
-            teamName="할수있다우리팀"
-            schoolName="대전둔산여자중학교"
-            price={1102000}
-          />
-          <RankingDiv
-            rank={3}
-            teamName="4반최고"
-            schoolName="대전둔산여자중학교"
-            price={922000}
-          />
-          <RankingDiv
-            rank={4}
-            teamName="1등 가보자"
-            schoolName="대전둔산여자중학교"
-            price={820000}
-          />
+          {rankData?.map((data, index) => (
+            <RankingDiv
+              key={data.id}
+              rank={index + 1}
+              teamName={data.name}
+              schoolName={data.schoolName}
+              price={data.totalMoney}
+            />
+          )) || <p>랭킹 데이터를 불러오는 중...</p>}
         </RankingContainer>
         <ButtonDiv onClick={onCancle}>
           <Button

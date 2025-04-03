@@ -7,12 +7,14 @@ import { useClassStore } from '@/store';
 
 interface IInvestModalType {
   close: () => void;
+  setUpdate: () => void;
 }
 
-export const AddInvestItemModal = ({ close }: IInvestModalType) => {
+export const AddInvestItemModal = ({ close, setUpdate }: IInvestModalType) => {
   const { data: stockData } = useGetStockList();
   const { updateStockItems, classData } = useClassStore();
   const [selectedRound, setSelectedRound] = useState(1);
+  const [isModal, setIsModal] = useState<boolean>(false);
 
   const items = stockData?.items || [];
 
@@ -32,26 +34,20 @@ export const AddInvestItemModal = ({ close }: IInvestModalType) => {
   };
 
   const handleSubmit = () => {
-    const selectedItems = items.filter((_, index) => checkedItems[index]);
+    const selectedItems = items
+      .filter((_, index) => checkedItems[index])
+      .map((item) => ({
+        itemId: item.id,
+        itemName: item.name,
+        money: Array(selectedRound + 1).fill(0), // 선택된 차수+1 길이의 배열
+        currentPrice: 0,
+        stockChecked: false,
+      }));
 
-    const newStockItems = selectedItems.map((item) => ({
-      itemId: item.id,
-      itemName: item.name,
-      money: Array(selectedRound + 1).fill(0),
-      currentPrice: 0,
-      stockChecked: false,
-    }));
+    console.log(selectedItems);
 
-    const currentItems = classData?.classItems || [];
-    const existingIds = new Set(currentItems.map((item) => item.itemId));
-
-    const uniqueNewItems = newStockItems.filter(
-      (item) => !existingIds.has(item.itemId),
-    );
-
-    updateStockItems([...currentItems, ...uniqueNewItems]);
-
-    close();
+    updateStockItems(selectedItems);
+    setUpdate();
   };
 
   const headClick = () => {

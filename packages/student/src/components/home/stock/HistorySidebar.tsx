@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { InvestCompleteModal, Toast } from '@mozu/ui';
-import { useEffect, useState } from 'react';
-import { useUnchangedValue } from '@/hook';
+import { Toast } from '@mozu/ui';
+import { useCallback, useEffect, useState } from 'react';
+import { useTradeHistory, useUnchangedValue } from '@/hook';
 import { db } from '@/db';
 import { liveQuery } from 'dexie';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useTeamEnd } from '@/apis';
+import { InvestCompleteModal } from '@/components';
 
 interface ITransactionContentType {
   id: number;
@@ -23,7 +26,7 @@ interface ITeamDataProp {
   cashMoney: number;
   valueMoney: number;
   valueProfit: number;
-  profitNum: number;
+  profitNum: string;
   totalBuy: number;
   totalSell: number;
   buyableAmount: number;
@@ -39,13 +42,13 @@ const TransactionContent = ({
   totalPrice,
   stockPrice,
   isUp,
+  id,
   onDelete,
-  id, // id를 props로 추가합니다.
 }: ITransactionContentType) => {
   const handleDelete = async () => {
     try {
-      await db.tradeHistory.delete(id); // 삭제할 id를 사용합니다.
-      onDelete(id); // onDelete 함수에 id를 전달합니다.
+      await db.tradeHistory.delete(id);
+      onDelete(id);
     } catch (error) {
       console.error('삭제 실패:', error);
       Toast('거래 취소 중 오류가 발생했습니다', { type: 'error' });
@@ -116,7 +119,7 @@ export const HistorySidebar = ({
     cashMoney: cashMoney.toLocaleString(),
     valueMoney: valueMoney.toLocaleString(),
     valueProfit: valueProfit.toLocaleString(),
-    profitNum: `${profitNum > 0 ? '+' : ''}${profitNum.toFixed(2)}%`,
+    profitNum: profitNum,
     totalBuy: totalBuy.toLocaleString(),
     totalSell: totalSell.toLocaleString(),
     buyableAmount: buyableAmount.toLocaleString(),
@@ -128,9 +131,21 @@ export const HistorySidebar = ({
   );
   const [isOpen, setIsOpen] = useState(false);
 
+  const [isNextDeg, setIsNextDeg] = useState(
+    () => () => console.log('함수 실행됨'),
+  );
+
   const IsOpen = () => {
     setIsOpen(true);
   };
+
+  const handleClick = () => {
+    isNextDeg();
+  };
+
+  useEffect(() => {
+    console.log(123);
+  }, [isOpen]);
 
   const handleDeleteTransaction = (deletedId: number) => {
     setTransactions((prev) => prev.filter((t) => t.id !== deletedId));
@@ -150,7 +165,7 @@ export const HistorySidebar = ({
               color={
                 sameValue
                   ? color.green[600]
-                  : profitNum > 0 // 숫자 비교로 변경
+                  : valueProfit > 0
                     ? color.red[500]
                     : color.blue[500]
               }
@@ -179,7 +194,7 @@ export const HistorySidebar = ({
           {datas.transactionHistory.map((data, index) => (
             <TransactionContent
               key={data.id}
-              id={data.id} // id를 전달합니다.
+              id={data.id}
               onDelete={handleDeleteTransaction}
               keyword={data.keyword}
               name={data.name}
