@@ -81,7 +81,7 @@ export const ItemSidebar = ({
               itemLogo={data.itemLogo}
               nowMoney={data.nowMoney ?? 0}
               isUp={true}
-              profitMoney={data.profitMoney ?? 0}
+              profitMoney={data.nowMoney ?? 0}
               profitNum={
                 data.profitNum && !isNaN(parseFloat(data.profitNum))
                   ? data.profitNum

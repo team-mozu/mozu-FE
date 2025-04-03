@@ -1,17 +1,19 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { InvestCompleteModal } from '@mozu/ui';
+import { InvestCompleteModal, Toast } from '@mozu/ui';
 import { useEffect, useState } from 'react';
 import { useUnchangedValue } from '@/hook';
 import { db } from '@/db';
 import { liveQuery } from 'dexie';
 
 interface ITransactionContentType {
+  id: number;
   keyword: string; //매수 매도
   name: string; //삼성전자
   totalPrice: string; //10000만원
   stockPrice: string; //100원(5주)
   isUp?: boolean; // 매수인지 매도인지 확인 기능
+  onDelete: (id: number) => void;
 }
 
 interface ITeamDataProp {
@@ -37,7 +39,18 @@ const TransactionContent = ({
   totalPrice,
   stockPrice,
   isUp,
+  onDelete,
+  id, // id를 props로 추가합니다.
 }: ITransactionContentType) => {
+  const handleDelete = async () => {
+    try {
+      await db.tradeHistory.delete(id); // 삭제할 id를 사용합니다.
+      onDelete(id); // onDelete 함수에 id를 전달합니다.
+    } catch (error) {
+      console.error('삭제 실패:', error);
+      Toast('거래 취소 중 오류가 발생했습니다', { type: 'error' });
+    }
+  };
   return (
     <TransactionContainer>
       <TransactionContentContainer>
@@ -49,7 +62,7 @@ const TransactionContent = ({
           <UpDownDiv isUp={isUp}>{totalPrice}원</UpDownDiv>
           <StockPrice>{stockPrice}</StockPrice>
         </TransactionPriceContainer>
-        <CancleBtn>취소</CancleBtn>
+        <CancleBtn onClick={handleDelete}>취소</CancleBtn>
       </TransactionContentContainer>
     </TransactionContainer>
   );
@@ -85,6 +98,7 @@ export const HistorySidebar = ({
           totalPrice: (trade.itemMoney * trade.orderCount).toLocaleString(),
           stockPrice: `${trade.itemMoney.toLocaleString()}원 (${trade.orderCount}주)`,
           isUp: trade.orderType === 'BUY',
+          onDelete: handleDeleteTransaction,
         }));
         setTransactions(mapped);
       },
@@ -116,6 +130,10 @@ export const HistorySidebar = ({
 
   const IsOpen = () => {
     setIsOpen(true);
+  };
+
+  const handleDeleteTransaction = (deletedId: number) => {
+    setTransactions((prev) => prev.filter((t) => t.id !== deletedId));
   };
 
   return (
@@ -160,7 +178,9 @@ export const HistorySidebar = ({
         <TransactionHistoryContents>
           {datas.transactionHistory.map((data, index) => (
             <TransactionContent
-              key={index}
+              key={data.id}
+              id={data.id} // id를 전달합니다.
+              onDelete={handleDeleteTransaction}
               keyword={data.keyword}
               name={data.name}
               totalPrice={data.totalPrice}

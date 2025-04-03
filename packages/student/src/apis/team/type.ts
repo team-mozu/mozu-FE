@@ -24,3 +24,12 @@ export type ItemType = {
   valProfit: number;
   profitNum: number;
 };
+
+export type TeamEndResponse = {
+  itemId: number;
+  itemName: string;
+  itemMoney: number;
+  orderCount: number;
+  totalMoney: number;
+  orderType: string;
+};
