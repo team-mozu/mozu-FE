@@ -9,34 +9,29 @@ import { useTeamEnd } from '@/apis';
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
-  const { mutate: teamEnd, isSuccess } = useTeamEnd();
+  const { mutate: teamEnd } = useTeamEnd();
 
   useEffect(() => {
     teamEnd();
   }, []);
 
-  useEffect(() => {
-    if (isSuccess) {
-      useSSE(
-        `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-        (data) => {
-          Toast(`${data.message}`, { type: 'success' });
-        },
-        (error) => {
-          console.log(error);
-          Toast(`SSE 에러 발생: ${error.message}`, { type: 'error' });
-        },
-        {
-          CLASS_NEXT_INV_START: (data) => {
-            Toast('다음 투자가 시작되었습니다', { type: 'info' });
-            setData(data);
-            navigate(`/${data.classId}/home`);
-          },
-        },
-      );
-    }
-  }, [isSuccess]);
-
+  useSSE(
+    `${import.meta.env.VITE_SERVER_URL}/team/sse`,
+    (data) => {
+      Toast(`${data.message}`, { type: 'success' });
+    },
+    (error) => {
+      console.log(error);
+      Toast(`SSE 에러 발생: ${error.message}`, { type: 'error' });
+    },
+    {
+      CLASS_NEXT_INV_START: (data) => {
+        Toast('다음 투자가 시작되었습니다', { type: 'info' });
+        setData(data);
+        navigate(`/${data.classId}/home`);
+      },
+    },
+  );
   return (
     <AppContainer>
       <Header isAdmin={false} />
