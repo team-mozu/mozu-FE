@@ -9,11 +9,6 @@ import { useTeamEnd } from '@/apis';
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
-  const { mutate: teamEnd } = useTeamEnd();
-
-  useEffect(() => {
-    teamEnd();
-  }, []);
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
