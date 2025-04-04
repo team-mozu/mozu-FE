@@ -45,7 +45,8 @@ export const TotalProperty = ({
                   : color.blue[500]
             }
           >
-            {valueProfit}원 ({profitNum})
+            {valueProfit.toLocaleString()}원 (
+            {Number(profitNum.replace('%', '')).toFixed(2)}%)
           </MoneyRate>
         )}
       </TitleBox>

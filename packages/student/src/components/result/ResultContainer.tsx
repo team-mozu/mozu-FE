@@ -1,9 +1,12 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Button, HandCoins, Trophy } from '@mozu/ui';
+import { Button, HandCoins, Toast, Trophy } from '@mozu/ui';
 import { NthDeal, AssetChange } from '@/components';
 import { History } from '@/components';
 import { useTeamOrders, useTeamResult } from '@/apis';
+import { useSSE } from '@/hook';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ValueStyleProps {
   isPositive?: boolean;
@@ -13,6 +16,26 @@ interface ValueStyleProps {
 export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
   const { data: teamOrders } = useTeamOrders();
   const { data: teamResult } = useTeamResult();
+  const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
+  const navigate = useNavigate();
+
+  useSSE(
+    `${import.meta.env.VITE_SERVER_URL}/team/sse`,
+    (data) => {
+      Toast(`${data.message}`, { type: 'success' });
+    },
+    (error) => {
+      console.log(error);
+      Toast(`SSE 에러 발생: ${error.message}`, { type: 'error' });
+    },
+    {
+      CLASS_NEXT_INV_START: (data) => {
+        Toast('다음 투자가 시작되었습니다', { type: 'info' });
+        setData(data);
+        navigate(`/${data.classId}/home`);
+      },
+    },
+  );
 
   return (
     <Container>
@@ -99,6 +122,7 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               iconColor={color.white}
               iconSize={24}
               hoverBackgroundColor={color.orange[600]}
+              disabled={true}
             >
               계속하기
             </Button>

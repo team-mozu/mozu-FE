@@ -125,6 +125,9 @@ export const HistorySidebar = ({
     buyableAmount: buyableAmount.toLocaleString(),
   };
 
+  const fixedProfitNum = Number(profitNum.replace('%', '')).toFixed(2);
+  const formattedProfitNum = `${fixedProfitNum}%`;
+
   const sameValue: boolean = useUnchangedValue(
     totalMoney.toLocaleString(),
     basicMoney.toLocaleString(),
@@ -174,7 +177,7 @@ export const HistorySidebar = ({
             </TotalAssetPrice>
             {!formattedData.valueProfit ? null : (
               <UpDownDiv>
-                {formattedData.valueProfit}원 ({formattedData.profitNum})
+                {formattedData.valueProfit}원 ({formattedProfitNum})
               </UpDownDiv>
             )}
           </TotalAssetContainer>
