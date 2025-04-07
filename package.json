@@ -1,6 +1,6 @@
 {
   "name": "mozu-fe",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.8.1",
   "private": true,
   "type": "module",
   "scripts": {

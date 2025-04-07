@@ -3,7 +3,6 @@
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
     "module": "ESNext",
-    "types": ["@emotion/react"],
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "strict": true,
@@ -14,7 +13,8 @@
     "rootDir": ".",
     "outDir": "./dist",
     "baseUrl": ".",
-    "composite": true
+    "composite": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*", "index.ts"],
   "exclude": ["node_modules", "dist"]
