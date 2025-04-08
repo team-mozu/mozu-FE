@@ -118,7 +118,7 @@ const ProfileContents = styled.div`
   align-items: start;
 `;
 
-const Divider = styled.line`
+const Divider = styled.div`
   width: 240px;
   height: 1px;
   border: none;
