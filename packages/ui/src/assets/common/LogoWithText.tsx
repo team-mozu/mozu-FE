@@ -12,7 +12,7 @@ export const LogoWithText = ({ width, height }: ILogoType) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_1400_1262)">
+      <g clipPath="url(#clip0_1400_1262)">
         <path
           d="M4.66602 4.6665H11.666L19.8327 23.3332H12.8327L4.66602 4.6665Z"
           fill="#EA580C"

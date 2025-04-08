@@ -18,9 +18,9 @@ export const ManagerLogo = ({
       <path
         d="M2.5 18.3332H17.5M5 14.9998V9.1665M8.33333 14.9998V9.1665M11.6667 14.9998V9.1665M15 14.9998V9.1665M10 1.6665L16.6667 5.83317H3.33333L10 1.6665Z"
         stroke={color}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

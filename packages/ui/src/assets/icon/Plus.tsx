@@ -15,9 +15,9 @@ export const Plus = ({ size, color }: IPlusType) => {
       <path
         d="M5 12H19M12 5V19"
         stroke={color}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

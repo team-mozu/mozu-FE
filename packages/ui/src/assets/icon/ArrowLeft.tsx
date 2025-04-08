@@ -15,9 +15,9 @@ export const ArrowLeft = ({ size = 24, color = 'black' }: IArrowType) => {
       <path
         d="M12 19L5 12M5 12L12 5M5 12H19"
         stroke={color}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
