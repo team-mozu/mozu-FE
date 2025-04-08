@@ -46,7 +46,7 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
             <RoleType>{role}</RoleType>
           </ProfileContents>
         </ProfileContainer>
-        <Line />
+        <Divider />
         <ContentContainer>
           <NavTitle>{navTitle}</NavTitle>
           <BtnContainer>
@@ -118,7 +118,7 @@ const ProfileContents = styled.div`
   align-items: start;
 `;
 
-const Line = styled.line`
+const Divider = styled.line`
   width: 240px;
   height: 1px;
   border: none;
