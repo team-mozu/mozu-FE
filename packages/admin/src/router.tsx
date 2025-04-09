@@ -177,6 +177,10 @@ import { AppLayout } from '@/layout';
 export const Router = createBrowserRouter([
   {
     path: '/',
+    element: <SignInPage />,
+  },
+  {
+    path: '/',
     element: <AppLayout />,
     children: [
       {
@@ -267,10 +271,7 @@ export const Router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: 'signin',
-    element: <SignInPage />,
-  },
+
   {
     path: '*', // 404 페이지
     element: <div>404</div>,
