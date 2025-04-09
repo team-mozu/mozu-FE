@@ -1232,7 +1232,11 @@ __metadata:
     "@types/react-dom": "npm:18.3.5"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
+<<<<<<< Updated upstream
     typescript: "npm:^5.0.0"
+=======
+    typescript: "npm:^5.8.3"
+>>>>>>> Stashed changes
   languageName: unknown
   linkType: soft
 
@@ -7991,7 +7995,11 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< Updated upstream
 "typescript@npm:^5.0.0":
+=======
+"typescript@npm:^5.8.3":
+>>>>>>> Stashed changes
   version: 5.8.3
   resolution: "typescript@npm:5.8.3"
   bin:
@@ -8021,7 +8029,11 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< Updated upstream
 "typescript@patch:typescript@npm%3A^5.0.0#optional!builtin<compat/typescript>":
+=======
+"typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
+>>>>>>> Stashed changes
   version: 5.8.3
   resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
   bin:

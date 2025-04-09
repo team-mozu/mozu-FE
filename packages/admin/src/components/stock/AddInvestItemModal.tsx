@@ -39,7 +39,7 @@ export const AddInvestItemModal = ({ close, setUpdate }: IInvestModalType) => {
       .map((item) => ({
         itemId: item.id,
         itemName: item.name,
-        money: Array(selectedRound + 1).fill(0), // 선택된 차수+1 길이의 배열
+        money: Array(selectedRound + 1).fill(0),
         currentPrice: 0,
         stockChecked: false,
       }));
