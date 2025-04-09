@@ -1,5 +1,10 @@
 import { instance } from '@configs/util';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { ClassData, ClassDetailResponse, ClassResponse } from '@/apis';
 import { Toast } from '@mozu/ui';
 import { useLocation, useNavigate } from 'react-router';
@@ -63,28 +68,40 @@ export const useClassUpdate = (id: string) => {
 };
 
 export const useClassStar = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) =>
       await instance.post(`${router}/star/${id}`),
-    onSuccess: () => {
-      Toast('즐겨찾기 추가에 성공 했습니다.', { type: 'success' });
-      window.location.reload();
+    onSuccess: (_, id) => {
+      Toast('즐겨찾기 변경에 성공 했습니다.', { type: 'success' });
+      queryClient.setQueryData(
+        ['getClass'],
+        (oldData: ClassResponse | undefined) => {
+          if (!oldData) return oldData;
+          return {
+            classes: oldData.classes.map((item) =>
+              item.id === id ? { ...item, starYN: !item.starYN } : item,
+            ),
+          };
+        },
+      );
     },
     onError: (error) => {
-      Toast('즐겨찾기 추가에 실패 했습니다.', { type: 'error' });
+      Toast('즐겨찾기 변경에 실패 했습니다.', { type: 'error' });
       console.log(error);
     },
   });
 };
 
 export const useClassDelete = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      return await instance.delete(`${router}/class/${id}`);
+      return await instance.delete(`${router}/${id}`);
     },
     onSuccess: () => {
-      console.log('성공');
-      window.location.reload();
+      Toast('삭제에 성공했습니다.', { type: 'success' });
+      queryClient.invalidateQueries({ queryKey: ['getClass'] });
     },
     onError: (error) => console.log('error', error),
   });

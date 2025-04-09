@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Input, LogoWithText } from '@mozu/ui';
+import { Input, LogoWithText, Toast } from '@mozu/ui';
 import { useAdminLogin } from '@/apis';
 import { useForm } from '@/hooks';
 import { isTruthValues } from '@/utils';
 import { useNavigate } from 'react-router';
 
 export const SignInPage = () => {
-  const { state, onChangeInputValue, setState } = useForm({
+  const { state, onChangeInputValue } = useForm({
     code: '',
     password: '',
   });
@@ -26,7 +26,9 @@ export const SignInPage = () => {
       },
       onError: () => {
         setErrorMessage('기관코드 혹은 비밀번호가 잘못되었습니다.');
-        setState({ code: '', password: '' });
+        Toast('기관코드 혹은 비밀번호를 다시 확인해주세요.', {
+          type: 'error',
+        });
       },
     });
   };

@@ -43,18 +43,18 @@ export const ClassManagement = () => {
   };
 
   //삭제 api 불러옴
-  const delClassApi = useClassDelete();
+  const { mutate: delClassApi } = useClassDelete();
 
   //삭제하기
   const handleDelete = () => {
     if (selectedClassId !== null) {
-      delClassApi.mutate(selectedClassId);
+      delClassApi(selectedClassId);
       console.log(`수업 ID ${selectedClassId} 삭제`);
     }
     setIsModal(false);
   };
 
-  const apiClassStar = useClassStar();
+  const { mutate: apiClassStar } = useClassStar();
 
   const toggleFavorite = (
     index: number,
@@ -67,14 +67,14 @@ export const ClassManagement = () => {
         updated[index] = !updated[index];
         return updated;
       });
-      apiClassStar.mutate(id);
+      apiClassStar(id);
     } else {
       setIsClickCommon((prev) => {
         const updated = [...prev];
         updated[index] = !updated[index];
         return updated;
       });
-      apiClassStar.mutate(id);
+      apiClassStar(id);
     }
   };
 

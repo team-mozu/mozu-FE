@@ -28,23 +28,5 @@ export const useAdminLogin = () => {
         domain: import.meta.env.VITE_ADMIN_COOKIE_DOMAIN,
       });
     },
-    onError: (res: AxiosError<AxiosError>) => {
-      if (res.response) {
-        switch (res.response?.status) {
-          case 401:
-            Toast('기관 코드 혹은 비밀번호를 다시 확인해주세요.', {
-              type: 'error',
-            });
-            break;
-          default:
-            Toast('로그인에 실패하였습니다.', { type: 'error' });
-            break;
-        }
-      } else {
-        Toast('네트워크 연결을 확인해주세요.', {
-          type: 'error',
-        });
-      }
-    },
   });
 };
