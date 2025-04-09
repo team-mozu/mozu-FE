@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-table';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
+import { Check } from '@mozu/ui';
 
 interface IRateType {
   color: string;
@@ -20,6 +21,7 @@ interface TeamRow {
   '4차 투자': { text: string; rate?: string };
   '5차 투자': { text: string; rate?: string };
   '총 자산': { text: string; rate?: string };
+  'isCompleted': boolean;
 }
 
 const data: TeamRow[] = [
@@ -31,6 +33,7 @@ const data: TeamRow[] = [
     '4차 투자': { text: '', rate: undefined },
     '5차 투자': { text: '', rate: undefined },
     '총 자산': { text: '511,000원', rate: '+400원 (+0.53%)' },
+    'isCompleted': true,
   },
   {
     '팀명': '대마고',
@@ -40,6 +43,7 @@ const data: TeamRow[] = [
     '4차 투자': { text: '', rate: undefined },
     '5차 투자': { text: '', rate: undefined },
     '총 자산': { text: '511,000원', rate: '+500원 (+0.53%)' },
+    'isCompleted': false,
   },
 ];
 
@@ -49,7 +53,21 @@ export const TeamInfoTable = () => {
       {
         accessorKey: '팀명',
         header: () => '팀명',
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => {
+          const teamName = row.getValue('팀명') as string;
+          const isCompleted = row.original.isCompleted;
+
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>{teamName}</span>
+              {isCompleted && (
+                <CompletedBadge>
+                  투자완료 <Check size={18} color={color.green[500]} />
+                </CompletedBadge>
+              )}
+            </div>
+          );
+        },
       },
       ...[
         '1차 투자',
@@ -197,4 +215,16 @@ const Table = styled.table`
   overflow: hidden;
   table-layout: fixed;
   width: 100%;
+`;
+
+const CompletedBadge = styled.span`
+  padding: 2px 6px;
+  background-color: ${color.green[50]};
+  color: ${color.green[600]};
+  font: ${font.l1};
+  border-radius: 4px;
+  border: 1px solid ${color.green[200]};
+  display: flex;
+  align-items: center;
+  gap: 2px;
 `;
