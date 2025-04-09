@@ -69,6 +69,10 @@ const PostContainer = styled.div`
 const Title = styled.div`
   font: ${font.h4};
   color: ${color.black};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 336px;
 `;
 
 const CreationDate = styled.div`

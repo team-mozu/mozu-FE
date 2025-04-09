@@ -15,7 +15,7 @@ export const useAddStock = () => {
 
   return useMutation({
     mutationFn: async (addData: StockAddRequest) => {
-      return await instance.post(`${router}/create`, addData, {
+      return await instance.post(`${router}`, addData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -35,7 +35,7 @@ export const useDeleteStock = (stockId: number) => {
 
   return useMutation({
     mutationFn: async () => {
-      return await instance.delete(`${router}/delete/${stockId}`);
+      return await instance.delete(`${router}/${stockId}`);
     },
     onSuccess: (stockId) => {
       console.log('삭제 성공:', stockId);
@@ -76,7 +76,7 @@ export const useEditStock = () => {
     mutationFn: async (datas: StockManagementEditRequest) => {
       const { stockId: _, ...data } = datas;
 
-      return await instance.post(`${router}/update/${datas.stockId}`, data, {
+      return await instance.post(`${router}/${datas.stockId}`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

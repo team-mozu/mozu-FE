@@ -33,7 +33,7 @@ export const useClassCreate = () => {
   return useMutation({
     mutationFn: async (formData: FormData) => {
       const { data } = await instance.post<{ id: number }>(
-        `${router}/create`,
+        `${router}/class`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -62,23 +62,31 @@ export const useClassUpdate = (id: string) => {
   });
 };
 
-export const useClassStar = (id: number) => {
+export const useClassStar = () => {
   return useMutation({
-    mutationFn: async () => await instance.post(`${router}/star/${id}`),
+    mutationFn: async (id: number) =>
+      await instance.post(`${router}/star/${id}`),
     onSuccess: () => {
       Toast('즐겨찾기 추가에 성공 했습니다.', { type: 'success' });
+      window.location.reload();
     },
-    onError: () => {
+    onError: (error) => {
       Toast('즐겨찾기 추가에 실패 했습니다.', { type: 'error' });
+      console.log(error);
     },
   });
 };
 
-export const useClassDelete = (id: number) => {
+export const useClassDelete = () => {
   return useMutation({
-    mutationFn: () => instance.delete(`${router}/delete/${id}`),
-    onSuccess: () => {},
-    onError: () => {},
+    mutationFn: async (id: number) => {
+      return await instance.delete(`${router}/class/${id}`);
+    },
+    onSuccess: () => {
+      console.log('성공');
+      window.location.reload();
+    },
+    onError: (error) => console.log('error', error),
   });
 };
 
@@ -98,7 +106,9 @@ export const useClassStart = (id: number) => {
       navigate(`start`);
       window.location.href = window.location.href;
     },
-    onError: () => {},
+    onError: (error) => {
+      console.log(error);
+    },
   });
 };
 
@@ -125,7 +135,7 @@ export const useNextDegree = (id: number) => {
 export const useEditClass = (classId: number) => {
   return useMutation({
     mutationFn: async (payload: ClassData) => {
-      await instance.post(`${router}/update/${classId}`, payload);
+      await instance.post(`${router}/class/${classId}`, payload);
     },
     onSuccess: () => {
       Toast(`수업이 수정되었습니다.`, { type: 'success' });

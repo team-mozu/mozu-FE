@@ -15,7 +15,7 @@ export const useAddArticle = () => {
 
   return useMutation({
     mutationFn: async (addData: ArticleAddRequest) => {
-      return await instance.post(`${router}/create`, addData, {
+      return await instance.post(`${router}`, addData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -35,7 +35,7 @@ export const useDeleteArticle = () => {
 
   return useMutation({
     mutationFn: async (articleId: number) => {
-      return await instance.delete(`${router}/delete/${articleId}`);
+      return await instance.delete(`${router}/${articleId}`);
     },
     onSuccess: () => {
       console.log('성공'),
@@ -82,7 +82,7 @@ export const useEditArticle = () => {
     mutationFn: async (data: ArticleManagementEditRequest) => {
       const { articleId: _, ...datas } = data;
 
-      return await instance.post(`/article/update/${data.articleId}`, datas, {
+      return await instance.post(`${router}/${data.articleId}`, datas, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -98,5 +98,3 @@ export const useEditArticle = () => {
     onError: (error) => console.log('error', error),
   });
 };
-
-export const useClassEdit = () => {};

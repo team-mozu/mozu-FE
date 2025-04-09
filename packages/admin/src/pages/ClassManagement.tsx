@@ -4,7 +4,12 @@ import { Button, DeleteModal, PostTitle, PageTitle } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { color } from '@mozu/design-token';
 import { ClassPost } from '@/components';
-import { ClassItem, useClassStar, useGetClassList } from '@/apis';
+import {
+  ClassItem,
+  useClassDelete,
+  useClassStar,
+  useGetClassList,
+} from '@/apis';
 
 export const ClassManagement = () => {
   const { data } = useGetClassList();
@@ -37,12 +42,19 @@ export const ClassManagement = () => {
     setSelectedClassId(null);
   };
 
+  //삭제 api 불러옴
+  const delClassApi = useClassDelete();
+
+  //삭제하기
   const handleDelete = () => {
     if (selectedClassId !== null) {
+      delClassApi.mutate(selectedClassId);
       console.log(`수업 ID ${selectedClassId} 삭제`);
     }
     setIsModal(false);
   };
+
+  const apiClassStar = useClassStar();
 
   const toggleFavorite = (
     index: number,
@@ -55,13 +67,14 @@ export const ClassManagement = () => {
         updated[index] = !updated[index];
         return updated;
       });
-      useClassStar(id);
+      apiClassStar.mutate(id);
     } else {
       setIsClickCommon((prev) => {
         const updated = [...prev];
         updated[index] = !updated[index];
         return updated;
       });
+      apiClassStar.mutate(id);
     }
   };
 
@@ -105,7 +118,7 @@ export const ClassManagement = () => {
                       key={item.id}
                       title={item.name}
                       creationDate={item.date}
-                      isClick={isClickFavorites[index]}
+                      isClick={item.starYN}
                       starOnClick={() =>
                         toggleFavorite(index, 'favorites', item.id)
                       }
@@ -125,7 +138,7 @@ export const ClassManagement = () => {
                     title={item.name}
                     creationDate={item.date}
                     isClick={isClickCommon[index]}
-                    starOnClick={() => toggleFavorite(index, 'common')}
+                    starOnClick={() => toggleFavorite(index, 'common', item.id)}
                     delClick={() => openDeleteModal(item.id)}
                     onClick={() => navigate(`${item.id}`)}
                   />
