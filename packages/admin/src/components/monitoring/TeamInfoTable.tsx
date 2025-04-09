@@ -1,167 +1,140 @@
+import { useMemo } from 'react';
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  ColumnDef,
+} from '@tanstack/react-table';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-
-interface IThProps {
-  width: string;
-  justify: string;
-  padding: string;
-}
-
-interface ITdProps {
-  width: string;
-  align: string;
-  padding: string;
-  font: any;
-}
+import { Check } from '@mozu/ui';
 
 interface IRateType {
   color: string;
 }
 
-export const TeamInfoTable = () => {
-  const headers = [
-    { text: '팀명', width: '312px' },
-    { text: '1차 투자', width: '200px' },
-    { text: '2차 투자', width: '200px' },
-    { text: '3차 투자', width: '200px' },
-    { text: '4차 투자', width: '200px' },
-    { text: '5차 투자', width: '200px' },
-    {
-      text: '총 자산\n(총 수익률)',
-      width: '200px',
-    },
-  ];
+interface TeamRow {
+  '팀명': string;
+  '1차 투자': { text: string; rate?: string };
+  '2차 투자': { text: string; rate?: string };
+  '3차 투자': { text: string; rate?: string };
+  '4차 투자': { text: string; rate?: string };
+  '5차 투자': { text: string; rate?: string };
+  '총 자산': { text: string; rate?: string };
+  'isCompleted': boolean;
+}
 
-  const contents = [
-    {
-      id: 1,
-      data: [
-        {
-          text: '대마고 화이팅',
-          value: '팀명',
-          width: '312px',
+const data: TeamRow[] = [
+  {
+    '팀명': '대마고 화이팅',
+    '1차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
+    '2차 투자': { text: '511,000원', rate: '-200원 (-0.23%)' },
+    '3차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
+    '4차 투자': { text: '', rate: undefined },
+    '5차 투자': { text: '', rate: undefined },
+    '총 자산': { text: '511,000원', rate: '+400원 (+0.53%)' },
+    'isCompleted': true,
+  },
+  {
+    '팀명': '대마고',
+    '1차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
+    '2차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
+    '3차 투자': { text: '511,000원', rate: '-100원 (-0.13%)' },
+    '4차 투자': { text: '', rate: undefined },
+    '5차 투자': { text: '', rate: undefined },
+    '총 자산': { text: '511,000원', rate: '+500원 (+0.53%)' },
+    'isCompleted': false,
+  },
+];
+
+export const TeamInfoTable = () => {
+  const columns = useMemo<ColumnDef<TeamRow>[]>(
+    () => [
+      {
+        accessorKey: '팀명',
+        header: () => '팀명',
+        cell: ({ row }) => {
+          const teamName = row.getValue('팀명') as string;
+          const isCompleted = row.original.isCompleted;
+
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>{teamName}</span>
+              {isCompleted && (
+                <CompletedBadge>
+                  투자완료 <Check size={18} color={color.green[500]} />
+                </CompletedBadge>
+              )}
+            </div>
+          );
         },
-        {
-          text: '511,000',
-          rate: '+200원 (+0.23%)',
-          value: '1차 투자',
-          width: '200px',
+      },
+      ...[
+        '1차 투자',
+        '2차 투자',
+        '3차 투자',
+        '4차 투자',
+        '5차 투자',
+        '총 자산',
+      ].map((key) => ({
+        accessorKey: key,
+        header: () => (key === '총 자산' ? '총 자산\n(총 수익률)' : key),
+        cell: ({ getValue }) => {
+          const { text, rate } = getValue() as { text: string; rate?: string };
+          const isNegative = rate?.includes('-');
+
+          return (
+            <>
+              {text}
+              {rate && (
+                <RateDiv color={isNegative ? color.blue[500] : color.red[500]}>
+                  {rate}
+                </RateDiv>
+              )}
+            </>
+          );
         },
-        {
-          text: '511,000',
-          rate: '-200원 (-0.23%)',
-          value: '2차 투자',
-          width: '200px',
-        },
-        {
-          text: '511,000',
-          rate: '+200원 (+0.23%)',
-          value: '3차 투자',
-          width: '200px',
-        },
-        {
-          text: '',
-          value: '4차 투자',
-          width: '200px',
-        },
-        {
-          text: '',
-          value: '5차 투자',
-          width: '200px',
-        },
-        {
-          text: '511,000',
-          rate: '+400원 (+0.53%)',
-          value: '총 자산',
-          width: '200px',
-        },
-      ],
-    },
-    {
-      id: 2,
-      data: [
-        {
-          text: '대마고',
-          value: '팀명',
-          width: '312px',
-        },
-        {
-          text: '511,000',
-          rate: '+200원 (+0.23%)',
-          value: '1차 투자',
-          width: '200px',
-        },
-        {
-          text: '511,000',
-          rate: '+200원 (+0.23%)',
-          value: '2차 투자',
-          width: '200px',
-        },
-        {
-          text: '511,000',
-          rate: '-100원 (-0.13%)',
-          value: '3차 투자',
-          width: '200px',
-        },
-        {
-          text: '',
-          value: '4차 투자',
-          width: '200px',
-        },
-        {
-          text: '',
-          value: '5차 투자',
-          width: '200px',
-        },
-        {
-          text: '511,000',
-          rate: '+500원 (+0.53%)',
-          value: '총 자산',
-          width: '200px',
-        },
-      ],
-    },
-  ];
+      })),
+    ],
+    [],
+  );
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <Table>
       <Thead>
-        <tr>
-          {headers.map((data, index) => (
-            <Th
-              key={index}
-              width={data.width}
-              justify={index === 0 ? 'left' : 'center'}
-              padding={index === 0 ? '16px' : '0px'}
-            >
-              {data.text}
-            </Th>
-          ))}
-        </tr>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <Th
+                key={header.id}
+                width={header.column.id === '팀명' ? '40%' : '15%'}
+                alignRight={header.column.id !== '팀명'}
+              >
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext(),
+                )}
+              </Th>
+            ))}
+          </tr>
+        ))}
       </Thead>
       <Tbody>
-        {contents.map((content) => (
-          <tr key={content.id}>
-            {content.data.map((data, index) => (
+        {table.getRowModel().rows.map((row) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell) => (
               <Td
-                width={data.width}
-                key={index}
-                align={index !== 0 ? 'right' : 'left'}
-                padding={index !== 0 ? '0px 16px 0px 0px' : '0px 0px 0px 16px'}
-                font={index !== 0 ? font.t1 : font.t4}
+                key={cell.id}
+                width={cell.column.id === '팀명' ? '40%' : '15%'}
+                alignRight={cell.column.id !== '팀명'}
               >
-                {data.text}
-                {data.rate && (
-                  <RateDiv
-                    color={
-                      data.rate.indexOf('-') !== -1
-                        ? color.blue[500]
-                        : color.red[500]
-                    }
-                  >
-                    {data.rate}
-                  </RateDiv>
-                )}
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Td>
             ))}
           </tr>
@@ -176,29 +149,44 @@ export const RateDiv = styled.div<IRateType>`
   color: ${(props) => props.color};
 `;
 
-const Th = styled.th<IThProps>`
-  border: 1px solid ${color.zinc[200]};
-  width: ${(props) => props.width};
-  padding: 26px 0px;
-  padding-left: ${(props) => props.padding};
-  height: 72px;
-  font: ${font.b1};
+const Th = styled.th<{ width?: string; alignRight?: boolean }>`
+  width: ${(props) => props.width || 'auto'};
+  padding: 16px;
+  font: ${font.t3};
   display: flex;
   align-items: center;
-  justify-content: ${(props) => props.justify};
-  white-space: pre-line;
+  justify-content: center;
+  text-align: ${(props) => (props.alignRight ? 'right' : 'center')};
+  height: 72px;
+  border: 1px solid ${color.zinc[200]};
+  &:first-of-type {
+    border-top-left-radius: 8px;
+    flex-grow: 0;
+  }
+  &:last-of-type {
+    border-top-right-radius: 8px;
+  }
 `;
 
-const Td = styled.td<ITdProps>`
-  padding: ${(props) => props.padding};
-  text-align: ${(props) => props.align};
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 72px;
-  font: ${(props) => props.font};
+const Td = styled.td<{ width?: string; alignRight?: boolean }>`
+  width: ${(props) => props.width || 'auto'};
+  padding: 16px;
+  font: ${font.t1};
   border: 1px solid ${color.zinc[200]};
-  width: ${(props) => props.width};
+  height: 72px;
+  display: flex;
+  align-items: ${(props) => (props.alignRight ? 'flex-end' : 'center')};
+  justify-content: ${(props) => (props.alignRight ? 'flex-end' : 'flex-start')};
+  flex-direction: ${(props) => (props.alignRight ? 'column' : 'row')};
+  text-align: ${(props) => (props.alignRight ? 'right' : 'left')};
+  tbody tr:last-of-type & {
+    &:first-of-type {
+      border-bottom-left-radius: 8px;
+    }
+    &:last-of-type {
+      border-bottom-right-radius: 8px;
+    }
+  }
 `;
 
 const Thead = styled.thead`
@@ -220,9 +208,23 @@ const Tbody = styled.tbody`
     align-items: center;
   }
 `;
+
 const Table = styled.table`
   border-radius: 8px;
   border-collapse: separate;
   overflow: hidden;
-  width: 1512px;
+  table-layout: fixed;
+  width: 100%;
+`;
+
+const CompletedBadge = styled.span`
+  padding: 2px 6px;
+  background-color: ${color.green[50]};
+  color: ${color.green[600]};
+  font: ${font.l1};
+  border-radius: 4px;
+  border: 1px solid ${color.green[200]};
+  display: flex;
+  align-items: center;
+  gap: 2px;
 `;
