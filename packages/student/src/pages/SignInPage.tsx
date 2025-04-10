@@ -38,7 +38,6 @@ export const SignInPage = () => {
       },
       onError: () => {
         setErrorMessage('형식을 다시 확인해주세요.');
-        setState({ classNum: null, schoolName: '', teamName: '' });
       },
       onSettled: () => {
         setIsLoggingIn(false); // 로그인 요청이 끝나면 다시 false로 설정

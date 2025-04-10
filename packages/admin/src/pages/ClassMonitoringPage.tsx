@@ -4,7 +4,8 @@ import { ArticleInfoModal, Button, ClassInfoModal, Toast } from '@mozu/ui';
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import { TeamCurrentModal, TeamInfoTable } from '@/components';
-import { useNextDegree } from '@/apis';
+import { useGetClassDetail, useNextDegree } from '@/apis';
+import { useSSE } from '@/hooks';
 
 export const ClassMonitoringPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export const ClassMonitoringPage = () => {
   const classId = id ? parseInt(id) : null;
 
   const { mutate: nextDegree } = useNextDegree(classId);
+  const { data: classData } = useGetClassDetail(classId);
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
@@ -28,6 +30,19 @@ export const ClassMonitoringPage = () => {
   const classInfoClick = () => {
     setIsOpenClass(true);
   };
+
+  useSSE(
+    `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
+    undefined,
+    undefined,
+    {
+      TEAM_INV_END: (data) => {
+        console.log('투자종료 이벤트 수신!', data);
+        Toast('투자가 종료되었습니다!', { type: 'success' });
+      },
+    },
+  );
+
   return (
     <Container>
       {isOpenArticle && (
@@ -46,7 +61,7 @@ export const ClassMonitoringPage = () => {
       <Header>
         <TitleContainer>
           <Title>모의투자 현황</Title>
-          <SubTitle>2024년도 모의투자</SubTitle>
+          <SubTitle>{classData?.name}</SubTitle>
         </TitleContainer>
         <ButtonContainer>
           <Button

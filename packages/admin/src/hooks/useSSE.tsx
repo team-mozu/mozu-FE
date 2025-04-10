@@ -83,8 +83,16 @@ export const useSSE = (
       eventHandlers?.TEAM_PART_IN?.(eventData);
     });
 
+    eventSource.addEventListener('TEAM_INV_END', (e: MessageEvent) => {
+      console.log(e);
+
+      const eventData = JSON.parse(e.data);
+      eventHandlers?.TEAM_INV_END?.(eventData);
+    });
+
     return () => {
       eventSource.close();
+      eventSourceRef.current = null;
     };
   }, [url, onMessage, eventHandlers]);
 
