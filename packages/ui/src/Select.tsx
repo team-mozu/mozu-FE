@@ -32,12 +32,14 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
     useImperativeHandle(ref, () => selectRef.current as HTMLDivElement);
 
     const handleSelectClick = () => {
-      setShowOptions((prev) => !prev);
+      // option이 닫혀있을 때만 option을 열 수 있도록 조건처리
+      if (!showOptions) setShowOptions((prev) => !prev);
     };
 
     const handleOptionClick = (selectedValue: string) => {
       onChange?.(selectedValue);
       setShowOptions(false);
+      console.log(false);
     };
 
     useEffect(() => {
