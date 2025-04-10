@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-table';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { CheckBox, Plus } from '@mozu/ui';
+import { Button, CheckBox, Plus } from '@mozu/ui';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { AddInvestItemModal } from '@/components';
 import { useClassStore } from '@/store';
@@ -85,30 +85,48 @@ export const StockTables = ({
   isEdit,
   selectedRound,
 }: IPropType) => {
-  const data = propData || [];
-  const [moneyData, setMoneyData] = useState<stockData[]>(data);
+  const [moneyData, setMoneyData] = useState<stockData[]>([]);
   const [isModal, setIsModal] = useState<boolean>(false);
   const { classData, setClassData, updateStockItems } = useClassStore();
   const [isA, setIsA] = useState<boolean>(false);
   type NumericField = 'currentPrice' | `level${number}`;
 
-  const setUpdate = () => {
-    setIsA(true);
-  };
+  const setUpdate = () => setIsA(true);
 
   const toggleAll = () => {
     if (!classData) return;
-
-    const allChecked = classData.classItems.every((row) => row.stockChecked);
-    const updatedData = classData.classItems.map((row) => ({
-      ...row,
+  
+    const allChecked = classData.classItems.every((item) => item.stockChecked);
+    const newItems = classData.classItems.map((item) => ({
+      ...item,
       stockChecked: !allChecked,
     }));
-
-    updateStockItems(updatedData);
-
+  
+    updateStockItems(newItems);
+  
     setMoneyData((prev) =>
-      prev.map((row) => ({ ...row, stockChecked: !allChecked })),
+      prev.map((item) => ({ ...item, stockChecked: !allChecked })),
+    );
+  };
+  
+
+  const toggleStockRow = (itemId: number) => {
+    if (!classData) return;
+  
+    const newItems = classData.classItems.map((item) =>
+      item.itemId === itemId
+        ? { ...item, stockChecked: !item.stockChecked }
+        : item,
+    );
+  
+    updateStockItems(newItems);
+    
+    setMoneyData((prev) =>
+      prev.map((item) =>
+        item.itemId === itemId
+          ? { ...item, stockChecked: !item.stockChecked }
+          : item,
+      ),
     );
   };
 
@@ -120,28 +138,11 @@ export const StockTables = ({
     return columns;
   }, [selectedRound]);
 
-  const toggleStockRow = (itemId: number) => {
-    if (!classData) return;
-
-    const newItems = classData.classItems.map((item) =>
-      item.itemId === itemId
-        ? { ...item, stockChecked: !item.stockChecked }
-        : item,
-    );
-
-    updateStockItems(newItems);
-
-    setMoneyData((prev) =>
-      prev.map((row) =>
-        row.itemId === itemId
-          ? { ...row, stockChecked: !row.stockChecked }
-          : row,
-      ),
-    );
-  };
-
+  // ✅ classData.classItems가 변경되면 자동 반영
   useEffect(() => {
-    const formattedData = data.map((item) => {
+    if (!classData?.classItems) return;
+
+    const formattedData = classData.classItems.map((item) => {
       const baseMoney = item.money || [];
       const extendedMoney = [
         ...baseMoney,
@@ -151,42 +152,17 @@ export const StockTables = ({
       return {
         ...item,
         money: extendedMoney.slice(0, selectedRound + 1),
-        currentPrice: extendedMoney[0],
-        ...Object.fromEntries(
-          Array(selectedRound)
-            .fill(0)
-            .map((_, i) => [`level${i + 1}`, extendedMoney[i + 1]]),
-        ),
+        currentPrice: extendedMoney[0] || 0,
+        level1: extendedMoney[1] || 0,
+        level2: extendedMoney[2] || 0,
+        level3: extendedMoney[3] || 0,
+        level4: extendedMoney[4] || 0,
+        level5: extendedMoney[5] || 0,
       };
     });
+
     setMoneyData(formattedData);
-  }, [data, selectedRound]);
-
-  useEffect(() => {
-    if (!data) return;
-    if (data) {
-      const formattedData = data.map((item) => {
-        // 기존 money 배열을 최대 selectedRound+1 길이로 확장
-        const baseMoney = item.money || [];
-        const extendedMoney = [
-          ...baseMoney,
-          ...Array(Math.max(selectedRound + 1 - baseMoney.length, 0)).fill(0),
-        ];
-
-        return {
-          ...item,
-          money: extendedMoney.slice(0, selectedRound + 1),
-          currentPrice: extendedMoney[0] || 0,
-          level1: extendedMoney[1] || 0,
-          level2: extendedMoney[2] || 0,
-          level3: extendedMoney[3] || 0,
-          level4: extendedMoney[4] || 0,
-          level5: extendedMoney[5] || 0,
-        };
-      });
-      setMoneyData(formattedData);
-    }
-  }, [data, selectedRound]);
+  }, [classData?.classItems, selectedRound]);
 
   useEffect(() => {
     isClose();
@@ -197,22 +173,24 @@ export const StockTables = ({
     field: NumericField,
     value: string,
   ) => {
-    // 입력값이 빈 문자열인 경우 0으로 처리
-    if (value === '') {
-      updateValue(itemId, field, 0);
-      return;
-    }
-
-    // 숫자만 추출
     const numericValue = Number(value.replace(/[^0-9]/g, '')) || 0;
     updateValue(itemId, field, numericValue);
+  };
+
+  const handleDeleteSelectedItems = () => {
+    if (!classData) return;
+  
+    const filteredItems = classData.classItems.filter(
+      (item) => !item.stockChecked,
+    );
+  
+    updateStockItems(filteredItems);
   };
 
   const updateValue = (itemId: number, field: NumericField, value: number) => {
     const level =
       field === 'currentPrice' ? 0 : parseInt(field.replace('level', ''));
 
-    // 로컬 상태 업데이트
     setMoneyData((prev) =>
       prev.map((row) => {
         if (row.itemId === itemId) {
@@ -228,7 +206,6 @@ export const StockTables = ({
       }),
     );
 
-    // 전역 상태 업데이트
     if (classData) {
       const updatedItems = classData.classItems.map((item) => {
         if (item.itemId === itemId) {
@@ -264,7 +241,6 @@ export const StockTables = ({
                 id={`stock-row-${row.original.itemId}`}
               />
             ),
-
             size: 52,
           },
         ]
@@ -293,10 +269,7 @@ export const StockTables = ({
       meta: { align: 'right' },
       cell: ({ row }) => {
         const value = row.original[key as NumericField] || 0;
-        if (key === 'currentPrice') {
-          return formatPrice(value);
-        }
-        return isEdit ? (
+        return isEdit && key !== 'currentPrice' ? (
           <Input
             type="text"
             value={formatPrice(value)}
@@ -319,24 +292,13 @@ export const StockTables = ({
     data: moneyData || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
-    state: {
-      columnVisibility: {
-        ...Object.fromEntries(
-          columns
-            .filter((col) => col.id?.startsWith('level'))
-            .map((col) => [
-              col.id,
-              parseInt(col.id.replace('level', '')) <= selectedRound,
-            ]),
-        ),
-      },
-    },
   });
 
   const isOpen = () => setIsModal(true);
 
   const isClose = () => {
     setIsModal(false);
+    if (!classData) return;
     setClassData({
       ...classData,
       classItems: classData.classItems.map((item) => ({
@@ -357,6 +319,14 @@ export const StockTables = ({
       <Caption>
         <CaptionBox>
           <Text>투자 종목</Text>
+          <Button
+            backgroundColor={color.zinc[50]}
+            borderColor={color.zinc[200]}
+            hoverBackgroundColor={color.zinc[100]}
+            onClick={handleDeleteSelectedItems}
+          >
+            선택항목 삭제하기
+          </Button>
         </CaptionBox>
       </Caption>
       <Thead>
@@ -371,11 +341,7 @@ export const StockTables = ({
                     (header.column.columnDef.meta as any)?.align || 'left',
                 }}
               >
-                {header.isPlaceholder
-                  ? null
-                  : typeof header.column.columnDef.header === 'function'
-                    ? header.column.columnDef.header(header.getContext())
-                    : header.column.columnDef.header}
+                {flexRender(header.column.columnDef.header, header.getContext())}
               </Th>
             ))}
           </tr>
@@ -407,7 +373,7 @@ export const StockTables = ({
         )}
         {isEdit && (
           <tr>
-            <PlusTd colSpan={columns.length} width="1510" onClick={isOpen}>
+            <PlusTd colSpan={columns.length} onClick={isOpen}>
               <PlusField>
                 <Plus size={20} color="black" />
                 추가하기
