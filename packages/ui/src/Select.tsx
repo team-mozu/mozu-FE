@@ -63,8 +63,9 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
         height={height}
         padding={padding}
         show={showOptions}
+        onClick={handleSelectClick}
       >
-        <SelectHeader onClick={handleSelectClick}>
+        <SelectHeader>
           <SelectedValue>{value}</SelectedValue>
           <ChevronWrapper show={showOptions}>
             <ChevronDown size={20} color={color.black} />
