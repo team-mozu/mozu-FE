@@ -95,32 +95,31 @@ export const StockTables = ({
 
   const toggleAll = () => {
     if (!classData) return;
-  
+
     const allChecked = classData.classItems.every((item) => item.stockChecked);
     const newItems = classData.classItems.map((item) => ({
       ...item,
       stockChecked: !allChecked,
     }));
-  
+
     updateStockItems(newItems);
-  
+
     setMoneyData((prev) =>
       prev.map((item) => ({ ...item, stockChecked: !allChecked })),
     );
   };
-  
 
   const toggleStockRow = (itemId: number) => {
     if (!classData) return;
-  
+
     const newItems = classData.classItems.map((item) =>
       item.itemId === itemId
         ? { ...item, stockChecked: !item.stockChecked }
         : item,
     );
-  
+
     updateStockItems(newItems);
-    
+
     setMoneyData((prev) =>
       prev.map((item) =>
         item.itemId === itemId
@@ -179,11 +178,11 @@ export const StockTables = ({
 
   const handleDeleteSelectedItems = () => {
     if (!classData) return;
-  
+
     const filteredItems = classData.classItems.filter(
       (item) => !item.stockChecked,
     );
-  
+
     updateStockItems(filteredItems);
   };
 
@@ -341,7 +340,10 @@ export const StockTables = ({
                     (header.column.columnDef.meta as any)?.align || 'left',
                 }}
               >
-                {flexRender(header.column.columnDef.header, header.getContext())}
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext(),
+                )}
               </Th>
             ))}
           </tr>

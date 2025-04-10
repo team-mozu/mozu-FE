@@ -95,7 +95,7 @@ export const HistorySidebar = ({
     const subscription = observable.subscribe({
       next: (history) => {
         const mapped = history.map((trade) => ({
-          id: trade.id!,
+          id: trade.id,
           keyword: trade.orderType === 'BUY' ? '매수' : '매도',
           name: trade.itemName,
           totalPrice: (trade.itemMoney * trade.orderCount).toLocaleString(),
@@ -145,10 +145,6 @@ export const HistorySidebar = ({
   const handleClick = () => {
     isNextDeg();
   };
-
-  useEffect(() => {
-    console.log(123);
-  }, [isOpen]);
 
   const handleDeleteTransaction = (deletedId: number) => {
     setTransactions((prev) => prev.filter((t) => t.id !== deletedId));
