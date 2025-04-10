@@ -1,8 +1,0 @@
-{
-  "name": "@mozu/prettier-config",
-  "main": "index.js",
-  "peerDependencies": {
-    "prettier": ">= 3"
-  },
-  "packageManager": "yarn@4.6.0"
-}
