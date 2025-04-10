@@ -1,4 +1,5 @@
 import { useTeamEnd } from '@/apis';
+import { fetchTradeHistory } from '@/db';
 import { useTradeHistory } from '@/hook';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
@@ -20,6 +21,8 @@ export const InvestCompleteModal = ({
   const { classId } = useParams();
   const { mutate: teamEnd } = useTeamEnd();
   const { history } = useTradeHistory();
+
+  console.log(history);
   useEffect(() => {
     const outSideClick = (e: MouseEvent) => {
       if (outSideRef.current && outSideRef.current === e.target) {
@@ -35,7 +38,20 @@ export const InvestCompleteModal = ({
   }, [isOpen, setIsOpen]);
 
   const invDeg = () => {
-    console.log(history);
+    const isValidData = history.every(
+      (item) =>
+        item.itemId &&
+        item.itemName &&
+        item.itemMoney &&
+        item.orderCount !== undefined &&
+        item.totalMoney &&
+        item.orderType,
+    );
+
+    if (!isValidData) {
+      console.error('Invalid data structure in history');
+      return;
+    }
 
     teamEnd(history);
     navigate(`/${classId}/result`);

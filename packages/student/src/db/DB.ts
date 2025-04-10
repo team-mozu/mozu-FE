@@ -10,7 +10,7 @@ class StudentDB extends Dexie {
     this.version(1).stores({
       team: '++id, cashMoney',
       tradeHistory:
-        '++id, itemId, itemName, itemMoney, orderCount, totalMoney, orderType, invDeg, timestamp',
+        '++id, itemId, itemName, itemMoney, orderCount, totalMoney, orderType, invDeg',
       items:
         '++id, itemId, itemName, buyMoney, itemCnt, totalMoney, nowMoney, valMoney, valProfit, profitNum',
     });

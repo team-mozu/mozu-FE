@@ -11,22 +11,21 @@ export const useTradeHistory = () => {
     const loadData = async () => {
       try {
         const data = await fetchTradeHistory();
-        // 필요한 필드만 필터링
         const filteredData = data.map(
           ({
             itemId,
-            itemName,
             itemMoney,
+            itemName,
             orderCount,
-            totalMoney,
             orderType,
+            totalMoney,
           }) => ({
             itemId,
-            itemName,
             itemMoney,
+            itemName,
             orderCount,
-            totalMoney,
             orderType,
+            totalMoney,
           }),
         );
 

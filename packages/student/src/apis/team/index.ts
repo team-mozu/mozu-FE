@@ -3,6 +3,7 @@ import { instance } from '@configs/util';
 import {
   HoldItemsResponse,
   TeamDeatilResponse,
+  TeamEndData,
   TeamEndProps,
   TeamOrdersResponse,
   TeamRankResponse,
