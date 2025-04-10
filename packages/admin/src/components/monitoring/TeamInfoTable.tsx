@@ -14,36 +14,36 @@ interface IRateType {
 }
 
 interface TeamRow {
-  '팀명': string;
+  팀명: string;
   '1차 투자': { text: string; rate?: string };
   '2차 투자': { text: string; rate?: string };
   '3차 투자': { text: string; rate?: string };
   '4차 투자': { text: string; rate?: string };
   '5차 투자': { text: string; rate?: string };
   '총 자산': { text: string; rate?: string };
-  'isCompleted': boolean;
+  isCompleted: boolean;
 }
 
 const data: TeamRow[] = [
   {
-    '팀명': '대마고 화이팅',
+    팀명: '대마고 화이팅',
     '1차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
     '2차 투자': { text: '511,000원', rate: '-200원 (-0.23%)' },
     '3차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
     '4차 투자': { text: '', rate: undefined },
     '5차 투자': { text: '', rate: undefined },
     '총 자산': { text: '511,000원', rate: '+400원 (+0.53%)' },
-    'isCompleted': true,
+    isCompleted: true,
   },
   {
-    '팀명': '대마고',
+    팀명: '대마고',
     '1차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
     '2차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
     '3차 투자': { text: '511,000원', rate: '-100원 (-0.13%)' },
     '4차 투자': { text: '', rate: undefined },
     '5차 투자': { text: '', rate: undefined },
     '총 자산': { text: '511,000원', rate: '+500원 (+0.53%)' },
-    'isCompleted': false,
+    isCompleted: false,
   },
 ];
 

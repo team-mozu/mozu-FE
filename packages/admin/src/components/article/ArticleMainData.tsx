@@ -12,23 +12,14 @@ export const ArticleMainData = ({ img, title, main }: IArticleMainDataType) => {
   return (
     <Container>
       <ArticleImgContainer>
-      {img ? (
-        <ArticleImg src={img} alt="기사 이미지" />
-      ) : (
-        <NoNewsImg/>
-      )
-      }
+        {img ? <ArticleImg src={img} alt="기사 이미지" /> : <NoNewsImg />}
       </ArticleImgContainer>
       <ContentWrapper>
         <ArticleTitle>
-          <p>
-            {title}
-          </p>
+          <p>{title}</p>
         </ArticleTitle>
         <ArticleMain>
-          <p>
-            {main}
-          </p>
+          <p>{main}</p>
         </ArticleMain>
       </ContentWrapper>
     </Container>

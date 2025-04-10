@@ -19,7 +19,7 @@
   "organizeImports": {
     "enabled": true
   },
-  "linter": { "enabled": true, "rules": { "recommended": true } },
+  "linter": { "enabled": false },
   "javascript": {
     "formatter": {
       "quoteStyle": "single",

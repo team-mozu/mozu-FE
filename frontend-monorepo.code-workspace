@@ -1,14 +1,14 @@
 {
   "folders": [
     {
-      "path": "packages/admin",
+      "path": "packages/admin"
     },
     {
-      "path": "packages/ui",
+      "path": "packages/ui"
     },
     {
-      "path": "packages/design-token",
-    },
+      "path": "packages/design-token"
+    }
   ],
   "settings": {
     "search.exclude": {
@@ -16,21 +16,21 @@
       "**/.pnp.*": true,
       "**/dist": true,
       "**/node_modules": true,
-      "tsconfig.tsbuildinfo": true,
+      "tsconfig.tsbuildinfo": true
     },
     "eslint.nodePath": "../../.yarn/sdks",
     "typescript.tsdk": "../../.yarn/sdks/typescript/lib",
     "typescript.enablePromptUseWorkspaceTsdk": true,
     "prettier.prettierPath": "../../.yarn/sdks/prettier/index.js",
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
   "extensions": {
     "recommendations": [
       "arcanis.vscode-zipfs",
       "dbaeumer.vscode-eslint",
-      "esbenp.prettier-vscode",
-    ],
-  },
+      "esbenp.prettier-vscode"
+    ]
+  }
 }
