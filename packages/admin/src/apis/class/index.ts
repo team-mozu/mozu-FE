@@ -5,7 +5,12 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { ClassData, ClassDetailResponse, ClassResponse } from '@/apis';
+import {
+  ClassCreateRequest,
+  ClassData,
+  ClassDetailResponse,
+  ClassResponse,
+} from '@/apis';
 import { Toast } from '@mozu/ui';
 import { useLocation, useNavigate } from 'react-router';
 
@@ -36,15 +41,9 @@ export const useGetClassDetail = (id: number) => {
 export const useClassCreate = () => {
   const navigate = useNavigate();
   return useMutation({
-    mutationFn: async (formData: FormData) => {
-      const { data } = await instance.post<{ id: number }>(
-        `${router}/class`,
-        formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        },
-      );
-      return data;
+    mutationFn: async (data: ClassCreateRequest): Promise<{ id: number }> => {
+      const response = await instance.post<{ id: number }>(`${router}`, data);
+      return response.data;
     },
     onSuccess: (data) => {
       Toast('성공적으로 생성되었습니다.', { type: 'success' });

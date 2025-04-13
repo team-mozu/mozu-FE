@@ -1,14 +1,12 @@
 import { Button, Input, Save, Select } from '@mozu/ui';
 import {
-  AssetBox,
   AssetField,
   AssetInput,
   BtnContainer,
   Container,
   Contents,
   Header,
-  InputBox,
-  SelectBox,
+  FlexColumnBox,
   SelectField,
   TableField,
   TextField,
@@ -138,7 +136,7 @@ export const ClassEdit = () => {
       </Header>
       <Contents>
         <TextField>
-          <InputBox>
+          <FlexColumnBox>
             수업 이름
             <Input
               value={classData?.name ?? ''}
@@ -148,8 +146,8 @@ export const ClassEdit = () => {
               placeholder="수업 이름을 입력해 주세요.."
               width="1080px"
             />
-          </InputBox>
-          <SelectBox>
+          </FlexColumnBox>
+          <FlexColumnBox>
             투자 차수
             <SelectField>
               <Select
@@ -162,8 +160,8 @@ export const ClassEdit = () => {
               />
               차
             </SelectField>
-          </SelectBox>
-          <AssetBox>
+          </FlexColumnBox>
+          <FlexColumnBox>
             기초자산
             <AssetField>
               <AssetInput
@@ -173,7 +171,7 @@ export const ClassEdit = () => {
               />
               원
             </AssetField>
-          </AssetBox>
+          </FlexColumnBox>
         </TextField>
         <TableField>
           <StockTables

@@ -48,11 +48,12 @@ export type ClassCreateRequest = {
   baseMoney: number;
   classDeg: number;
   classItems: ClassItemRequest[];
+  classArticles: ClassArticleRequest[];
 };
 
 export type ClassItemRequest = {
   id: number;
-  money: string;
+  money: number[];
 };
 
 export type ClassArticleRequest = {

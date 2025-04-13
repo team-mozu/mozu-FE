@@ -1,25 +1,33 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Search } from './assets';
-import { useState } from 'react'; // useState import
+import { ChangeEvent, useState } from 'react'; // useState import
 
 interface ISearchInputType {
   inputText: string;
+  value?: string;
+  onChange: (value: string) => void;
 }
 
-export const SearchInput = ({ inputText }: ISearchInputType) => {
+export const SearchInput = ({
+  inputText,
+  value,
+  onChange,
+}: ISearchInputType) => {
   const [isFocused, setIsFocused] = useState(false); // focus 상태 관리
 
   return (
     <SearchInputContaniner isFocused={isFocused}>
-      {' '}
-      {/* isFocused prop 전달 */}
       <Search size={20} color={color.zinc[400]} />
       <Input
         type="text"
         placeholder={inputText}
         onFocus={() => setIsFocused(true)} // focus 시 isFocused true로 변경
         onBlur={() => setIsFocused(false)} // blur 시 isFocused false로 변경
+        value={value}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          onChange(e.target.value);
+        }}
       />
     </SearchInputContaniner>
   );
