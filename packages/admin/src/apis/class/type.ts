@@ -58,7 +58,7 @@ export type ClassItemRequest = {
 
 export type ClassArticleRequest = {
   invDeg: number;
-  article: number[];
+  articles: number[];
 };
 
 // class/edit

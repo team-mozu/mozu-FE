@@ -4,10 +4,15 @@ import { font, color } from '@mozu/design-token';
 import { Button, Input, Select } from '@mozu/ui';
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useClassCreate } from '@/apis';
-import { InvestmentItemsTable } from './InvestmentItemsTable';
-import { AddInvestItemModal } from './AddInvestItemModal';
-import { ClassItemRequest } from '@/apis/class/type';
+import { useClassCreate, useGetStockList, useGetArticleList } from '@/apis';
+import { StockTables } from '@/components/common/StockTables';
+import { ArticleTables } from '@/components/common/ArticleTables';
+import {
+  ClassItemRequest,
+  ClassArticleRequest,
+  ClassCreateRequest,
+  Article,
+} from '@/apis/class/type';
 
 export const CreateClass = () => {
   const navigate = useNavigate();
@@ -16,8 +21,10 @@ export const CreateClass = () => {
   const [classDeg, setClassDeg] = useState<'3' | '4' | '5'>('3');
   const [baseMoney, setBaseMoney] = useState<number>(1000000);
   const [classItems, setClassItems] = useState<ClassItemRequest[]>([]);
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
+  const [classArticles, setClassArticles] = useState<ClassArticleRequest[]>([]);
   const [stockData, setStockData] = useState<any[]>([]);
+  const { data: stockListData } = useGetStockList();
+  const { data: articleListData } = useGetArticleList();
 
   const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setClassName(e.target.value);
@@ -34,34 +41,31 @@ export const CreateClass = () => {
     setBaseMoney(numValue);
   };
 
-  const handleAddItems = (newItems: ClassItemRequest[]) => {
-    // Add new items to the classItems array
-    setClassItems([...classItems, ...newItems]);
+  // 투자 종목 관련 핸들러
+  const handleAddItems = (newItems: any[]) => {
+    console.log('New items received in CreateClass:', newItems);
 
-    // Convert ClassItemRequest[] to display format for the table
+    // Add new items to the classItems array
+    setClassItems((prevItems) => [...prevItems, ...newItems]);
+
+    // Convert to display format for the table
     const newStockData = newItems.map((item) => {
-      // Fetch the item name from the server response or use a placeholder
-      // In a real app, you would store the name in the state or fetch it
-      const itemName = `Item ${item.id}`;
+      // Find the item name from the API response
+      const stockItem = stockListData?.items.find(
+        (stockItem) => stockItem.id === item.id,
+      );
+      const itemName = stockItem ? stockItem.name : `Item ${item.id}`;
 
       return {
         itemId: item.id,
-        itemCode: String(item.id), // Using ID as code for now
+        itemCode: String(item.id),
         itemName: itemName,
         money: item.money,
         stockChecked: false,
       };
     });
 
-    setStockData([...stockData, ...newStockData]);
-  };
-
-  const handleOpenAddModal = () => {
-    setShowAddModal(true);
-  };
-
-  const handleCloseAddModal = () => {
-    setShowAddModal(false);
+    setStockData((prevData) => [...prevData, ...newStockData]);
   };
 
   const onDeleteItems = (itemIds: number[]) => {
@@ -102,6 +106,82 @@ export const CreateClass = () => {
     );
   };
 
+  // 기사 관련 핸들러
+  const handleAddArticles = (newArticleGroup: {
+    invDeg: number;
+    articles: Article[];
+  }) => {
+    console.log('New articles received:', newArticleGroup);
+
+    const { invDeg, articles } = newArticleGroup;
+
+    // 해당 차수의 기사 그룹 찾기
+    const existingGroupIndex = classArticles.findIndex(
+      (group) => group.invDeg === invDeg,
+    );
+
+    if (existingGroupIndex >= 0) {
+      // 기존 그룹에 새 기사 추가
+      setClassArticles((prevGroups) => {
+        const updatedGroups = [...prevGroups];
+        // 현재 기사 ID 배열
+        const currentArticleIds = updatedGroups[existingGroupIndex].articles;
+
+        // 새 기사 ID 추가
+        const newArticleIds = articles.map((article) => article.id);
+        const combinedIds = [
+          ...new Set([...currentArticleIds, ...newArticleIds]),
+        ];
+
+        updatedGroups[existingGroupIndex] = {
+          ...updatedGroups[existingGroupIndex],
+          articles: combinedIds,
+        };
+
+        return updatedGroups;
+      });
+    } else {
+      // 새 그룹 추가
+      setClassArticles((prevGroups) => [
+        ...prevGroups,
+        {
+          invDeg,
+          articles: articles.map((article) => article.id),
+        },
+      ]);
+    }
+  };
+
+  const handleDeleteArticles = (articleIds: number[], degree: number) => {
+    // 해당 차수의 기사 그룹 찾기
+    const groupIndex = classArticles.findIndex(
+      (group) => group.invDeg === degree,
+    );
+
+    if (groupIndex === -1) return;
+
+    setClassArticles((prevGroups) => {
+      const updatedGroups = [...prevGroups];
+      // 삭제할 ID를 제외한 기사만 남기기
+      const filteredArticleIds = updatedGroups[groupIndex].articles.filter(
+        (id) => !articleIds.includes(id),
+      );
+
+      // 남은 기사가 없으면 그룹 자체를 제거
+      if (filteredArticleIds.length === 0) {
+        return prevGroups.filter((group) => group.invDeg !== degree);
+      }
+
+      // 남은 기사가 있으면 업데이트
+      updatedGroups[groupIndex] = {
+        ...updatedGroups[groupIndex],
+        articles: filteredArticleIds,
+      };
+
+      return updatedGroups;
+    });
+  };
+
   const onSubmit = () => {
     // Validate inputs
     if (!className.trim()) {
@@ -114,21 +194,33 @@ export const CreateClass = () => {
       return;
     }
 
-    console.log({
+    const classCreateData: ClassCreateRequest = {
       className: className,
       classDeg: parseInt(classDeg),
       baseMoney: baseMoney,
       classItems: classItems,
+      classArticles: classArticles,
+    };
+
+    mutateClassCreate(classCreateData);
+  };
+
+  // 기사 테이블용 데이터 변환
+  const articleTableData = classArticles.map((group) => {
+    // API 데이터에서 기사 제목 찾기
+    const articleDetails = group.articles.map((id) => {
+      const article = articleListData?.article.find((a) => a.id === id);
+      return {
+        id: id,
+        title: article ? article.title : `기사 ID: ${id}`,
+      };
     });
 
-    // Submit the data using the mutation function
-    // mutateClassCreate({
-    //   className: className,
-    //   classDeg: parseInt(classDeg),
-    //   baseMoney: baseMoney,
-    //   classItems: classItems,
-    // });
-  };
+    return {
+      invDeg: group.invDeg,
+      articles: articleDetails,
+    };
+  });
 
   return (
     <Container>
@@ -192,37 +284,36 @@ export const CreateClass = () => {
             </AssetField>
           </FlexColumnBox>
         </TextField>
+
+        {/* 투자 종목 테이블 */}
         <TableField>
           <TableHeader>
             <Text>투자 종목</Text>
-            <Button
-              backgroundColor={color.orange[500]}
-              borderColor={color.orange[500]}
-              color={color.white}
-              hoverBackgroundColor={color.orange[600]}
-              onClick={handleOpenAddModal}
-            >
-              투자 종목 추가
-            </Button>
           </TableHeader>
-          <InvestmentItemsTable
+          <StockTables
             isEdit
             degree={classDeg}
             data={stockData}
             onPriceChange={handleUpdateItemPrice}
             onDeleteItems={onDeleteItems}
+            onAddItems={handleAddItems}
+          />
+        </TableField>
+
+        {/* 기사 테이블 */}
+        <TableField>
+          <TableHeader>
+            <Text>기사 목록</Text>
+          </TableHeader>
+          <ArticleTables
+            isEdit
+            degree={classDeg}
+            data={articleTableData}
+            onDeleteArticles={handleDeleteArticles}
+            onAddArticles={handleAddArticles}
           />
         </TableField>
       </Contents>
-
-      {showAddModal && (
-        <AddInvestItemModal
-          close={handleCloseAddModal}
-          onItemsSelected={handleAddItems}
-          selectedDegree={parseInt(classDeg)}
-          existingItems={classItems}
-        />
-      )}
     </Container>
   );
 };

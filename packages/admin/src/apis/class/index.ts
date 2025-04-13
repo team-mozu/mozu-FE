@@ -47,7 +47,7 @@ export const useClassCreate = () => {
     },
     onSuccess: (data) => {
       Toast('성공적으로 생성되었습니다.', { type: 'success' });
-      navigate(`class-management/create${data.id}`);
+      navigate(`/class-management/${data.id}`);
     },
   });
 };
