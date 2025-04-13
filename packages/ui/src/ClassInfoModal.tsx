@@ -4,12 +4,19 @@ import { useRef, useCallback, useEffect } from 'react';
 import { Button } from './Button';
 import { InvestInfoTable } from './InvestInfoTable';
 
+interface classItem {
+  itemId: number;
+  itemName: string;
+  money: number[];
+}
+
 interface IClassInfoType {
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  classItems: classItem[];
 }
 
-export const ClassInfoModal = ({ isOpen, setIsOpen }: IClassInfoType) => {
+export const ClassInfoModal = ({ isOpen, setIsOpen, classItems }: IClassInfoType) => {
   const outSideRef = useRef<HTMLDivElement>(null);
 
   const outSideClick = useCallback(
@@ -45,7 +52,7 @@ export const ClassInfoModal = ({ isOpen, setIsOpen }: IClassInfoType) => {
           <TitleContainer>
             <Title>투자 정보</Title>
           </TitleContainer>
-          <InvestInfoTable />
+          <InvestInfoTable classItems={classItems} />
           <FooterContainer>
             <Button
               backgroundColor={color.zinc[50]}

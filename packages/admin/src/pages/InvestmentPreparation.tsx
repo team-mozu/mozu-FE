@@ -6,6 +6,7 @@ import { ParticipationContainer } from '@/components';
 import { useSSE } from '@/hooks';
 import { useState } from 'react';
 import { useGetClassDetail, useNextDegree } from '@/apis';
+import { useTeamStore } from '@/store';
 
 export const InvestmentPreparation = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export const InvestmentPreparation = () => {
   );
   const [datas, setDatas] = useState({ teams: [] });
   const { mutate: nextDegree } = useNextDegree(classId);
+  const { setTeamInfo } = useTeamStore();
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
@@ -39,6 +41,11 @@ export const InvestmentPreparation = () => {
           };
           console.log('업데이트된 데이터:', updatedData);
           return updatedData;
+        });
+        setTeamInfo({
+          teamId: teamData.teamId,
+          teamName: teamData.teamName,
+          schoolName: teamData.schoolName
         });
         Toast('새로운 팀이 참가했습니다', { type: 'success' });
       },

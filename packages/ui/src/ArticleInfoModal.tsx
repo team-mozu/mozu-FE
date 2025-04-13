@@ -3,12 +3,23 @@ import { color, font } from '@mozu/design-token';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from './Button';
 
+interface ArticleType {
+  id: number;
+  title: string;
+}
+
+interface ClassArticle {
+  invDeg: number;
+  articles: ArticleType[];
+}
+
 interface IArticleInfoType {
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  classArticles: ClassArticle[];
 }
 
-export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
+export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleInfoType) => {
   const [datas, setDatas] = useState<
     { isClicked: boolean; articleContent: { title: string }[] }[]
   >([]);
@@ -30,13 +41,23 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen }: IArticleInfoType) => {
     setDatas((prev) =>
       prev
         ? prev.map((data, idx) =>
-            idx === index
-              ? { ...data, isClicked: true }
-              : { ...data, isClicked: false },
-          )
+          idx === index
+            ? { ...data, isClicked: true }
+            : { ...data, isClicked: false },
+        )
         : [],
     );
   };
+
+  useEffect(() => {
+    if (classArticles && classArticles.length > 0) {
+      const formatted = classArticles.map((item, index) => ({
+        isClicked: index === 0,
+        articleContent: item.articles,
+      }));
+      setDatas(formatted);
+    }
+  }, [classArticles]);
 
   useEffect(() => {
     if (isOpen) {
