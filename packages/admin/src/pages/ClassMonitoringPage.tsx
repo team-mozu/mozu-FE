@@ -2,22 +2,33 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { ArticleInfoModal, Button, ClassInfoModal, Toast } from '@mozu/ui';
 import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { TeamCurrentModal, TeamInfoTable } from '@/components';
 import { useGetClassDetail, useNextDegree } from '@/apis';
 import { useSSE } from '@/hooks';
+import { useTeamStore } from '@/store';
+
+interface TradeResult {
+  teamId: number;
+  invDeg: number;
+  totalMoney: number;
+  valMoney: number;
+  profitNum: string;
+}
 
 export const ClassMonitoringPage = () => {
   const navigate = useNavigate();
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [isOpenTeam, setIsOpenTeam] = useState<boolean>(false);
+  const [tradeResults, setTradeResults] = useState<TradeResult[]>([]);
 
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
 
   const { mutate: nextDegree } = useNextDegree(classId);
   const { data: classData } = useGetClassDetail(classId);
+  const { teamInfoMap } = useTeamStore();
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
@@ -37,8 +48,8 @@ export const ClassMonitoringPage = () => {
     undefined,
     {
       TEAM_INV_END: (data) => {
-        console.log('투자종료 이벤트 수신!', data);
         Toast('투자가 종료되었습니다!', { type: 'success' });
+        setTradeResults((prev) => [...prev, data]);
       },
     },
   );
@@ -46,10 +57,10 @@ export const ClassMonitoringPage = () => {
   return (
     <Container>
       {isOpenArticle && (
-        <ArticleInfoModal isOpen={isOpenArticle} setIsOpen={setIsOpenArticle} />
+        <ArticleInfoModal classArticles={classData?.classArticles} isOpen={isOpenArticle} setIsOpen={setIsOpenArticle} />
       )}
       {isOpenClass && (
-        <ClassInfoModal isOpen={isOpenClass} setIsOpen={setIsOpenClass} />
+        <ClassInfoModal classItems={classData?.classItems} isOpen={isOpenClass} setIsOpen={setIsOpenClass} />
       )}
       {isOpenTeam && (
         <TeamCurrentModal
@@ -94,17 +105,17 @@ export const ClassMonitoringPage = () => {
       </Header>
       <MainContainer>
         <p>
-          <span>3차 투자</span>
+          <span>{classData?.curInvDeg}차 투자</span>
           진행중
         </p>
         <InfoContainer>
           <ClassInfo>
             <p>
-              투자 차수 <span>5차</span>
+              투자 차수 <span>{classData?.maxInvDeg}차</span>
             </p>
             <span>|</span>
             <p>
-              기초자산 <span>1,000,000</span>
+              기초자산 <span>{classData?.baseMoney.toLocaleString()}</span>
             </p>
           </ClassInfo>
           <InfoBtn>
@@ -137,7 +148,11 @@ export const ClassMonitoringPage = () => {
           </InfoBtn>
         </InfoContainer>
         <TableContainer>
-          <TeamInfoTable />
+          <TeamInfoTable
+            teamInfo={Object.values(teamInfoMap)}
+            tradeResults={tradeResults}
+            invDeg={classData?.curInvDeg}
+          />
         </TableContainer>
       </MainContainer>
     </Container>

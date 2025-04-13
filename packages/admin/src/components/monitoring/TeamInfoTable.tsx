@@ -9,45 +9,89 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Check } from '@mozu/ui';
 
+interface Team {
+  teamId: number;
+  teamName: string;
+  schoolName: string;
+}
+
 interface IRateType {
   color: string;
 }
 
+interface TableCell {
+  text: string;
+  rate: string;
+}
+
 interface TeamRow {
   팀명: string;
-  '1차 투자': { text: string; rate?: string };
-  '2차 투자': { text: string; rate?: string };
-  '3차 투자': { text: string; rate?: string };
-  '4차 투자': { text: string; rate?: string };
-  '5차 투자': { text: string; rate?: string };
-  '총 자산': { text: string; rate?: string };
+  '1차 투자': TableCell;
+  '2차 투자': TableCell;
+  '3차 투자': TableCell;
+  '4차 투자': TableCell;
+  '5차 투자': TableCell;
+  '총 자산': TableCell;
   isCompleted: boolean;
 }
 
-const data: TeamRow[] = [
-  {
-    팀명: '대마고 화이팅',
-    '1차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
-    '2차 투자': { text: '511,000원', rate: '-200원 (-0.23%)' },
-    '3차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
-    '4차 투자': { text: '', rate: undefined },
-    '5차 투자': { text: '', rate: undefined },
-    '총 자산': { text: '511,000원', rate: '+400원 (+0.53%)' },
-    isCompleted: true,
-  },
-  {
-    팀명: '대마고',
-    '1차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
-    '2차 투자': { text: '511,000원', rate: '+200원 (+0.23%)' },
-    '3차 투자': { text: '511,000원', rate: '-100원 (-0.13%)' },
-    '4차 투자': { text: '', rate: undefined },
-    '5차 투자': { text: '', rate: undefined },
-    '총 자산': { text: '511,000원', rate: '+500원 (+0.53%)' },
-    isCompleted: false,
-  },
-];
+interface TradeResult {
+  teamId: number;
+  invDeg: number;
+  totalMoney: number;
+  valMoney: number;
+  profitNum: string;
+}
 
-export const TeamInfoTable = () => {
+export const TeamInfoTable = ({
+  teamInfo,
+  tradeResults,
+  invDeg,
+}: {
+  teamInfo: Team[];
+  tradeResults: TradeResult[];
+  invDeg: number;
+}) => {
+  const data = useMemo<TeamRow[]>(() => {
+    return teamInfo.map((team) => {
+      const teamResults = tradeResults.filter(
+        (result) => result.teamId === team.teamId,
+      );
+
+      const row: TeamRow = {
+        팀명: team.teamName,
+        '1차 투자': { text: '', rate: '' },
+        '2차 투자': { text: '', rate: '' },
+        '3차 투자': { text: '', rate: '' },
+        '4차 투자': { text: '', rate: '' },
+        '5차 투자': { text: '', rate: '' },
+        '총 자산': { text: '', rate: '' },
+        isCompleted: teamResults.length === 5,
+      };
+
+      // 차수별 투자 결과 채우기
+      for (let i = 1; i <= 5; i++) {
+        const key = `${i}차 투자` as keyof TeamRow;
+
+        if (i === invDeg) {
+          (row[key] as { text: string; rate?: string }) = { text: '진행중..', rate: '' };
+          continue;
+        }
+
+        const result = teamResults.find((r) => r.invDeg === i);
+        if (result) {
+          (row[key] as { text: string; rate?: string }) = {
+            text: `${result.valMoney.toLocaleString()}원`,
+            rate: result.profitNum,
+          };
+        }
+      }
+
+      return row;
+    });
+  }, [teamInfo, tradeResults, invDeg]);
+
+
   const columns = useMemo<ColumnDef<TeamRow>[]>(
     () => [
       {
@@ -82,16 +126,25 @@ export const TeamInfoTable = () => {
         cell: ({ getValue }) => {
           const { text, rate } = getValue() as { text: string; rate?: string };
           const isNegative = rate?.includes('-');
+          const isPending = text === '진행중..';
 
           return (
-            <>
-              {text}
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: isPending ? 'center' : 'flex-end',
+                justifyContent: 'center',
+              }}
+            >
+              <span>{text}</span>
               {rate && (
                 <RateDiv color={isNegative ? color.blue[500] : color.red[500]}>
                   {rate}
                 </RateDiv>
               )}
-            </>
+            </div>
           );
         },
       })),
