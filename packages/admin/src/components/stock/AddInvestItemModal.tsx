@@ -1,131 +1,180 @@
 import { useGetStockList } from '@/apis';
-import { Button, Item, SearchInput } from '../../../../ui/src';
+import { Button, Item, SearchInput } from '@mozu/ui';
 import styled from '@emotion/styled';
 import { font, color } from '@mozu/design-token';
-import { useState } from 'react';
-import { useClassStore } from '@/store';
+import { useState, useEffect } from 'react';
+
+// 서버 응답 인터페이스 정의
+interface StockItem {
+  id: number;
+  name: string;
+}
 
 interface IInvestModalType {
   close: () => void;
-  setUpdate: () => void;
+  onItemsSelected: (items: any[]) => void;
+  selectedDegree: number;
+  existingItems?: { id: number }[];
 }
 
-export const AddInvestItemModal = ({ close, setUpdate }: IInvestModalType) => {
+export const AddInvestItemModal = ({
+  close,
+  onItemsSelected,
+  selectedDegree,
+  existingItems = [],
+}: IInvestModalType) => {
+  // API에서 종목 리스트 가져오기
   const { data: stockData } = useGetStockList();
-  const { updateStockItems, classData } = useClassStore();
-  const [selectedRound, setSelectedRound] = useState(1);
-  const [isModal, setIsModal] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState('');
 
   const items = stockData?.items || [];
+  const existingItemIds = existingItems.map((item) => item.id);
+
+  // 이미 선택된 아이템 필터링 및 검색어 적용
+  const filteredItems = items.filter(
+    (item) =>
+      !existingItemIds.includes(item.id) &&
+      (searchText === '' ||
+        item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        String(item.id).includes(searchText)),
+  );
 
   const [checkedItems, setCheckedItems] = useState<boolean[]>(
-    Array(items.length).fill(false),
+    Array(filteredItems.length).fill(false),
   );
 
   const [isHeadCheck, setIsHeadCheck] = useState<boolean>(false);
-  const [isClose, setIsClose] = useState<boolean>(false);
 
+  // 필터링된 아이템이 변경될 때마다 체크 상태 초기화
+  useEffect(() => {
+    setCheckedItems(Array(filteredItems.length).fill(false));
+    setIsHeadCheck(false);
+  }, [filteredItems.length, searchText]);
+
+  // 개별 아이템 체크 토글
   const checkClick = (index: number) => {
     setCheckedItems((prev) => {
       const updateCheckItems = [...prev];
       updateCheckItems[index] = !updateCheckItems[index];
+
+      // 헤더 체크박스 상태 업데이트
+      const allChecked = updateCheckItems.every((item) => item);
+      setIsHeadCheck(allChecked);
+
       return updateCheckItems;
     });
   };
 
+  // 선택 완료 후 제출
   const handleSubmit = () => {
-    const selectedItems = items
+    const selectedItems = filteredItems
       .filter((_, index) => checkedItems[index])
       .map((item) => ({
-        itemId: item.id,
-        itemName: item.name,
-        money: Array(selectedRound + 1).fill(0),
-        currentPrice: 0,
-        stockChecked: false,
+        id: item.id,
+        money: Array(selectedDegree + 1).fill(0), // +1은 현재가를 위한 것
       }));
 
-    console.log(selectedItems);
-
-    updateStockItems(selectedItems);
-    setUpdate();
+    console.log('Selected items in modal:', selectedItems);
+    onItemsSelected(selectedItems);
   };
 
+  // 전체 선택 토글
   const headClick = () => {
-    setIsHeadCheck(!isHeadCheck);
-    setCheckedItems((prev) => prev.map(() => !isHeadCheck));
+    const newState = !isHeadCheck;
+    setIsHeadCheck(newState);
+    setCheckedItems(Array(filteredItems.length).fill(newState));
   };
+
+  // 검색어 변경 처리
+  const handleSearchChange = (value: string) => {
+    setSearchText(value);
+  };
+
+  // 선택된 아이템이 있는지 확인
+  const hasSelectedItems = checkedItems.some((item) => item);
 
   return (
-    !isClose && (
-      <ModalBackground>
-        <InvestItemContainer>
-          <SearchContainer>
-            <Title isHeader>투자종목 추가</Title>
-            <SearchInput inputText="종목 검색.." />
-          </SearchContainer>
-          <TableContainer>
-            <Item
-              isHeader={true}
-              title1="종목 코드"
-              title2="종목 이름"
-              id="title"
-              checked={isHeadCheck}
-              onChange={headClick}
-            />
-            <ItemContents>
-              {items.map((data, index) => (
+    <ModalBackground>
+      <InvestItemContainer>
+        <SearchContainer>
+          <Title isHeader>투자종목 추가</Title>
+          <SearchInput
+            inputText="종목 검색.."
+            value={searchText}
+            onChange={handleSearchChange}
+          />
+        </SearchContainer>
+        <TableContainer>
+          <Item
+            isHeader={true}
+            title1="종목 코드"
+            title2="종목 이름"
+            id="title"
+            checked={isHeadCheck}
+            onChange={headClick}
+          />
+          <ItemContents>
+            {filteredItems.length > 0 ? (
+              filteredItems.map((data, index) => (
                 <Item
-                  title1={data.id}
+                  title1={String(data.id)}
                   title2={data.name}
                   onChange={() => checkClick(index)}
                   checked={checkedItems[index]}
                   id={String(data.id)}
                   key={data.id}
                 />
-              ))}
-            </ItemContents>
-          </TableContainer>
-          <FooterContainer>
-            <BtnContainer>
-              <Button
-                backgroundColor={color.zinc[50]}
-                borderColor={color.zinc[200]}
-                color={color.zinc[800]}
-                onClick={close}
-              >
-                취소
-              </Button>
-              <Button
-                backgroundColor={color.orange[500]}
-                borderColor={color.orange[500]}
-                color={color.white}
-                onClick={handleSubmit}
-              >
-                선택 종목 추가
-              </Button>
-            </BtnContainer>
-          </FooterContainer>
-        </InvestItemContainer>
-      </ModalBackground>
-    )
+              ))
+            ) : (
+              <EmptyState>
+                {searchText
+                  ? '검색 결과가 없습니다.'
+                  : '추가 가능한 종목이 없습니다.'}
+              </EmptyState>
+            )}
+          </ItemContents>
+        </TableContainer>
+        <FooterContainer>
+          <BtnContainer>
+            <Button
+              backgroundColor={color.zinc[50]}
+              borderColor={color.zinc[200]}
+              color={color.zinc[800]}
+              onClick={close}
+            >
+              취소
+            </Button>
+            <Button
+              backgroundColor={color.orange[500]}
+              borderColor={color.orange[500]}
+              color={color.white}
+              onClick={handleSubmit}
+              disabled={!hasSelectedItems}
+            >
+              선택 종목 추가
+            </Button>
+          </BtnContainer>
+        </FooterContainer>
+      </InvestItemContainer>
+    </ModalBackground>
   );
 };
 
-export const FooterContainer = styled.footer`
+const FooterContainer = styled.footer`
   width: 100%;
   height: 64px;
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: flex-end;
   padding-right: 12px;
 `;
 
-export const BtnContainer = styled.div`
+const BtnContainer = styled.div`
   display: flex;
   gap: 10px;
 `;
 
-export const TableContainer = styled.div`
+const TableContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -153,13 +202,13 @@ const InvestItemContainer = styled.div`
   padding-top: 12px;
 `;
 
-export const ModalBackground = styled.div`
+const ModalBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.08); // 배경 흐림 효과
+  background: rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -167,11 +216,20 @@ export const ModalBackground = styled.div`
 `;
 
 const ItemContents = styled.div`
-  overflow: scroll;
+  overflow: auto;
   height: 432px;
 `;
 
-export const Title = styled.div<{ isHeader: boolean }>`
+const EmptyState = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font: ${font.b2};
+  color: ${color.zinc[500]};
+`;
+
+const Title = styled.div<{ isHeader: boolean }>`
   font: ${font.b1};
   color: ${color.black};
   margin-left: 4px;

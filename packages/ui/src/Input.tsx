@@ -38,7 +38,7 @@ export const Input = ({
 
   return (
     <InputContainer>
-      <Label>{label}</Label>
+      {label && <Label>{label}</Label>}
       <InputWrapper>
         <InputContent
           type={inputType}

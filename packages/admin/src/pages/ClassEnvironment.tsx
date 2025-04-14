@@ -1,99 +1,111 @@
-import { StockTables, ArticleTables } from '@/components';
+import { StockTables } from '@/components/common/StockTables';
+import { ArticleTables } from '@/components/common/ArticleTables';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from '@mozu/ui';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { useClassStart, useGetClassDetail } from '@/apis';
-import { useClassStore } from '@/store';
-import { usePriceFormatter } from '@/hooks';
+import { useClassStart, useGetClassDetail, useClassDelete } from '@/apis';
+import { formatPrice } from '@/utils/formatPrice';
 
 export const ClassEnvironment = () => {
-  const { classId, id } = useParams();
-  const articleId = id ? parseInt(id) : null;
+  const { id } = useParams();
+  const classId = id ? parseInt(id) : null;
   const navigate = useNavigate();
   const location = useLocation();
-  const { data, refetch } = useGetClassDetail(articleId);
-  const [isModal, setIsModal] = useState<boolean>(false);
-  const { classData, setClassData } = useClassStore();
-  const { mutate } = useClassStart(articleId);
-  const [selectedRound, setSelectedRound] = useState(classData?.maxInvDeg ?? 1);
 
+  // API 호출
+  const { data: classData, isLoading, refetch } = useGetClassDetail(classId);
+  const { mutate: startClass } = useClassStart(classId);
+  const { mutate: deleteClass } = useClassDelete();
+
+  // 상태 관리
+  const [isModal, setIsModal] = useState<boolean>(false);
+  const [selectedRound, setSelectedRound] = useState<number>(1);
+
+  // 차수 변경 시 최대 차수로 업데이트
   useEffect(() => {
     if (classData?.maxInvDeg) {
       setSelectedRound(classData.maxInvDeg);
     }
   }, [classData?.maxInvDeg]);
 
-  const { prices, priceChangeHandler } = usePriceFormatter(
-    [data?.baseMoney ?? 0],
-    (index, value) => {
-      console.log(`입력값 변경됨: index ${index}, value ${value}`);
-    },
-  );
-
-  const handleRoundChange = (value: string) => {
-    const round = parseInt(value);
-    setSelectedRound(round);
-  };
-
+  // 페이지 이동 시 데이터 갱신
   useEffect(() => {
     refetch();
   }, [location.pathname, refetch]);
 
-  useEffect(() => {
-    if (data && JSON.stringify(classData) !== JSON.stringify(data)) {
-      const safeData = {
-        ...data,
-        classItems:
-          data.classItems?.map((item) => ({
-            ...item,
-            money: [
-              ...item.money,
-              ...Array(
-                Math.max(data.maxInvDeg - item.money.length + 1, 0),
-              ).fill(0),
-            ].slice(0, data.maxInvDeg + 1),
-          })) ?? [],
-      };
-      setClassData(safeData);
-    }
-  }, [data]);
-
-  const isOpen = () => {
+  // 삭제 모달 열기
+  const openDeleteModal = () => {
     setIsModal(true);
   };
 
-  const isCancle = () => {
+  // 삭제 모달 닫기
+  const closeDeleteModal = () => {
     setIsModal(false);
   };
 
-  const isDelete = () => {
-    console.log('삭제');
+  // 클래스 삭제
+  const handleDelete = () => {
+    if (!classId) return;
+
+    deleteClass(classId, {
+      onSuccess: () => {
+        navigate(-1); // 삭제 후 이전 페이지로 이동
+      },
+      onError: (error) => {
+        console.error('클래스 삭제 중 오류 발생:', error);
+        alert('클래스 삭제에 실패했습니다.');
+      },
+    });
     setIsModal(false);
   };
 
-  const infos = [
-    { kind: '수업 이름', value: data?.name ?? '정보 없음' },
-    {
-      kind: '투자 차수',
-      value: data?.maxInvDeg ? `${data.maxInvDeg}차` : '정보 없음',
-    },
-    { kind: '기초자산', value: prices[0] ? `${prices[0]}원` : '정보 없음' },
-    { kind: '생성일자', value: data?.createdAt ?? '정보 없음' },
-  ];
+  // 수업 시작
+  const handleStartClass = () => {
+    startClass();
+  };
+
+  // 정보 배열 구성
+  const infos = classData
+    ? [
+        { kind: '수업 이름', value: classData.name || '정보 없음' },
+        { kind: '투자 차수', value: `${classData.maxInvDeg}차` || '정보 없음' },
+        {
+          kind: '기초자산',
+          value: `${formatPrice(classData.baseMoney)}원` || '정보 없음',
+        },
+        { kind: '생성일자', value: classData.createdAt || '정보 없음' },
+      ]
+    : [];
+
+  // 투자 종목 데이터 가공
+  const stockTableData = classData?.classItems
+    ? classData.classItems.map((item) => ({
+        itemId: item.itemId,
+        itemCode: String(item.itemId),
+        itemName: item.itemName,
+        money: item.money,
+        stockChecked: false,
+      }))
+    : [];
+
+  // 기사 데이터 가공
+  const articleTableData = classData?.classArticles || [];
+
+  if (isLoading) {
+    return <LoadingWrapper>데이터를 불러오는 중입니다...</LoadingWrapper>;
+  }
 
   return (
     <>
-      {isModal ? (
+      {isModal && (
         <DeleteModal
-          titleComment={`'${infos[0].value}' 삭제하실 건가요?`}
+          titleComment={`'${classData?.name || ''}' 삭제하실 건가요?`}
           subComment="삭제하면 복구가 불가능합니다."
-          onCancel={isCancle}
-          onDelete={isDelete}
+          onCancel={closeDeleteModal}
+          onDelete={handleDelete}
         />
-      ) : (
-        <></>
       )}
       <Wrapper>
         <Head>
@@ -102,8 +114,8 @@ export const ClassEnvironment = () => {
               <ArrowLeft />
             </BackBtn>
             <TextBox>
-              <h2>{data?.name ?? '정보 없음'}</h2>
-              <p>{data?.createdAt ?? '날짜 없음'}</p>
+              <h2>{classData?.name || '정보 없음'}</h2>
+              <p>{classData?.createdAt || '날짜 없음'}</p>
             </TextBox>
           </Container>
           <div>
@@ -113,7 +125,7 @@ export const ClassEnvironment = () => {
               color="white"
               hoverBackgroundColor={color.orange[400]}
               hoverBorderColor={color.orange[400]}
-              onClick={() => mutate()}
+              onClick={handleStartClass}
             >
               모의주식투자 시작하기
               <Play />
@@ -136,7 +148,7 @@ export const ClassEnvironment = () => {
                 borderColor={color.zinc[200]}
                 hoverBackgroundColor={color.zinc[100]}
                 hoverBorderColor={color.zinc[100]}
-                onClick={isOpen}
+                onClick={openDeleteModal}
               >
                 삭제하기
                 <Del color="black" size={20} />
@@ -147,7 +159,7 @@ export const ClassEnvironment = () => {
                 color={color.orange[500]}
                 hoverBackgroundColor={color.orange[100]}
                 hoverBorderColor={color.orange[100]}
-                onClick={() => navigate('edit')}
+                onClick={() => navigate(`/class-management/${classId}/edit`)}
               >
                 수정하기
                 <Edit color={color.orange[500]} size={20} />
@@ -155,14 +167,17 @@ export const ClassEnvironment = () => {
             </BtnContainer>
           </Option>
           <TableBox>
+            <TableTitle>투자 종목</TableTitle>
             <StockTables
               isEdit={false}
-              data={classData?.classItems ?? []}
-              selectedRound={selectedRound}
+              degree={selectedRound.toString()}
+              data={stockTableData}
             />
+            <TableTitle>기사 목록</TableTitle>
             <ArticleTables
               isEdit={false}
-              data={classData?.classArticles ?? []}
+              degree={selectedRound.toString()}
+              data={articleTableData}
             />
           </TableBox>
         </Content>
@@ -170,6 +185,20 @@ export const ClassEnvironment = () => {
     </>
   );
 };
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+  font: ${font.t1};
+  color: ${color.zinc[500]};
+`;
+
+const TableTitle = styled.div`
+  font: ${font.t2};
+  margin-bottom: 16px;
+`;
 
 const TableBox = styled.div`
   display: flex;

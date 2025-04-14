@@ -32,12 +32,15 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
     useImperativeHandle(ref, () => selectRef.current as HTMLDivElement);
 
     const handleSelectClick = () => {
-      setShowOptions((prev) => !prev);
+      // option이 닫혀있을 때만 option을 열 수 있도록 조건처리
+      if (!showOptions) setShowOptions(true);
+      else setShowOptions(false);
     };
 
     const handleOptionClick = (selectedValue: string) => {
       onChange?.(selectedValue);
       setShowOptions(false);
+      console.log(false);
     };
 
     useEffect(() => {
@@ -63,8 +66,9 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
         height={height}
         padding={padding}
         show={showOptions}
+        onClick={handleSelectClick}
       >
-        <SelectHeader onClick={handleSelectClick}>
+        <SelectHeader>
           <SelectedValue>{value}</SelectedValue>
           <ChevronWrapper show={showOptions}>
             <ChevronDown size={20} color={color.black} />

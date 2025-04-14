@@ -48,35 +48,31 @@ export type ClassCreateRequest = {
   baseMoney: number;
   classDeg: number;
   classItems: ClassItemRequest[];
+  classArticles: ClassArticleRequest[];
 };
 
 export type ClassItemRequest = {
   id: number;
-  money: string;
+  money: number[];
 };
 
 export type ClassArticleRequest = {
   invDeg: number;
-  article: number[];
+  articles: number[];
 };
 
 // class/edit
 
 export type ClassData = {
-  id?: number;
-  name: string;
-  maxInvDeg: number;
+  className: string;
+  classDeg: number;
   baseMoney: number;
   classItems: {
-    itemId: number;
-    itemName: string;
+    id: number;
     money: number[];
   }[];
   classArticles: {
     invDeg: number;
-    articles: {
-      id: number;
-      title: string;
-    }[];
+    articles: number[];
   }[];
 };
