@@ -20,20 +20,15 @@
     ]
   },
   "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
+    "packages": ["packages/*"]
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
-    "@mozu/eslint-config": "workspace:^",
-    "@mozu/prettier-config": "workspace:^",
     "@types/node": "^22.10.5",
-    "eslint": "8.57.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.3.0",
-    "prettier": "^3.4.2",
     "typescript": "^5.7.3"
   },
   "resolutions": {

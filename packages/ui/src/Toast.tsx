@@ -13,7 +13,7 @@ export const Toast = (message: string, { type }: IToastProps) => {
       ...ToastType[type].style,
       color: color.white,
       fontWeight: 500,
-      lineHeight: 1.5
+      lineHeight: 1.5,
     },
     transition: Flip,
     icon: ToastType[type].icon,
