@@ -318,14 +318,14 @@ export const CreateClass = () => {
   );
 };
 
-const TableHeader = styled.div`
+export const TableHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 `;
 
-const Text = styled.div`
+export const Text = styled.div`
   font: ${font.t2};
 `;
 

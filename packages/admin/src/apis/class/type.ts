@@ -64,20 +64,15 @@ export type ClassArticleRequest = {
 // class/edit
 
 export type ClassData = {
-  id?: number;
-  name: string;
-  maxInvDeg: number;
+  className: string;
+  classDeg: number;
   baseMoney: number;
   classItems: {
-    itemId: number;
-    itemName: string;
+    id: number;
     money: number[];
   }[];
   classArticles: {
     invDeg: number;
-    articles: {
-      id: number;
-      title: string;
-    }[];
+    articles: number[];
   }[];
 };

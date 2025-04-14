@@ -151,7 +151,7 @@ export const useNextDegree = (id: number) => {
 export const useEditClass = (classId: number) => {
   return useMutation({
     mutationFn: async (payload: ClassData) => {
-      await instance.post(`${router}/class/${classId}`, payload);
+      await instance.post(`${router}/${classId}`, payload);
     },
     onSuccess: () => {
       Toast(`수업이 수정되었습니다.`, { type: 'success' });
