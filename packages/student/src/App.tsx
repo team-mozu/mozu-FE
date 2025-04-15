@@ -1,4 +1,3 @@
-import { GlobalStyle } from '@mozu/design-token';
 import { RouterProvider } from 'react-router-dom';
 import { Router } from './router';
 import { useEffect, useState } from 'react';
@@ -24,10 +23,7 @@ function App() {
   if (!isDBReady) return <div>로딩중..</div>;
 
   return (
-    <>
-      <GlobalStyle />
-      <RouterProvider router={Router} />
-    </>
+    <RouterProvider router={Router} />
   );
 }
 
