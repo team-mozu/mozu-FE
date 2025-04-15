@@ -38,7 +38,7 @@ export const StockSearchSideBar = ({
         <p>
           전체 <span>{datas.length}</span>
         </p>
-        <SearchInput inputText="종목 검색.." />
+        <SearchInput inputText="종목 검색.." onChange={(value) => { }} />
       </UpperWrapper>
       <ArticleWrapper>
         {datas.map((data, index) => (
