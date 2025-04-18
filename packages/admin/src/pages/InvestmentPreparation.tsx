@@ -1,12 +1,12 @@
-import { Button, WarningMsg, Toast } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useNavigate, useParams } from 'react-router';
-import { ParticipationContainer } from '@/components';
-import { useSSE } from '@/hooks';
-import { useState } from 'react';
-import { useGetClassDetail, useNextDegree } from '@/apis';
-import { useTeamStore } from '@/store';
+import { Button, WarningMsg, Toast } from "@mozu/ui";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useNavigate, useParams } from "react-router";
+import { ParticipationContainer } from "@/components";
+import { useSSE } from "@/hooks";
+import { useState } from "react";
+import { useGetClassDetail, useNextDegree } from "@/apis";
+import { useTeamStore } from "@/store";
 
 export const InvestmentPreparation = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ export const InvestmentPreparation = () => {
   const classId = id ? parseInt(id) : null;
   const { data: classNameData } = useGetClassDetail(classId);
   const [inviteCode, setInviteCode] = useState(
-    () => localStorage.getItem('inviteCode') || '로딩중...',
+    () => localStorage.getItem("inviteCode") || "로딩중..."
   );
   const [datas, setDatas] = useState({ teams: [] });
   const { mutate: nextDegree } = useNextDegree(classId);
@@ -23,11 +23,11 @@ export const InvestmentPreparation = () => {
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
     (data) => {
-      Toast(`${data.message}`, { type: 'success' });
+      Toast(`${data.message}`, { type: "success" });
     },
     (error) => {
       console.log(error);
-      Toast(`SSE 에러 발생: ${error.message}`, { type: 'error' });
+      Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
     },
     {
       TEAM_PART_IN: (teamData) => {
@@ -39,20 +39,20 @@ export const InvestmentPreparation = () => {
               { title: teamData.teamName, school: teamData.schoolName },
             ],
           };
-          console.log('업데이트된 데이터:', updatedData);
+          console.log("업데이트된 데이터:", updatedData);
           return updatedData;
         });
         setTeamInfo({
           teamId: teamData.teamId,
           teamName: teamData.teamName,
-          schoolName: teamData.schoolName
+          schoolName: teamData.schoolName,
         });
-        Toast('새로운 팀이 참가했습니다', { type: 'success' });
+        Toast("새로운 팀이 참가했습니다", { type: "success" });
       },
       TEAM_INV_END: (data) => {
-        Toast('팀 투자가 종료되었습니다', { type: 'info' });
+        Toast("팀 투자가 종료되었습니다", { type: "info" });
       },
-    },
+    }
   );
 
   return (
@@ -60,10 +60,10 @@ export const InvestmentPreparation = () => {
       <ContentContainer>
         <TitleContainer>
           <Title>모의투자 준비</Title>
-          <UsedDate>{classNameData?.name ?? '로딩중...'}</UsedDate>
+          <UsedDate>{classNameData?.name ?? "로딩중..."}</UsedDate>
         </TitleContainer>
         <ParticipationContainer
-          code={inviteCode ?? '로딩중...'}
+          code={inviteCode ?? "로딩중..."}
           teamDatas={datas.teams}
         />
         <WarningMsg message="모의투자를 시작하면 중도참여가 불가능해요." />
@@ -91,6 +91,7 @@ export const InvestmentPreparation = () => {
             color={color.white}
             hoverBackgroundColor={color.orange[600]}
             onClick={() => nextDegree()}
+            disabled={datas.teams.length === 0}
           >
             진행하기 ({datas.teams.length ?? 0})
           </Button>
