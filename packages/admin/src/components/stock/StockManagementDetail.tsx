@@ -1,10 +1,10 @@
-import { Del, Edit, Button, Accounts, StockNoLogo } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
-import { useDeleteStock, useGetStockDetail } from '@/apis';
-import { usePriceFormatter } from '@/hooks';
+import { Del, Edit, Button, Accounts, StockNoLogo } from "@mozu/ui";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { useDeleteStock, useGetStockDetail } from "@/apis";
+import { usePriceFormatter } from "@/hooks";
 
 interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
@@ -31,8 +31,8 @@ export const StockManagementDetail = ({
     profitBen: number;
     netProfit: number;
   }>({
-    name: '',
-    info: '',
+    name: "",
+    info: "",
     logo: null,
     money: null,
     debt: null,
@@ -43,16 +43,18 @@ export const StockManagementDetail = ({
     netProfit: null,
   });
   const initialPrices = [
-    datas.debt?.toString() || '',
-    datas.capital?.toString() || '',
-    datas.profit?.toString() || '',
-    datas.profitOG?.toString() || '',
-    datas.profitBen?.toString() || '',
-    datas.netProfit?.toString() || '',
+    datas.debt?.toString() || "",
+    datas.capital?.toString() || "",
+    datas.profit?.toString() || "",
+    datas.profitOG?.toString() || "",
+    datas.profitBen?.toString() || "",
+    datas.netProfit?.toString() || "",
   ];
 
   const { data: stockData, isLoading } = useGetStockDetail(stockId);
   const { mutate: stockDelete } = useDeleteStock(stockId);
+
+  const lines = datas.info ? datas.info.split("\n") : [];
 
   if (isLoading) {
     <div>로딩중...</div>;
@@ -61,11 +63,11 @@ export const StockManagementDetail = ({
   useEffect(() => {
     if (stockData) {
       setDatas({
-        name: stockData.name || '',
-        info: stockData.info || '',
+        name: stockData.name || "",
+        info: stockData.info || "",
         logo:
           stockData.logo ==
-          'https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg'
+          "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg"
             ? null
             : stockData.logo,
         money: stockData.money || null,
@@ -133,7 +135,14 @@ export const StockManagementDetail = ({
         <CompanyInfo>
           <Label>회사 정보</Label>
           <div>
-            <p>{datas.info}</p>
+            {lines.map((line, index) =>
+              line.trim() === "" ? (
+                // 빈 줄은 <br>로 처리
+                <br key={index} />
+              ) : (
+                <p key={index}>{line}</p>
+              )
+            )}
           </div>
         </CompanyInfo>
         <CompanyMain>
@@ -141,17 +150,17 @@ export const StockManagementDetail = ({
             <div>
               <Label>재무상태표</Label>
               <ContentWrapper>
-                <Accounts title={'부채'} content={datas.debt} />
-                <Accounts title={'자본금'} content={datas.capital} />
+                <Accounts title={"부채"} content={datas.debt} />
+                <Accounts title={"자본금"} content={datas.capital} />
               </ContentWrapper>
             </div>
             <div>
               <Label>손익계산서</Label>
               <ContentWrapper>
-                <Accounts title={'매출액'} content={datas.profit} />
-                <Accounts title={'매출원가'} content={datas.profitOG} />
-                <Accounts title={'매출이익'} content={datas.profitBen} />
-                <Accounts title={'당기순이익'} content={datas.netProfit} />
+                <Accounts title={"매출액"} content={datas.profit} />
+                <Accounts title={"매출원가"} content={datas.profitOG} />
+                <Accounts title={"매출이익"} content={datas.profitBen} />
+                <Accounts title={"당기순이익"} content={datas.netProfit} />
               </ContentWrapper>
             </div>
           </Section>
