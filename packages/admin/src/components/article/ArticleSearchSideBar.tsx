@@ -1,10 +1,10 @@
-import { AddButton, SearchInput } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ArticleDiv } from './ArticleDiv';
-import { useEffect, useState, Dispatch, SetStateAction } from 'react';
-import { useGetArticleList } from '@/apis';
+import { AddButton, SearchInput } from "@mozu/ui";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArticleDiv } from "./ArticleDiv";
+import { useEffect, useState, Dispatch, SetStateAction } from "react";
+import { useGetArticleList } from "@/apis";
 
 interface ArticleSearchSideBarProps {
   setSelectedId: Dispatch<SetStateAction<number | null>>;
@@ -20,7 +20,15 @@ export const ArticleSearchSideBar = ({
     { id: number; title: string; date: string }[]
   >([]);
   const { data: articleData } = useGetArticleList();
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
+
+  const filteredDatas = datas.filter(
+    (item) =>
+      searchText === "" ||
+      item.title.toLowerCase().includes(searchText.toLowerCase()) ||
+      String(item.id).includes(searchText)
+  );
 
   useEffect(() => {
     if (!articleData?.article) return;
@@ -44,10 +52,14 @@ export const ArticleSearchSideBar = ({
         <p>
           전체 <span>{datas.length}</span>
         </p>
-        <SearchInput inputText="기사 검색.." />
+        <SearchInput
+          inputText="기사 검색.."
+          value={searchText}
+          onChange={(value) => setSearchText(value)}
+        />
       </UpperWrapper>
       <ArticleWrapper>
-        {datas.map((data, index) => (
+        {filteredDatas.map((data, index) => (
           <ArticleDiv
             key={data.id}
             articleNumber={index + 1}
@@ -62,7 +74,7 @@ export const ArticleSearchSideBar = ({
         ))}
       </ArticleWrapper>
       <AddButton
-        onClick={() => navigate('/article-management/add')}
+        onClick={() => navigate("/article-management/add")}
         text="기사 추가하기"
       />
     </SideBarContainer>
