@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3001,
-    host: true,
+    host: 'student.localhost',
     cors: true,
   },
   build: {
