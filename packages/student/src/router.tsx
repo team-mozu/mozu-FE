@@ -78,7 +78,7 @@
 //   },
 // ]);
 
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import {
   HomePage,
   NewsPage,
@@ -87,60 +87,61 @@ import {
   ResultPage,
   NewsDetailPage,
   StudentWaitPage,
-} from '@/pages';
-import { AppLayout } from '@/layout';
+} from "@/pages";
+import { AppLayout } from "@/layout";
+import { NotFoundPage } from "./pages/404";
 
 export const Router = createBrowserRouter([
   {
-    path: '/:classId',
+    path: "/:classId",
     element: <AppLayout />,
     children: [
       {
-        path: 'home',
+        path: "home",
         children: [
           {
             index: true,
             element: <HomePage />,
           },
           {
-            path: 'stock/:stockId',
+            path: "stock/:stockId",
             element: <StockPage />,
             children: [
               { index: true, element: <Navigate to="price-info" replace /> },
-              { path: 'price-info', element: <StockPage /> },
-              { path: 'stock-info', element: <StockPage /> },
+              { path: "price-info", element: <StockPage /> },
+              { path: "stock-info", element: <StockPage /> },
             ],
           },
         ],
       },
       {
-        path: 'news',
+        path: "news",
         children: [
           { index: true, element: <NewsPage /> },
-          { path: ':newsId', element: <NewsDetailPage /> },
+          { path: ":newsId", element: <NewsDetailPage /> },
         ],
       },
       {
-        path: 'result',
+        path: "result",
         element: <ResultPage />,
       },
     ],
   },
   {
-    path: 'signin',
+    path: "signin",
     children: [
       {
         index: true,
         element: <SignInPage />,
       },
       {
-        path: 'wait',
+        path: "wait",
         element: <StudentWaitPage />,
       },
     ],
   },
   {
-    path: '*', // 404 페이지
-    element: <div>404</div>,
+    path: "*",
+    element: <NotFoundPage />,
   },
 ]);
