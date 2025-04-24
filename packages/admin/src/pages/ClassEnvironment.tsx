@@ -69,25 +69,25 @@ export const ClassEnvironment = () => {
   // 정보 배열 구성
   const infos = classData
     ? [
-        { kind: '수업 이름', value: classData.name || '정보 없음' },
-        { kind: '투자 차수', value: `${classData.maxInvDeg}차` || '정보 없음' },
-        {
-          kind: '기초자산',
-          value: `${formatPrice(classData.baseMoney)}원` || '정보 없음',
-        },
-        { kind: '생성일자', value: classData.createdAt || '정보 없음' },
-      ]
+      { kind: '수업 이름', value: classData.name || '정보 없음' },
+      { kind: '투자 차수', value: `${classData.maxInvDeg}차` || '정보 없음' },
+      {
+        kind: '기초자산',
+        value: `${formatPrice(classData.baseMoney)}원` || '정보 없음',
+      },
+      { kind: '생성일자', value: classData.createdAt || '정보 없음' },
+    ]
     : [];
 
   // 투자 종목 데이터 가공
   const stockTableData = classData?.classItems
     ? classData.classItems.map((item) => ({
-        itemId: item.itemId,
-        itemCode: String(item.itemId),
-        itemName: item.itemName,
-        money: item.money,
-        stockChecked: false,
-      }))
+      itemId: item.itemId,
+      itemCode: String(item.itemId),
+      itemName: item.itemName,
+      money: item.money,
+      stockChecked: false,
+    }))
     : [];
 
   // 기사 데이터 가공
@@ -167,13 +167,11 @@ export const ClassEnvironment = () => {
             </BtnContainer>
           </Option>
           <TableBox>
-            <TableTitle>투자 종목</TableTitle>
             <StockTables
               isEdit={false}
               degree={selectedRound.toString()}
               data={stockTableData}
             />
-            <TableTitle>기사 목록</TableTitle>
             <ArticleTables
               isEdit={false}
               degree={selectedRound.toString()}
@@ -181,7 +179,7 @@ export const ClassEnvironment = () => {
             />
           </TableBox>
         </Content>
-      </Wrapper>
+      </Wrapper >
     </>
   );
 };
@@ -195,15 +193,16 @@ const LoadingWrapper = styled.div`
   color: ${color.zinc[500]};
 `;
 
-const TableTitle = styled.div`
-  font: ${font.t2};
-  margin-bottom: 16px;
-`;
-
 const TableBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 40px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 `;
 
 const Option = styled.div`
