@@ -54,12 +54,14 @@ const ItemContent = ({
           <ItemCode>{itemId}</ItemCode>
         </ItemTitleContainer>
       </LogoContainer>
-      <ItemPriceContainer>
-        <Price>{nowMoney.toLocaleString()}원</Price>
-        <Percent isUp={isUp}>
-          {`${isUp ? '+' : ''}${profitMoney.toLocaleString()}원 (${isUp ? '+' : ''}${profitNum})`}
-        </Percent>
-      </ItemPriceContainer>
+      {profitMoney !== 0 && (
+        <ItemPriceContainer>
+          <Price>{nowMoney.toLocaleString()}원</Price>
+          <Percent isUp={isUp}>
+            {`${isUp ? '+' : ''}${profitMoney.toLocaleString()}원 (${isUp ? '+' : ''}${profitNum})`}
+          </Percent>
+        </ItemPriceContainer>
+      )}
     </ItemContainer>
   );
 };
