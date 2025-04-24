@@ -85,7 +85,6 @@ export const StockPage = () => {
 };
 
 const Container = styled.div`
-  min-height: calc(100vh - 64px);
   width: 100%;
   padding: 40px;
   display: flex;
@@ -94,12 +93,12 @@ const Container = styled.div`
 `;
 
 const MainWrapper = styled.div`
-  flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: start;
   gap: 1rem;
-  /* width: 100%; */
+  width: 100%;
   > div:last-child {
     width: 100%;
   }
