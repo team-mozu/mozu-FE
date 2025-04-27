@@ -152,28 +152,28 @@ export const ArticleTables = ({
   const columns: ColumnDef<DisplayArticle>[] = [
     ...(isEdit
       ? [
-          {
-            accessorKey: 'checked',
-            header: () => (
-              <CheckBox
-                onChange={toggleAll}
-                checked={
-                  currentArticles.length > 0 &&
-                  checkedArticleIds.length === currentArticles.length
-                }
-                id="article-header-checkbox"
-              />
-            ),
-            cell: ({ row }) => (
-              <CheckBox
-                checked={row.original.checked}
-                onChange={() => toggleArticle(row.original.id)}
-                id={`article-row-${row.original.id}`}
-              />
-            ),
-            size: 52,
-          },
-        ]
+        {
+          accessorKey: 'checked',
+          header: () => (
+            <CheckBox
+              onChange={toggleAll}
+              checked={
+                currentArticles.length > 0 &&
+                checkedArticleIds.length === currentArticles.length
+              }
+              id="article-header-checkbox"
+            />
+          ),
+          cell: ({ row }) => (
+            <CheckBox
+              checked={row.original.checked}
+              onChange={() => toggleArticle(row.original.id)}
+              id={`article-row-${row.original.id}`}
+            />
+          ),
+          size: 52,
+        },
+      ]
       : []),
     {
       accessorKey: 'title',
@@ -193,31 +193,36 @@ export const ArticleTables = ({
   return (
     <TableContainer>
       <ControlContainer>
-        <SelectBox>
-          <Select
-            data={roundOptions}
-            width={100}
-            height={40}
-            value={selectedRound}
-            onChange={handleRoundChange}
-            padding={{ top: 10, bottom: 10, right: 10, left: 16 }}
-          />
-          차
-        </SelectBox>
+        <TableTitle>기사 목록</TableTitle>
 
-        {isEdit && (
-          <RightControls>
-            <Button
-              backgroundColor={color.zinc[50]}
-              borderColor={color.zinc[200]}
-              hoverBackgroundColor={color.zinc[100]}
-              onClick={handleDeleteChecked}
-              disabled={!hasCheckedItems}
-            >
-              선택항목 삭제하기
-            </Button>
-          </RightControls>
-        )}
+        <div>
+          <SelectBox>
+            <Select
+              data={roundOptions}
+              width={100}
+              height={40}
+              value={selectedRound}
+              onChange={handleRoundChange}
+              padding={{ top: 10, bottom: 10, right: 10, left: 16 }}
+            />
+            차
+          </SelectBox>
+
+          {isEdit && (
+            <RightControls>
+              <Button
+                backgroundColor={color.zinc[50]}
+                borderColor={color.zinc[200]}
+                hoverBackgroundColor={color.zinc[100]}
+                onClick={handleDeleteChecked}
+                disabled={!hasCheckedItems}
+              >
+                선택항목 삭제하기
+              </Button>
+            </RightControls>
+          )}
+        </div>
+
       </ControlContainer>
 
       <Table>
@@ -229,9 +234,9 @@ export const ArticleTables = ({
                   {header.isPlaceholder
                     ? null
                     : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
                 </Th>
               ))}
             </tr>
@@ -289,6 +294,13 @@ export const ArticleTables = ({
   );
 };
 
+const TableTitle = styled.div`
+  font: ${font.t2};
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+`;
+
 const TableContainer = styled.div`
   width: 100%;
 `;
@@ -298,6 +310,11 @@ const ControlContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+
+  > div {
+    display: flex;
+    gap: 24px;
+  }
 `;
 
 const RightControls = styled.div`

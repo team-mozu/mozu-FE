@@ -15,7 +15,6 @@ export const TeamCurrentModal = ({
   isOpen,
   setIsOpen,
 }: ITeamCurrentType) => {
-  const modalRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
 
   const handleClose = useCallback(() => {
