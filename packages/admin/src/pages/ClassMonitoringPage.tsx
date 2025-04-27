@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { ArticleInfoModal, Button, ClassInfoModal, Toast } from '@mozu/ui';
-import { useNavigate, useParams } from 'react-router';
-import { useState } from 'react';
-import { TeamCurrentModal, TeamInfoTable } from '@/components';
-import { useGetClassDetail, useNextDegree } from '@/apis';
-import { useSSE } from '@/hooks';
-import { useTeamStore } from '@/store';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { ArticleInfoModal, Button, ClassInfoModal, Toast } from "@mozu/ui";
+import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { TeamCurrentModal, TeamInfoTable } from "@/components";
+import { useGetClassDetail, useNextDegree } from "@/apis";
+import { useSSE } from "@/hooks";
+import { useTeamStore } from "@/store";
 
 interface TradeResult {
   teamId: number;
@@ -48,19 +48,40 @@ export const ClassMonitoringPage = () => {
     undefined,
     {
       TEAM_INV_END: (data) => {
-        Toast('투자가 종료되었습니다!', { type: 'success' });
+        Toast("투자가 종료되었습니다!", { type: "success" });
         setTradeResults((prev) => [...prev, data]);
       },
-    },
+    }
   );
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <Container>
       {isOpenArticle && (
-        <ArticleInfoModal classArticles={classData?.classArticles} isOpen={isOpenArticle} setIsOpen={setIsOpenArticle} />
+        <ArticleInfoModal
+          classArticles={classData?.classArticles}
+          isOpen={isOpenArticle}
+          setIsOpen={setIsOpenArticle}
+        />
       )}
       {isOpenClass && (
-        <ClassInfoModal classItems={classData?.classItems} isOpen={isOpenClass} setIsOpen={setIsOpenClass} />
+        <ClassInfoModal
+          classItems={classData?.classItems}
+          isOpen={isOpenClass}
+          setIsOpen={setIsOpenClass}
+        />
       )}
       {isOpenTeam && (
         <TeamCurrentModal
@@ -76,7 +97,7 @@ export const ClassMonitoringPage = () => {
         </TitleContainer>
         <ButtonContainer>
           <Button
-            type={'logOutImg'}
+            type={"logOutImg"}
             isIcon={true}
             iconColor={color.zinc[800]}
             iconSize={24}
@@ -89,7 +110,7 @@ export const ClassMonitoringPage = () => {
             모의투자 취소
           </Button>
           <Button
-            type={'startImg'}
+            type={"startImg"}
             isIcon={true}
             iconColor={color.white}
             iconSize={24}
@@ -120,7 +141,7 @@ export const ClassMonitoringPage = () => {
           </ClassInfo>
           <InfoBtn>
             <Button
-              type={'articleImg'}
+              type={"articleImg"}
               isIcon={true}
               color={color.zinc[800]}
               backgroundColor={color.zinc[50]}
@@ -133,7 +154,7 @@ export const ClassMonitoringPage = () => {
               기사정보
             </Button>
             <Button
-              type={'classImg'}
+              type={"classImg"}
               isIcon={true}
               color={color.zinc[800]}
               backgroundColor={color.zinc[50]}
