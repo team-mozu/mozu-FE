@@ -1,13 +1,13 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Toast } from '@mozu/ui';
-import { useCallback, useEffect, useState } from 'react';
-import { useTradeHistory, useUnchangedValue } from '@/hook';
-import { db } from '@/db';
-import { liveQuery } from 'dexie';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useTeamEnd } from '@/apis';
-import { InvestCompleteModal } from '@/components';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Toast } from "@mozu/ui";
+import { useCallback, useEffect, useState } from "react";
+import { useTradeHistory, useUnchangedValue } from "@/hook";
+import { db } from "@/db";
+import { liveQuery } from "dexie";
+import { useNavigate, useParams } from "react-router-dom";
+import { useTeamEnd } from "@/apis";
+import { InvestCompleteModal } from "@/components";
 
 interface ITransactionContentType {
   id: number;
@@ -50,8 +50,8 @@ const TransactionContent = ({
       await db.tradeHistory.delete(id);
       onDelete(id);
     } catch (error) {
-      console.error('삭제 실패:', error);
-      Toast('거래 취소 중 오류가 발생했습니다', { type: 'error' });
+      console.error("삭제 실패:", error);
+      Toast("거래 취소 중 오류가 발생했습니다", { type: "error" });
     }
   };
   return (
@@ -84,28 +84,30 @@ export const HistorySidebar = ({
   buyableAmount,
 }: ITeamDataProp) => {
   const [transactions, setTransactions] = useState<ITransactionContentType[]>(
-    [],
+    []
   );
 
   useEffect(() => {
     const observable = liveQuery(async () => {
-      return await db.tradeHistory.orderBy('timestamp').reverse().toArray();
+      return await db.tradeHistory.orderBy("timestamp").reverse().toArray();
     });
 
     const subscription = observable.subscribe({
       next: (history) => {
         const mapped = history.map((trade) => ({
           id: trade.id,
-          keyword: trade.orderType === 'BUY' ? '매수' : '매도',
+          keyword: trade.orderType === "BUY" ? "매수" : "매도",
           name: trade.itemName,
           totalPrice: (trade.itemMoney * trade.orderCount).toLocaleString(),
-          stockPrice: `${trade.itemMoney.toLocaleString()}원 (${trade.orderCount}주)`,
-          isUp: trade.orderType === 'BUY',
+          stockPrice: `${trade.itemMoney.toLocaleString()}원 (${
+            trade.orderCount
+          }주)`,
+          isUp: trade.orderType === "BUY",
           onDelete: handleDeleteTransaction,
         }));
         setTransactions(mapped);
       },
-      error: (error) => console.error('실시간 업데이트 오류:', error),
+      error: (error) => console.error("실시간 업데이트 오류:", error),
     });
 
     return () => subscription.unsubscribe();
@@ -125,17 +127,17 @@ export const HistorySidebar = ({
     buyableAmount: buyableAmount.toLocaleString(),
   };
 
-  const fixedProfitNum = Number(profitNum.replace('%', '')).toFixed(2);
+  const fixedProfitNum = Number(profitNum.replace("%", "")).toFixed(2);
   const formattedProfitNum = `${fixedProfitNum}%`;
 
   const sameValue: boolean = useUnchangedValue(
     totalMoney.toLocaleString(),
-    basicMoney.toLocaleString(),
+    basicMoney.toLocaleString()
   );
   const [isOpen, setIsOpen] = useState(false);
 
   const [isNextDeg, setIsNextDeg] = useState(
-    () => () => console.log('함수 실행됨'),
+    () => () => console.log("함수 실행됨")
   );
 
   const IsOpen = () => {
@@ -165,8 +167,8 @@ export const HistorySidebar = ({
                 sameValue
                   ? color.green[600]
                   : valueProfit > 0
-                    ? color.red[500]
-                    : color.blue[500]
+                  ? color.red[500]
+                  : color.blue[500]
               }
             >
               {formattedData.totalMoney}원
@@ -263,6 +265,7 @@ const Btn = styled.button`
   background-color: ${color.orange[500]};
   cursor: pointer;
   :hover {
+    transition: 0.35s ease-in-out;
     background-color: ${color.orange[600]};
   }
 `;
@@ -277,7 +280,8 @@ const SidebarContainer = styled.div`
   flex-direction: column;
   align-items: center;
   border-left: 1px solid ${color.zinc[200]};
-  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+  box-shadow: -2px 0 4px rgba(93, 93, 93, 0.1);
+  z-index: 1;
 `;
 
 const FooterContainer = styled.div`
@@ -322,7 +326,7 @@ const TransactionContentContainer = styled.div`
   align-items: center;
 `;
 
-const UpDownDiv = styled.div<Pick<ITransactionContentType, 'isUp'>>`
+const UpDownDiv = styled.div<Pick<ITransactionContentType, "isUp">>`
   font: ${font.b1};
   color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
 `;

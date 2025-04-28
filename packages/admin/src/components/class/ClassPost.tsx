@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Button, Star } from '@mozu/ui';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, Star } from "@mozu/ui";
 
 interface IClassPostType {
   title: string;
@@ -34,7 +34,7 @@ export const ClassPost = ({
               starOnClick && starOnClick(e);
             }}
             strokeColor={isClick ? color.yellow[400] : color.zinc[600]}
-            fillColor={isClick ? color.yellow[400] : 'none'}
+            fillColor={isClick ? color.yellow[400] : "none"}
           />
         </TitleIconContainer>
         <Button

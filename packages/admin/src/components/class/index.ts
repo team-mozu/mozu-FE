@@ -1,1 +1,1 @@
-export * from './ClassPost';
+export * from "./ClassPost";

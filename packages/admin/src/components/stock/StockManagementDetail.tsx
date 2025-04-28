@@ -140,7 +140,7 @@ export const StockManagementDetail = ({
                 // 빈 줄은 <br>로 처리
                 <br key={index} />
               ) : (
-                <p key={index}>{line}</p>
+                <CompanyText key={index}>{line}</CompanyText>
               )
             )}
           </div>
@@ -169,6 +169,11 @@ export const StockManagementDetail = ({
     </Container>
   );
 };
+
+const CompanyText = styled.div`
+  font: ${font.h5};
+  word-break: break-all;
+`;
 
 const LogoImg = styled.img`
   width: 64px;

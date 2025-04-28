@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { noImgIcon } from '@mozu/ui';
-import { useNavigate } from 'react-router-dom';
-import { useUnchangedValue } from '@/hook';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { noImgIcon } from "@mozu/ui";
+import { useNavigate } from "react-router-dom";
+import { useUnchangedValue } from "@/hook";
 
 interface IItemContentType {
   itemId?: number;
@@ -83,8 +83,8 @@ export const ItemSidebar = ({
               itemLogo={data.itemLogo}
               nowMoney={data.nowMoney ?? 0}
               isUp={
-                typeof data.profitNum === 'string' &&
-                data.profitNum.includes('-')
+                typeof data.profitNum === "string" &&
+                data.profitNum.includes("-")
                   ? false
                   : true
               }
@@ -92,7 +92,7 @@ export const ItemSidebar = ({
               profitNum={
                 data.profitNum && !isNaN(parseFloat(data.profitNum))
                   ? data.profitNum
-                  : '0%'
+                  : "0%"
               }
               onClick={() => navigate(`home/stock/${data.itemId}/stock-info`)}
             />
@@ -116,6 +116,7 @@ const ItemContainer = styled.div`
 
   :hover {
     background: ${color.zinc[100]};
+    transition: ease-in-out 0.35s;
   }
 `;
 
@@ -142,6 +143,10 @@ const ItemTitleContainer = styled.div`
 const ItemTitle = styled.div`
   font: ${font.b1};
   color: ${color.black};
+  width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const ItemCode = styled.div`
@@ -154,7 +159,7 @@ const Price = styled.div`
   color: ${color.black};
 `;
 
-const Percent = styled.div<Pick<IItemContentType, 'isUp'>>`
+const Percent = styled.div<Pick<IItemContentType, "isUp">>`
   font: ${font.l2};
   color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
 `;
@@ -181,7 +186,8 @@ const SideBarContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 4px rgba(93, 93, 93, 0.1);
+  z-index: 1;
 `;
 
 const ItemContentContainer = styled.div`

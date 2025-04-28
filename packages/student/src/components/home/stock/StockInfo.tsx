@@ -61,7 +61,7 @@ const CompanyInfo = styled.div`
 const StyledText = styled.p`
   white-space: pre-line;
   line-height: 1.7;
-  word-break: keep-all;
+  word-break: break-all;
 `;
 
 const CompanyMain = styled.div`
@@ -111,7 +111,7 @@ const Container = styled.div`
   overflow: scroll;
   padding: 32px;
   background-color: ${color.white};
-  width: 1500px;
+  width: 100%;
   height: 95%;
   border: 1px solid ${color.zinc[200]};
   border-radius: 16px;

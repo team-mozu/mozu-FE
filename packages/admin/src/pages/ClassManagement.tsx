@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, DeleteModal, PostTitle, PageTitle } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color } from '@mozu/design-token';
-import { ClassPost } from '@/components';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, DeleteModal, PostTitle, PageTitle } from "@mozu/ui";
+import styled from "@emotion/styled";
+import { color } from "@mozu/design-token";
+import { ClassPost } from "@/components";
 import {
   ClassItem,
   useClassDelete,
   useClassStar,
   useGetClassList,
-} from '@/apis';
+} from "@/apis";
 
 export const ClassManagement = () => {
   const { data } = useGetClassList();
@@ -58,10 +58,10 @@ export const ClassManagement = () => {
 
   const toggleFavorite = (
     index: number,
-    type: 'favorites' | 'common',
-    id?: number,
+    type: "favorites" | "common",
+    id?: number
   ) => {
-    if (type === 'favorites') {
+    if (type === "favorites") {
       setIsClickFavorites((prev) => {
         const updated = [...prev];
         updated[index] = !updated[index];
@@ -82,8 +82,8 @@ export const ClassManagement = () => {
     <>
       {isModal && (
         <DeleteModal
-          titleComment={'이 수업을 삭제하시겠습니까?'}
-          subComment={'삭제하면 복구가 불가능합니다.'}
+          titleComment={"이 수업을 삭제하시겠습니까?"}
+          subComment={"삭제하면 복구가 불가능합니다."}
           onCancel={handleCloseModal}
           onDelete={handleDelete}
         />
@@ -91,8 +91,8 @@ export const ClassManagement = () => {
       <ClassManagementContent>
         <TitleContainer>
           <PageTitle
-            mainTitle={'수업 관리'}
-            subTitle={'수업 환경을 만들어 사용해 보세요.'}
+            mainTitle={"수업 관리"}
+            subTitle={"수업 환경을 만들어 사용해 보세요."}
           />
           <Button
             type="plusImg"
@@ -101,7 +101,7 @@ export const ClassManagement = () => {
             isIcon
             iconSize={24}
             iconColor={color.white}
-            onClick={() => navigate('create')}
+            onClick={() => navigate("create")}
             hoverBackgroundColor={color.orange[600]}
           >
             수업 생성하기
@@ -120,7 +120,7 @@ export const ClassManagement = () => {
                       creationDate={item.date}
                       isClick={item.starYN}
                       starOnClick={() =>
-                        toggleFavorite(index, 'favorites', item.id)
+                        toggleFavorite(index, "favorites", item.id)
                       }
                       delClick={() => openDeleteModal(item.id)}
                       onClick={() => navigate(`${item.id}`)}
@@ -138,7 +138,7 @@ export const ClassManagement = () => {
                     title={item.name}
                     creationDate={item.date}
                     isClick={isClickCommon[index]}
-                    starOnClick={() => toggleFavorite(index, 'common', item.id)}
+                    starOnClick={() => toggleFavorite(index, "common", item.id)}
                     delClick={() => openDeleteModal(item.id)}
                     onClick={() => navigate(`${item.id}`)}
                   />

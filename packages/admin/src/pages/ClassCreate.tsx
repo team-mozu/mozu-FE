@@ -1,24 +1,24 @@
-import { formatPrice } from '@/utils/formatPrice';
-import styled from '@emotion/styled';
-import { font, color } from '@mozu/design-token';
-import { Button, Input, Select } from '@mozu/ui';
-import { ChangeEvent, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useClassCreate, useGetStockList, useGetArticleList } from '@/apis';
-import { StockTables } from '@/components/common/StockTables';
-import { ArticleTables } from '@/components/common/ArticleTables';
+import { formatPrice } from "@/utils/formatPrice";
+import styled from "@emotion/styled";
+import { font, color } from "@mozu/design-token";
+import { Button, Input, Select } from "@mozu/ui";
+import { ChangeEvent, useState } from "react";
+import { useNavigate } from "react-router";
+import { useClassCreate, useGetStockList, useGetArticleList } from "@/apis";
+import { StockTables } from "@/components/common/StockTables";
+import { ArticleTables } from "@/components/common/ArticleTables";
 import {
   ClassItemRequest,
   ClassArticleRequest,
   ClassCreateRequest,
   Article,
-} from '@/apis/class/type';
+} from "@/apis/class/type";
 
 export const CreateClass = () => {
   const navigate = useNavigate();
   const { mutate: mutateClassCreate } = useClassCreate();
-  const [className, setClassName] = useState<string>('');
-  const [classDeg, setClassDeg] = useState<'3' | '4' | '5'>('3');
+  const [className, setClassName] = useState<string>("");
+  const [classDeg, setClassDeg] = useState<"3" | "4" | "5">("3");
   const [baseMoney, setBaseMoney] = useState<number>(1000000);
   const [classItems, setClassItems] = useState<ClassItemRequest[]>([]);
   const [classArticles, setClassArticles] = useState<ClassArticleRequest[]>([]);
@@ -30,20 +30,20 @@ export const CreateClass = () => {
     setClassName(e.target.value);
   };
 
-  const onDegreeChange = (value: '3' | '4' | '5') => {
+  const onDegreeChange = (value: "3" | "4" | "5") => {
     setClassDeg(value);
   };
 
   const onBaseMoneyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^\d]/g, '');
-    const numValue = value === '' ? 0 : parseInt(value, 10);
+    const value = e.target.value.replace(/[^\d]/g, "");
+    const numValue = value === "" ? 0 : parseInt(value, 10);
 
     setBaseMoney(numValue);
   };
 
   // 투자 종목 관련 핸들러
   const handleAddItems = (newItems: any[]) => {
-    console.log('New items received in CreateClass:', newItems);
+    console.log("New items received in CreateClass:", newItems);
 
     // Add new items to the classItems array
     setClassItems((prevItems) => [...prevItems, ...newItems]);
@@ -52,7 +52,7 @@ export const CreateClass = () => {
     const newStockData = newItems.map((item) => {
       // Find the item name from the API response
       const stockItem = stockListData?.items.find(
-        (stockItem) => stockItem.id === item.id,
+        (stockItem) => stockItem.id === item.id
       );
       const itemName = stockItem ? stockItem.name : `Item ${item.id}`;
 
@@ -79,7 +79,7 @@ export const CreateClass = () => {
   const handleUpdateItemPrice = (
     itemId: number,
     levelIndex: number,
-    value: number | null,
+    value: number | null
   ) => {
     // Update the price in classItems
     setClassItems((items) =>
@@ -90,7 +90,7 @@ export const CreateClass = () => {
           return { ...item, money: updatedMoney };
         }
         return item;
-      }),
+      })
     );
 
     // Update the price in stockData for display
@@ -102,7 +102,7 @@ export const CreateClass = () => {
           return { ...item, money: updatedMoney };
         }
         return item;
-      }),
+      })
     );
   };
 
@@ -111,13 +111,13 @@ export const CreateClass = () => {
     invDeg: number;
     articles: Article[];
   }) => {
-    console.log('New articles received:', newArticleGroup);
+    console.log("New articles received:", newArticleGroup);
 
     const { invDeg, articles } = newArticleGroup;
 
     // 해당 차수의 기사 그룹 찾기
     const existingGroupIndex = classArticles.findIndex(
-      (group) => group.invDeg === invDeg,
+      (group) => group.invDeg === invDeg
     );
 
     if (existingGroupIndex >= 0) {
@@ -155,7 +155,7 @@ export const CreateClass = () => {
   const handleDeleteArticles = (articleIds: number[], degree: number) => {
     // 해당 차수의 기사 그룹 찾기
     const groupIndex = classArticles.findIndex(
-      (group) => group.invDeg === degree,
+      (group) => group.invDeg === degree
     );
 
     if (groupIndex === -1) return;
@@ -164,7 +164,7 @@ export const CreateClass = () => {
       const updatedGroups = [...prevGroups];
       // 삭제할 ID를 제외한 기사만 남기기
       const filteredArticleIds = updatedGroups[groupIndex].articles.filter(
-        (id) => !articleIds.includes(id),
+        (id) => !articleIds.includes(id)
       );
 
       // 남은 기사가 없으면 그룹 자체를 제거
@@ -185,12 +185,12 @@ export const CreateClass = () => {
   const onSubmit = () => {
     // Validate inputs
     if (!className.trim()) {
-      alert('수업 이름을 입력해주세요.');
+      alert("수업 이름을 입력해주세요.");
       return;
     }
 
     if (classItems.length === 0) {
-      alert('최소 하나 이상의 투자 종목을 추가해주세요.');
+      alert("최소 하나 이상의 투자 종목을 추가해주세요.");
       return;
     }
 
@@ -249,21 +249,21 @@ export const CreateClass = () => {
       </Header>
       <Contents>
         <TextField>
-          <FlexColumnBox>
+          <FlexInputBox>
             수업 이름
             <Input
               placeholder="수업 이름을 입력해 주세요.."
-              width="1080px"
+              width="100%"
               value={className}
               onChange={onTitleChange}
             />
-          </FlexColumnBox>
+          </FlexInputBox>
           <FlexColumnBox>
             투자 차수
             <SelectField>
               <Select
-                data={['3', '4', '5']}
-                width={120}
+                data={["3", "4", "5"]}
+                width={"4rem"}
                 height={48}
                 padding={{ top: 14, bottom: 14, left: 16, right: 10 }}
                 value={classDeg}
@@ -279,6 +279,7 @@ export const CreateClass = () => {
                 type="text"
                 onChange={onBaseMoneyChange}
                 value={formatPrice(baseMoney)}
+                width={"10rem"}
               />
               원
             </AssetField>
@@ -322,7 +323,7 @@ export const TableHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `;
 
 export const Text = styled.div`
@@ -362,6 +363,14 @@ export const FlexColumnBox = styled.div`
   gap: 8px;
 `;
 
+export const FlexInputBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  font: ${font.b1};
+  gap: 8px;
+  width: 62rem;
+`;
+
 export const SelectField = styled.div`
   display: flex;
   align-items: center;
@@ -371,15 +380,15 @@ export const SelectField = styled.div`
 
 export const TextField = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 24px;
+  flex-wrap: wrap;
 `;
 
 export const Contents = styled.div`
   background-color: ${color.white};
   border: 1px solid ${color.zinc[200]};
-  width: 1560px;
+  width: 100%;
   height: fit;
   border-radius: 16px;
   padding: 32px 24px 52px;
@@ -400,10 +409,11 @@ export const Container = styled.div`
   align-items: center;
   padding: 40px;
   gap: 8px;
+  width: 100%;
 `;
 
 export const Header = styled.div`
-  width: 1560px;
+  width: 100%;
   height: 64px;
   border: 1px solid ${color.zinc[200]};
   border-radius: 16px;

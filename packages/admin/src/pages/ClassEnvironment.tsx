@@ -1,12 +1,12 @@
-import { StockTables } from '@/components/common/StockTables';
-import { ArticleTables } from '@/components/common/ArticleTables';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from '@mozu/ui';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router';
-import { useClassStart, useGetClassDetail, useClassDelete } from '@/apis';
-import { formatPrice } from '@/utils/formatPrice';
+import { StockTables } from "@/components/common/StockTables";
+import { ArticleTables } from "@/components/common/ArticleTables";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from "@mozu/ui";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router";
+import { useClassStart, useGetClassDetail, useClassDelete } from "@/apis";
+import { formatPrice } from "@/utils/formatPrice";
 
 export const ClassEnvironment = () => {
   const { id } = useParams();
@@ -54,8 +54,8 @@ export const ClassEnvironment = () => {
         navigate(-1); // 삭제 후 이전 페이지로 이동
       },
       onError: (error) => {
-        console.error('클래스 삭제 중 오류 발생:', error);
-        alert('클래스 삭제에 실패했습니다.');
+        console.error("클래스 삭제 중 오류 발생:", error);
+        alert("클래스 삭제에 실패했습니다.");
       },
     });
     setIsModal(false);
@@ -69,13 +69,13 @@ export const ClassEnvironment = () => {
   // 정보 배열 구성
   const infos = classData
     ? [
-        { kind: '수업 이름', value: classData.name || '정보 없음' },
-        { kind: '투자 차수', value: `${classData.maxInvDeg}차` || '정보 없음' },
+        { kind: "수업 이름", value: classData.name || "정보 없음" },
+        { kind: "투자 차수", value: `${classData.maxInvDeg}차` || "정보 없음" },
         {
-          kind: '기초자산',
-          value: `${formatPrice(classData.baseMoney)}원` || '정보 없음',
+          kind: "기초자산",
+          value: `${formatPrice(classData.baseMoney)}원` || "정보 없음",
         },
-        { kind: '생성일자', value: classData.createdAt || '정보 없음' },
+        { kind: "생성일자", value: classData.createdAt || "정보 없음" },
       ]
     : [];
 
@@ -101,7 +101,7 @@ export const ClassEnvironment = () => {
     <>
       {isModal && (
         <DeleteModal
-          titleComment={`'${classData?.name || ''}' 삭제하실 건가요?`}
+          titleComment={`'${classData?.name || ""}' 삭제하실 건가요?`}
           subComment="삭제하면 복구가 불가능합니다."
           onCancel={closeDeleteModal}
           onDelete={handleDelete}
@@ -114,8 +114,8 @@ export const ClassEnvironment = () => {
               <ArrowLeft />
             </BackBtn>
             <TextBox>
-              <h2>{classData?.name || '정보 없음'}</h2>
-              <p>{classData?.createdAt || '날짜 없음'}</p>
+              <h2>{classData?.name || "정보 없음"}</h2>
+              <p>{classData?.createdAt || "날짜 없음"}</p>
             </TextBox>
           </Container>
           <div>
@@ -230,7 +230,7 @@ const InfoBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 1260px;
+  width: fit-content;
 `;
 
 const Content = styled.div`
@@ -282,7 +282,7 @@ const TextBox = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 12px;
-  width: 1257px;
+  width: fit-content;
   > h2 {
     font: ${font.h2};
   }
