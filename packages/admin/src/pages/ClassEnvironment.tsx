@@ -1,12 +1,13 @@
-import { StockTables } from '@/components/common/StockTables';
-import { ArticleTables } from '@/components/common/ArticleTables';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from '@mozu/ui';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router';
-import { useClassStart, useGetClassDetail, useClassDelete } from '@/apis';
-import { formatPrice } from '@/utils/formatPrice';
+import { StockTables } from "@/components/common/StockTables";
+import { ArticleTables } from "@/components/common/ArticleTables";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from "@mozu/ui";
+import { useEffect, useState } from "react";
+import { data, useLocation, useNavigate, useParams } from "react-router";
+import { useClassStart, useGetClassDetail, useClassDelete } from "@/apis";
+import { formatPrice } from "@/utils/formatPrice";
+import { Skeleton } from "../../../design-token/src/theme/Skeleton";
 
 export const ClassEnvironment = () => {
   const { id } = useParams();
@@ -15,7 +16,26 @@ export const ClassEnvironment = () => {
   const location = useLocation();
 
   // API 호출
-  const { data: classData, isLoading, refetch } = useGetClassDetail(classId);
+  const {
+    data: classData,
+    isLoading: apiLoading,
+    refetch,
+  } = useGetClassDetail(classId);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+  }, [classId]);
+
+  useEffect(() => {
+    if (!apiLoading && classData) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [apiLoading, classData]);
+
   const { mutate: startClass } = useClassStart(classId);
   const { mutate: deleteClass } = useClassDelete();
 
@@ -54,8 +74,8 @@ export const ClassEnvironment = () => {
         navigate(-1); // 삭제 후 이전 페이지로 이동
       },
       onError: (error) => {
-        console.error('클래스 삭제 중 오류 발생:', error);
-        alert('클래스 삭제에 실패했습니다.');
+        console.error("클래스 삭제 중 오류 발생:", error);
+        alert("클래스 삭제에 실패했습니다.");
       },
     });
     setIsModal(false);
@@ -90,18 +110,20 @@ export const ClassEnvironment = () => {
     }))
     : [];
 
+  console.log(stockTableData);
+
   // 기사 데이터 가공
   const articleTableData = classData?.classArticles || [];
 
-  if (isLoading) {
-    return <LoadingWrapper>데이터를 불러오는 중입니다...</LoadingWrapper>;
-  }
+  // if (isLoading) {
+  //   return <LoadingWrapper>데이터를 불러오는 중입니다...</LoadingWrapper>;
+  // }
 
   return (
     <>
       {isModal && (
         <DeleteModal
-          titleComment={`'${classData?.name || ''}' 삭제하실 건가요?`}
+          titleComment={`'${classData?.name || ""}' 삭제하실 건가요?`}
           subComment="삭제하면 복구가 불가능합니다."
           onCancel={closeDeleteModal}
           onDelete={handleDelete}
@@ -114,8 +136,16 @@ export const ClassEnvironment = () => {
               <ArrowLeft />
             </BackBtn>
             <TextBox>
-              <h2>{classData?.name || '정보 없음'}</h2>
-              <p>{classData?.createdAt || '날짜 없음'}</p>
+              {isLoading ? (
+                <H2Div>{classData?.name}</H2Div>
+              ) : (
+                <h2>{classData?.name || "정보 없음"}</h2>
+              )}
+              {isLoading ? (
+                <PDiv>{classData?.createdAt}</PDiv>
+              ) : (
+                <p>{classData?.createdAt || "날짜 없음"}</p>
+              )}
             </TextBox>
           </Container>
           <div>
@@ -135,12 +165,19 @@ export const ClassEnvironment = () => {
         <Content>
           <Option>
             <InfoBox>
-              {infos.map((data, index) => (
-                <Info key={index}>
-                  <span>{data.kind}</span>
-                  {data.value}
-                </Info>
-              ))}
+              {isLoading
+                ? infos.map((data, index) => (
+                    <InfoDiv key={index}>
+                      <span>{data.kind}</span>
+                      {data.value}
+                    </InfoDiv>
+                  ))
+                : infos.map((data, index) => (
+                    <Info key={index}>
+                      <span>{data.kind}</span>
+                      {data.value}
+                    </Info>
+                  ))}
             </InfoBox>
             <BtnContainer>
               <Button
@@ -168,6 +205,7 @@ export const ClassEnvironment = () => {
           </Option>
           <TableBox>
             <StockTables
+              isApiLoading={isLoading}
               isEdit={false}
               degree={selectedRound.toString()}
               data={stockTableData}
@@ -183,6 +221,15 @@ export const ClassEnvironment = () => {
     </>
   );
 };
+
+const PDiv = styled(Skeleton)`
+  color: transparent;
+  width: fit-content;
+`;
+
+const H2Div = styled(Skeleton)`
+  color: transparent;
+`;
 
 const LoadingWrapper = styled.div`
   display: flex;
@@ -225,11 +272,21 @@ const Info = styled.div`
   }
 `;
 
+const InfoDiv = styled(Skeleton)`
+  display: flex;
+  font: ${font.t2};
+  color: transparent;
+  > span {
+    width: 120px;
+    color: transparent;
+  }
+`;
+
 const InfoBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 1260px;
+  width: fit-content;
 `;
 
 const Content = styled.div`
@@ -281,7 +338,7 @@ const TextBox = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 12px;
-  width: 1257px;
+  width: fit-content;
   > h2 {
     font: ${font.h2};
   }

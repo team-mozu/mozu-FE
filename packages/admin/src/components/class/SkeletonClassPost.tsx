@@ -1,24 +1,18 @@
 import styled from "@emotion/styled";
-import { color, font } from "@mozu/design-token";
-import { Button, Star } from "@mozu/ui";
+import { color } from "@mozu/design-token";
+import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
-interface IClassPostType {
+interface IPostType {
   title: string;
   creationDate: string;
-  starOnClick?: (event: React.MouseEvent) => void;
-  isClick?: boolean;
-  delClick?: (event: React.MouseEvent) => void;
   onClick?: () => void;
 }
 
-export const ClassPost = ({
+export const SkeletonClassPost = ({
+  onClick,
   title,
   creationDate,
-  starOnClick,
-  isClick,
-  delClick,
-  onClick,
-}: IClassPostType) => {
+}: IPostType) => {
   return (
     <PostContainer onClick={onClick}>
       <ContentContainer>
@@ -27,33 +21,25 @@ export const ClassPost = ({
             <Title>{title}</Title>
             <CreationDate>생성일자 | {creationDate}</CreationDate>
           </TilteContainer>
-          <Star
-            size={20}
-            onClick={(e) => {
-              e.stopPropagation();
-              starOnClick && starOnClick(e);
-            }}
-            strokeColor={isClick ? color.yellow[400] : color.zinc[600]}
-            fillColor={isClick ? color.yellow[400] : "none"}
-          />
+          <StarDiv />
         </TitleIconContainer>
-        <Button
-          backgroundColor={color.zinc[50]}
-          color={color.zinc[800]}
-          
-          borderColor={color.zinc[200]}
-          onClick={(e) => {
-            e.stopPropagation();
-            delClick && delClick(e);
-          }}
-          hoverBackgroundColor={color.zinc[100]}
-        >
-          삭제하기
-        </Button>
+        <ButtonDiv />
       </ContentContainer>
     </PostContainer>
   );
 };
+
+const ButtonDiv = styled(Skeleton)`
+  width: 90px;
+  height: 42px;
+  border-radius: 8px;
+`;
+
+const StarDiv = styled(Skeleton)`
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+`;
 
 const PostContainer = styled.div`
   cursor: pointer;
@@ -67,18 +53,17 @@ const PostContainer = styled.div`
   align-items: center;
 `;
 
-const Title = styled.div`
-  font: ${font.h4};
-  color: ${color.black};
+const Title = styled(Skeleton)`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   width: 336px;
+  color: transparent;
 `;
 
-const CreationDate = styled.div`
-  font: ${font.b2};
-  color: ${color.zinc[500]};
+const CreationDate = styled(Skeleton)`
+  width: fit-content;
+  color: transparent;
 `;
 
 const TilteContainer = styled.div`

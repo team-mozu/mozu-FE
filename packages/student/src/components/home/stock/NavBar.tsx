@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useLocation, useNavigate } from 'react-router-dom';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface INavType {
   children: string;
@@ -20,18 +20,18 @@ export const NavBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const navItems = ['종목정보', '시세정보'];
-  const navRoutes = ['/stock-info', '/price-info'];
+  const navItems = ["종목정보", "시세정보"];
+  const navRoutes = ["/stock-info", "/price-info"];
 
   const currentPath = location.pathname;
   const activeIndex = navRoutes.findIndex((route) =>
-    currentPath.includes(route),
+    currentPath.includes(route)
   );
 
   const navClick = (index: number) => {
     const newPath = currentPath.replace(
       /\/(price-info|stock-info)/,
-      navRoutes[index],
+      navRoutes[index]
     );
     if (newPath !== currentPath) {
       navigate(newPath);
@@ -57,9 +57,10 @@ const BarContainer = styled.div`
   height: 40px;
   display: flex;
   justify-content: center;
+  gap: 10px;
 `;
 
-const NavContainer = styled.button<Pick<INavType, 'isActive'>>`
+const NavContainer = styled.button<Pick<INavType, "isActive">>`
   outline: none;
   border: none;
   padding: 10px 16px;
@@ -71,8 +72,8 @@ const NavContainer = styled.button<Pick<INavType, 'isActive'>>`
   color: ${({ isActive }) => (isActive ? color.black : color.zinc[600])};
   font: ${font.b1};
   background-color: ${({ isActive }) =>
-    isActive ? color.zinc[200] : 'transparent'};
-
+    isActive ? color.zinc[200] : "transparent"};
+  transition: 0.2s ease-in-out;
   ${({ isActive }) =>
     !isActive &&
     `

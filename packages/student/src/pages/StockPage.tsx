@@ -1,16 +1,16 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 import {
   NavBar,
   StockGraph,
   StockInfo,
   StockStatusBar,
   BuySellModal,
-} from '@/components';
-import { useLocation, useParams } from 'react-router-dom';
-import { ReactNode, useState } from 'react';
-import { useGetStockDetail, useGetTeamDetail } from '@/apis';
-import { TradeHistory } from '@/db/type';
-import { Toast } from '@mozu/ui';
+} from "@/components";
+import { useLocation, useParams } from "react-router-dom";
+import { ReactNode, useState } from "react";
+import { useGetStockDetail, useGetTeamDetail } from "@/apis";
+import { TradeHistory } from "@/db/type";
+import { Toast } from "@mozu/ui";
 
 export const StockPage = () => {
   const { stockId } = useParams();
@@ -18,15 +18,15 @@ export const StockPage = () => {
 
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    type: '매수' | '매도';
+    type: "매수" | "매도";
     // stock: StockData | null;
   }>({
     isOpen: false,
-    type: '매수',
+    type: "매수",
     // stock: null,
   });
 
-  const openModal = (type: '매수' | '매도' /* stock: StockData*/) => {
+  const openModal = (type: "매수" | "매도" /* stock: StockData*/) => {
     setModalState({ isOpen: true, type /* stock */ });
   };
 
@@ -38,13 +38,13 @@ export const StockPage = () => {
     if (trade.id) {
       // ID가 있으면 성공
       Toast(
-        `성공적으로 ${trade.orderType === 'BUY' ? '매수' : '매도'}되었습니다`,
+        `성공적으로 ${trade.orderType === "BUY" ? "매수" : "매도"}되었습니다`,
         {
-          type: 'success',
-        },
+          type: "success",
+        }
       );
     } else {
-      Toast('거래 처리에 실패했습니다', { type: 'error' });
+      Toast("거래 처리에 실패했습니다", { type: "error" });
     }
   };
 
@@ -53,8 +53,8 @@ export const StockPage = () => {
 
   const location = useLocation();
   const componentRoute = (currentPath: string): ReactNode => {
-    if (currentPath.includes('/price-info')) return <StockGraph />;
-    if (currentPath.includes('/stock-info')) return <StockInfo />;
+    if (currentPath.includes("/price-info")) return <StockGraph />;
+    if (currentPath.includes("/stock-info")) return <StockInfo />;
     return <p>404</p>;
   };
 
@@ -87,7 +87,7 @@ export const StockPage = () => {
 const Container = styled.div`
   width: 100%;
   padding: 40px;
-  display: flex;
+  display: flex; 
   flex-direction: column;
   gap: 24px;
 `;

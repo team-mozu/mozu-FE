@@ -1,9 +1,9 @@
-import { color } from '@mozu/design-token';
-import styled from '@emotion/styled';
-import { NewsDetail } from '@/components';
-import { ExitBtn, noImgIcon } from '@mozu/ui';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useGetArticleList, useGetStockDetail } from '@/apis';
+import { color } from "@mozu/design-token";
+import styled from "@emotion/styled";
+import { NewsDetail } from "@/components";
+import { ExitBtn, noImgIcon } from "@mozu/ui";
+import { useNavigate, useParams } from "react-router-dom";
+import { useGetArticleList, useGetStockDetail } from "@/apis";
 
 export const NewsDetailPage = () => {
   const navigate = useNavigate();
@@ -17,9 +17,9 @@ export const NewsDetailPage = () => {
         <Container>
           <ArticleDiv>
             <NewsDetail
-              img={index?.image ?? ''}
-              title={index?.title ?? ''}
-              main={index?.description ?? ''}
+              img={index?.image ?? ""}
+              title={index?.title ?? ""}
+              main={index?.description ?? ""}
             />
           </ArticleDiv>
         </Container>

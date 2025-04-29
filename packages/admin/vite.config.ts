@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()], // react-refresh 대신 사용
   server: {
     port: 3002,
-    host: 'admin.localhost',
+    host: "admin.localhost", // 네트워크 접근 허용
     cors: true, // CORS 설정
   },
   build: {

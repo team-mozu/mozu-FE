@@ -1,19 +1,19 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 import {
   useEffect,
   useRef,
   useState,
   forwardRef,
   useImperativeHandle,
-} from 'react';
-import { ChevronDown } from '.';
+} from "react";
+import { ChevronDown } from ".";
 
 interface ISelectProps {
   data: string[];
   value: string;
   onChange?: (value: string) => void;
-  width?: number;
+  width?: string;
   height?: number;
   padding?: {
     top?: number;
@@ -53,9 +53,9 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
         }
       };
 
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener("mousedown", handleClickOutside);
       };
     }, []);
 
@@ -88,15 +88,15 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
         </SelectOptions>
       </SelectContainer>
     );
-  },
+  }
 );
 
 // 스타일 컴포넌트
 const SelectContainer = styled.div<
-  Pick<ISelectProps, 'width' | 'height' | 'padding'> & { show: boolean }
+  Pick<ISelectProps, "width" | "height" | "padding"> & { show: boolean }
 >`
   position: relative;
-  width: ${(props) => props.width}px;
+  width: ${(props) => props.width};
   height: ${(props) => props.height}px;
   padding: ${(props) =>
     `${props.padding?.top}px ${props.padding?.right}px ${props.padding?.bottom}px ${props.padding?.left}px`};
@@ -120,7 +120,7 @@ const SelectedValue = styled.span`
 `;
 
 const ChevronWrapper = styled.div<{ show: boolean }>`
-  transform: rotate(${(props) => (props.show ? '180deg' : '0deg')});
+  transform: rotate(${(props) => (props.show ? "180deg" : "0deg")});
   transition: transform 0.2s ease-in-out;
 `;
 
@@ -129,13 +129,13 @@ const SelectOptions = styled.ul<{ show: boolean }>`
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  max-height: ${(props) => (props.show ? '200px' : '0')};
+  max-height: ${(props) => (props.show ? "200px" : "0")};
   overflow-y: auto;
   background-color: ${color.white};
-  border: ${(props) => (props.show ? `1px solid ${color.zinc[200]}` : 'none')};
+  border: ${(props) => (props.show ? `1px solid ${color.zinc[200]}` : "none")};
   border-radius: 8px;
   box-shadow: ${(props) =>
-    props.show ? `0 4px 6px ${color.zinc[200]}` : 'none'};
+    props.show ? `0 4px 6px ${color.zinc[200]}` : "none"};
   transition: all 0.2s ease-in-out;
   z-index: 10;
 `;
@@ -145,7 +145,7 @@ const Option = styled.li<{ selected?: boolean }>`
   font: ${font.b2};
   color: ${(props) => (props.selected ? color.orange[600] : color.zinc[800])};
   background-color: ${(props) =>
-    props.selected ? color.orange[50] : 'transparent'};
+    props.selected ? color.orange[50] : "transparent"};
   cursor: pointer;
   transition: all 0.1s ease;
   text-align: start;

@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useEffect, useState } from 'react';
-import { Button, Input, Toast } from '@mozu/ui';
-import { TradeHistory } from '@/db/type';
-import { db } from '@/db';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useEffect, useState } from "react";
+import { Button, Input, Toast } from "@mozu/ui";
+import { TradeHistory } from "@/db/type";
+import { db } from "@/db";
 
 interface IPropsType {
   modalType: string;
@@ -36,7 +36,7 @@ export const BuySellModal = ({
         itemMoney: nowMoney,
         orderCount: numericQuantity,
         totalMoney: numericQuantity * nowMoney,
-        orderType: modalType === '매수' ? 'BUY' : 'SELL',
+        orderType: modalType === "매수" ? "BUY" : "SELL",
         invDeg: invDeg,
         timestamp: new Date(),
       };
@@ -50,31 +50,31 @@ export const BuySellModal = ({
         onClose();
       }
     } catch (error) {
-      console.error('거래 실패:', error);
-      Toast('거래 처리 중 오류가 발생했습니다', { type: 'error' });
+      console.error("거래 실패:", error);
+      Toast("거래 처리 중 오류가 발생했습니다", { type: "error" });
     }
   };
 
   const maxQuantity = nowMoney > 0 ? Math.floor(cashMoney / nowMoney) : 0;
 
   // 상태 관리
-  const [quantity, setQuantity] = useState<string>('0');
-  const numericQuantity = Number(quantity.replace(/[^0-9]/g, '')) || 0;
+  const [quantity, setQuantity] = useState<string>("0");
+  const numericQuantity = Number(quantity.replace(/[^0-9]/g, "")) || 0;
 
   // 총 주문 금액 계산
   const totalAmount =
-    (numericQuantity * nowMoney).toLocaleString('ko-KR') + '원';
+    (numericQuantity * nowMoney).toLocaleString("ko-KR") + "원";
 
   // 데이터 초기화
   useEffect(() => {
-    const newQuantity = maxQuantity > 0 ? '1' : '0';
+    const newQuantity = maxQuantity > 0 ? "1" : "0";
     setQuantity(newQuantity);
   }, [nowMoney, cashMoney]);
 
   // 입력 변경 핸들러
   const priceChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    const numericValue = parseInt(inputValue.replace(/[^0-9]/g, ''), 10) || 0;
+    const numericValue = parseInt(inputValue.replace(/[^0-9]/g, ""), 10) || 0;
 
     if (numericValue <= maxQuantity && numericValue >= 0) {
       setQuantity(numericValue.toString());
@@ -84,8 +84,8 @@ export const BuySellModal = ({
   // UI 데이터
   const footerData = [
     { text: `${modalType}가능 수량`, value: `${maxQuantity}주` },
-    { text: '주문가격', value: `${nowMoney.toLocaleString()}원` },
-    { text: '총 주문금액', value: totalAmount },
+    { text: "주문가격", value: `${nowMoney.toLocaleString()}원` },
+    { text: "총 주문금액", value: totalAmount },
   ];
 
   if (!isOpen) return null;
@@ -95,16 +95,20 @@ export const BuySellModal = ({
       <Modal onClick={(e) => e.stopPropagation()}>
         <Wrapper>
           <Header
-            color={modalType === '매도' ? color.blue[500] : color.red[500]}
+            color={modalType === "매도" ? color.blue[500] : color.red[500]}
           >
             삼성전자
-            <span>{modalType} 주문</span>
+            <BuySellKeyword
+              color={modalType === "매도" ? color.blue[500] : color.red[500]}
+            >
+              {modalType} 주문
+            </BuySellKeyword>
           </Header>
           <InputBox>
             <Input
               placeholder=""
               label="수량"
-              width="290px"
+              width="100%"
               value={quantity}
               onChange={priceChangeHandler}
               disabled={maxQuantity === 0} // 수량 입력 비활성화
@@ -134,10 +138,10 @@ export const BuySellModal = ({
             </Button>
             <Button
               backgroundColor={
-                modalType === '매도' ? color.blue[500] : color.red[500]
+                modalType === "매도" ? color.blue[500] : color.red[500]
               }
               borderColor={
-                modalType === '매도' ? color.blue[500] : color.red[500]
+                modalType === "매도" ? color.blue[500] : color.red[500]
               }
               color="white"
               disabled={numericQuantity === 0}
@@ -152,8 +156,12 @@ export const BuySellModal = ({
   );
 };
 
+const BuySellKeyword = styled.div<{ color: string }>`
+  font: ${font.t3};
+  color: ${(color) => color.color};
+`;
+
 const Wrapper = styled.div`
-  margin: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -169,6 +177,7 @@ const BtnDiv = styled.div`
   padding: 12px 12px 12px 0px;
   border-top: 1px solid ${color.zinc[200]};
   width: 100%;
+  margin-top: 20px;
 `;
 
 const Footer = styled.div`
@@ -191,6 +200,7 @@ const FooterData = styled.div`
 const InputBox = styled.div`
   display: flex;
   align-items: flex-end;
+  width: 100%;
   gap: 8px;
   > span {
     font: ${font.t4};
@@ -198,23 +208,21 @@ const InputBox = styled.div`
   }
 `;
 
-const Header = styled.div<{ color: string }>`
+const Header = styled.div`
   font: ${font.t1};
   display: flex;
   flex-direction: column;
   width: 75px;
+  gap: 8px;
   justify-content: center;
-  > span {
-    font: ${font.t2};
-    color: ${(color) => color.color};
-  }
 `;
 
 const Modal = styled.div`
   background-color: ${color.white};
   border-radius: 16px;
-  width: 360px;
-  height: 356px;
+  width: 480px;
+  height: fit-content;
+  padding: 40px;
 `;
 
 const BackgroundContainer = styled.div`
@@ -224,7 +232,7 @@ const BackgroundContainer = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -3,13 +3,14 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
-} from '@tanstack/react-table';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Button, CheckBox, Select } from '@mozu/ui';
-import { useEffect, useState } from 'react';
-import { AddArticleItemModal } from '@/components/article/AddArticleItemModal';
-import { Article } from '@/apis/class/type';
+} from "@tanstack/react-table";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, CheckBox, Select } from "@mozu/ui";
+import { useEffect, useState } from "react";
+import { AddArticleItemModal } from "@/components/article/AddArticleItemModal";
+import { Article } from "@/apis/class/type";
+import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
 interface ClassArticleItem {
   invDeg: number;
@@ -29,18 +30,20 @@ interface ArticleTablesProps {
     invDeg: number;
     articles: Article[];
   }) => void;
+  isApiLoading?: boolean;
 }
 
 export const ArticleTables = ({
   data = [],
   isEdit,
   degree,
+  isApiLoading,
   onDeleteArticles,
   onAddArticles,
 }: ArticleTablesProps) => {
   const [isModal, setIsModal] = useState<boolean>(false);
   // 선택된 차수 (1, 2, 3, 4, 5)
-  const [selectedRound, setSelectedRound] = useState('1');
+  const [selectedRound, setSelectedRound] = useState("1");
 
   // 현재 선택된 차수의 기사 목록
   const [currentArticles, setCurrentArticles] = useState<DisplayArticle[]>([]);
@@ -58,12 +61,25 @@ export const ArticleTables = ({
         articleGroup.articles.map((article) => ({
           ...article,
           checked: checkedArticleIds.includes(article.id),
-        })),
+        }))
       );
     } else {
       setCurrentArticles([]);
     }
   }, [data, selectedRound, checkedArticleIds]);
+
+  //isLoading을 받아 스켈레톤 ui 구현
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  //받아오는 isLoading 값이 변경 될 때(로딩이 다시 될 때)와 selectedRound가 변경될 때 실행
+  useEffect(() => {
+    setIsLoading(true);
+    if (!isApiLoading) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [isApiLoading, selectedRound]);
 
   // 체크 상태가 변경될 때마다 현재 기사 목록 업데이트
   useEffect(() => {
@@ -71,7 +87,7 @@ export const ArticleTables = ({
       prevArticles.map((article) => ({
         ...article,
         checked: checkedArticleIds.includes(article.id),
-      })),
+      }))
     );
   }, [checkedArticleIds]);
 
@@ -140,12 +156,12 @@ export const ArticleTables = ({
 
   // 현재 선택된 차수에 맞는 옵션 배열 생성
   const roundOptions = Array.from({ length: parseInt(degree) }, (_, i) =>
-    (i + 1).toString(),
+    (i + 1).toString()
   );
 
   // 이미 추가된 모든 기사의 ID를 수집
   const allAddedArticleIds = data.flatMap((group) =>
-    group.articles.map((article) => article.id),
+    group.articles.map((article) => article.id)
   );
 
   // 테이블 컬럼 정의
@@ -176,9 +192,16 @@ export const ArticleTables = ({
       ]
       : []),
     {
-      accessorKey: 'title',
-      header: '기사 제목',
-      cell: ({ row }) => row.original.title,
+      accessorKey: "title",
+      header: "기사 제목",
+      cell: ({ row }) => {
+        const value = row.original.title;
+        if (isLoading) {
+          return <EmptyValueTextDiv>{value}</EmptyValueTextDiv>;
+        } else {
+          return <EmptyValueText>{value}</EmptyValueText>;
+        }
+      },
       size: 1460,
     },
   ];
@@ -234,9 +257,9 @@ export const ArticleTables = ({
                   {header.isPlaceholder
                     ? null
                     : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                 </Th>
               ))}
             </tr>
@@ -261,7 +284,7 @@ export const ArticleTables = ({
                   <EmptyStateText>
                     {isEdit
                       ? `${selectedRound}차에 추가된 기사가 없습니다.`
-                      : '기사가 없습니다.'}
+                      : "기사가 없습니다."}
                   </EmptyStateText>
                 </EmptyStateContainer>
               </EmptyStateTd>
@@ -286,13 +309,21 @@ export const ArticleTables = ({
           onArticlesSelected={handleArticlesSelected}
           selectedDegree={parseInt(selectedRound)}
           existingArticles={data.flatMap((group) =>
-            group.articles.map((article) => ({ id: article.id })),
+            group.articles.map((article) => ({ id: article.id }))
           )}
         />
       )}
     </TableContainer>
   );
 };
+
+const EmptyValueText = styled.span`
+  color: ${color.zinc[900]};
+`;
+
+const EmptyValueTextDiv = styled(Skeleton)`
+  color: transparent;
+`;
 
 const TableTitle = styled.div`
   font: ${font.t2};
