@@ -13,17 +13,28 @@ export interface TradeHistory {
   orderType: 'BUY' | 'SELL';
   invDeg: number;
   timestamp: Date;
+  originalBuyMoney?: number; // 매수 단가
+  originalValMoney?: number; // 평가 금액
+  originalValProfit?: number; // 평가 수익
 }
 
 export interface Item {
-  id: number;
+  id?: number;
   itemId: number;
   itemName: string;
-  itemCnt: number;
+  itemCnt: number; // 기존 필드
+  tradeCount?: number; // 새로 추가할 필드 (옵셔널)
   buyMoney: number;
-  totalMoney: number;
   nowMoney: number;
+  totalMoney: number;
   valMoney: number;
   valProfit: number;
   profitNum: number;
+}
+
+export interface ItemIndex {
+  itemId: number; // Primary key
+  tradeCount: number;
+  createdAt: Date; // Add createdAt field
+  updatedAt: Date;
 }

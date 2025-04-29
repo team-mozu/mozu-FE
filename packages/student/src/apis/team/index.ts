@@ -1,3 +1,4 @@
+import { db } from '@/db';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { instance } from '@configs/util';
 import {
@@ -18,6 +19,18 @@ export const useGetTeamDetail = () => {
     queryKey: ['getTeam'],
     queryFn: async () => {
       const { data } = await instance.get<TeamDeatilResponse>(`${router}`);
+
+      if (data && typeof data.cashMoney === 'number') {
+        try {
+          await db.team.put({ id: 1, cashMoney: data.cashMoney });
+          console.log(`Updated cashMoney in IndexedDB: ${data.cashMoney}`);
+        } catch (error) {
+          console.error('Failed to save cashMoney to IndexedDB:', error);
+        }
+      } else {
+        console.warn('cashMoney not found or invalid in response data.');
+      }
+
       return data;
     },
   });

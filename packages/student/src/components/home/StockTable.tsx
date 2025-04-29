@@ -20,8 +20,6 @@ interface StockData {
   profit: string;
 }
 
-const data: StockData[] = [];
-
 const columns: ColumnDef<StockData>[] = [
   { accessorKey: 'name', header: '종목 이름', size: 376 },
   { accessorKey: 'tradePrice', header: '거래 가격', size: 140 },
@@ -49,32 +47,6 @@ const columns: ColumnDef<StockData>[] = [
 
 export const StockTable = () => {
   const [stockData, setStockData] = useState<StockData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { data: response } = useGetHoldItems();
-
-  const fetchDataToIndexedDB = () => {
-    try {
-      if (!response) return;
-      db.items.bulkPut(
-        response.map((item) => ({
-          id: item.id,
-          itemId: item.itemId,
-          itemName: item.itemName,
-          buyMoney: item.buyMoney,
-          itemCnt: item.itemCnt,
-          totalMoney: item.totalMoney,
-          nowMoney: item.nowMoney,
-          valMoney: item.valMoney,
-          valProfit: item.valProfit,
-          profitNum: item.profitNum,
-        })),
-      );
-
-      return response;
-    } catch (error) {
-      throw new Error('데이터 갱신 실패');
-    }
-  };
 
   const transformToTableData = (items: ItemType[]): StockData[] => {
     return items.map((item) => ({
@@ -94,26 +66,6 @@ export const StockTable = () => {
     });
     return () => subscription.unsubscribe();
   }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const cachedItems = await db.items.toArray();
-        if (cachedItems.length > 0) {
-          setStockData(transformToTableData(cachedItems));
-        }
-
-        const freshItems = await fetchDataToIndexedDB();
-        setStockData(transformToTableData(freshItems));
-      } catch (error) {
-        console.error('Error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [response]);
 
   const table = useReactTable({
     data: stockData,

@@ -13,7 +13,7 @@ export type TeamDeatilResponse = {
 export type HoldItemsResponse = ItemType[];
 
 export type ItemType = {
-  id: number;
+  id?: number;
   itemId: number;
   itemName: string;
   itemCnt: number;

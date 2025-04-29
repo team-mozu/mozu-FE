@@ -43,6 +43,7 @@ const ToastType = {
     style: {
       backgroundColor: color.orange[500],
     },
-    icon: <Warning width={24} height={24} />,
+    icon: <Warning width={24} height={24} color={color.white} />,
+
   },
 };

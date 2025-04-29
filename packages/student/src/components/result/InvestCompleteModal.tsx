@@ -6,6 +6,8 @@ import { color, font } from '@mozu/design-token';
 import { Check, Button } from '@mozu/ui';
 import { useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { db } from '@/db';
+import { Toast } from '@mozu/ui';
 
 interface IInvestCompleteType {
   isOpen?: boolean;
@@ -37,7 +39,7 @@ export const InvestCompleteModal = ({
     };
   }, [isOpen, setIsOpen]);
 
-  const invDeg = () => {
+  const invDeg = async () => {
     const isValidData = history.every(
       (item) =>
         item.itemId &&
@@ -50,12 +52,20 @@ export const InvestCompleteModal = ({
 
     if (!isValidData) {
       console.error('Invalid data structure in history');
+      Toast('기록 데이터 구조 오류', { type: 'error' });
       return;
     }
 
-    teamEnd(history);
-    navigate(`/${classId}/result`);
-    setIsOpen(false);
+    try {
+      teamEnd(history);
+      await db.tradeHistory.clear();
+      navigate(`/${classId}/result`);
+      setIsOpen(false);
+
+    } catch (error) {
+      console.error('Failed to process investment completion or clear history:', error);
+      Toast('완료 처리 중 오류 발생', { type: 'error' });
+    }
   };
 
   if (!isOpen) return null;

@@ -45,12 +45,9 @@ export const CreateClass = () => {
   const handleAddItems = (newItems: any[]) => {
     console.log('New items received in CreateClass:', newItems);
 
-    // Add new items to the classItems array
     setClassItems((prevItems) => [...prevItems, ...newItems]);
 
-    // Convert to display format for the table
     const newStockData = newItems.map((item) => {
-      // Find the item name from the API response
       const stockItem = stockListData?.items.find(
         (stockItem) => stockItem.id === item.id,
       );
@@ -69,10 +66,8 @@ export const CreateClass = () => {
   };
 
   const onDeleteItems = (itemIds: number[]) => {
-    // Remove items from the classItems array
     setClassItems(classItems.filter((item) => !itemIds.includes(item.id)));
 
-    // Remove items from the stockData array
     setStockData(stockData.filter((item) => !itemIds.includes(item.itemId)));
   };
 
@@ -81,7 +76,6 @@ export const CreateClass = () => {
     levelIndex: number,
     value: number | null,
   ) => {
-    // Update the price in classItems
     setClassItems((items) =>
       items.map((item) => {
         if (item.id === itemId) {
@@ -93,7 +87,6 @@ export const CreateClass = () => {
       }),
     );
 
-    // Update the price in stockData for display
     setStockData((data) =>
       data.map((item) => {
         if (item.itemId === itemId) {

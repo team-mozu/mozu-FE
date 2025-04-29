@@ -2,19 +2,57 @@ import { Header } from '@mozu/ui';
 import { Outlet, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { useGetClassItem, useGetTeamDetail } from '@/apis';
+import { useGetClassItem, useGetTeamDetail, useGetHoldItems } from '@/apis';
 import { ItemSidebar, HistorySidebar } from '@/components';
 import { liveQuery } from 'dexie';
 import { db } from '@/db';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 export const AppLayout = () => {
   const [isResultPage, setIsResultPage] = useState<boolean>(false);
   const { pathname } = useLocation();
   const { data: itemSideBarData } = useGetClassItem();
   const { data: teamData } = useGetTeamDetail();
+  const { data: holdItems } = useGetHoldItems();
+
+  useEffect(() => {
+    if (holdItems) {
+      fetchDataToIndexedDB();
+    }
+  }, [holdItems]);
+
+  const fetchDataToIndexedDB = () => {
+    try {
+      if (!holdItems) return;
+      db.items.bulkPut(
+        holdItems.map((item) => ({
+          id: item.id,
+          itemId: item.itemId,
+          itemName: item.itemName,
+          buyMoney: item.buyMoney,
+          itemCnt: item.itemCnt,
+          totalMoney: item.totalMoney,
+          nowMoney: item.nowMoney,
+          valMoney: item.valMoney,
+          valProfit: item.valProfit,
+          profitNum: item.profitNum,
+        })),
+      );
+
+      return holdItems;
+    } catch (error) {
+      throw new Error('데이터 갱신 실패');
+    }
+  };
 
   const [totalBuy, setTotalBuy] = useState(0);
   const [totalSell, setTotalSell] = useState(0);
+
+  const localTeamData = useLiveQuery(
+    () => db.team.get(1),
+    []
+  );
+  const localCashMoney = localTeamData?.cashMoney ?? 0;
 
   useEffect(() => {
     const subscription = liveQuery(async () => {
@@ -43,7 +81,7 @@ export const AppLayout = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const buyableAmount = (teamData?.cashMoney || 0) - totalBuy + totalSell;
+  const buyableAmount = (localCashMoney || 0) - totalBuy + totalSell;
 
   useEffect(() => {
     console.log('itemSideBarData:', itemSideBarData ?? 0);
@@ -74,7 +112,7 @@ export const AppLayout = () => {
               teamName={teamData?.name ?? ''}
               totalMoney={teamData?.totalMoney ?? 0}
               basicMoney={teamData?.baseMoney ?? 0}
-              cashMoney={teamData?.cashMoney ?? 0}
+              cashMoney={localCashMoney}
               valueProfit={teamData?.valueProfit ?? 0}
               valueMoney={teamData?.valueMoney ?? 0}
               profitNum={teamData?.profitNum ?? ''}

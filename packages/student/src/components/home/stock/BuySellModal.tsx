@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react';
 import { Button, Input, Toast } from '@mozu/ui';
 import { TradeHistory } from '@/db/type';
 import { db } from '@/db';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { useGetHoldItems } from '@/apis';
+import { ItemType } from '@/apis/team/type'
+import { useQueryClient } from '@tanstack/react-query';
 
 interface IPropsType {
   modalType: string;
@@ -21,15 +25,31 @@ export const BuySellModal = ({
   modalType,
   onClose,
   nowMoney,
-  cashMoney,
   isOpen,
   itemId,
   itemName,
   onConfirm,
   invDeg,
 }: IPropsType) => {
+  const queryClient = useQueryClient();
+
   const handleConfirm = async () => {
+    const numericQuantity = Number(quantity.replace(/[^0-9]/g, '')) || 0;
+
+    if (modalType === '매도') {
+      const heldQuantity = localHoldItem?.itemCnt ?? 0;
+      if (numericQuantity > heldQuantity) {
+        Toast('보유 수량보다 많이 매도할 수 없습니다.', { type: 'warning' });
+        return;
+      }
+    }
+
     try {
+      if (numericQuantity <= 0) {
+        Toast('주문 수량은 0보다 커야 합니다.', { type: 'warning' });
+        return;
+      }
+
       const tradeData: TradeHistory = {
         itemId,
         itemName,
@@ -41,8 +61,79 @@ export const BuySellModal = ({
         timestamp: new Date(),
       };
 
-      const savedId = await db.tradeHistory.add(tradeData);
+      const savedId = await db.tradeHistory.add({
+        ...tradeData,
+        originalBuyMoney: nowMoney,
+        originalValMoney: nowMoney,
+        originalValProfit: 0
+      });
+
       if (savedId) {
+        try {
+          const currentTeamData = await db.team.get(1);
+          if (currentTeamData && typeof currentTeamData.cashMoney === 'number') {
+            let newCashMoney: number;
+            if (tradeData.orderType === 'BUY') {
+              newCashMoney = currentTeamData.cashMoney - tradeData.totalMoney;
+            } else {
+              newCashMoney = currentTeamData.cashMoney + tradeData.totalMoney;
+            }
+
+            await db.team.update(1, { cashMoney: newCashMoney });
+            console.log(`IndexedDB cashMoney updated to: ${newCashMoney}`);
+
+            if (tradeData.orderType === 'SELL') {
+              // React Query 캐시 업데이트 (기존 코드)
+              queryClient.setQueryData<ItemType[]>(['holdItems'], (oldData) => {
+                if (!oldData) return oldData;
+                return oldData
+                  .map(item => {
+                    if (item.itemId === tradeData.itemId) {
+                      return {
+                        ...item,
+                        itemCnt: item.itemCnt - tradeData.orderCount,
+                      };
+                    }
+                    return item;
+                  })
+                  .filter(item => item.itemCnt > 0);
+              });
+
+              // IndexedDB의 holdItems 업데이트 추가
+              try {
+                // holdItems 테이블에서 해당 아이템 조회
+                const existingItem = await db.items.get({ itemId: tradeData.itemId });
+
+                if (existingItem) {
+                  const newCount = existingItem.itemCnt - tradeData.orderCount;
+
+                  if (newCount > 0) {
+                    // 수량 업데이트
+                    await db.items.update(existingItem.id, {
+                      itemCnt: newCount
+                    });
+                  } else {
+                    // 수량이 0 이하면 아이템 삭제
+                    await db.items.delete(existingItem.id);
+                  }
+
+                  console.log(`IndexedDB items updated for item ${tradeData.itemId}`);
+                }
+              } catch (dbError) {
+                console.error('Failed to update items in IndexedDB:', dbError);
+                Toast('보유 종목 업데이트 실패', { type: 'error' });
+              }
+            }
+
+
+          } else {
+            Toast('로컬 잔액 업데이트 실패', { type: 'error' });
+          }
+        } catch (dbError) {
+          console.error('Failed to update cashMoney in IndexedDB:', dbError);
+          Toast('로컬 잔액 업데이트 실패', { type: 'error' });
+        }
+
         onConfirm({
           ...tradeData,
           id: savedId,
@@ -50,28 +141,42 @@ export const BuySellModal = ({
         onClose();
       }
     } catch (error) {
-      console.error('거래 실패:', error);
       Toast('거래 처리 중 오류가 발생했습니다', { type: 'error' });
+      console.error('Error adding trade history:', error);
     }
   };
 
-  const maxQuantity = nowMoney > 0 ? Math.floor(cashMoney / nowMoney) : 0;
+  const localTeamData = useLiveQuery(
+    () => db.team.get(1),
+    []
+  );
+  const localCashMoney = localTeamData?.cashMoney ?? 0;
 
-  // 상태 관리
+  const localHoldItem = useLiveQuery(
+    () => (modalType === '매도' ? db.items.get({ itemId: itemId }) : undefined),
+    [itemId, modalType],
+  );
+
+  const maxQuantity = (() => {
+    if (modalType === '매수') {
+      return nowMoney > 0 ? Math.floor(localCashMoney / nowMoney) : 0;
+    } else { // 매도
+      // Use item count from IndexedDB live query
+      return localHoldItem?.itemCnt ?? 0;
+    }
+  })();
+
   const [quantity, setQuantity] = useState<string>('0');
   const numericQuantity = Number(quantity.replace(/[^0-9]/g, '')) || 0;
 
-  // 총 주문 금액 계산
   const totalAmount =
     (numericQuantity * nowMoney).toLocaleString('ko-KR') + '원';
 
-  // 데이터 초기화
   useEffect(() => {
     const newQuantity = maxQuantity > 0 ? '1' : '0';
     setQuantity(newQuantity);
-  }, [nowMoney, cashMoney]);
+  }, [nowMoney, maxQuantity, modalType, localHoldItem]);
 
-  // 입력 변경 핸들러
   const priceChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     const numericValue = parseInt(inputValue.replace(/[^0-9]/g, ''), 10) || 0;
@@ -81,12 +186,20 @@ export const BuySellModal = ({
     }
   };
 
-  // UI 데이터
   const footerData = [
     { text: `${modalType}가능 수량`, value: `${maxQuantity}주` },
     { text: '주문가격', value: `${nowMoney.toLocaleString()}원` },
     { text: '총 주문금액', value: totalAmount },
   ];
+
+  const confirmButtonDisabled = (() => {
+    if (numericQuantity <= 0) return true;
+    if (modalType === '매수') {
+      return numericQuantity * nowMoney > localCashMoney;
+    } else {
+      return numericQuantity > maxQuantity;
+    }
+  })();
 
   if (!isOpen) return null;
 
@@ -97,7 +210,7 @@ export const BuySellModal = ({
           <Header
             color={modalType === '매도' ? color.blue[500] : color.red[500]}
           >
-            삼성전자
+            {itemName}
             <span>{modalType} 주문</span>
           </Header>
           <InputBox>
@@ -107,7 +220,7 @@ export const BuySellModal = ({
               width="290px"
               value={quantity}
               onChange={priceChangeHandler}
-              disabled={maxQuantity === 0} // 수량 입력 비활성화
+              disabled={maxQuantity === 0}
             />
             <span>주</span>
           </InputBox>
@@ -140,7 +253,7 @@ export const BuySellModal = ({
                 modalType === '매도' ? color.blue[500] : color.red[500]
               }
               color="white"
-              disabled={numericQuantity === 0}
+              disabled={confirmButtonDisabled}
               onClick={handleConfirm}
             >
               {modalType}하기

@@ -1,12 +1,10 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Toast } from '@mozu/ui';
-import { useCallback, useEffect, useState } from 'react';
-import { useTradeHistory, useUnchangedValue } from '@/hook';
+import { useEffect, useState } from 'react';
+import { useUnchangedValue } from '@/hook';
 import { db } from '@/db';
 import { liveQuery } from 'dexie';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useTeamEnd } from '@/apis';
 import { InvestCompleteModal } from '@/components';
 
 interface ITransactionContentType {
@@ -47,7 +45,65 @@ const TransactionContent = ({
 }: ITransactionContentType) => {
   const handleDelete = async () => {
     try {
-      await db.tradeHistory.delete(id);
+      await db.transaction('rw', db.tradeHistory, db.team, db.items, async () => {
+        const tradeToDelete = await db.tradeHistory.get(id);
+        if (!tradeToDelete) {
+          throw new Error(`Trade with id ${id} not found.`);
+        }
+
+        // 팀 현금 업데이트
+        const currentTeamData = await db.team.get(1);
+        if (!currentTeamData || typeof currentTeamData.cashMoney !== 'number') {
+          throw new Error('Could not retrieve current team cashMoney.');
+        }
+
+        const newCashMoney = tradeToDelete.orderType === 'BUY'
+          ? currentTeamData.cashMoney + tradeToDelete.totalMoney
+          : currentTeamData.cashMoney - tradeToDelete.totalMoney;
+
+        await db.team.update(1, { cashMoney: newCashMoney });
+
+        // 아이템 수량 업데이트
+        const existingItem = await db.items.get({ itemId: tradeToDelete.itemId });
+
+        if (tradeToDelete.orderType === 'BUY') {
+          // BUY 취소 로직
+          if (existingItem) {
+            const newCount = existingItem.itemCnt - tradeToDelete.orderCount;
+            if (newCount > 0) {
+              await db.items.update(existingItem.id, { itemCnt: newCount });
+            } else {
+              await db.items.delete(existingItem.id);
+            }
+          }
+        } else {
+          // SELL 취소 로직
+          if (existingItem) {
+            const newCount = existingItem.itemCnt + tradeToDelete.orderCount;
+            await db.items.update(existingItem.id, {
+              itemCnt: newCount,
+              tradeCount: (existingItem.tradeCount || 0) + tradeToDelete.orderCount // 추가된 필드
+            });
+          } else {
+            await db.items.add({
+              itemId: tradeToDelete.itemId,
+              itemName: tradeToDelete.itemName,
+              itemCnt: tradeToDelete.orderCount,
+              tradeCount: tradeToDelete.orderCount, // 신규 필드
+              buyMoney: 0,
+              nowMoney: tradeToDelete.itemMoney,
+              totalMoney: tradeToDelete.itemMoney * tradeToDelete.orderCount,
+              valMoney: 0,
+              valProfit: 0,
+              profitNum: 0,
+            });
+          }
+        }
+
+        await db.tradeHistory.delete(id);
+        console.log(`Trade ${id} deleted, cash updated to ${newCashMoney}`);
+      });
+
       onDelete(id);
     } catch (error) {
       console.error('삭제 실패:', error);
@@ -190,7 +246,7 @@ export const HistorySidebar = ({
           <p>거래내역</p>
         </UpperContainer>
         <TransactionHistoryContents>
-          {datas.transactionHistory.map((data, index) => (
+          {datas.transactionHistory.map((data) => (
             <TransactionContent
               key={data.id}
               id={data.id}
