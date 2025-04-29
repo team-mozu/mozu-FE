@@ -3,13 +3,14 @@ import {
   useReactTable,
   getCoreRowModel,
   flexRender,
-} from '@tanstack/react-table';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Button, CheckBox } from '@mozu/ui';
-import { useState, useMemo, forwardRef, useRef, useEffect } from 'react';
-import { formatPrice } from '@/utils/formatPrice';
-import { AddInvestItemModal } from '@/components/stock/AddInvestItemModal';
+} from "@tanstack/react-table";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, CheckBox } from "@mozu/ui";
+import { useState, useMemo, forwardRef, useRef, useEffect } from "react";
+import { formatPrice } from "@/utils/formatPrice";
+import { AddInvestItemModal } from "@/components/stock/AddInvestItemModal";
+import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
 // 투자 종목 데이터 인터페이스
 interface StockData {
@@ -27,10 +28,11 @@ interface InvestmentItemsTableProps {
   onPriceChange?: (
     itemId: number,
     levelIndex: number,
-    value: number | null,
+    value: number | null
   ) => void;
   onDeleteItems?: (itemIds: number[]) => void;
   onAddItems?: (items: any[]) => void;
+  isApiLoading?: boolean;
 }
 
 // 포커스를 유지하는 커스텀 Input 컴포넌트
@@ -44,26 +46,26 @@ const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>(
   ({ value, onChange, placeholder }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
     const [localValue, setLocalValue] = useState(
-      value === null ? '' : value.toString().replace(/,/g, ''),
+      value === null ? "" : value.toString().replace(/,/g, "")
     );
 
     const handleFocus = () => {
       setIsFocused(true);
-      setLocalValue(value === null ? '' : value.toString().replace(/,/g, ''));
+      setLocalValue(value === null ? "" : value.toString().replace(/,/g, ""));
     };
 
     const handleBlur = () => {
       setIsFocused(false);
-      if (localValue === '') {
+      if (localValue === "") {
         onChange(null);
       } else {
-        const numericValue = Number(localValue.replace(/[^0-9]/g, '')) || 0;
+        const numericValue = Number(localValue.replace(/[^0-9]/g, "")) || 0;
         onChange(numericValue);
       }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = e.target.value.replace(/[^\d]/g, '');
+      const inputValue = e.target.value.replace(/[^\d]/g, "");
       setLocalValue(inputValue);
     };
 
@@ -72,7 +74,7 @@ const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>(
         ref={ref}
         type="text"
         value={
-          isFocused ? localValue : value === null ? '' : formatPrice(value)
+          isFocused ? localValue : value === null ? "" : formatPrice(value)
         }
         onChange={handleChange}
         onFocus={handleFocus}
@@ -80,7 +82,7 @@ const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>(
         placeholder={placeholder}
       />
     );
-  },
+  }
 );
 
 export const StockTables = ({
@@ -90,6 +92,7 @@ export const StockTables = ({
   onPriceChange,
   onDeleteItems,
   onAddItems,
+  isApiLoading,
 }: InvestmentItemsTableProps) => {
   const selectedRound = parseInt(degree, 10);
   const [stockData, setStockData] = useState<StockData[]>(data);
@@ -109,7 +112,7 @@ export const StockTables = ({
       stockData.map((item) => ({
         ...item,
         stockChecked: !allChecked,
-      })),
+      }))
     );
   };
 
@@ -119,8 +122,8 @@ export const StockTables = ({
       stockData.map((item) =>
         item.itemId === itemId
           ? { ...item, stockChecked: !item.stockChecked }
-          : item,
-      ),
+          : item
+      )
     );
   };
 
@@ -145,7 +148,7 @@ export const StockTables = ({
   const handlePriceChange = (
     itemId: number,
     levelIndex: number,
-    value: number | null,
+    value: number | null
   ) => {
     // Update local state
     setStockData(
@@ -156,7 +159,7 @@ export const StockTables = ({
           return { ...item, money: newMoney };
         }
         return item;
-      }),
+      })
     );
 
     // Call the parent component's price change handler if provided
@@ -180,19 +183,25 @@ export const StockTables = ({
 
   // 차수에 따라 동적 컬럼 생성
   const dynamicColumns = useMemo(() => {
-    const columns = ['현재가'];
+    const columns = ["현재가"];
     for (let i = 1; i <= selectedRound; i++) {
       columns.push(`${i}차`);
     }
     return columns;
   }, [selectedRound]);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoading(isApiLoading);
+  }, [isApiLoading]);
+
   // 테이블 컬럼 정의
   const columns: ColumnDef<StockData>[] = [
     ...(isEdit
       ? [
           {
-            accessorKey: 'stockChecked',
+            accessorKey: "stockChecked",
             header: () => (
               <CheckBox
                 onChange={toggleAll}
@@ -215,27 +224,51 @@ export const StockTables = ({
         ]
       : []),
     {
-      accessorKey: 'itemCode',
+      accessorKey: "itemCode",
       header: () => <>종목 코드</>,
       size: 120,
-      meta: { align: 'left' },
+      meta: { align: "left" },
+      cell: ({ row }) => {
+        const value = row.original.itemCode;
+        if (isLoading) {
+          return <EmptyValueTextDiv>{value}</EmptyValueTextDiv>;
+        } else {
+          return value === null ? (
+            <EmptyValueText>{value}</EmptyValueText>
+          ) : (
+            formatPrice(value)
+          );
+        }
+      },
     },
     {
-      accessorKey: 'itemName',
+      accessorKey: "itemName",
       header: () => <>종목 이름</>,
       size: 300,
-      meta: { align: 'left' },
+      meta: { align: "left" },
+      cell: ({ row }) => {
+        const value = row.original.itemName;
+        if (isLoading) {
+          return <EmptyValueTextDiv>{value}</EmptyValueTextDiv>;
+        } else {
+          return value === null ? (
+            <EmptyValueText>{value}</EmptyValueText>
+          ) : (
+            formatPrice(value)
+          );
+        }
+      },
     },
     // 현재가와 차수별 가격 컬럼 동적 생성
     ...dynamicColumns.map((header, index) => ({
       id: `level${index}`,
       header: () => <>{header}</>,
       size: 140,
-      meta: { align: 'right' },
+      meta: { align: "right" },
       cell: ({ row }) => {
         const value = row.original.money[index];
         const inputId = `${row.original.itemId}-${index}`;
-        const placeholder = `${index > 0 ? index + '차' : '현재'} 금액`;
+        const placeholder = `${index > 0 ? index + "차" : "현재"} 금액`;
 
         if (isEdit) {
           return (
@@ -249,11 +282,19 @@ export const StockTables = ({
             />
           );
         } else {
-          return value === null ? (
-            <EmptyValueText>{placeholder}</EmptyValueText>
-          ) : (
-            formatPrice(value)
-          );
+          if (isLoading) {
+            return (
+              <EmptyValueTextDiv>
+                {value === null ? placeholder : formatPrice(value)}
+              </EmptyValueTextDiv>
+            );
+          } else {
+            return value === null ? (
+              <EmptyValueText>{placeholder}</EmptyValueText>
+            ) : (
+              formatPrice(value)
+            );
+          }
         }
       },
     })),
@@ -315,7 +356,7 @@ export const StockTables = ({
                 >
                   {flexRender(
                     header.column.columnDef.header,
-                    header.getContext(),
+                    header.getContext()
                   )}
                 </Th>
               ))}
@@ -328,13 +369,13 @@ export const StockTables = ({
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   // 가격 입력 필드를 위한 inputId 생성
-                  const isInputCell = cell.column.id.startsWith('level');
+                  const isInputCell = cell.column.id.startsWith("level");
                   const levelIndex = isInputCell
-                    ? parseInt(cell.column.id.replace('level', ''), 10)
+                    ? parseInt(cell.column.id.replace("level", ""), 10)
                     : -1;
                   const inputId = isInputCell
                     ? `${row.original.itemId}-${levelIndex}`
-                    : '';
+                    : "";
 
                   return (
                     <Td
@@ -349,7 +390,7 @@ export const StockTables = ({
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </Td>
                   );
@@ -428,7 +469,7 @@ const Th = styled.th<{ width: string; align?: string }>`
   padding: 16px 14px;
   min-width: 80px;
   width: ${(props) => props.width};
-  text-align: ${(props) => props.align || 'left'};
+  text-align: ${(props) => props.align || "left"};
 
   &:first-of-type {
     border-top-left-radius: 8px;
@@ -444,8 +485,8 @@ const Td = styled.td<{ align?: string; clickable?: boolean }>`
   border-bottom: 1px solid ${color.zinc[200]};
   border: 1px solid ${color.zinc[200]};
   padding: 16px 14px;
-  text-align: ${(props) => props.align || 'left'};
-  cursor: ${(props) => (props.clickable ? 'pointer' : 'default')};
+  text-align: ${(props) => props.align || "left"};
+  cursor: ${(props) => (props.clickable ? "pointer" : "default")};
 
   tbody tr:last-of-type & {
     &:first-of-type {
@@ -470,8 +511,27 @@ const PriceInputStyle = styled.input`
   }
 `;
 
+const PriceInputStyleDiv = styled(Skeleton)`
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font: ${font.b2};
+  width: 110px;
+  text-align: right;
+  color: transparent;
+
+  &::placeholder {
+    color: transparent;
+  }
+`;
+
 const EmptyValueText = styled.span`
   color: ${color.zinc[400]};
+  font-style: italic;
+`;
+
+const EmptyValueTextDiv = styled(Skeleton)`
+  color: transparent;
   font-style: italic;
 `;
 

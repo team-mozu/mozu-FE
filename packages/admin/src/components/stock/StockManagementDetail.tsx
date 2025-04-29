@@ -1,10 +1,18 @@
-import { Del, Edit, Button, Accounts, StockNoLogo } from "@mozu/ui";
+import {
+  Del,
+  Edit,
+  Button,
+  Accounts,
+  StockNoLogo,
+  AccountsSkeleton,
+} from "@mozu/ui";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useDeleteStock, useGetStockDetail } from "@/apis";
 import { usePriceFormatter } from "@/hooks";
+import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
 interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
@@ -51,14 +59,28 @@ export const StockManagementDetail = ({
     datas.netProfit?.toString() || "",
   ];
 
-  const { data: stockData, isLoading } = useGetStockDetail(stockId);
+  const { data: stockData, isLoading: apiLoading } = useGetStockDetail(stockId);
   const { mutate: stockDelete } = useDeleteStock(stockId);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+  }, [stockId]);
+
+  useEffect(() => {
+    if (!apiLoading && stockData) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [apiLoading, stockData]);
 
   const lines = datas.info ? datas.info.split("\n") : [];
 
-  if (isLoading) {
-    <div>로딩중...</div>;
-  }
+  // if (isLoading) {
+  //   <div>로딩중...</div>;
+  // }
 
   useEffect(() => {
     if (stockData) {
@@ -92,19 +114,27 @@ export const StockManagementDetail = ({
   //   }
   // }, [datas.logo]);
 
+  console.log(datas);
+
   return (
     <Container>
       <UpperContainer>
         <div>
           <Logo>
-            {datas.logo ? (
+            {isLoading ? (
+              <LogoImgDiv />
+            ) : datas.logo ? (
               <LogoImg src={datas.logo} alt="로고" />
             ) : (
               <StockNoLogo />
             )}
           </Logo>
           <Text>
-            <Title>{datas.name}</Title>
+            {isLoading ? (
+              <TitleDiv>{datas.name}</TitleDiv>
+            ) : (
+              <Title>{datas.name}</Title>
+            )}
           </Text>
         </div>
         <ButtonContainer>
@@ -135,12 +165,16 @@ export const StockManagementDetail = ({
         <CompanyInfo>
           <Label>회사 정보</Label>
           <div>
-            {lines.map((line, index) =>
-              line.trim() === "" ? (
-                // 빈 줄은 <br>로 처리
-                <br key={index} />
-              ) : (
-                <CompanyText key={index}>{line}</CompanyText>
+            {isLoading ? (
+              <CompanyDiv>{lines}</CompanyDiv>
+            ) : (
+              lines.map((line, index) =>
+                line.trim() === "" ? (
+                  // 빈 줄은 <br>로 처리
+                  <br key={index} />
+                ) : (
+                  <CompanyText key={index}>{line}</CompanyText>
+                )
               )
             )}
           </div>
@@ -149,19 +183,44 @@ export const StockManagementDetail = ({
           <Section>
             <div>
               <Label>재무상태표</Label>
-              <ContentWrapper>
-                <Accounts title={"부채"} content={datas.debt} />
-                <Accounts title={"자본금"} content={datas.capital} />
-              </ContentWrapper>
+              {isLoading ? (
+                <ContentWrapper>
+                  <AccountsSkeleton title={"부채"} content={datas.debt} />
+                  <AccountsSkeleton title={"자본금"} content={datas.capital} />
+                </ContentWrapper>
+              ) : (
+                <ContentWrapper>
+                  <Accounts title={"부채"} content={datas.debt} />
+                  <Accounts title={"자본금"} content={datas.capital} />
+                </ContentWrapper>
+              )}
             </div>
             <div>
               <Label>손익계산서</Label>
-              <ContentWrapper>
-                <Accounts title={"매출액"} content={datas.profit} />
-                <Accounts title={"매출원가"} content={datas.profitOG} />
-                <Accounts title={"매출이익"} content={datas.profitBen} />
-                <Accounts title={"당기순이익"} content={datas.netProfit} />
-              </ContentWrapper>
+              {isLoading ? (
+                <ContentWrapper>
+                  <AccountsSkeleton title={"매출액"} content={datas.profit} />
+                  <AccountsSkeleton
+                    title={"매출원가"}
+                    content={datas.profitOG}
+                  />
+                  <AccountsSkeleton
+                    title={"매출이익"}
+                    content={datas.profitBen}
+                  />
+                  <AccountsSkeleton
+                    title={"당기순이익"}
+                    content={datas.netProfit}
+                  />
+                </ContentWrapper>
+              ) : (
+                <ContentWrapper>
+                  <Accounts title={"매출액"} content={datas.profit} />
+                  <Accounts title={"매출원가"} content={datas.profitOG} />
+                  <Accounts title={"매출이익"} content={datas.profitBen} />
+                  <Accounts title={"당기순이익"} content={datas.netProfit} />
+                </ContentWrapper>
+              )}
             </div>
           </Section>
         </CompanyMain>
@@ -175,8 +234,19 @@ const CompanyText = styled.div`
   word-break: break-all;
 `;
 
+const CompanyDiv = styled(Skeleton)`
+  font: ${font.h5};
+  word-break: break-all;
+  color: transparent;
+  width: fit-content;
+`;
+
 const LogoImg = styled.img`
   width: 64px;
+`;
+const LogoImgDiv = styled(Skeleton)`
+  width: 64px;
+  height: 64px;
 `;
 
 const Container = styled.div`
@@ -219,6 +289,12 @@ const Text = styled.div`
 const Title = styled.p`
   font: ${font.h3};
   color: ${color.black};
+`;
+
+const TitleDiv = styled(Skeleton)`
+  color: transparent;
+  width: fit-content;
+  font: ${font.h3};
 `;
 
 const Number = styled.p`

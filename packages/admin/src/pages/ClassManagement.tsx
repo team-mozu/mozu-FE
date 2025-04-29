@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, DeleteModal, PostTitle, PageTitle } from "@mozu/ui";
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { ClassPost } from "@/components";
+import { ClassPost, SkeletonClassPost } from "@/components";
 import {
   ClassItem,
   useClassDelete,
@@ -12,7 +12,18 @@ import {
 } from "@/apis";
 
 export const ClassManagement = () => {
-  const { data } = useGetClassList();
+  const { data, isLoading: apiLoading } = useGetClassList();
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!apiLoading && data) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [apiLoading, data]);
+
   const navigate = useNavigate();
   const [isModal, setIsModal] = useState(false);
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
@@ -52,6 +63,10 @@ export const ClassManagement = () => {
       console.log(`수업 ID ${selectedClassId} 삭제`);
     }
     setIsModal(false);
+  };
+
+  const onClick = () => {
+    console.log("onClcik");
   };
 
   const { mutate: apiClassStar } = useClassStar();
@@ -113,36 +128,56 @@ export const ClassManagement = () => {
               <PostContainer>
                 <PostTitle title="즐겨찾기" count={favorites.length} />
                 <PostContents>
-                  {favorites.map((item, index) => (
-                    <ClassPost
-                      key={item.id}
-                      title={item.name}
-                      creationDate={item.date}
-                      isClick={item.starYN}
-                      starOnClick={() =>
-                        toggleFavorite(index, "favorites", item.id)
-                      }
-                      delClick={() => openDeleteModal(item.id)}
-                      onClick={() => navigate(`${item.id}`)}
-                    />
-                  ))}
+                  {isLoading
+                    ? favorites.map((item, index) => (
+                        <SkeletonClassPost
+                          key={index}
+                          title={item.name}
+                          creationDate={item.date}
+                          onClick={() => navigate(`${item.id}`)}
+                        />
+                      ))
+                    : favorites.map((item, index) => (
+                        <ClassPost
+                          key={item.id}
+                          title={item.name}
+                          creationDate={item.date}
+                          isClick={item.starYN}
+                          starOnClick={() =>
+                            toggleFavorite(index, "favorites", item.id)
+                          }
+                          delClick={() => openDeleteModal(item.id)}
+                          onClick={() => navigate(`${item.id}`)}
+                        />
+                      ))}
                 </PostContents>
               </PostContainer>
             )}
             <PostContainer>
               <PostTitle title="전체" count={common.length} />
               <PostContents>
-                {common.map((item, index) => (
-                  <ClassPost
-                    key={item.id}
-                    title={item.name}
-                    creationDate={item.date}
-                    isClick={isClickCommon[index]}
-                    starOnClick={() => toggleFavorite(index, "common", item.id)}
-                    delClick={() => openDeleteModal(item.id)}
-                    onClick={() => navigate(`${item.id}`)}
-                  />
-                ))}
+                {isLoading
+                  ? common.map((item, index) => (
+                      <SkeletonClassPost
+                        key={index}
+                        title={item.name}
+                        creationDate={item.date}
+                        onClick={() => navigate(`${item.id}`)}
+                      />
+                    ))
+                  : common.map((item, index) => (
+                      <ClassPost
+                        key={item.id}
+                        title={item.name}
+                        creationDate={item.date}
+                        isClick={isClickCommon[index]}
+                        starOnClick={() =>
+                          toggleFavorite(index, "common", item.id)
+                        }
+                        delClick={() => openDeleteModal(item.id)}
+                        onClick={() => navigate(`${item.id}`)}
+                      />
+                    ))}
               </PostContents>
             </PostContainer>
           </PostAllContainer>

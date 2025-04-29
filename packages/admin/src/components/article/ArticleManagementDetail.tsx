@@ -1,10 +1,12 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { ArticleMainData } from './ArticleMainData';
-import { Button, Del, Edit } from '@mozu/ui';
-import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
-import { useGetArticleDetail } from '@/apis';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { ArticleMainData } from "./ArticleMainData";
+import { Button, Del, Edit } from "@mozu/ui";
+import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { useGetArticleDetail } from "@/apis";
+import { ArticleMainDataSkeleton } from "./ArticleMainDataSkeleton";
+import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
 interface IArticleManagementDetailProps {
   onClick?: () => void;
@@ -23,25 +25,40 @@ export const ArticleManagementDetail = ({
     description: string;
     image: string;
     createDate: string;
-  }>({ title: '', description: '', image: '', createDate: '' });
+  }>({ title: "", description: "", image: "", createDate: "" });
 
-  const { data: articleData, isLoading } = useGetArticleDetail(articleId);
+  const { data: articleData, isLoading: apiLoading } =
+    useGetArticleDetail(articleId);
 
-  if (isLoading) {
-    <div>로딩중...</div>;
-  }
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!apiLoading && articleData) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [apiLoading, articleData]);
+
+  useEffect(() => {
+    setIsLoading(true);
+  }, [articleId]);
+
+  // if (isLoading) {
+  //   <div>로딩중...</div>;
+  // }
 
   useEffect(() => {
     if (articleData) {
       setDatas({
-        title: articleData.title || '',
-        description: articleData.description || '',
+        title: articleData.title || "",
+        description: articleData.description || "",
         image:
           articleData.image ===
-          'https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg'
+          "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg"
             ? null
             : articleData.image,
-        createDate: articleData.createDate || '',
+        createDate: articleData.createDate || "",
       });
     }
   }, [articleData]);
@@ -49,7 +66,11 @@ export const ArticleManagementDetail = ({
   return (
     <Container>
       <UpperContainer>
-        <p>등록일자 | {datas.createDate}</p>
+        {isLoading ? (
+          <DateDiv>등록일자 | {datas.createDate}</DateDiv>
+        ) : (
+          <p>등록일자 | {datas.createDate}</p>
+        )}
         <div>
           <div onClick={onClick}>
             <Button
@@ -76,17 +97,31 @@ export const ArticleManagementDetail = ({
         </div>
       </UpperContainer>
       <MainArticle>
-        <ArticleContainer>
-          <ArticleMainData
-            img={datas.image}
-            title={datas.title}
-            main={datas.description}
-          />
-        </ArticleContainer>
+        {isLoading ? (
+          <ArticleContainer>
+            <ArticleMainDataSkeleton
+              title={datas.title}
+              main={datas.description}
+            />
+          </ArticleContainer>
+        ) : (
+          <ArticleContainer>
+            <ArticleMainData
+              img={datas.image}
+              title={datas.title}
+              main={datas.description}
+            />
+          </ArticleContainer>
+        )}
       </MainArticle>
     </Container>
   );
 };
+
+const DateDiv = styled(Skeleton)`
+  color: transparent;
+  width: fit-content;
+`;
 
 const Container = styled.div`
   padding: 40px;
