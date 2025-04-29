@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Button, HandCoins, Toast, Trophy } from '@mozu/ui';
-import { NthDeal, AssetChange } from '@/components';
-import { History } from '@/components';
-import { useTeamOrders, useTeamResult } from '@/apis';
-import { useSSE } from '@/hook';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, HandCoins, Toast, Trophy } from "@mozu/ui";
+import { NthDeal, AssetChange } from "@/components";
+import { History } from "@/components";
+import { useTeamOrders, useTeamResult } from "@/apis";
+import { useSSE } from "@/hook";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ValueStyleProps {
   isPositive?: boolean;
@@ -17,24 +17,26 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
   const { data: teamOrders } = useTeamOrders();
   const { data: teamResult } = useTeamResult();
   const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
+  const [isWait, setIsWait] = useState(true);
   const navigate = useNavigate();
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     (data) => {
-      Toast(`${data.message}`, { type: 'success' });
+      Toast(`${data.message}`, { type: "success" });
     },
     (error) => {
       console.log(error);
-      Toast(`SSE 에러 발생: ${error.message}`, { type: 'error' });
+      Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
     },
     {
       CLASS_NEXT_INV_START: (data) => {
-        Toast('다음 투자가 시작되었습니다', { type: 'info' });
+        Toast("다음 투자가 시작되었습니다", { type: "info" });
         setData(data);
-        navigate(`/${data.classId}/home`);
+        // navigate(`/${data.classId}/home`);
+        setIsWait(false);
       },
-    },
+    }
   );
 
   return (
@@ -93,7 +95,7 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               </Proceeds>
               <Return isPositive={true}>
                 <label>수익률</label>
-                <p>+{teamResult?.profitNum ?? '0%'}</p>
+                <p>+{teamResult?.profitNum ?? "0%"}</p>
               </Return>
               <TotalDeal>
                 <label>총 거래 횟수</label>
@@ -122,7 +124,10 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               iconColor={color.white}
               iconSize={24}
               hoverBackgroundColor={color.orange[600]}
-              disabled={true}
+              disabled={isWait}
+              onClick={() => {
+                navigate(`/${data.classId}/home`);
+              }}
             >
               계속하기
             </Button>

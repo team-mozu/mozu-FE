@@ -120,7 +120,7 @@ export const HistorySidebar = ({
     totalMoney: totalMoney.toLocaleString(),
     cashMoney: cashMoney.toLocaleString(),
     valueMoney: valueMoney.toLocaleString(),
-    valueProfit: valueProfit.toLocaleString(),
+    valueProfit: valueProfit,
     profitNum: profitNum,
     totalBuy: totalBuy.toLocaleString(),
     totalSell: totalSell.toLocaleString(),
@@ -173,11 +173,11 @@ export const HistorySidebar = ({
             >
               {formattedData.totalMoney}원
             </TotalAssetPrice>
-            {!formattedData.valueProfit ? null : (
+            {formattedData.valueProfit !== 0 ? (
               <UpDownDiv>
-                {formattedData.valueProfit}원 ({formattedProfitNum})
+                {formattedData.valueProfit.toLocaleString()}원 ({formattedProfitNum})
               </UpDownDiv>
-            )}
+            ) : null}
           </TotalAssetContainer>
           <HoldContainer>
             <HoldContent>

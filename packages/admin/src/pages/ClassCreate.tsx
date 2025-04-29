@@ -288,9 +288,6 @@ export const CreateClass = () => {
 
         {/* 투자 종목 테이블 */}
         <TableField>
-          <TableHeader>
-            <Text>투자 종목</Text>
-          </TableHeader>
           <StockTables
             isEdit
             degree={classDeg}
@@ -303,9 +300,6 @@ export const CreateClass = () => {
 
         {/* 기사 테이블 */}
         <TableField>
-          <TableHeader>
-            <Text>기사 목록</Text>
-          </TableHeader>
           <ArticleTables
             isEdit
             degree={classDeg}

@@ -34,9 +34,9 @@
     "typescript": "^5.7.3"
   },
   "resolutions": {
-    "eslint": "8.57.0",
-    "@typescript-eslint/eslint-plugin": "7.5.0",
-    "@typescript-eslint/parser": "7.5.0"
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.1",
+    "@types/hoist-non-react-statics": "^3.3.6"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

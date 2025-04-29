@@ -200,28 +200,28 @@ export const StockTables = ({
   const columns: ColumnDef<StockData>[] = [
     ...(isEdit
       ? [
-          {
-            accessorKey: "stockChecked",
-            header: () => (
-              <CheckBox
-                onChange={toggleAll}
-                checked={
-                  stockData.length > 0 &&
-                  stockData.every((row) => row.stockChecked)
-                }
-                id="stock-header-checkbox"
-              />
-            ),
-            cell: ({ row }) => (
-              <CheckBox
-                checked={row.original.stockChecked}
-                onChange={() => toggleStockRow(row.original.itemId)}
-                id={`stock-row-${row.original.itemId}`}
-              />
-            ),
-            size: 52,
-          },
-        ]
+        {
+          accessorKey: 'stockChecked',
+          header: () => (
+            <CheckBox
+              onChange={toggleAll}
+              checked={
+                stockData.length > 0 &&
+                stockData.every((row) => row.stockChecked)
+              }
+              id="stock-header-checkbox"
+            />
+          ),
+          cell: ({ row }) => (
+            <CheckBox
+              checked={row.original.stockChecked}
+              onChange={() => toggleStockRow(row.original.itemId)}
+              id={`stock-row-${row.original.itemId}`}
+            />
+          ),
+          size: 52,
+        },
+      ]
       : []),
     {
       accessorKey: "itemCode",
@@ -331,8 +331,9 @@ export const StockTables = ({
 
   return (
     <TableContainer>
-      {isEdit && (
-        <DeleteButtonContainer>
+      <DeleteButtonContainer>
+        <TableTitle>투자 종목</TableTitle>
+        {isEdit && (
           <Button
             backgroundColor={color.zinc[50]}
             borderColor={color.zinc[200]}
@@ -342,8 +343,8 @@ export const StockTables = ({
           >
             선택항목 삭제하기
           </Button>
-        </DeleteButtonContainer>
-      )}
+        )}
+      </DeleteButtonContainer>
       <Table>
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -432,13 +433,20 @@ export const StockTables = ({
 };
 
 // Styled components
+
+const TableTitle = styled.div`
+  font: ${font.t2};
+  margin-bottom: 16px;
+`;
+
 const TableContainer = styled.div`
   width: 100%;
 `;
 
 const DeleteButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 12px;
 `;
 

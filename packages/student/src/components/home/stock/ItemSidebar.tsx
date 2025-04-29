@@ -54,12 +54,14 @@ const ItemContent = ({
           <ItemCode>{itemId}</ItemCode>
         </ItemTitleContainer>
       </LogoContainer>
-      <ItemPriceContainer>
-        <Price>{nowMoney.toLocaleString()}원</Price>
-        <Percent isUp={isUp}>
-          {profitMoney.toLocaleString()}원 ({[profitNum]})
-        </Percent>
-      </ItemPriceContainer>
+      {profitMoney !== 0 && (
+        <ItemPriceContainer>
+          <Price>{nowMoney.toLocaleString()}원</Price>
+          <Percent isUp={isUp}>
+            {`${isUp ? '+' : ''}${profitMoney.toLocaleString()}원 (${isUp ? '+' : ''}${profitNum})`}
+          </Percent>
+        </ItemPriceContainer>
+      )}
     </ItemContainer>
   );
 };
@@ -83,8 +85,8 @@ export const ItemSidebar = ({
               itemLogo={data.itemLogo}
               nowMoney={data.nowMoney ?? 0}
               isUp={
-                typeof data.profitNum === "string" &&
-                data.profitNum.includes("-")
+                typeof data.profitNum === 'string' &&
+                  data.profitNum.includes('-')
                   ? false
                   : true
               }
