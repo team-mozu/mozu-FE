@@ -29,7 +29,9 @@ const ContentContainer = styled.div`
 
 const Title = styled.div`
   font: ${font.h4};
-
+  white-space: nowrap;
+  min-width: 10ch;
+  width: fit-content;
   color: ${color.zinc[600]};
 `;
 
@@ -47,7 +49,9 @@ const AccountsContainer = styled.div`
 
 const Content = styled.div`
   font: ${font.h4};
-
+white-space: nowrap;
+  min-width: 10ch;
+  width: fit-content;
   color: ${color.black};
   margin-left: auto;
 `;

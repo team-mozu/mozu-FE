@@ -13,7 +13,7 @@ interface ISelectProps {
   data: string[];
   value: string;
   onChange?: (value: string) => void;
-  width?: string;
+  width?: number;
   height?: number;
   padding?: {
     top?: number;
@@ -96,7 +96,7 @@ const SelectContainer = styled.div<
   Pick<ISelectProps, "width" | "height" | "padding"> & { show: boolean }
 >`
   position: relative;
-  width: ${(props) => props.width};
+  width: ${(props) => props.width}px;
   height: ${(props) => props.height}px;
   padding: ${(props) =>
     `${props.padding?.top}px ${props.padding?.right}px ${props.padding?.bottom}px ${props.padding?.left}px`};

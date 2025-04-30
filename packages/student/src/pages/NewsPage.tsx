@@ -49,7 +49,6 @@ const NewsContainer = styled.div`
 `;
 
 const Container = styled.div`
-  width: 100%;
   padding: 32px;
   background-color: ${color.white};
   border: 1px solid ${color.zinc[200]};

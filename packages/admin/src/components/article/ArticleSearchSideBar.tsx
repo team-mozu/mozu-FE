@@ -82,7 +82,7 @@ export const ArticleSearchSideBar = ({
 };
 
 const SideBarContainer = styled.div`
-  min-width: 520px;
+  min-width: 490px;
   height: 100%;
   background-color: ${color.white};
   border-right: 1px solid ${color.zinc[200]};

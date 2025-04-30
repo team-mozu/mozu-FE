@@ -263,7 +263,7 @@ export const CreateClass = () => {
             <SelectField>
               <Select
                 data={["3", "4", "5"]}
-                width={"4rem"}
+                width={120}
                 height={48}
                 padding={{ top: 14, bottom: 14, left: 16, right: 10 }}
                 value={classDeg}

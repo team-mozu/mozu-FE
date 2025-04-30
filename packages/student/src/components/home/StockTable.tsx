@@ -20,14 +20,27 @@ interface StockData {
   profit: string;
 }
 
-const data: StockData[] = [];
-
 const columns: ColumnDef<StockData>[] = [
   { accessorKey: 'name', header: '종목 이름', size: 376 },
-  { accessorKey: 'tradePrice', header: '거래 가격', size: 140 },
+  {
+    accessorKey: 'tradePrice',
+    header: '거래 가격',
+    size: 140,
+    cell: ({ row }) => `${row.getValue('tradePrice')}원`
+  },
   { accessorKey: 'quantity', header: '수량', size: 100 },
-  { accessorKey: 'tradeAmount', header: '거래 금액', size: 140 },
-  { accessorKey: 'currentPrice', header: '현재 가격', size: 140 },
+  {
+    accessorKey: 'tradeAmount',
+    header: '거래 금액',
+    size: 140,
+    cell: ({ row }) => `${row.getValue('tradeAmount')}원`
+  },
+  {
+    accessorKey: 'currentPrice',
+    header: '현재 가격',
+    size: 140,
+    cell: ({ row }) => `${row.getValue('currentPrice')}원`
+  },
   {
     accessorKey: 'profit',
     header: '수익률',
@@ -39,7 +52,7 @@ const columns: ColumnDef<StockData>[] = [
 
       return (
         <RateWrapper>
-          <span>{currentPrice}</span>
+          <span>{`${currentPrice}원`}</span>
           <ProfitSpan isProfit={isProfit}>{profit}</ProfitSpan>{' '}
         </RateWrapper>
       );

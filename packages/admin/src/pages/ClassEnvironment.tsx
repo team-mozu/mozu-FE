@@ -167,17 +167,17 @@ export const ClassEnvironment = () => {
             <InfoBox>
               {isLoading
                 ? infos.map((data, index) => (
-                    <InfoDiv key={index}>
-                      <span>{data.kind}</span>
-                      {data.value}
-                    </InfoDiv>
-                  ))
+                  <InfoDiv key={index}>
+                    <span>{data.kind}</span>
+                    {data.value}
+                  </InfoDiv>
+                ))
                 : infos.map((data, index) => (
-                    <Info key={index}>
-                      <span>{data.kind}</span>
-                      {data.value}
-                    </Info>
-                  ))}
+                  <Info key={index}>
+                    <span>{data.kind}</span>
+                    {data.value}
+                  </Info>
+                ))}
             </InfoBox>
             <BtnContainer>
               <Button
