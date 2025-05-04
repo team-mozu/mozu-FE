@@ -3,11 +3,9 @@ import { color, font } from "@mozu/design-token";
 import { Header, Users, Info, Toast } from "@mozu/ui";
 import { useSSE } from "@/hook";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
@@ -21,11 +19,11 @@ export const StudentWaitPage = () => {
     {
       CLASS_NEXT_INV_START: (data) => {
         Toast("다음 투자가 시작되었습니다", { type: "info" });
-        setData(data);
-        navigate(`/${data.classId}/home`);
+        navigate(`/${data.classId}`);
       },
     }
   );
+
   return (
     <AppContainer>
       <Header isAdmin={false} />
