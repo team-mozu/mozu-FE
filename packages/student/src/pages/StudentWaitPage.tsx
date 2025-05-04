@@ -1,31 +1,29 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Header, Users, Info, Toast } from '@mozu/ui';
-import { useSSE } from '@/hook';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Header, Users, Info, Toast } from "@mozu/ui";
+import { useSSE } from "@/hook";
+import { useNavigate } from "react-router-dom";
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     (data) => {
-      Toast(`${data.message}`, { type: 'success' });
+      Toast(`${data.message}`, { type: "success" });
     },
     (error) => {
       console.log(error);
-      Toast(`SSE 에러 발생: ${error.message}`, { type: 'error' });
+      Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
     },
     {
       CLASS_NEXT_INV_START: (data) => {
-        Toast('다음 투자가 시작되었습니다', { type: 'info' });
-        setData(data);
-        navigate(`/${data.classId}/home`);
+        Toast("다음 투자가 시작되었습니다", { type: "info" });
+        navigate(`/${data.classId}`);
       },
-    },
+    }
   );
+
   return (
     <AppContainer>
       <Header isAdmin={false} />
