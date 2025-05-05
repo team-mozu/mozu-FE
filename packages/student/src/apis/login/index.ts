@@ -17,7 +17,6 @@ export const useStudentLogin = () => {
       return response.data;
     },
     onSuccess: async (res) => {
-      console.log(`res => ${res.accessToken}`);
       const accessToken = res.accessToken; // 여기가 정확한지 확인
 
       if (!accessToken) {
