@@ -1,14 +1,12 @@
-import { useEffect, useRef } from 'react';
-import { EventSourcePolyfill } from 'event-source-polyfill';
-import { getCookies } from '@configs/util';
+import { useEffect, useRef } from "react";
+import { EventSourcePolyfill } from "event-source-polyfill";
+import { getCookies } from "@configs/util";
 
-type EventType = 'TEAM_PART_IN' | 'TEAM_INV_END' | 'CLASS_NEXT_INV_START';
-
-interface SSEEvent {
-  type: EventType;
-  data: any;
-  message?: string;
-}
+type EventType =
+  | "TEAM_PART_IN"
+  | "TEAM_INV_END"
+  | "CLASS_NEXT_INV_START"
+  | "CANCEL_CLASS";
 
 interface TeamNextInvStart {
   classId: number;
@@ -21,20 +19,30 @@ interface TeamPartInData {
   schoolName: string;
 }
 
+interface SSEEventPayload {
+  event?: {
+    type: EventType;
+  };
+  data: any;
+  message?: string;
+}
+
+interface EventHandlers {
+  TEAM_PART_IN?: (data: TeamPartInData) => void;
+  CLASS_NEXT_INV_START?: (data: TeamNextInvStart) => void;
+}
+
 export const useSSE = (
   url: string,
   onMessage?: (data: any) => void,
   onError?: (error: any) => void,
-  eventHandlers?: {
-    TEAM_PART_IN?: (data: TeamPartInData) => void;
-    CLASS_NEXT_INV_START?: (data: TeamNextInvStart) => void;
-  },
+  eventHandlers?: EventHandlers
 ) => {
-  const token = getCookies<string>('accessToken');
+  const token = getCookies<string>("accessToken");
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
 
   useEffect(() => {
-    if (!url) return;
+    if (!url || !token) return;
 
     const eventSource = new EventSourcePolyfill(url, {
       headers: { Authorization: `Bearer ${token}` },
@@ -43,49 +51,38 @@ export const useSSE = (
 
     eventSourceRef.current = eventSource;
 
-    eventSource.onmessage = (e) => {
+    (Object.keys(eventHandlers || {}) as EventType[]).forEach((eventType) => {
+      eventSource.addEventListener(eventType, (e: MessageEvent) => {
+        try {
+          const eventData = JSON.parse(e.data);
+          console.log(`[SSE] ${eventType} 수신:`, eventData);
+          eventHandlers?.[eventType]?.(eventData);
+        } catch (err) {
+          console.error(`[SSE] ${eventType} 파싱 오류:`, err);
+        }
+      });
+    });
+
+    // 일반 message 이벤트도 수신
+    eventSource.onmessage = (e: MessageEvent) => {
       try {
-        const parsedData = JSON.parse(e.data);
-        const eventType = parsedData.event?.type as EventType;
-        const eventData = parsedData.data;
-
-        if (onMessage) {
-          onMessage(parsedData);
-        }
-
-        if (eventHandlers && eventType) {
-          console.log('sse event', eventType);
-          switch (eventType) {
-            case 'CLASS_NEXT_INV_START':
-              eventHandlers.CLASS_NEXT_INV_START?.(eventData);
-              break;
-            default:
-              console.warn('알 수 없는 이벤트 타입:', eventType);
-          }
-        }
-
-        onMessage?.(parsedData);
-      } catch (error) {
-        console.error('SSE JSON 파싱 오류', error);
+        const parsed: SSEEventPayload = JSON.parse(e.data);
+        onMessage?.(parsed);
+      } catch (err) {
+        console.error("[SSE] onmessage 파싱 오류:", err);
       }
     };
 
-    eventSource.addEventListener('CLASS_NEXT_INV_START', (e: MessageEvent) => {
-      console.log(e);
-
-      const eventData = JSON.parse(e.data);
-      eventHandlers?.CLASS_NEXT_INV_START?.(eventData);
-    });
-
-    eventSource.onerror = (error) => {
-      console.error('SSE 오류 발생:', error);
-      onError?.(error);
+    eventSource.onerror = (err) => {
+      console.error("[SSE] 연결 오류:", err);
+      onError?.(err);
     };
 
     return () => {
       eventSource.close();
+      eventSourceRef.current = null;
     };
-  }, [url]);
+  }, [url, token, eventHandlers, onMessage, onError]);
 
   const disconnect = () => {
     if (eventSourceRef.current) {
