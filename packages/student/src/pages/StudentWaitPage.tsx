@@ -3,6 +3,7 @@ import { color, font } from "@mozu/design-token";
 import { Header, Users, Info, Toast } from "@mozu/ui";
 import { useSSE } from "@/hook";
 import { useNavigate } from "react-router-dom";
+import { removeCookiesAsync } from "@configs/util";
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
@@ -20,6 +21,18 @@ export const StudentWaitPage = () => {
       CLASS_NEXT_INV_START: (data) => {
         Toast("투자가 시작되었습니다", { type: "info" });
         navigate(`/${data.classId}`);
+      },
+      CLASS_CANCEL: async () => {
+        Toast("수업이 취소되었습니다.", { type: "error" });
+
+        const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
+        await removeCookiesAsync(["accessToken", "authority"], {
+          path: "/",
+          secure: true,
+          sameSite: "none",
+          domain,
+        });
+        navigate("/signin");
       },
     }
   );

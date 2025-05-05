@@ -27,9 +27,14 @@ interface SSEEventPayload {
   message?: string;
 }
 
+interface ClassCancelData {
+  classId: number;
+}
+
 interface EventHandlers {
   TEAM_PART_IN?: (data: TeamPartInData) => void;
   CLASS_NEXT_INV_START?: (data: TeamNextInvStart) => void;
+  CLASS_CANCEL?: (data: ClassCancelData) => void; // ✅ 추가
 }
 
 export const useSSE = (
