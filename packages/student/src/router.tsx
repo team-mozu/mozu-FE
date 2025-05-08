@@ -104,7 +104,7 @@ export const Router = createBrowserRouter([
             element: <HomePage />,
           },
           {
-            path: "stock/:stockId",
+            path: 'stock/:stockId',
             element: <StockPage />,
             children: [
               { index: true, element: <Navigate to="price-info" replace /> },

@@ -39,6 +39,7 @@ const TableDiv = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 700px;
   gap: 24px;
   align-items: center;
   padding: 40px;

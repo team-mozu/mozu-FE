@@ -86,8 +86,13 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
 
 const BtnImgContainer = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 12px 12px;
   align-items: end;
+  min-width: 580px;
+  @media (min-width: 700px) {
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
 `;
 
 const ImgContentContainer = styled.div`

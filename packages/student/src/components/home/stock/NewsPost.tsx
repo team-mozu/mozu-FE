@@ -63,7 +63,9 @@ const Content = styled.div`
   color: ${color.zinc[600]};
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap;
+  display: -webkit-box; 
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical; 
   width: 100%;
 `;
 
@@ -73,6 +75,7 @@ const TitleContainer = styled.div`
   gap: 12px;
   align-items: start;
   width: 100%;
+  overflow: hidden; 
 `;
 
 const NewsImg = styled.img<{ hasImage: boolean }>`
@@ -83,4 +86,5 @@ const NewsImg = styled.img<{ hasImage: boolean }>`
     ${({ hasImage }) => (hasImage ? "transparent" : color.zinc[200])};
 
   background-color: ${color.zinc[50]};
+  flex-shrink: 0; 
 `;

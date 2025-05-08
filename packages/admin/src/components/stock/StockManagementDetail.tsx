@@ -89,7 +89,7 @@ export const StockManagementDetail = ({
         info: stockData.info || "",
         logo:
           stockData.logo ==
-          "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg"
+            "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg"
             ? null
             : stockData.logo,
         money: stockData.money || null,

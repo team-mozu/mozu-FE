@@ -118,7 +118,6 @@ const ItemContainer = styled.div`
 
   :hover {
     background: ${color.zinc[100]};
-    transition: ease-in-out 0.35s;
   }
 `;
 
@@ -145,7 +144,6 @@ const ItemTitleContainer = styled.div`
 const ItemTitle = styled.div`
   font: ${font.b1};
   color: ${color.black};
-  width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -159,6 +157,7 @@ const ItemCode = styled.div`
 const Price = styled.div`
   font: ${font.t3};
   color: ${color.black};
+  white-space: nowrap;
 `;
 
 const Percent = styled.div<Pick<IItemContentType, "isUp">>`
