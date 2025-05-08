@@ -4,7 +4,7 @@ import { ArticleInfoModal, Button, ClassInfoModal, Toast } from "@mozu/ui";
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { TeamCurrentModal, TeamInfoTable } from "@/components";
-import { useGetClassDetail, useNextDegree } from "@/apis";
+import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";
 
@@ -27,6 +27,7 @@ export const ClassMonitoringPage = () => {
   const classId = id ? parseInt(id) : null;
 
   const { mutate: nextDegree } = useNextDegree(classId);
+  const { mutate: stopClass } = useClassStop(classId);
   const { data: classData } = useGetClassDetail(classId);
   const { teamInfoMap } = useTeamStore();
 
@@ -104,7 +105,7 @@ export const ClassMonitoringPage = () => {
             backgroundColor={color.zinc[50]}
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
-            onClick={() => navigate(-1)}
+            onClick={() => stopClass()}
             hoverBackgroundColor={color.zinc[100]}
           >
             모의투자 취소
