@@ -1,13 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
   ColumnDef,
-} from '@tanstack/react-table';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Check } from '@mozu/ui';
+} from "@tanstack/react-table";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Check } from "@mozu/ui";
+import { TeamCurrentModal } from "./TeamCurrentModal";
 
 interface Team {
   teamId: number;
@@ -26,12 +27,12 @@ interface TableCell {
 
 interface TeamRow {
   팀명: string;
-  '1차 투자': TableCell;
-  '2차 투자': TableCell;
-  '3차 투자': TableCell;
-  '4차 투자': TableCell;
-  '5차 투자': TableCell;
-  '총 자산': TableCell;
+  "1차 투자": TableCell;
+  "2차 투자": TableCell;
+  "3차 투자": TableCell;
+  "4차 투자": TableCell;
+  "5차 투자": TableCell;
+  "총 자산": TableCell;
   isCompleted: boolean;
 }
 
@@ -52,20 +53,24 @@ export const TeamInfoTable = ({
   tradeResults: TradeResult[];
   invDeg: number;
 }) => {
+  const [isOpenTeam, setIsOpenTeam] = useState<boolean>(false);
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const [selectedTeamName, setSelectedTeamName] = useState<string>("");
+
   const data = useMemo<TeamRow[]>(() => {
     return teamInfo.map((team) => {
       const teamResults = tradeResults.filter(
-        (result) => result.teamId === team.teamId,
+        (result) => result.teamId === team.teamId
       );
 
       const row: TeamRow = {
         팀명: team.teamName,
-        '1차 투자': { text: '', rate: '' },
-        '2차 투자': { text: '', rate: '' },
-        '3차 투자': { text: '', rate: '' },
-        '4차 투자': { text: '', rate: '' },
-        '5차 투자': { text: '', rate: '' },
-        '총 자산': { text: '', rate: '' },
+        "1차 투자": { text: "", rate: "" },
+        "2차 투자": { text: "", rate: "" },
+        "3차 투자": { text: "", rate: "" },
+        "4차 투자": { text: "", rate: "" },
+        "5차 투자": { text: "", rate: "" },
+        "총 자산": { text: "", rate: "" },
         isCompleted: teamResults.length === 5,
       };
 
@@ -74,7 +79,10 @@ export const TeamInfoTable = ({
         const key = `${i}차 투자` as keyof TeamRow;
 
         if (i === invDeg) {
-          (row[key] as { text: string; rate?: string }) = { text: '진행중..', rate: '' };
+          (row[key] as { text: string; rate?: string }) = {
+            text: "진행중..",
+            rate: "",
+          };
           continue;
         }
 
@@ -91,18 +99,36 @@ export const TeamInfoTable = ({
     });
   }, [teamInfo, tradeResults, invDeg]);
 
+  const handleOpenModal = (teamId: number, teamName: string) => {
+    setSelectedTeamId(teamId);
+    setSelectedTeamName(teamName);
+    setIsOpenTeam(true);
+  };
 
   const columns = useMemo<ColumnDef<TeamRow>[]>(
     () => [
       {
-        accessorKey: '팀명',
-        header: () => '팀명',
+        accessorKey: "팀명",
+        header: () => "팀명",
         cell: ({ row }) => {
-          const teamName = row.getValue('팀명') as string;
+          const teamName = row.getValue("팀명") as string;
           const isCompleted = row.original.isCompleted;
 
+          const matchedTeam = teamInfo.find((t) => t.teamName === teamName);
+
           return (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                cursor: "pointer",
+              }}
+              onClick={() =>
+                matchedTeam &&
+                handleOpenModal(matchedTeam.teamId, matchedTeam.teamName)
+              }
+            >
               <span>{teamName}</span>
               {isCompleted && (
                 <CompletedBadge>
@@ -114,28 +140,28 @@ export const TeamInfoTable = ({
         },
       },
       ...[
-        '1차 투자',
-        '2차 투자',
-        '3차 투자',
-        '4차 투자',
-        '5차 투자',
-        '총 자산',
+        "1차 투자",
+        "2차 투자",
+        "3차 투자",
+        "4차 투자",
+        "5차 투자",
+        "총 자산",
       ].map((key) => ({
         accessorKey: key,
-        header: () => (key === '총 자산' ? '총 자산\n(총 수익률)' : key),
+        header: () => (key === "총 자산" ? "총 자산\n(총 수익률)" : key),
         cell: ({ getValue }) => {
           const { text, rate } = getValue() as { text: string; rate?: string };
-          const isNegative = rate?.includes('-');
-          const isPending = text === '진행중..';
+          const isNegative = rate?.includes("-");
+          const isPending = text === "진행중..";
 
           return (
             <div
               style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: isPending ? 'center' : 'flex-end',
-                justifyContent: 'center',
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: isPending ? "center" : "flex-end",
+                justifyContent: "center",
               }}
             >
               <span>{text}</span>
@@ -149,7 +175,7 @@ export const TeamInfoTable = ({
         },
       })),
     ],
-    [],
+    [teamInfo]
   );
 
   const table = useReactTable({
@@ -159,41 +185,51 @@ export const TeamInfoTable = ({
   });
 
   return (
-    <Table>
-      <Thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <Th
-                key={header.id}
-                width={header.column.id === '팀명' ? '40%' : '15%'}
-                alignRight={header.column.id !== '팀명'}
-              >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </Th>
-            ))}
-          </tr>
-        ))}
-      </Thead>
-      <Tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <Td
-                key={cell.id}
-                width={cell.column.id === '팀명' ? '40%' : '15%'}
-                alignRight={cell.column.id !== '팀명'}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </Td>
-            ))}
-          </tr>
-        ))}
-      </Tbody>
-    </Table>
+    <div>
+      <Table>
+        <Thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <Th
+                  key={header.id}
+                  width={header.column.id === "팀명" ? "40%" : "15%"}
+                  alignRight={header.column.id !== "팀명"}
+                >
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                </Th>
+              ))}
+            </tr>
+          ))}
+        </Thead>
+        <Tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <Td
+                  key={cell.id}
+                  width={cell.column.id === "팀명" ? "40%" : "15%"}
+                  alignRight={cell.column.id !== "팀명"}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Td>
+              ))}
+            </tr>
+          ))}
+        </Tbody>
+      </Table>
+      {isOpenTeam && selectedTeamId !== null && (
+        <TeamCurrentModal
+          teamId={selectedTeamId}
+          isOpen={isOpenTeam}
+          setIsOpen={setIsOpenTeam}
+          teamName={selectedTeamName}
+        />
+      )}
+    </div>
   );
 };
 
@@ -203,13 +239,13 @@ export const RateDiv = styled.div<IRateType>`
 `;
 
 const Th = styled.th<{ width?: string; alignRight?: boolean }>`
-  width: ${(props) => props.width || 'auto'};
+  width: ${(props) => props.width || "auto"};
   padding: 16px;
   font: ${font.t3};
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: ${(props) => (props.alignRight ? 'right' : 'center')};
+  text-align: ${(props) => (props.alignRight ? "right" : "center")};
   height: 72px;
   border: 1px solid ${color.zinc[200]};
   &:first-of-type {
@@ -222,16 +258,16 @@ const Th = styled.th<{ width?: string; alignRight?: boolean }>`
 `;
 
 const Td = styled.td<{ width?: string; alignRight?: boolean }>`
-  width: ${(props) => props.width || 'auto'};
+  width: ${(props) => props.width || "auto"};
   padding: 16px;
   font: ${font.t1};
   border: 1px solid ${color.zinc[200]};
   height: 72px;
   display: flex;
-  align-items: ${(props) => (props.alignRight ? 'flex-end' : 'center')};
-  justify-content: ${(props) => (props.alignRight ? 'flex-end' : 'flex-start')};
-  flex-direction: ${(props) => (props.alignRight ? 'column' : 'row')};
-  text-align: ${(props) => (props.alignRight ? 'right' : 'left')};
+  align-items: ${(props) => (props.alignRight ? "flex-end" : "center")};
+  justify-content: ${(props) => (props.alignRight ? "flex-end" : "flex-start")};
+  flex-direction: ${(props) => (props.alignRight ? "column" : "row")};
+  text-align: ${(props) => (props.alignRight ? "right" : "left")};
   tbody tr:last-of-type & {
     &:first-of-type {
       border-bottom-left-radius: 8px;

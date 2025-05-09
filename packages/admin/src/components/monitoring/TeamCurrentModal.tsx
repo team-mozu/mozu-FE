@@ -1,19 +1,22 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useRef, useCallback, useEffect } from 'react';
-import { Button } from '@mozu/ui';
-import { TeamInvestStatusTable } from './TeamInvestStatusTable';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useRef, useCallback, useEffect } from "react";
+import { Button } from "@mozu/ui";
+import { TeamInvestStatusTable } from "./TeamInvestStatusTable";
+import { useTeamDeals } from "@/apis";
 
 interface ITeamCurrentType {
   teamName: string;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  teamId: number;
 }
 
 export const TeamCurrentModal = ({
   teamName,
   isOpen,
   setIsOpen,
+  teamId,
 }: ITeamCurrentType) => {
   const backgroundRef = useRef<HTMLDivElement>(null);
 
@@ -27,19 +30,22 @@ export const TeamCurrentModal = ({
         setIsOpen(false);
       }
     },
-    [setIsOpen],
+    [setIsOpen]
   );
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
+
+  const { data } = useTeamDeals(teamId);
+  console.log("ss" + data);
 
   return (
     isOpen && (
@@ -49,7 +55,9 @@ export const TeamCurrentModal = ({
             <TitleContainer>
               <Title>‘{teamName}’ 팀 거래 현황</Title>
             </TitleContainer>
-            <TeamInvestStatusTable />
+            <TableContainer>
+              <TeamInvestStatusTable contents={data ?? []} />
+            </TableContainer>
             <FooterContainer>
               <Button
                 backgroundColor={color.zinc[50]}
@@ -67,6 +75,12 @@ export const TeamCurrentModal = ({
     )
   );
 };
+
+const TableContainer = styled.div`
+  width: fit-content;
+  height: 192px;
+  overflow-y: scroll;
+`;
 
 const FooterContainer = styled.div`
   width: 100%;
