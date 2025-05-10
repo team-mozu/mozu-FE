@@ -4,7 +4,7 @@ import { ArticleInfoModal, Button, ClassInfoModal, Toast } from "@mozu/ui";
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { TeamCurrentModal, TeamInfoTable } from "@/components";
-import { useGetClassDetail, useNextDegree } from "@/apis";
+import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";
 
@@ -17,7 +17,7 @@ interface TradeResult {
 }
 
 export const ClassMonitoringPage = () => {
-  const navigate = useNavigate();
+
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [tradeResults, setTradeResults] = useState<TradeResult[]>([]);
@@ -26,8 +26,9 @@ export const ClassMonitoringPage = () => {
   const classId = id ? parseInt(id) : null;
 
   const { mutate: nextDegree } = useNextDegree(classId);
+  const { mutate: stopClass } = useClassStop(classId);
   const { data: classData } = useGetClassDetail(classId);
-  const { teamInfoMap } = useTeamStore();
+  const { teamInfoMap, clearTeamInfo } = useTeamStore();
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
@@ -59,6 +60,7 @@ export const ClassMonitoringPage = () => {
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      clearTeamInfo();
     };
   }, []);
 
@@ -92,7 +94,7 @@ export const ClassMonitoringPage = () => {
             backgroundColor={color.zinc[50]}
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
-            onClick={() => navigate(-1)}
+            onClick={() => stopClass()}
             hoverBackgroundColor={color.zinc[100]}
           >
             모의투자 취소

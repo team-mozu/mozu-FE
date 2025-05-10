@@ -94,7 +94,7 @@ export const useSSE = (
       eventSource.close();
       eventSourceRef.current = null;
     };
-  }, [url, onMessage, eventHandlers]);
+  }, []);
 
   const disconnect = () => {
     if (eventSourceRef.current) {

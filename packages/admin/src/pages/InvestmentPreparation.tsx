@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router";
 import { ParticipationContainer } from "@/components";
 import { useSSE } from "@/hooks";
 import { useState } from "react";
-import { useGetClassDetail, useNextDegree } from "@/apis";
+import { useClassStop, useGetClassDetail, useNextDegree } from "@/apis";
 import { useTeamStore } from "@/store";
 
 export const InvestmentPreparation = () => {
@@ -18,6 +18,7 @@ export const InvestmentPreparation = () => {
   );
   const [datas, setDatas] = useState({ teams: [] });
   const { mutate: nextDegree } = useNextDegree(classId);
+  const { mutate: stopClass } = useClassStop(classId);
   const { setTeamInfo } = useTeamStore();
 
   useSSE(
@@ -76,7 +77,7 @@ export const InvestmentPreparation = () => {
             color={color.zinc[800]}
             type="cancelImg"
             onClick={() => {
-              navigate(-1);
+              stopClass();
             }}
             iconSize={24}
             iconColor={color.zinc[800]}
