@@ -17,7 +17,7 @@ interface TradeResult {
 }
 
 export const ClassMonitoringPage = () => {
-  const navigate = useNavigate();
+
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [isOpenTeam, setIsOpenTeam] = useState<boolean>(false);
@@ -29,7 +29,7 @@ export const ClassMonitoringPage = () => {
   const { mutate: nextDegree } = useNextDegree(classId);
   const { mutate: stopClass } = useClassStop(classId);
   const { data: classData } = useGetClassDetail(classId);
-  const { teamInfoMap } = useTeamStore();
+  const { teamInfoMap, clearTeamInfo } = useTeamStore();
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
@@ -65,6 +65,7 @@ export const ClassMonitoringPage = () => {
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      clearTeamInfo();
     };
   }, []);
 

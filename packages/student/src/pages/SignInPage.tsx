@@ -7,7 +7,7 @@ import { useStudentLogin } from '@/apis';
 import { useNavigate } from 'react-router-dom';
 
 export const SignInPage = () => {
-  const { state, onChangeInputValue, setState } = useForm<{
+  const { state, onChangeInputValue } = useForm<{
     classNum: number | null;
     schoolName: string;
     teamName: string;

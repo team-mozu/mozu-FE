@@ -14,7 +14,7 @@ export const useClassStop = (id: number) => {
       );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       Toast('수업을 성공적으로 종료했습니다.', { type: 'success' });
       navigate(`/class-management/${id}`);
     },
