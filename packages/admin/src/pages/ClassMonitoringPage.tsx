@@ -20,7 +20,6 @@ export const ClassMonitoringPage = () => {
   const navigate = useNavigate();
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
-  const [isOpenTeam, setIsOpenTeam] = useState<boolean>(false);
   const [tradeResults, setTradeResults] = useState<TradeResult[]>([]);
 
   const { id } = useParams();
@@ -32,10 +31,6 @@ export const ClassMonitoringPage = () => {
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
-  };
-
-  const teamCurrentClick = () => {
-    setIsOpenTeam(true);
   };
 
   const classInfoClick = () => {
@@ -81,13 +76,6 @@ export const ClassMonitoringPage = () => {
           classItems={classData?.classItems}
           isOpen={isOpenClass}
           setIsOpen={setIsOpenClass}
-        />
-      )}
-      {isOpenTeam && (
-        <TeamCurrentModal
-          isOpen={isOpenTeam}
-          setIsOpen={setIsOpenTeam}
-          teamName="대마고"
         />
       )}
       <Header>
