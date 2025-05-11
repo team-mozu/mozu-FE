@@ -58,7 +58,9 @@ const ItemContent = ({
         <ItemPriceContainer>
           <Price>{nowMoney.toLocaleString()}원</Price>
           <Percent isUp={isUp}>
-            {`${isUp ? '+' : ''}${profitMoney.toLocaleString()}원 (${isUp ? '+' : ''}${profitNum})`}
+            {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${
+              isUp ? "+" : ""
+            }${profitNum})`}
           </Percent>
         </ItemPriceContainer>
       )}
@@ -85,8 +87,8 @@ export const ItemSidebar = ({
               itemLogo={data.itemLogo}
               nowMoney={data.nowMoney ?? 0}
               isUp={
-                typeof data.profitNum === 'string' &&
-                  data.profitNum.includes('-')
+                typeof data.profitNum === "string" &&
+                data.profitNum.includes("-")
                   ? false
                   : true
               }
@@ -96,7 +98,7 @@ export const ItemSidebar = ({
                   ? data.profitNum
                   : "0%"
               }
-              onClick={() => navigate(`home/stock/${data.itemId}/stock-info`)}
+              onClick={() => navigate(`stock/${data.itemId}`)}
             />
           ))
         ) : (

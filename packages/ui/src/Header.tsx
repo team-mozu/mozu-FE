@@ -41,10 +41,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
 
       {!isAdmin && !isResultPage && !isWaitPage && (
         <NavContainer>
-          <Nav
-            onClick={() => navigate(`/${classId}/home`)}
-            isActive={isNavHome}
-          >
+          <Nav onClick={() => navigate(`/${classId}`)} isActive={isNavHome}>
             홈
           </Nav>
           <Nav
