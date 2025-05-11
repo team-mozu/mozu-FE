@@ -1,8 +1,8 @@
-import { LogoWithText } from '@mozu/ui';
-import { color, font } from '@mozu/design-token';
-import styled from '@emotion/styled';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { useMemo } from 'react';
+import { LogoWithText } from "@mozu/ui";
+import { color, font } from "@mozu/design-token";
+import styled from "@emotion/styled";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useMemo } from "react";
 
 interface IHeaderProps {
   isAdmin: boolean;
@@ -16,23 +16,23 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
 
   /** 📌 현재 페이지 상태를 useMemo로 계산 */
   const currentPage = useMemo(() => {
-    if (pathname.startsWith('/:classId/home')) return 'home';
-    if (pathname.startsWith('/:classId/news')) return 'news';
-    if (pathname === '/:classId/result') return 'result';
-    if (pathname === '/signin/wait') return 'wait';
-    return 'default';
+    if (pathname.startsWith("/:classId/home")) return "home";
+    if (pathname.startsWith("/:classId/news")) return "news";
+    if (pathname === "/:classId/result") return "result";
+    if (pathname === "/signin/wait") return "wait";
+    return "default";
   }, [pathname]);
 
-  const isNavHome = currentPage === 'home';
-  const isNavNews = currentPage === 'news';
-  const isResultPage = currentPage === 'result';
-  const isWaitPage = currentPage === 'wait';
+  const isNavHome = currentPage === "home";
+  const isNavNews = currentPage === "news";
+  const isResultPage = currentPage === "result";
+  const isWaitPage = currentPage === "wait";
 
   return (
     <HeaderContainer isAdmin={isAdmin}>
       <LogoContainer
         onClick={() =>
-          navigate(isAdmin ? '/class-management' : `/${classId}/home`)
+          navigate(isAdmin ? "/class-management" : `/${classId}/home`)
         }
       >
         <LogoWithText width={74} height={28} />
@@ -41,10 +41,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
 
       {!isAdmin && !isResultPage && !isWaitPage && (
         <NavContainer>
-          <Nav
-            onClick={() => navigate(`/${classId}/home`)}
-            isActive={isNavHome}
-          >
+          <Nav onClick={() => navigate(`/${classId}`)} isActive={isNavHome}>
             홈
           </Nav>
           <Nav
@@ -82,8 +79,8 @@ const HeaderContainer = styled.header<{ isAdmin: boolean }>`
   position: fixed;
   top: 0;
   z-index: 1;
-  width: ${({ isAdmin }) => (isAdmin ? 'calc(100% - 280px)' : '100%')};
-  margin-left: ${({ isAdmin }) => (isAdmin ? '280px' : '0')};
+  width: ${({ isAdmin }) => (isAdmin ? "calc(100% - 280px)" : "100%")};
+  margin-left: ${({ isAdmin }) => (isAdmin ? "280px" : "0")};
   height: 64px;
   padding: 0 40px;
   display: flex;

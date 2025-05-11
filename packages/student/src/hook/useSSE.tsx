@@ -34,7 +34,7 @@ interface ClassCancelData {
 interface EventHandlers {
   TEAM_PART_IN?: (data: TeamPartInData) => void;
   CLASS_NEXT_INV_START?: (data: TeamNextInvStart) => void;
-  CLASS_CANCEL?: (data: ClassCancelData) => void; // ✅ 추가
+  CLASS_CANCEL?: (data: ClassCancelData) => void;
 }
 
 export const useSSE = (
@@ -67,7 +67,6 @@ export const useSSE = (
       });
     });
 
-    // 일반 message 이벤트도 수신
     eventSource.onmessage = (e: MessageEvent) => {
       try {
         const parsed: SSEEventPayload = JSON.parse(e.data);

@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { noImgIcon } from '@mozu/ui';
-import { useNavigate } from 'react-router-dom';
-import { useUnchangedValue } from '@/hook';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { noImgIcon } from "@mozu/ui";
+import { useNavigate } from "react-router-dom";
+import { useUnchangedValue } from "@/hook";
 
 interface IItemContentType {
   itemId?: number;
@@ -58,7 +58,9 @@ const ItemContent = ({
         <ItemPriceContainer>
           <Price>{nowMoney.toLocaleString()}원</Price>
           <Percent isUp={isUp}>
-            {`${isUp ? '+' : ''}${profitMoney.toLocaleString()}원 (${isUp ? '+' : ''}${profitNum})`}
+            {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${
+              isUp ? "+" : ""
+            }${profitNum})`}
           </Percent>
         </ItemPriceContainer>
       )}
@@ -85,8 +87,8 @@ export const ItemSidebar = ({
               itemLogo={data.itemLogo}
               nowMoney={data.nowMoney ?? 0}
               isUp={
-                typeof data.profitNum === 'string' &&
-                  data.profitNum.includes('-')
+                typeof data.profitNum === "string" &&
+                data.profitNum.includes("-")
                   ? false
                   : true
               }
@@ -94,9 +96,9 @@ export const ItemSidebar = ({
               profitNum={
                 data.profitNum && !isNaN(parseFloat(data.profitNum))
                   ? data.profitNum
-                  : '0%'
+                  : "0%"
               }
-              onClick={() => navigate(`home/stock/${data.itemId}/stock-info`)}
+              onClick={() => navigate(`stock/${data.itemId}`)}
             />
           ))
         ) : (
@@ -156,7 +158,7 @@ const Price = styled.div`
   color: ${color.black};
 `;
 
-const Percent = styled.div<Pick<IItemContentType, 'isUp'>>`
+const Percent = styled.div<Pick<IItemContentType, "isUp">>`
   font: ${font.l2};
   color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
 `;
