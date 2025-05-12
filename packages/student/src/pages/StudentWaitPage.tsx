@@ -12,7 +12,7 @@ export const StudentWaitPage = () => {
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     (data) => {
-      Toast(`${data.message}`, { type: "success" });
+      console.log(data.message);
     },
     (error) => {
       console.log(error);

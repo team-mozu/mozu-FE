@@ -24,7 +24,7 @@ export const InvestmentPreparation = () => {
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
     (data) => {
-      Toast(`${data.message}`, { type: "success" });
+      console.log(data.message);
     },
     (error) => {
       console.log(error);
