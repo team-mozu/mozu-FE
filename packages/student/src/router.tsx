@@ -43,6 +43,10 @@ export const Router = createBrowserRouter([
         ],
       },
       {
+        path: "stock/:stockId",
+        element: <StockPage />,
+      },
+      {
         path: "news",
         children: [
           { index: true, element: <NewsPage /> },
