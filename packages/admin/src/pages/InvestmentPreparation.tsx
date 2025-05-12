@@ -4,7 +4,7 @@ import { color, font } from "@mozu/design-token";
 import { useNavigate, useParams } from "react-router";
 import { ParticipationContainer } from "@/components";
 import { useSSE } from "@/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useClassStop, useGetClassDetail, useNextDegree } from "@/apis";
 import { useTeamStore } from "@/store";
 
@@ -19,7 +19,11 @@ export const InvestmentPreparation = () => {
   const [datas, setDatas] = useState({ teams: [] });
   const { mutate: nextDegree } = useNextDegree(classId);
   const { mutate: stopClass } = useClassStop(classId);
-  const { setTeamInfo } = useTeamStore();
+  const { setTeamInfo, clearTeamInfo } = useTeamStore();
+
+  useEffect(() => {
+    clearTeamInfo();
+  }, [])
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
