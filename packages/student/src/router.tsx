@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import {
   HomePage,
   NewsPage,
@@ -36,6 +36,11 @@ export const Router = createBrowserRouter([
       {
         path: "stock/:stockId",
         element: <StockPage />,
+        children: [
+          { index: true, element: <Navigate to="price-info" replace /> },
+          { path: "price-info", element: <StockPage /> },
+          { path: "stock-info", element: <StockPage /> },
+        ],
       },
       {
         path: "news",

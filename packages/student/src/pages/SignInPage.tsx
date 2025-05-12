@@ -7,8 +7,6 @@ import { useStudentLogin } from "@/apis";
 import { StudentLoginProps } from "@/apis/login/type";
 
 export const SignInPage = () => {
-    schoolName: string;
-  }>({
   const { state, onChangeInputValue } = useForm<StudentLoginProps>({
     classNum: null,
     schoolName: "",
