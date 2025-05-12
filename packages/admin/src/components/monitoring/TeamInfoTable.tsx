@@ -129,7 +129,7 @@ export const TeamInfoTable = ({
                 handleOpenModal(matchedTeam.teamId, matchedTeam.teamName)
               }
             >
-              <span>{teamName}</span>
+              <TeamName>{teamName}</TeamName>
               {isCompleted && (
                 <CompletedBadge>
                   투자완료 <Check size={18} color={color.green[500]} />
@@ -316,4 +316,10 @@ const CompletedBadge = styled.span`
   display: flex;
   align-items: center;
   gap: 2px;
+`;
+
+const TeamName = styled.span`
+  :hover {
+    text-decoration: underline;
+  }
 `;

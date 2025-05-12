@@ -33,9 +33,8 @@ export const useSSE = (
     if (!url) return;
 
     const eventSource = new EventSourcePolyfill(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
+      heartbeatTimeout: 1000 * 60 * 30,
     });
 
     eventSourceRef.current = eventSource;
