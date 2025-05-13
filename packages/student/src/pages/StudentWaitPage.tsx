@@ -19,6 +19,7 @@ export const StudentWaitPage = () => {
     },
     {
       CLASS_NEXT_INV_START: (data) => {
+        localStorage.removeItem("trade");
         Toast("투자가 시작되었습니다", { type: "info" });
         navigate(`/${data.classId}`);
       },

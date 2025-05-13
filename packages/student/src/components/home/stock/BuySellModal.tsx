@@ -1,61 +1,115 @@
+// TODO: 매수 or 매도 불가 메시지 띄우기 || 버튼 Disable 처리 because 사용자 경험 향상
+
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useEffect, useState } from "react";
 import { Button, Input, Toast } from "@mozu/ui";
-import { TradeHistory } from "@/db/type";
-import { db } from "@/db";
+import { useParams } from "react-router-dom";
+import { useGetHoldItems, useGetStockDetail, useGetTeamDetail } from "@/apis";
+import { useLocalStorage } from "@/hook/useLocalStorage";
+import { TeamEndData, TeamEndProps } from "@/apis/team/type";
 
 interface IPropsType {
   modalType: string;
-  nowMoney: number;
-  cashMoney: number;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (order: TradeHistory) => void;
-  itemId: number;
-  itemName: string;
-  invDeg: number;
 }
 
-export const BuySellModal = ({
-  modalType,
-  onClose,
-  nowMoney,
-  cashMoney,
-  isOpen,
-  itemId,
-  itemName,
-  onConfirm,
-  invDeg,
-}: IPropsType) => {
-  const handleConfirm = async () => {
-    try {
-      const tradeData: TradeHistory = {
-        itemId,
-        itemName,
-        itemMoney: nowMoney,
-        orderCount: numericQuantity,
-        totalMoney: numericQuantity * nowMoney,
-        orderType: modalType === "매수" ? "BUY" : "SELL",
-        invDeg: invDeg,
-        timestamp: new Date(),
-      };
+export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
+  const { stockId } = useParams();
+  const ItemId = stockId ? parseInt(stockId) : null;
 
-      const savedId = await db.tradeHistory.add(tradeData);
-      if (savedId) {
-        onConfirm({
-          ...tradeData,
-          id: savedId,
+  const { data: teamData } = useGetTeamDetail();
+  const { data: stockData } = useGetStockDetail(ItemId);
+  const { data: holdItemData } = useGetHoldItems();
+  const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
+
+  const handleConfirm = async () => {
+    const itemIdNum = Number(stockId);
+    const existingOppositeOrder = tradeData.find(
+      (tradeItem) =>
+        tradeItem.itemId === itemIdNum &&
+        tradeItem.orderType !== (modalType === "매수" ? "BUY" : "SELL")
+    );
+
+    if (existingOppositeOrder) {
+      Toast("같은 차수에서는 매수와 매도를 동시에 할 수 없습니다", {
+        type: "error",
+      });
+      return;
+    }
+
+    if (
+      modalType === "매수" &&
+      numericQuantity * stockData.nowMoney > teamData.cashMoney
+    ) {
+      Toast("보유하고 있는 현금보다 많이 매수할 수 없습니다", {
+        type: "error",
+      });
+      return;
+    }
+
+    if (modalType === "매도") {
+      const holding = holdItemData.find((item) => item.itemId === itemIdNum);
+      const holdingCount = holding?.itemCnt || 0;
+
+      if (numericQuantity > holdingCount) {
+        Toast("보유하고 있는 종목의 수량보다 많이 매도할 수 없습니다", {
+          type: "error",
         });
-        onClose();
+        return;
       }
+    }
+
+    const newTradeItem: TeamEndData = {
+      itemId: stockData.itemId,
+      itemName: stockData.itemName,
+      itemMoney: stockData.nowMoney,
+      orderCount: numericQuantity,
+      totalMoney: numericQuantity * stockData.nowMoney,
+      orderType: modalType === "매수" ? "BUY" : "SELL",
+    };
+
+    try {
+      const existingIndex = tradeData.findIndex(
+        (tradeItem) =>
+          tradeItem.itemId === itemIdNum &&
+          tradeItem.orderType === newTradeItem.orderType
+      );
+
+      let updatedTradeData: TeamEndData[];
+
+      if (existingIndex !== -1) {
+        const mergedItem = {
+          ...tradeData[existingIndex],
+          orderCount:
+            tradeData[existingIndex].orderCount + newTradeItem.orderCount,
+          totalMoney:
+            tradeData[existingIndex].totalMoney + newTradeItem.totalMoney,
+        };
+
+        updatedTradeData = [...tradeData];
+        updatedTradeData[existingIndex] = mergedItem;
+      } else {
+        updatedTradeData = [...tradeData, newTradeItem];
+      }
+
+      setTradeData(updatedTradeData);
+      Toast(`거래가 성공적으로 완료되었습니다.`, { type: "success" });
+
+      onClose();
     } catch (error) {
-      console.error("거래 실패:", error);
-      Toast("거래 처리 중 오류가 발생했습니다", { type: "error" });
+      console.error("거래 저장 중 오류 발생:", error);
+      Toast("거래 중 오류가 발생했습니다. 다시 시도해주세요.", {
+        type: "error",
+      });
     }
   };
 
-  const maxQuantity = nowMoney > 0 ? Math.floor(cashMoney / nowMoney) : 0;
+  const maxQuantity =
+    stockData.nowMoney > 0
+      ? Math.floor(teamData.cashMoney / stockData.nowMoney)
+      : 0;
 
   // 상태 관리
   const [quantity, setQuantity] = useState<string>("0");
@@ -63,13 +117,13 @@ export const BuySellModal = ({
 
   // 총 주문 금액 계산
   const totalAmount =
-    (numericQuantity * nowMoney).toLocaleString("ko-KR") + "원";
+    (numericQuantity * stockData.nowMoney).toLocaleString("ko-KR") + "원";
 
   // 데이터 초기화
   useEffect(() => {
     const newQuantity = maxQuantity > 0 ? "1" : "0";
     setQuantity(newQuantity);
-  }, [nowMoney, cashMoney]);
+  }, [stockData.nowMoney, teamData.cashMoney]);
 
   // 입력 변경 핸들러
   const priceChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +138,7 @@ export const BuySellModal = ({
   // UI 데이터
   const footerData = [
     { text: `${modalType}가능 수량`, value: `${maxQuantity}주` },
-    { text: "주문가격", value: `${nowMoney.toLocaleString()}원` },
+    { text: "주문가격", value: `${stockData.nowMoney.toLocaleString()}원` },
     { text: "총 주문금액", value: totalAmount },
   ];
 
@@ -97,7 +151,7 @@ export const BuySellModal = ({
           <Header
             color={modalType === "매도" ? color.blue[500] : color.red[500]}
           >
-            삼성전자
+            {stockData.itemName}
             <BuySellKeyword
               color={modalType === "매도" ? color.blue[500] : color.red[500]}
             >

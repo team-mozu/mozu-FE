@@ -28,6 +28,7 @@ export const AppLayout = () => {
     },
     {
       CLASS_NEXT_INV_START: () => {
+        localStorage.removeItem("trade");
         classItemRefetch();
         teamDataRefetch();
         articleDataRefetch();

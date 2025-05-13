@@ -1,6 +1,7 @@
-import { ResultContainer, RankModal } from '@/components';
-import styled from '@emotion/styled';
-import { useState } from 'react';
+// TODO: 소수점이 너무 길게 나와요
+import { ResultContainer, RankModal } from "@/components";
+import styled from "@emotion/styled";
+import { useState } from "react";
 
 export const ResultPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

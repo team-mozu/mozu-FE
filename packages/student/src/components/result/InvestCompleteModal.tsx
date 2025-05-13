@@ -1,5 +1,4 @@
 import { useTeamEnd } from "@/apis";
-import { fetchTradeHistory } from "@/db";
 import { useTradeHistory } from "@/hook";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
@@ -22,7 +21,7 @@ export const InvestCompleteModal = ({
   const { history } = useTradeHistory();
   const { mutate: teamEnd } = useTeamEnd({
     onSuccess: () => {
-      Toast("투자 완료에 성공하였습니다", { type: "error" });
+      Toast("투자 완료에 성공하였습니다", { type: "success" });
       setIsOpen(false);
       navigate(`/${classId}/result`);
     },
