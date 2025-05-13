@@ -3,14 +3,14 @@ import { Outlet, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useGetClassItem, useGetTeamDetail } from '@/apis';
-import { ItemSidebar, HistorySidebar } from '@/components';
+import { ItemSidebar, HistorySidebar, ItemSidebarSkeleton } from '@/components';
 import { liveQuery } from 'dexie';
 import { db } from '@/db';
 
 export const AppLayout = () => {
   const [isResultPage, setIsResultPage] = useState<boolean>(false);
   const { pathname } = useLocation();
-  const { data: itemSideBarData } = useGetClassItem();
+  const { data: itemSideBarData, isLoading } = useGetClassItem();
   const { data: teamData } = useGetTeamDetail();
 
   const [totalBuy, setTotalBuy] = useState(0);
@@ -67,9 +67,14 @@ export const AppLayout = () => {
       <Layout>
         {!isResultPage && (
           <>
-            <ItemSidebar
-              classData={Array.isArray(itemSideBarData) ? itemSideBarData : []}
-            />
+            {
+              isLoading ?
+                <ItemSidebarSkeleton />
+                :
+                <ItemSidebar
+                  classData={Array.isArray(itemSideBarData) ? itemSideBarData : []}
+                />
+            }
             <HistorySidebar
               teamName={teamData?.name ?? ''}
               totalMoney={teamData?.totalMoney ?? 0}

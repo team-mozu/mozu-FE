@@ -35,46 +35,44 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
   }, [pathname]);
 
   return (
-    <>
-      <SideBarContainer>
-        <ProfileContainer>
-          <LogoContainer>
-            <ManagerLogo />
-          </LogoContainer>
-          <ProfileContents>
-            <Name>{name}</Name>
-            <RoleType>{role}</RoleType>
-          </ProfileContents>
-        </ProfileContainer>
-        <Divider />
-        <ContentContainer>
-          <NavTitle>{navTitle}</NavTitle>
-          <BtnContainer>
-            <NavBtn
-              type={"classIcon"}
-              isColor={isClassColor}
-              onClick={() => navigate("/class-management")}
-            >
-              수업 관리
-            </NavBtn>
-            <NavBtn
-              type={"stockIcon"}
-              isColor={isStockColor}
-              onClick={() => navigate("/stock-management")}
-            >
-              종목 관리
-            </NavBtn>
-            <NavBtn
-              type={"articleIcon"}
-              isColor={isArticleColor}
-              onClick={() => navigate("/article-management")}
-            >
-              기사 관리
-            </NavBtn>
-          </BtnContainer>
-        </ContentContainer>
-      </SideBarContainer>
-    </>
+    <SideBarContainer>
+      <ProfileContainer>
+        <LogoContainer>
+          <ManagerLogo />
+        </LogoContainer>
+        <ProfileContents>
+          <Name>{name}</Name>
+          <RoleType>{role}</RoleType>
+        </ProfileContents>
+      </ProfileContainer>
+      <Divider />
+      <ContentContainer>
+        <NavTitle>{navTitle}</NavTitle>
+        <BtnContainer>
+          <NavBtn
+            type={"classIcon"}
+            isColor={isClassColor}
+            onClick={() => navigate("/class-management")}
+          >
+            수업 관리
+          </NavBtn>
+          <NavBtn
+            type={"stockIcon"}
+            isColor={isStockColor}
+            onClick={() => navigate("/stock-management")}
+          >
+            종목 관리
+          </NavBtn>
+          <NavBtn
+            type={"articleIcon"}
+            isColor={isArticleColor}
+            onClick={() => navigate("/article-management")}
+          >
+            기사 관리
+          </NavBtn>
+        </BtnContainer>
+      </ContentContainer>
+    </SideBarContainer>
   );
 };
 

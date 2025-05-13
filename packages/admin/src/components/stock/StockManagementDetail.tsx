@@ -5,13 +5,13 @@ import {
   Accounts,
   StockNoLogo,
   AccountsSkeleton,
+  CompanySkeleton,
 } from "@mozu/ui";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useDeleteStock, useGetStockDetail } from "@/apis";
-import { usePriceFormatter } from "@/hooks";
 import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
 interface IStockManagementDetailProps {
@@ -164,20 +164,18 @@ export const StockManagementDetail = ({
       <UnderContainer>
         <CompanyInfo>
           <Label>회사 정보</Label>
-          <div>
-            {isLoading ? (
-              <CompanyDiv>{lines}</CompanyDiv>
-            ) : (
-              lines.map((line, index) =>
-                line.trim() === "" ? (
-                  // 빈 줄은 <br>로 처리
-                  <br key={index} />
-                ) : (
-                  <CompanyText key={index}>{line}</CompanyText>
-                )
+          {isLoading ? (
+            <CompanySkeleton />
+          ) : (
+
+            lines.map((line, index) =>
+              line.trim() === "" ? (
+                <br key={index} />
+              ) : (
+                <CompanyText key={index}>{line}</CompanyText>
               )
-            )}
-          </div>
+            )
+          )}
         </CompanyInfo>
         <CompanyMain>
           <Section>
@@ -185,8 +183,8 @@ export const StockManagementDetail = ({
               <Label>재무상태표</Label>
               {isLoading ? (
                 <ContentWrapper>
-                  <AccountsSkeleton title={"부채"} content={datas.debt} />
-                  <AccountsSkeleton title={"자본금"} content={datas.capital} />
+                  <AccountsSkeleton />
+                  <AccountsSkeleton />
                 </ContentWrapper>
               ) : (
                 <ContentWrapper>
@@ -199,19 +197,10 @@ export const StockManagementDetail = ({
               <Label>손익계산서</Label>
               {isLoading ? (
                 <ContentWrapper>
-                  <AccountsSkeleton title={"매출액"} content={datas.profit} />
-                  <AccountsSkeleton
-                    title={"매출원가"}
-                    content={datas.profitOG}
-                  />
-                  <AccountsSkeleton
-                    title={"매출이익"}
-                    content={datas.profitBen}
-                  />
-                  <AccountsSkeleton
-                    title={"당기순이익"}
-                    content={datas.netProfit}
-                  />
+                  <AccountsSkeleton />
+                  <AccountsSkeleton />
+                  <AccountsSkeleton />
+                  <AccountsSkeleton />
                 </ContentWrapper>
               ) : (
                 <ContentWrapper>

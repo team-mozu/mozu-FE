@@ -27,3 +27,4 @@ export * from './ExitBtn';
 export * from './Toast';
 export * from './ToastContainer';
 export * from './AccountsSkeleton';
+export * from './CompanySkeleton';
