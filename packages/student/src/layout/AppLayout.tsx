@@ -2,37 +2,37 @@ import { Header, Toast } from "@mozu/ui";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import { useGetClassItem, useGetTeamDetail } from "@/apis";
+import { useGetArticleList, useGetClassItem, useGetTeamDetail } from "@/apis";
 import { ItemSidebar, HistorySidebar } from "@/components";
-import { liveQuery } from "dexie";
-import { db } from "@/db";
 import { useSSE } from "@/hook";
 import { removeCookiesAsync } from "@configs/util";
+import { queryClient } from "..";
 
 export const AppLayout = () => {
-  const [isResultPage, setIsResultPage] = useState<boolean>(false);
+  const { data: teamData, refetch: teamDataRefetch } = useGetTeamDetail();
+  const { refetch: classItemRefetch } = useGetClassItem();
+  const { refetch: articleDataRefetch } = useGetArticleList();
   const { pathname } = useLocation();
-  const { data: itemSideBarData } = useGetClassItem();
-  const { data: teamData } = useGetTeamDetail();
-
-  const [totalBuy, setTotalBuy] = useState(0);
-  const [totalSell, setTotalSell] = useState(0);
 
   const navigate = useNavigate();
 
+  const splitedPath = pathname.split("/");
+  const isResultPage = splitedPath[splitedPath.length - 1] === "result";
+
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    (data) => {
-      Toast(`${data.message}`, { type: "success" });
-    },
+    (data) => {},
     (error) => {
       console.log(error);
       Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
     },
     {
-      CLASS_NEXT_INV_START: (data) => {
+      CLASS_NEXT_INV_START: () => {
+        classItemRefetch();
+        teamDataRefetch();
+        articleDataRefetch();
+        queryClient.invalidateQueries({ queryKey: ["getStock"], exact: false });
         Toast("다음 투자가 시작되었습니다", { type: "info" });
-        console.log(data);
       },
       CLASS_CANCEL: async () => {
         Toast("수업이 취소되었습니다.", { type: "error" });
@@ -49,50 +49,32 @@ export const AppLayout = () => {
     }
   );
 
-  useEffect(() => {
-    const subscription = liveQuery(async () => {
-      const [buySum, sellSum] = await Promise.all([
-        db.tradeHistory
-          .where("orderType")
-          .equals("BUY")
-          .toArray()
-          .then((data) =>
-            data.reduce((acc, cur) => acc + cur.itemMoney * cur.orderCount, 0)
-          ),
+  // useEffect(() => {
+  //   const subscription = liveQuery(async () => {
+  //     const [buySum, sellSum] = await Promise.all([
+  //       db.tradeHistory
+  //         .where("orderType")
+  //         .equals("BUY")
+  //         .toArray()
+  //         .then((data) =>
+  //           data.reduce((acc, cur) => acc + cur.itemMoney * cur.orderCount, 0)
+  //         ),
 
-        db.tradeHistory
-          .where("orderType")
-          .equals("SELL")
-          .toArray()
-          .then((data) =>
-            data.reduce((acc, cur) => acc + cur.itemMoney * cur.orderCount, 0)
-          ),
-      ]);
+  //       db.tradeHistory
+  //         .where("orderType")
+  //         .equals("SELL")
+  //         .toArray()
+  //         .then((data) =>
+  //           data.reduce((acc, cur) => acc + cur.itemMoney * cur.orderCount, 0)
+  //         ),
+  //     ]);
 
-      setTotalBuy(buySum);
-      setTotalSell(sellSum);
-    }).subscribe();
+  //     setTotalBuy(buySum);
+  //     setTotalSell(sellSum);
+  //   }).subscribe();
 
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const buyableAmount = (teamData?.cashMoney || 0) - totalBuy + totalSell;
-
-  useEffect(() => {
-    console.log("itemSideBarData:", itemSideBarData ?? 0);
-  }, [itemSideBarData]);
-
-  useEffect(() => {
-    if (pathname === "/news") {
-      setIsResultPage(false);
-    } else if (pathname.includes("/home")) {
-      setIsResultPage(false);
-    } else if (pathname.includes("/result")) {
-      setIsResultPage(true);
-    } else {
-      setIsResultPage(false);
-    }
-  }, [pathname]);
+  //   return () => subscription.unsubscribe();
+  // }, []);
 
   return (
     <AppContainer>
@@ -100,21 +82,8 @@ export const AppLayout = () => {
       <Layout>
         {!isResultPage && (
           <>
-            <ItemSidebar
-              classData={Array.isArray(itemSideBarData) ? itemSideBarData : []}
-            />
-            <HistorySidebar
-              teamName={teamData?.name ?? ""}
-              totalMoney={teamData?.totalMoney ?? 0}
-              basicMoney={teamData?.baseMoney ?? 0}
-              cashMoney={teamData?.cashMoney ?? 0}
-              valueProfit={teamData?.valueProfit ?? 0}
-              valueMoney={teamData?.valueMoney ?? 0}
-              profitNum={teamData?.profitNum ?? ""}
-              totalBuy={totalBuy}
-              totalSell={totalSell}
-              buyableAmount={buyableAmount > 0 ? buyableAmount : 0}
-            />
+            <ItemSidebar />
+            <HistorySidebar />
           </>
         )}
         <MainContent isResultPage={isResultPage}>

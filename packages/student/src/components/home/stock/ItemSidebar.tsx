@@ -3,6 +3,7 @@ import { color, font } from "@mozu/design-token";
 import { noImgIcon } from "@mozu/ui";
 import { useNavigate } from "react-router-dom";
 import { useUnchangedValue } from "@/hook";
+import { useGetClassItem } from "@/apis";
 
 interface IItemContentType {
   itemId?: number;
@@ -68,18 +69,16 @@ const ItemContent = ({
   );
 };
 
-export const ItemSidebar = ({
-  classData = [],
-}: {
-  classData: ClassResponse[];
-}) => {
+export const ItemSidebar = () => {
+  const { data } = useGetClassItem();
   const navigate = useNavigate();
+
   return (
     <SideBarContainer>
       <Title>전체 종목</Title>
       <ItemContentContainer>
-        {Array.isArray(classData) && classData.length > 0 ? (
-          classData.map((data, id) => (
+        {Array.isArray(data) && data.length > 0 ? (
+          data.map((data, id) => (
             <ItemContent
               key={id}
               itemId={data.itemId}

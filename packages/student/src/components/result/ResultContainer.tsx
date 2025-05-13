@@ -126,7 +126,7 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               hoverBackgroundColor={color.orange[600]}
               disabled={isWait}
               onClick={() => {
-                navigate(`/${data.classId}/home`);
+                navigate(`/${data.classId}`);
               }}
             >
               계속하기

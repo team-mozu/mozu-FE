@@ -10,6 +10,7 @@ import {
   NotFoundPage,
 } from "@/pages";
 import { AppLayout } from "@/layout";
+import { StockGraph, StockInfo } from "./components";
 
 export const Router = createBrowserRouter([
   {
@@ -37,14 +38,10 @@ export const Router = createBrowserRouter([
         path: "stock/:stockId",
         element: <StockPage />,
         children: [
-          { index: true, element: <Navigate to="price-info" replace /> },
-          { path: "price-info", element: <StockPage /> },
-          { path: "stock-info", element: <StockPage /> },
+          { index: true, element: <Navigate to="stock-info" replace /> },
+          { path: "price-info", element: <StockGraph /> },
+          { path: "stock-info", element: <StockInfo /> },
         ],
-      },
-      {
-        path: "stock/:stockId",
-        element: <StockPage />,
       },
       {
         path: "news",

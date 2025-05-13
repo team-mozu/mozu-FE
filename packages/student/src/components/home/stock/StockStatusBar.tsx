@@ -1,13 +1,13 @@
-import { color, font } from '@mozu/design-token';
-import styled from '@emotion/styled';
-import { Button, noImgIcon } from '@mozu/ui';
-import { useGetStockDetail } from '@/apis';
-import { useParams } from 'react-router-dom';
+import { color, font } from "@mozu/design-token";
+import styled from "@emotion/styled";
+import { Button, noImgIcon } from "@mozu/ui";
+import { useGetStockDetail } from "@/apis";
+import { useParams } from "react-router-dom";
 
 export const StockStatusBar = ({
   openModal,
 }: {
-  openModal: (type: '매수' | '매도') => void;
+  openModal: (type: "매수" | "매도") => void;
 }) => {
   const { stockId } = useParams();
   const ItemId = stockId ? parseInt(stockId) : null;
@@ -18,23 +18,22 @@ export const StockStatusBar = ({
     <Wrapper>
       <Stock>
         <Logo
-          src={data?.itemLogo ?? ''}
+          src={data?.itemLogo ?? ""}
           onError={(e) => {
             e.currentTarget.src = noImgIcon;
           }}
         />
         <StockInfo>
           <StockName>
-            {data?.itemName ?? ''}
+            {data?.itemName ?? ""}
             <span>{data?.itemId ?? 0}</span>
           </StockName>
           <StockPrice
             color={
-              data?.profitNum.includes('+') ? color.red[500] : color.blue[500]
+              data?.profitNum.includes("+") ? color.red[500] : color.blue[500]
             }
           >
-            {data?.moneyList[1]?.toLocaleString()}원{' '}
-            <span>{data?.profitNum}</span>
+            {data?.nowMoney.toLocaleString()}원 <span>{data?.profitNum}</span>
           </StockPrice>
         </StockInfo>
       </Stock>
@@ -44,7 +43,7 @@ export const StockStatusBar = ({
           backgroundColor={color.red[500]}
           color="white"
           width={80}
-          onClick={() => openModal('매수' /*currentStock*/)}
+          onClick={() => openModal("매수" /*currentStock*/)}
           hoverBackgroundColor={color.red[600]}
           hoverBorderColor={color.red[600]}
         >
@@ -55,7 +54,7 @@ export const StockStatusBar = ({
           backgroundColor={color.blue[500]}
           color="white"
           width={80}
-          onClick={() => openModal('매도' /*currentStock*/)}
+          onClick={() => openModal("매도" /*currentStock*/)}
           hoverBackgroundColor={color.blue[600]}
           hoverBorderColor={color.blue[600]}
         >

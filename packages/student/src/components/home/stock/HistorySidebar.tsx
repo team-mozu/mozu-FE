@@ -1,12 +1,11 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Toast } from "@mozu/ui";
-import { useCallback, useEffect, useState } from "react";
-import { useTradeHistory, useUnchangedValue } from "@/hook";
+import { useEffect, useState } from "react";
+import { useUnchangedValue } from "@/hook";
 import { db } from "@/db";
 import { liveQuery } from "dexie";
-import { useNavigate, useParams } from "react-router-dom";
-import { useTeamEnd } from "@/apis";
+import { useGetTeamDetail } from "@/apis";
 import { InvestCompleteModal } from "@/components";
 
 interface ITransactionContentType {
@@ -17,23 +16,6 @@ interface ITransactionContentType {
   stockPrice: string; //100원(5주)
   isUp?: boolean; // 매수인지 매도인지 확인 기능
   onDelete: (id: number) => void;
-}
-
-interface ITeamDataProp {
-  teamName: string;
-  totalMoney: number;
-  basicMoney: number;
-  cashMoney: number;
-  valueMoney: number;
-  valueProfit: number;
-  profitNum: string;
-  totalBuy: number;
-  totalSell: number;
-  buyableAmount: number;
-}
-
-interface TransactionData extends ITransactionContentType {
-  id: number;
 }
 
 const TransactionContent = ({
@@ -71,21 +53,14 @@ const TransactionContent = ({
   );
 };
 
-export const HistorySidebar = ({
-  teamName,
-  totalMoney,
-  basicMoney,
-  cashMoney,
-  valueMoney,
-  valueProfit,
-  profitNum,
-  totalBuy,
-  totalSell,
-  buyableAmount,
-}: ITeamDataProp) => {
+// TODO: totalBuy, totalSell, buyableAmount 구현 필요함
+
+export const HistorySidebar = () => {
+  const { data, isLoading } = useGetTeamDetail();
   const [transactions, setTransactions] = useState<ITransactionContentType[]>(
     []
   );
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const observable = liveQuery(async () => {
@@ -115,37 +90,34 @@ export const HistorySidebar = ({
 
   const datas = { transactionHistory: transactions };
 
+  if (isLoading) return;
+
+  const totalBuy = 0;
+  const totalSell = 0;
+  const buyableAmount = data.cashMoney - totalBuy + totalSell;
+
   const formattedData = {
-    teamName: teamName,
-    totalMoney: totalMoney.toLocaleString(),
-    cashMoney: cashMoney.toLocaleString(),
-    valueMoney: valueMoney.toLocaleString(),
-    valueProfit: valueProfit,
-    profitNum: profitNum,
+    teamName: data.name,
+    totalMoney: data.totalMoney.toLocaleString(),
+    cashMoney: data.cashMoney.toLocaleString(),
+    valueMoney: data.valueMoney.toLocaleString(),
+    valueProfit: data.valueProfit,
+    profitNum: data.profitNum,
     totalBuy: totalBuy.toLocaleString(),
     totalSell: totalSell.toLocaleString(),
     buyableAmount: buyableAmount.toLocaleString(),
   };
 
-  const fixedProfitNum = Number(profitNum.replace("%", "")).toFixed(2);
+  const fixedProfitNum = Number(data.profitNum.replace("%", "")).toFixed(2);
   const formattedProfitNum = `${fixedProfitNum}%`;
 
   const sameValue: boolean = useUnchangedValue(
-    totalMoney.toLocaleString(),
-    basicMoney.toLocaleString()
-  );
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [isNextDeg, setIsNextDeg] = useState(
-    () => () => console.log("함수 실행됨")
+    data.totalMoney.toLocaleString(),
+    data.baseMoney.toLocaleString()
   );
 
   const IsOpen = () => {
     setIsOpen(true);
-  };
-
-  const handleClick = () => {
-    isNextDeg();
   };
 
   const handleDeleteTransaction = (deletedId: number) => {
@@ -166,7 +138,7 @@ export const HistorySidebar = ({
               color={
                 sameValue
                   ? color.green[600]
-                  : valueProfit > 0
+                  : data.valueProfit > 0
                   ? color.red[500]
                   : color.blue[500]
               }
@@ -175,7 +147,8 @@ export const HistorySidebar = ({
             </TotalAssetPrice>
             {formattedData.valueProfit !== 0 ? (
               <UpDownDiv>
-                {formattedData.valueProfit.toLocaleString()}원 ({formattedProfitNum})
+                {formattedData.valueProfit.toLocaleString()}원 (
+                {formattedProfitNum})
               </UpDownDiv>
             ) : null}
           </TotalAssetContainer>

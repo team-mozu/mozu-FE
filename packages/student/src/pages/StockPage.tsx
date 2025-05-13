@@ -6,7 +6,7 @@ import {
   StockStatusBar,
   BuySellModal,
 } from "@/components";
-import { useLocation, useParams } from "react-router-dom";
+import { Outlet, useLocation, useParams } from "react-router-dom";
 import { ReactNode, useState } from "react";
 import { useGetStockDetail, useGetTeamDetail } from "@/apis";
 import { TradeHistory } from "@/db/type";
@@ -51,20 +51,13 @@ export const StockPage = () => {
   const { data: stockData } = useGetStockDetail(ItemId);
   const { data: teamData } = useGetTeamDetail();
 
-  const location = useLocation();
-  const componentRoute = (currentPath: string): ReactNode => {
-    if (currentPath.includes("/price-info")) return <StockGraph />;
-    if (currentPath.includes("/stock-info")) return <StockInfo />;
-    return <p>404</p>;
-  };
-
   return (
     <div>
       <Container>
         <StockStatusBar openModal={openModal} />
         <MainWrapper>
           <NavBar />
-          <div>{componentRoute(location.pathname)}</div>
+          <Outlet />
         </MainWrapper>
       </Container>
       {modalState.isOpen && (
@@ -87,7 +80,7 @@ export const StockPage = () => {
 const Container = styled.div`
   width: 100%;
   padding: 40px;
-  display: flex; 
+  display: flex;
   flex-direction: column;
   gap: 24px;
 `;
