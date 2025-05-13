@@ -1,3 +1,4 @@
+// TODO: state 변동 시에 리렌더링 됨에 따라 useSSE가 재실행 됨
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, HandCoins, Toast, Trophy } from "@mozu/ui";
@@ -22,9 +23,7 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    (data) => {
-      Toast(`${data.message}`, { type: "success" });
-    },
+    (data) => {},
     (error) => {
       console.log(error);
       Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
