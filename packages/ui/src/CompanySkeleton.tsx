@@ -1,13 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css, keyframes } from '@emotion/react';
-import { color } from "@mozu/design-token";
+import { color } from '@mozu/design-token';
 
-export const AccountsSkeleton = () => {
+export const CompanySkeleton = () => {
   return (
-    <div css={AccountsContainer}>
+    <div css={CompanyContainer}>
       <div css={TextBarWrapper}>
         <div css={TextBarShort} />
-        <div css={TextBarLong} />
+        <div css={TextAreaBlock} />
       </div>
     </div>
   );
@@ -22,17 +22,17 @@ const shimmer = keyframes`
   }
 `;
 
-const AccountsContainer = css`
+const CompanyContainer = css`
   position: relative;
   overflow: hidden;
-  flex-grow: 1;
   width: 100%;
-  height: 108px;
+  max-width: 1000px;
+  height: 200px;
   border-radius: 12px;
   background-color: ${color.zinc[100]};
   padding: 24px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 
   &::before {
     content: '';
@@ -58,20 +58,20 @@ const TextBarWrapper = css`
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
 `;
 
 const TextBarShort = css`
-  width: 40%;
-  height: 14px;
+  width: 30%;
+  height: 16px;
   border-radius: 6px;
   background-color: ${color.zinc[200]};
 `;
 
-const TextBarLong = css`
-  width: 80%;
-  height: 14px;
-  border-radius: 6px;
+const TextAreaBlock = css`
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
   background-color: ${color.zinc[200]};
 `;

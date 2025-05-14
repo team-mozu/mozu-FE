@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useGetArticleList, useGetClassItem, useGetTeamDetail } from "@/apis";
-import { ItemSidebar, HistorySidebar } from "@/components";
+import { ItemSidebar, HistorySidebar, ItemSidebarSkeleton } from "@/components";
 import { useSSE } from "@/hook";
 import { removeCookiesAsync } from "@configs/util";
 import { queryClient } from "..";
@@ -13,6 +13,9 @@ export const AppLayout = () => {
   const { refetch: classItemRefetch } = useGetClassItem();
   const { refetch: articleDataRefetch } = useGetArticleList();
   const { pathname } = useLocation();
+  
+  const { data: itemSideBarData, isLoading } = useGetClassItem();
+  const { data: teamData } = useGetTeamDetail();
 
   const navigate = useNavigate();
 
@@ -83,8 +86,26 @@ export const AppLayout = () => {
       <Layout>
         {!isResultPage && (
           <>
-            <ItemSidebar />
-            <HistorySidebar />
+            {
+              isLoading ?
+                <ItemSidebarSkeleton />
+                :
+                <ItemSidebar
+                  classData={Array.isArray(itemSideBarData) ? itemSideBarData : []}
+                />
+            }
+            <HistorySidebar
+              teamName={teamData?.name ?? ''}
+              totalMoney={teamData?.totalMoney ?? 0}
+              basicMoney={teamData?.baseMoney ?? 0}
+              cashMoney={teamData?.cashMoney ?? 0}
+              valueProfit={teamData?.valueProfit ?? 0}
+              valueMoney={teamData?.valueMoney ?? 0}
+              profitNum={teamData?.profitNum ?? ''}
+              totalBuy={totalBuy}
+              totalSell={totalSell}
+              buyableAmount={buyableAmount > 0 ? buyableAmount : 0}
+            />
           </>
         )}
         <MainContent isResultPage={isResultPage}>

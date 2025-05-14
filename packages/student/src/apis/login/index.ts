@@ -49,9 +49,6 @@ export const useStudentLogin = () => {
             break;
         }
       } else {
-        Toast("네트워크 연결을 확인해주세요.", {
-          type: "error",
-        });
         console.log(res);
       }
     },

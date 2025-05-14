@@ -60,7 +60,6 @@ export const ClassMonitoringPage = () => {
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      clearTeamInfo();
     };
   }, []);
 
