@@ -1,49 +1,54 @@
-import { useState } from 'react';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Input, LogoWithText, Toast } from '@mozu/ui';
-import { useForm, useSSE } from '@/hook';
-import { useStudentLogin } from '@/apis';
-import { useNavigate } from 'react-router-dom';
+import { useState, KeyboardEvent } from "react";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Input, LogoWithText } from "@mozu/ui";
+import { useForm } from "@/hook";
+import { useStudentLogin } from "@/apis";
+import { StudentLoginProps } from "@/apis/login/type";
 
 export const SignInPage = () => {
-  const { state, onChangeInputValue } = useForm<{
-    classNum: number | null;
-    schoolName: string;
-    teamName: string;
-  }>({
+  const { state, onChangeInputValue } = useForm<StudentLoginProps>({
     classNum: null,
-    schoolName: '',
-    teamName: '',
+    schoolName: "",
+    teamName: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
+  const { mutate: studentLogin, isPending } = useStudentLogin();
 
-  const [errorMessage, setErrorMessage] = useState('');
-  const [datas, setDatas] = useState<{ classId: number; nextInvDeg: number }[]>(
-    [],
-  );
-  const navigate = useNavigate();
-
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-
-  const { mutate: studentLogin, isPending: isStudentLoginLoading } =
-    useStudentLogin();
+  /**
+   * 입력값이 모두 유효하고 로그인 중이 아닐 때 true를 반환
+   * @return {boolean}
+   */
+  const isValidForm = () =>
+    state.classNum !== null &&
+    state.schoolName.trim() !== "" &&
+    state.teamName.trim() !== "" &&
+    !isPending;
 
   const handleLogin = () => {
-    if (isLoggingIn) return;
-    setIsLoggingIn(true);
+    if (!isValidForm()) return;
 
     studentLogin(state, {
-      onSuccess: () => {
-        navigate(`/${datas[0].classId}/home`);
-      },
-      onError: () => {
-        setErrorMessage('형식을 다시 확인해주세요.');
-      },
-      onSettled: () => {
-        setIsLoggingIn(false); // 로그인 요청이 끝나면 다시 false로 설정
-      },
+      onError: () => setErrorMessage("형식을 다시 확인해주세요."),
     });
   };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter") handleLogin();
+  };
+
+  const handleChange =
+    (field: "classNum" | "schoolName" | "teamName") =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let value: string | number = e.target.value;
+
+      if (field === "classNum") {
+        value = value.replace(/\D/g, "").slice(0, 7);
+      }
+
+      onChangeInputValue({ target: { name: field, value } });
+      setErrorMessage("");
+    };
 
   return (
     <Container>
@@ -51,101 +56,56 @@ export const SignInPage = () => {
         <LogoWithText width={74} height={28} />
         모의주식투자
       </LogoWrapper>
-      <SigninContainer>
-        <p>학생 로그인</p>
-        <div
-          onKeyDown={(e) => {
-            if (
-              e.key === 'Enter' &&
-              state.classNum !== null &&
-              state.schoolName.trim() !== '' &&
-              state.teamName.trim() !== '' &&
-              !isStudentLoginLoading &&
-              !isLoggingIn
-            ) {
-              handleLogin();
-            }
-          }}
-        >
+      <SigninContainer onKeyDown={handleKeyDown}>
+        <Title>학생 로그인</Title>
+        <FormGroup>
           <Input
-            placeholder={'참가 코드를 입력해 주세요..'}
-            label={'참가 코드'}
-            value={state.classNum ?? ''}
+            label="참가 코드"
+            placeholder="참가 코드를 입력해 주세요.."
+            value={state.classNum ?? ""}
             name="classNum"
-            type="text"
-            onChange={(e) => {
-              const value = e.target.value.replace(/\D/g, '').slice(0, 7);
-              onChangeInputValue({ target: { name: 'classNum', value } });
-              setErrorMessage('');
-            }}
+            onChange={handleChange("classNum")}
           />
-
           <Input
-            placeholder={'학교 이름을 입력해 주세요..'}
+            label="학교"
+            placeholder="학교 이름을 입력해 주세요.."
             value={state.schoolName}
             name="schoolName"
-            label={'학교'}
-            onChange={(e) => {
-              onChangeInputValue(e);
-              setErrorMessage('');
-            }}
+            onChange={handleChange("schoolName")}
           />
-
           <Input
-            placeholder={'팀 이름을 입력해 주세요..'}
+            label="팀명"
+            placeholder="팀 이름을 입력해 주세요.."
             value={state.teamName}
             name="teamName"
-            label={'팀명'}
-            onChange={(e) => {
-              onChangeInputValue(e);
-              setErrorMessage('');
-            }}
+            onChange={handleChange("teamName")}
           />
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        </div>
-        <LoginButton
-          onClick={handleLogin}
-          disabled={
-            state.classNum === null ||
-            state.schoolName.trim() === '' ||
-            state.teamName.trim() === '' ||
-            isStudentLoginLoading ||
-            isLoggingIn
-          }
-        >
+        </FormGroup>
+        <LoginButton onClick={handleLogin} disabled={!isValidForm()}>
           로그인
         </LoginButton>
       </SigninContainer>
-      <p>© 대덕소프트웨어마이스터고등학교</p>
+      <FooterText>© 대덕소프트웨어마이스터고등학교</FooterText>
     </Container>
   );
 };
 
-const ErrorMessage = styled.p`
-  color: ${color.red[500]};
-  font: ${font.b2};
-  margin-top: 8px;
-`;
-
 const Container = styled.div`
   width: 480px;
   height: 100vh;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
   gap: 24px;
-  > p {
-    font: ${font.l2};
-    color: ${color.zinc[500]};
-  }
 `;
 
 const LogoWrapper = styled.div`
+  display: flex;
   align-items: center;
   gap: 12px;
-  display: flex;
   font: ${font.b1};
   color: ${color.zinc[500]};
 `;
@@ -159,15 +119,23 @@ const SigninContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  > p {
-    font: ${font.t1};
-    color: ${color.black};
-  }
-  > div {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+`;
+
+const Title = styled.p`
+  font: ${font.t1};
+  color: ${color.black};
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const ErrorMessage = styled.p`
+  color: ${color.red[500]};
+  font: ${font.b2};
+  margin-top: 8px;
 `;
 
 const LoginButton = styled.button`
@@ -179,11 +147,18 @@ const LoginButton = styled.button`
   font: ${font.b1};
   border: none;
   border-radius: 8px;
+
   :hover {
     background-color: ${color.orange[400]};
   }
+
   :disabled {
     cursor: not-allowed;
     opacity: 0.5;
   }
+`;
+
+const FooterText = styled.p`
+  font: ${font.l2};
+  color: ${color.zinc[500]};
 `;

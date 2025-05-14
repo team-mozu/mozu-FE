@@ -1,39 +1,20 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Toast } from "@mozu/ui";
-import { useCallback, useEffect, useState } from "react";
-import { useTradeHistory, useUnchangedValue } from "@/hook";
-import { db } from "@/db";
-import { liveQuery } from "dexie";
-import { useNavigate, useParams } from "react-router-dom";
-import { useTeamEnd } from "@/apis";
+import { useState } from "react";
+import { useUnchangedValue } from "@/hook";
+import { useGetTeamDetail } from "@/apis";
 import { InvestCompleteModal } from "@/components";
+import { useLocalStorage } from "@/hook/useLocalStorage";
+import { TeamEndProps } from "@/apis/team/type";
 
 interface ITransactionContentType {
   id: number;
-  keyword: string; //매수 매도
-  name: string; //삼성전자
-  totalPrice: string; //10000만원
-  stockPrice: string; //100원(5주)
-  isUp?: boolean; // 매수인지 매도인지 확인 기능
+  keyword: "BUY" | "SELL";
+  name: string;
+  totalPrice: number;
+  stockPrice: number;
   onDelete: (id: number) => void;
-}
-
-interface ITeamDataProp {
-  teamName: string;
-  totalMoney: number;
-  basicMoney: number;
-  cashMoney: number;
-  valueMoney: number;
-  valueProfit: number;
-  profitNum: string;
-  totalBuy: number;
-  totalSell: number;
-  buyableAmount: number;
-}
-
-interface TransactionData extends ITransactionContentType {
-  id: number;
+  isBuy?: boolean;
 }
 
 const TransactionContent = ({
@@ -41,28 +22,23 @@ const TransactionContent = ({
   name,
   totalPrice,
   stockPrice,
-  isUp,
   id,
   onDelete,
 }: ITransactionContentType) => {
+  const isBuy = keyword === "BUY";
+
   const handleDelete = async () => {
-    try {
-      await db.tradeHistory.delete(id);
-      onDelete(id);
-    } catch (error) {
-      console.error("삭제 실패:", error);
-      Toast("거래 취소 중 오류가 발생했습니다", { type: "error" });
-    }
+    onDelete(id);
   };
   return (
     <TransactionContainer>
       <TransactionContentContainer>
-        <UpDownDiv isUp={isUp}>{keyword}</UpDownDiv>
+        <UpDownDiv isBuy={isBuy}>{keyword}</UpDownDiv>
         <TransactionName>{name}</TransactionName>
       </TransactionContentContainer>
       <TransactionContentContainer>
         <TransactionPriceContainer>
-          <UpDownDiv isUp={isUp}>{totalPrice}원</UpDownDiv>
+          <UpDownDiv isBuy={isBuy}>{totalPrice}원</UpDownDiv>
           <StockPrice>{stockPrice}</StockPrice>
         </TransactionPriceContainer>
         <CancleBtn onClick={handleDelete}>취소</CancleBtn>
@@ -71,85 +47,51 @@ const TransactionContent = ({
   );
 };
 
-export const HistorySidebar = ({
-  teamName,
-  totalMoney,
-  basicMoney,
-  cashMoney,
-  valueMoney,
-  valueProfit,
-  profitNum,
-  totalBuy,
-  totalSell,
-  buyableAmount,
-}: ITeamDataProp) => {
-  const [transactions, setTransactions] = useState<ITransactionContentType[]>(
-    []
-  );
+export const HistorySidebar = () => {
+  const { data, isLoading } = useGetTeamDetail();
+  const [isOpen, setIsOpen] = useState(false);
+  const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
 
-  useEffect(() => {
-    const observable = liveQuery(async () => {
-      return await db.tradeHistory.orderBy("timestamp").reverse().toArray();
-    });
+  if (isLoading) return;
 
-    const subscription = observable.subscribe({
-      next: (history) => {
-        const mapped = history.map((trade) => ({
-          id: trade.id,
-          keyword: trade.orderType === "BUY" ? "매수" : "매도",
-          name: trade.itemName,
-          totalPrice: (trade.itemMoney * trade.orderCount).toLocaleString(),
-          stockPrice: `${trade.itemMoney.toLocaleString()}원 (${
-            trade.orderCount
-          }주)`,
-          isUp: trade.orderType === "BUY",
-          onDelete: handleDeleteTransaction,
-        }));
-        setTransactions(mapped);
-      },
-      error: (error) => console.error("실시간 업데이트 오류:", error),
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const datas = { transactionHistory: transactions };
+  const totalBuy = tradeData
+    .filter((tradeItem) => tradeItem.orderType === "BUY")
+    .reduce((acc, item) => acc + item.totalMoney, 0);
+  const totalSell = tradeData
+    .filter((tradeItem) => tradeItem.orderType === "SELL")
+    .reduce((acc, item) => acc + item.totalMoney, 0);
+  const buyableAmount = data.cashMoney - totalBuy + totalSell;
 
   const formattedData = {
-    teamName: teamName,
-    totalMoney: totalMoney.toLocaleString(),
-    cashMoney: cashMoney.toLocaleString(),
-    valueMoney: valueMoney.toLocaleString(),
-    valueProfit: valueProfit,
-    profitNum: profitNum,
+    teamName: data.name,
+    totalMoney: data.totalMoney.toLocaleString(),
+    cashMoney: data.cashMoney.toLocaleString(),
+    valueMoney: data.valueMoney.toLocaleString(),
+    valueProfit: data.valueProfit,
+    profitNum: data.profitNum,
     totalBuy: totalBuy.toLocaleString(),
     totalSell: totalSell.toLocaleString(),
     buyableAmount: buyableAmount.toLocaleString(),
   };
 
-  const fixedProfitNum = Number(profitNum.replace("%", "")).toFixed(2);
+  const fixedProfitNum = Number(data.profitNum.replace("%", "")).toFixed(2);
   const formattedProfitNum = `${fixedProfitNum}%`;
 
   const sameValue: boolean = useUnchangedValue(
-    totalMoney.toLocaleString(),
-    basicMoney.toLocaleString()
-  );
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [isNextDeg, setIsNextDeg] = useState(
-    () => () => console.log("함수 실행됨")
+    data.totalMoney.toLocaleString(),
+    data.baseMoney.toLocaleString()
   );
 
   const IsOpen = () => {
     setIsOpen(true);
   };
 
-  const handleClick = () => {
-    isNextDeg();
-  };
-
   const handleDeleteTransaction = (deletedId: number) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== deletedId));
+    setTradeData(
+      tradeData.filter((tradeItem) => {
+        return tradeItem.itemId !== deletedId;
+      })
+    );
   };
 
   return (
@@ -166,7 +108,7 @@ export const HistorySidebar = ({
               color={
                 sameValue
                   ? color.green[600]
-                  : valueProfit > 0
+                  : data.valueProfit > 0
                   ? color.red[500]
                   : color.blue[500]
               }
@@ -175,7 +117,8 @@ export const HistorySidebar = ({
             </TotalAssetPrice>
             {formattedData.valueProfit !== 0 ? (
               <UpDownDiv>
-                {formattedData.valueProfit.toLocaleString()}원 ({formattedProfitNum})
+                {formattedData.valueProfit.toLocaleString()}원 (
+                {formattedProfitNum})
               </UpDownDiv>
             ) : null}
           </TotalAssetContainer>
@@ -192,27 +135,26 @@ export const HistorySidebar = ({
           <p>거래내역</p>
         </UpperContainer>
         <TransactionHistoryContents>
-          {datas.transactionHistory.map((data, index) => (
+          {tradeData.map((data) => (
             <TransactionContent
-              key={data.id}
-              id={data.id}
+              key={data.itemId}
+              id={data.itemId}
               onDelete={handleDeleteTransaction}
-              keyword={data.keyword}
-              name={data.name}
-              totalPrice={data.totalPrice}
-              stockPrice={data.stockPrice}
-              isUp={data.isUp}
+              keyword={data.orderType}
+              name={data.itemName}
+              totalPrice={data.totalMoney}
+              stockPrice={data.itemMoney}
             />
           ))}
         </TransactionHistoryContents>
         <TotalPriceContainer>
           <PriceTitleContainer>
             <PriceTitle>총 매수금액</PriceTitle>
-            <UpDownDiv isUp={true}>{formattedData.totalBuy}원</UpDownDiv>
+            <UpDownDiv isBuy={true}>{formattedData.totalBuy}원</UpDownDiv>
           </PriceTitleContainer>
           <PriceTitleContainer>
             <PriceTitle>총 매도금액</PriceTitle>
-            <UpDownDiv isUp={false}>{formattedData.totalSell}원</UpDownDiv>
+            <UpDownDiv isBuy={false}>{formattedData.totalSell}원</UpDownDiv>
           </PriceTitleContainer>
           <PriceTitleContainer>
             <PriceTitle>구매가능 금액</PriceTitle>
@@ -326,9 +268,9 @@ const TransactionContentContainer = styled.div`
   align-items: center;
 `;
 
-const UpDownDiv = styled.div<Pick<ITransactionContentType, "isUp">>`
+const UpDownDiv = styled.div<Pick<ITransactionContentType, "isBuy">>`
   font: ${font.b1};
-  color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
+  color: ${({ isBuy }) => (isBuy ? color.red[500] : color.blue[500])};
 `;
 
 const TotalAssetPrice = styled.div<{ color?: string }>`

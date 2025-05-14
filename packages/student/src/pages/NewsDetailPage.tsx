@@ -11,6 +11,7 @@ export const NewsDetailPage = () => {
   const { newsId } = useParams();
   const targetId = parseInt(newsId);
   const index = newsData?.find((article) => article.articleId === targetId);
+
   return (
     <PageContainer>
       <Wrapper>

@@ -3,16 +3,15 @@ import { color, font } from "@mozu/design-token";
 import { Header, Users, Info, Toast } from "@mozu/ui";
 import { useSSE } from "@/hook";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { removeCookiesAsync } from "@configs/util";
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     (data) => {
-      console.log(data.message);
+      Toast(`${data.message}`, { type: "success" });
     },
     (error) => {
       console.log(error);
@@ -20,12 +19,25 @@ export const StudentWaitPage = () => {
     },
     {
       CLASS_NEXT_INV_START: (data) => {
-        Toast("다음 투자가 시작되었습니다", { type: "info" });
-        setData(data);
-        navigate(`/${data.classId}/home`);
+        localStorage.removeItem("trade");
+        Toast("투자가 시작되었습니다", { type: "info" });
+        navigate(`/${data.classId}`);
+      },
+      CLASS_CANCEL: async () => {
+        Toast("수업이 취소되었습니다.", { type: "error" });
+
+        const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
+        await removeCookiesAsync(["accessToken", "authority"], {
+          path: "/",
+          secure: true,
+          sameSite: "none",
+          domain,
+        });
+        navigate("/signin");
       },
     }
   );
+
   return (
     <AppContainer>
       <Header isAdmin={false} />

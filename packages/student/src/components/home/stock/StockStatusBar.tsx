@@ -8,7 +8,7 @@ import { Skeleton } from "../../../../../design-token/src/theme/Skeleton";
 export const StockStatusBar = ({
   openModal,
 }: {
-  openModal: (type: '매수' | '매도') => void;
+  openModal: (type: "매수" | "매도") => void;
 }) => {
   const { stockId } = useParams();
   const ItemId = stockId ? parseInt(stockId) : null;
@@ -52,7 +52,7 @@ export const StockStatusBar = ({
           backgroundColor={color.red[500]}
           color="white"
           width={80}
-          onClick={() => openModal('매수' /*currentStock*/)}
+          onClick={() => openModal("매수" /*currentStock*/)}
           hoverBackgroundColor={color.red[600]}
           hoverBorderColor={color.red[600]}
         >
@@ -63,7 +63,7 @@ export const StockStatusBar = ({
           backgroundColor={color.blue[500]}
           color="white"
           width={80}
-          onClick={() => openModal('매도' /*currentStock*/)}
+          onClick={() => openModal("매도" /*currentStock*/)}
           hoverBackgroundColor={color.blue[600]}
           hoverBorderColor={color.blue[600]}
         >

@@ -1,11 +1,10 @@
-import { useTeamEnd } from '@/apis';
-import { fetchTradeHistory } from '@/db';
-import { useTradeHistory } from '@/hook';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Check, Button } from '@mozu/ui';
-import { useRef, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useTeamEnd } from "@/apis";
+import { useTradeHistory } from "@/hook";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Check, Button, Toast } from "@mozu/ui";
+import { useRef, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface IInvestCompleteType {
   isOpen?: boolean;
@@ -19,8 +18,17 @@ export const InvestCompleteModal = ({
   const navigate = useNavigate();
   const outSideRef = useRef<HTMLDivElement | null>(null);
   const { classId } = useParams();
-  const { mutate: teamEnd } = useTeamEnd();
   const { history } = useTradeHistory();
+  const { mutate: teamEnd } = useTeamEnd({
+    onSuccess: () => {
+      Toast("투자 완료에 성공하였습니다", { type: "success" });
+      setIsOpen(false);
+      navigate(`/${classId}/result`);
+    },
+    onError: () => {
+      Toast("투자 완료에 실패하였습니다", { type: "error" });
+    },
+  });
 
   console.log(history);
   useEffect(() => {
@@ -30,10 +38,10 @@ export const InvestCompleteModal = ({
       }
     };
     if (isOpen) {
-      document.addEventListener('click', outSideClick);
+      document.addEventListener("click", outSideClick);
     }
     return () => {
-      document.removeEventListener('click', outSideClick);
+      document.removeEventListener("click", outSideClick);
     };
   }, [isOpen, setIsOpen]);
 
@@ -45,17 +53,15 @@ export const InvestCompleteModal = ({
         item.itemMoney &&
         item.orderCount !== undefined &&
         item.totalMoney &&
-        item.orderType,
+        item.orderType
     );
 
     if (!isValidData) {
-      console.error('Invalid data structure in history');
+      console.error("Invalid data structure in history");
       return;
     }
 
     teamEnd(history);
-    navigate(`/${classId}/result`);
-    setIsOpen(false);
   };
 
   if (!isOpen) return null;

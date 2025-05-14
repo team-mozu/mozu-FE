@@ -2,6 +2,8 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { noImgIcon } from "@mozu/ui";
 import { useNavigate } from "react-router-dom";
+import { useUnchangedValue } from "@/hook";
+import { useGetClassItem } from "@/apis";
 
 interface IItemContentType {
   itemId?: number;
@@ -57,7 +59,9 @@ const ItemContent = ({
         <ItemPriceContainer>
           <Price>{nowMoney.toLocaleString()}원</Price>
           <Percent isUp={isUp}>
-            {`${isUp ? '+' : ''}${profitMoney.toLocaleString()}원 (${isUp ? '+' : ''}${profitNum})`}
+            {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${
+              isUp ? "+" : ""
+            }${profitNum})`}
           </Percent>
         </ItemPriceContainer>
       )}
@@ -65,18 +69,16 @@ const ItemContent = ({
   );
 };
 
-export const ItemSidebar = ({
-  classData = [],
-}: {
-  classData: ClassResponse[];
-}) => {
+export const ItemSidebar = () => {
+  const { data } = useGetClassItem();
   const navigate = useNavigate();
+
   return (
     <SideBarContainer>
       <Title>전체 종목</Title>
       <ItemContentContainer>
-        {Array.isArray(classData) && classData.length > 0 ? (
-          classData.map((data, id) => (
+        {Array.isArray(data) && data.length > 0 ? (
+          data.map((data, id) => (
             <ItemContent
               key={id}
               itemId={data.itemId}
@@ -84,8 +86,8 @@ export const ItemSidebar = ({
               itemLogo={data.itemLogo}
               nowMoney={data.nowMoney ?? 0}
               isUp={
-                typeof data.profitNum === 'string' &&
-                  data.profitNum.includes('-')
+                typeof data.profitNum === "string" &&
+                data.profitNum.includes("-")
                   ? false
                   : true
               }
@@ -95,7 +97,7 @@ export const ItemSidebar = ({
                   ? data.profitNum
                   : "0%"
               }
-              onClick={() => navigate(`home/stock/${data.itemId}/stock-info`)}
+              onClick={() => navigate(`stock/${data.itemId}`)}
             />
           ))
         ) : (

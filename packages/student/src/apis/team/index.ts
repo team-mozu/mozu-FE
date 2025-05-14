@@ -1,5 +1,9 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { instance } from '@configs/util';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+} from "@tanstack/react-query";
+import { instance } from "@configs/util";
 import {
   HoldItemsResponse,
   TeamDeatilResponse,
@@ -8,55 +12,54 @@ import {
   TeamOrdersResponse,
   TeamRankResponse,
   TeamResultResponse,
-} from './type';
-import { AxiosError } from 'axios';
+} from "./type";
+import { AxiosError } from "axios";
 
-const router = '/team';
+const router = "/team";
 
 export const useGetTeamDetail = () => {
   return useQuery({
-    queryKey: ['getTeam'],
+    queryKey: ["getTeam"],
     queryFn: async () => {
       const { data } = await instance.get<TeamDeatilResponse>(`${router}`);
       return data;
     },
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
 export const useGetHoldItems = () => {
   return useQuery({
-    queryKey: ['getHoldItem'],
+    queryKey: ["getHoldItem"],
     queryFn: async () => {
       const { data } = await instance.get<HoldItemsResponse>(
-        `${router}/holditems`,
+        `${router}/holditems`
       );
-      console.log('data:', data);
+      console.log("data:", data);
       return data;
     },
   });
 };
 
-export const useTeamEnd = () => {
+export const useTeamEnd = (
+  options?: UseMutationOptions<void, AxiosError, TeamEndProps>
+) => {
   return useMutation<void, AxiosError, TeamEndProps>({
     mutationFn: async (teamData) => {
-      const response = await instance.post('/team/end', teamData);
+      const response = await instance.post("/team/end", teamData);
       return response.data;
     },
-    onSuccess: () => {
-      console.log('팀 종료 성공');
-    },
-    onError: (error) => {
-      console.error('팀 종료 실패:', error);
-    },
+    ...options,
   });
 };
 
 export const useTeamOrders = () => {
   return useQuery({
-    queryKey: ['getTeamOrder'],
+    queryKey: ["getTeamOrder"],
     queryFn: async () => {
       const { data } = await instance.get<TeamOrdersResponse>(
-        `${router}/orders`,
+        `${router}/orders`
       );
       return data;
     },
@@ -65,10 +68,10 @@ export const useTeamOrders = () => {
 
 export const useTeamResult = () => {
   return useQuery({
-    queryKey: ['getTeamResult'],
+    queryKey: ["getTeamResult"],
     queryFn: async () => {
       const { data } = await instance.get<TeamResultResponse>(
-        `${router}/result`,
+        `${router}/result`
       );
       return data;
     },
@@ -77,7 +80,7 @@ export const useTeamResult = () => {
 
 export const useTeamRank = () => {
   return useQuery({
-    queryKey: ['getTeamRank'],
+    queryKey: ["getTeamRank"],
     queryFn: async () => {
       const { data } = await instance.get<TeamRankResponse>(`${router}/rank`);
       return data;
