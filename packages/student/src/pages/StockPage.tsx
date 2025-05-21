@@ -53,7 +53,17 @@ export const StockPage = () => {
 
   const location = useLocation();
   const componentRoute = (currentPath: string): ReactNode => {
-    if (currentPath.includes('/price-info')) return <StockGraph />;
+    if (currentPath.includes('/price-info')) {
+      // ItemId가 null이 아닐 경우에만 StockGraph를 렌더링하거나,
+      // StockGraph 컴포넌트가 null stockId를 처리할 수 있도록 수정해야 합니다.
+      // 현재는 ItemId가 유효한 숫자라고 가정합니다.
+      if (ItemId === null) {
+        // Or handle this case inside StockGraph, e.g. by showing an error or empty state.
+        // For now, returning a placeholder or null if ItemId is not available.
+        return <p>Stock ID is not available.</p>;
+      }
+      return <StockGraph stockId={ItemId} />;
+    }
     if (currentPath.includes('/stock-info')) return <StockInfo />;
     return <p>404</p>;
   };
