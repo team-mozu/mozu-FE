@@ -3,20 +3,12 @@ import { EventSourcePolyfill } from "event-source-polyfill";
 import { getCookies } from "@configs/util";
 
 type EventType =
-  | "TEAM_PART_IN"
-  | "TEAM_INV_END"
   | "CLASS_NEXT_INV_START"
   | "CANCEL_CLASS";
 
 interface TeamNextInvStart {
   classId: number;
   nextInvDeg: number;
-}
-
-interface TeamPartInData {
-  teamId: number;
-  teamName: string;
-  schoolName: string;
 }
 
 interface SSEEventPayload {
@@ -32,7 +24,6 @@ interface ClassCancelData {
 }
 
 interface EventHandlers {
-  TEAM_PART_IN?: (data: TeamPartInData) => void;
   CLASS_NEXT_INV_START?: (data: TeamNextInvStart) => void;
   CLASS_CANCEL?: (data: ClassCancelData) => void;
 }
@@ -68,7 +59,8 @@ export const useSSE = (
       });
     });
 
-    eventSource.onmessage = (e: MessageEvent) => {
+    eventSource.onmessage = (e) => {
+      console.log('수신된 SSE 데이터:', e.data);
       try {
         const parsed: SSEEventPayload = JSON.parse(e.data);
         onMessage?.(parsed);
@@ -86,7 +78,7 @@ export const useSSE = (
       eventSource.close();
       eventSourceRef.current = null;
     };
-  }, [url, token, eventHandlers, onMessage, onError]);
+  }, []);
 
   const disconnect = () => {
     if (eventSourceRef.current) {
