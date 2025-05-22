@@ -11,7 +11,8 @@ export const StudentWaitPage = () => {
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     (data) => {
-      Toast(`${data.message}`, { type: "success" });
+      console.log(data);
+      Toast('모의투자 시작을 기다리는중..', { type: "info" });
     },
     (error) => {
       console.log(error);

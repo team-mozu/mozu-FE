@@ -8,6 +8,7 @@ import { useTeamOrders, useTeamResult } from "@/apis";
 import { useSSE } from "@/hook";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { roundToFixed } from "@/utils";
 
 interface ValueStyleProps {
   isPositive?: boolean;
@@ -21,9 +22,24 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
   const [isWait, setIsWait] = useState(true);
   const navigate = useNavigate();
 
+  const valueProfitStr = teamResult?.valueProfit ?? "0";
+
+  const profitNumRaw = teamResult?.profitNum ?? "0%";
+  const profitNum = parseFloat(profitNumRaw.toString().replace("%", ""));
+  const roundedProfitNum = roundToFixed(profitNum, 3);
+  const profitNumStr = `${roundedProfitNum}%`;
+
+  // 숫자 파싱을 통해 부호 판단
+  const valueProfitNum = parseFloat(valueProfitStr.toString().replace(/,/g, ""));
+  const profitNumNum = parseFloat(profitNumStr.toString().replace("%", ""));
+
+  const isValueProfitPositive = valueProfitNum >= 0;
+  const isProfitNumPositive = profitNumNum >= 0;
+
+
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    (data) => {},
+    (data) => { },
     (error) => {
       console.log(error);
       Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
@@ -55,30 +71,37 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
         <Transaction>
           <label>거래내역</label>
           {teamOrders &&
-          teamOrders.length > 0 &&
-          teamOrders[teamOrders.length - 1]?.invDeg
-            ? [...Array(teamOrders[teamOrders.length - 1].invDeg)]
-                .map((_, i) => teamOrders.length - 1 - i)
-                .map((revIndex) => (
-                  <NthDeal
-                    key={revIndex}
-                    deal={teamOrders[revIndex].invDeg}
-                    orderHistory={
-                      <History
-                        type={teamOrders[revIndex].orderType}
-                        totalMoney={teamOrders[
-                          revIndex
-                        ]?.totalMoney.toLocaleString()}
-                        itemMoney={teamOrders[
-                          revIndex
-                        ]?.itemMoney.toLocaleString()}
-                        itemCount={teamOrders[revIndex]?.orderCount}
-                        itemName={teamOrders[revIndex]?.itemName}
-                      />
-                    }
-                  />
-                ))
-            : null}
+            teamOrders.length > 0 && (
+              [...Array(teamOrders[teamOrders.length - 1].invDeg)]
+                .map((_, i) => i + 1) // 1부터 시작
+                .reverse()
+                .map((deg) => {
+                  const ordersInDeg = teamOrders.filter((order) => order.invDeg === deg);
+                  if (ordersInDeg.length === 0) return null;
+
+                  return (
+                    <NthDeal
+                      key={deg}
+                      deal={deg}
+                      orderHistory={
+                        <>
+                          {ordersInDeg.reverse().map((order, idx) => (
+                            <History
+                              key={idx}
+                              type={order.orderType}
+                              totalMoney={order.totalMoney.toLocaleString()}
+                              itemMoney={order.itemMoney.toLocaleString()}
+                              itemCount={order.orderCount}
+                              itemName={order.itemName}
+                            />
+                          ))}
+                        </>
+                      }
+                    />
+                  );
+                })
+            )}
+
         </Transaction>
         <RightContainer>
           <Result>
@@ -88,14 +111,22 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               totalMoney={teamResult?.totalMoney}
             />
             <Sub>
-              <Proceeds isPositive={true}>
+              <Proceeds isPositive={isValueProfitPositive}>
                 <label>수익금</label>
-                <p>+{teamResult?.valueProfit ?? 0}원</p>
+                <p>
+                  {isValueProfitPositive ? "+" : ""}
+                  {valueProfitStr.toLocaleString()}원
+                </p>
               </Proceeds>
-              <Return isPositive={true}>
+
+              <Return isPositive={isProfitNumPositive}>
                 <label>수익률</label>
-                <p>+{teamResult?.profitNum ?? "0%"}</p>
+                <p>
+                  {isProfitNumPositive ? "+" : ""}
+                  {profitNumStr}
+                </p>
               </Return>
+
               <TotalDeal>
                 <label>총 거래 횟수</label>
                 <p>{teamResult?.orderCount ?? 0}회</p>
@@ -296,7 +327,7 @@ const Proceeds = styled.div<ValueStyleProps>`
   > p {
     font: ${font.t3};
     color: ${({ isPositive }) =>
-      isPositive ? color.red[500] : color.blue[500]}; // 🔥 조건부 색상
+    isPositive ? color.red[500] : color.blue[500]}; // 🔥 조건부 색상
   }
 `;
 
@@ -309,7 +340,7 @@ const Return = styled.div<ValueStyleProps>`
   > p {
     font: ${font.t3};
     color: ${({ isPositive }) =>
-      isPositive ? color.red[500] : color.blue[500]}; // 🔥 조건부 색상
+    isPositive ? color.red[500] : color.blue[500]}; // 🔥 조건부 색상
   }
 `;
 

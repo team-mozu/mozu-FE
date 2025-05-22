@@ -1,5 +1,4 @@
 import { useTeamEnd } from "@/apis";
-import { useTradeHistory } from "@/hook";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check, Button, Toast } from "@mozu/ui";
@@ -18,7 +17,6 @@ export const InvestCompleteModal = ({
   const navigate = useNavigate();
   const outSideRef = useRef<HTMLDivElement | null>(null);
   const { classId } = useParams();
-  const { history } = useTradeHistory();
   const { mutate: teamEnd } = useTeamEnd({
     onSuccess: () => {
       Toast("투자 완료에 성공하였습니다", { type: "success" });
@@ -30,7 +28,6 @@ export const InvestCompleteModal = ({
     },
   });
 
-  console.log(history);
   useEffect(() => {
     const outSideClick = (e: MouseEvent) => {
       if (outSideRef.current && outSideRef.current === e.target) {
@@ -46,22 +43,38 @@ export const InvestCompleteModal = ({
   }, [isOpen, setIsOpen]);
 
   const invDeg = () => {
-    const isValidData = history.every(
-      (item) =>
-        item.itemId &&
-        item.itemName &&
-        item.itemMoney &&
-        item.orderCount !== undefined &&
-        item.totalMoney &&
-        item.orderType
-    );
+    try {
+      const tradeData = localStorage.getItem("trade");
+      if (!tradeData) {
+        console.error("localStorage에 'trade' 데이터가 없습니다.");
+        Toast("거래 내역이 없습니다. 최소 한 번 거래한 뒤 시도해주세요.", { type: "error" });
+        setIsOpen(false);
+        return;
+      }
 
-    if (!isValidData) {
-      console.error("Invalid data structure in history");
-      return;
+      const parsedHistory = JSON.parse(tradeData);
+
+      const isValidData = Array.isArray(parsedHistory) && parsedHistory.every(
+        (item) =>
+          item.itemId &&
+          item.itemName &&
+          item.itemMoney &&
+          item.orderCount !== undefined &&
+          item.totalMoney &&
+          item.orderType
+      );
+
+      if (!isValidData) {
+        console.error("localStorage의 'trade' 데이터 구조가 올바르지 않습니다.");
+        Toast("저장된 거래 데이터가 유효하지 않습니다. 거래를 다시 진행해 주세요.", { type: "error" });
+        setIsOpen(false);
+        return;
+      }
+
+      teamEnd(parsedHistory);
+    } catch (e) {
+      console.error("localStorage 'trade' 데이터 파싱 중 오류 발생:", e);
     }
-
-    teamEnd(history);
   };
 
   if (!isOpen) return null;

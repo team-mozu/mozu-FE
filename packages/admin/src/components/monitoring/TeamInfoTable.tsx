@@ -9,6 +9,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { TeamCurrentModal } from "./TeamCurrentModal";
+import { roundToFixed } from "@/utils";
 
 interface Team {
   teamId: number;
@@ -88,9 +89,16 @@ export const TeamInfoTable = ({
 
         const result = teamResults.find((r) => r.invDeg === i);
         if (result) {
+          const valMoneyNumber = Number(result.valMoney);
+          const valMoneyStr = `${valMoneyNumber >= 0 ? '+' : '-'}${Math.abs(valMoneyNumber).toLocaleString()}`;
+
+          const profitNumStr = result.profitNum.startsWith('-')
+            ? result.profitNum
+            : `+${result.profitNum}`;
+
           (row[key] as { text: string; rate?: string }) = {
-            text: `${result.valMoney.toLocaleString()}원`,
-            rate: result.profitNum,
+            text: `${Number(result.totalMoney).toLocaleString()}원`,
+            rate: `${valMoneyStr}(${profitNumStr})`,
           };
         }
       }
@@ -154,6 +162,10 @@ export const TeamInfoTable = ({
           const isNegative = rate?.includes("-");
           const isPending = text === "진행중..";
 
+          const roundedRate =
+            rate !== undefined ? `${roundToFixed(parseFloat(rate), 3)}%` : null;
+
+
           return (
             <div
               style={{
@@ -167,7 +179,7 @@ export const TeamInfoTable = ({
               <span>{text}</span>
               {rate && (
                 <RateDiv color={isNegative ? color.blue[500] : color.red[500]}>
-                  {rate}
+                  {roundedRate}
                 </RateDiv>
               )}
             </div>

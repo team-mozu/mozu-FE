@@ -16,7 +16,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
 
   /** 📌 현재 페이지 상태를 useMemo로 계산 */
   const currentPage = useMemo(() => {
-    if (pathname.startsWith("/:classId/home")) return "home";
+    if (pathname.startsWith("/:classId")) return "home";
     if (pathname.startsWith("/:classId/news")) return "news";
     if (pathname === "/:classId/result") return "result";
     if (pathname === "/signin/wait") return "wait";
@@ -32,7 +32,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
     <HeaderContainer isAdmin={isAdmin}>
       <LogoContainer
         onClick={() =>
-          navigate(isAdmin ? "/class-management" : `/${classId}/home`)
+          navigate(isAdmin ? "/class-management" : `/${classId}`)
         }
       >
         <LogoWithText width={74} height={28} />

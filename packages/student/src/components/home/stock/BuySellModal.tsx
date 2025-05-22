@@ -2,7 +2,7 @@
 
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Input, Toast } from "@mozu/ui";
 import { useParams } from "react-router-dom";
 import { useGetHoldItems, useGetStockDetail, useGetTeamDetail } from "@/apis";
@@ -23,6 +23,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   const { data: stockData } = useGetStockDetail(ItemId);
   const { data: holdItemData } = useGetHoldItems();
   const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
+  const [cashMoney, setCashMoney] = useLocalStorage<number>("cashMoney", 0);
 
   const handleConfirm = async () => {
     const itemIdNum = Number(stockId);
@@ -41,7 +42,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
 
     if (
       modalType === "매수" &&
-      numericQuantity * stockData.nowMoney > teamData.cashMoney
+      numericQuantity * stockData.nowMoney > cashMoney
     ) {
       Toast("보유하고 있는 현금보다 많이 매수할 수 없습니다", {
         type: "error",
@@ -94,6 +95,14 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
         updatedTradeData = [...tradeData, newTradeItem];
       }
 
+      const totalTradeMoney = numericQuantity * stockData.nowMoney;
+      const updatedCashMoney =
+        modalType === "매수"
+          ? cashMoney - totalTradeMoney
+          : cashMoney + totalTradeMoney;
+
+      setCashMoney(updatedCashMoney);
+
       setTradeData(updatedTradeData);
       Toast(`거래가 성공적으로 완료되었습니다.`, { type: "success" });
 
@@ -106,10 +115,19 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     }
   };
 
-  const maxQuantity =
-    stockData.nowMoney > 0
-      ? Math.floor(teamData.cashMoney / stockData.nowMoney)
-      : 0;
+  const maxQuantity = useMemo(() => {
+    if (!stockData || !stockData.nowMoney || !holdItemData) return 0;
+
+    if (modalType === "매수") {
+      return stockData.nowMoney > 0
+        ? Math.floor(cashMoney / stockData.nowMoney)
+        : 0;
+    } else if (modalType === "매도") {
+      const holding = holdItemData.find((item) => item.itemId === stockData.itemId);
+      return holding?.itemCnt || 0;
+    }
+    return 0;
+  }, [cashMoney, stockData.nowMoney, modalType, holdItemData, stockData.itemId]);
 
   // 상태 관리
   const [quantity, setQuantity] = useState<string>("0");
@@ -266,7 +284,7 @@ const Header = styled.div`
   font: ${font.t1};
   display: flex;
   flex-direction: column;
-  width: 75px;
+  width: 100%;
   gap: 8px;
   justify-content: center;
 `;

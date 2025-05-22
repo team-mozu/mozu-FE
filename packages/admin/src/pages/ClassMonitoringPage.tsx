@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { ArticleInfoModal, Button, ClassInfoModal, Toast } from "@mozu/ui";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { TeamCurrentModal, TeamInfoTable } from "@/components";
+import { TeamInfoTable } from "@/components";
 import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";
@@ -17,7 +17,6 @@ interface TradeResult {
 }
 
 export const ClassMonitoringPage = () => {
-
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [tradeResults, setTradeResults] = useState<TradeResult[]>([]);
@@ -28,7 +27,7 @@ export const ClassMonitoringPage = () => {
   const { mutate: nextDegree } = useNextDegree(classId);
   const { mutate: stopClass } = useClassStop(classId);
   const { data: classData } = useGetClassDetail(classId);
-  const { teamInfoMap, clearTeamInfo } = useTeamStore();
+  const { teamInfoMap } = useTeamStore();
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);

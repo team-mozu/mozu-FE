@@ -1,7 +1,6 @@
 import { Header, Toast } from "@mozu/ui";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
 import { useGetArticleList, useGetClassItem, useGetTeamDetail } from "@/apis";
 import { ItemSidebar, HistorySidebar, ItemSidebarSkeleton } from "@/components";
 import { useSSE } from "@/hook";
@@ -10,12 +9,10 @@ import { queryClient } from "..";
 
 export const AppLayout = () => {
   const { data: teamData, refetch: teamDataRefetch } = useGetTeamDetail();
-  const { refetch: classItemRefetch } = useGetClassItem();
   const { refetch: articleDataRefetch } = useGetArticleList();
   const { pathname } = useLocation();
-  
-  const { data: itemSideBarData, isLoading } = useGetClassItem();
-  const { data: teamData } = useGetTeamDetail();
+
+  const { isLoading, refetch: classItemRefetch } = useGetClassItem();
 
   const navigate = useNavigate();
 
@@ -24,11 +21,8 @@ export const AppLayout = () => {
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    (data) => {},
-    (error) => {
-      console.log(error);
-      Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
-    },
+    undefined,
+    undefined,
     {
       CLASS_NEXT_INV_START: () => {
         localStorage.removeItem("trade");
@@ -90,22 +84,9 @@ export const AppLayout = () => {
               isLoading ?
                 <ItemSidebarSkeleton />
                 :
-                <ItemSidebar
-                  classData={Array.isArray(itemSideBarData) ? itemSideBarData : []}
-                />
+                <ItemSidebar />
             }
-            <HistorySidebar
-              teamName={teamData?.name ?? ''}
-              totalMoney={teamData?.totalMoney ?? 0}
-              basicMoney={teamData?.baseMoney ?? 0}
-              cashMoney={teamData?.cashMoney ?? 0}
-              valueProfit={teamData?.valueProfit ?? 0}
-              valueMoney={teamData?.valueMoney ?? 0}
-              profitNum={teamData?.profitNum ?? ''}
-              totalBuy={totalBuy}
-              totalSell={totalSell}
-              buyableAmount={buyableAmount > 0 ? buyableAmount : 0}
-            />
+            <HistorySidebar />
           </>
         )}
         <MainContent isResultPage={isResultPage}>

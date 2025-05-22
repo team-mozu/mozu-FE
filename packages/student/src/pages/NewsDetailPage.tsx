@@ -1,9 +1,9 @@
 import { color } from "@mozu/design-token";
 import styled from "@emotion/styled";
 import { NewsDetail } from "@/components";
-import { ExitBtn, noImgIcon } from "@mozu/ui";
+import { ExitBtn } from "@mozu/ui";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetArticleList, useGetStockDetail } from "@/apis";
+import { useGetArticleList } from "@/apis";
 
 export const NewsDetailPage = () => {
   const navigate = useNavigate();

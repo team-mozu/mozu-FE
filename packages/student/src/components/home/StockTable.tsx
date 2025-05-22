@@ -6,6 +6,7 @@ import {
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useGetHoldItems } from "@/apis";
+import { roundToFixed } from "@/utils";
 
 interface StockData {
   name: string;
@@ -13,7 +14,7 @@ interface StockData {
   quantity: string;
   tradeAmount: string;
   currentPrice: string;
-  profit: string;
+  profit: { valueMoney: number; profitMoney: number; profitRate: number };
 }
 
 const columns: ColumnDef<StockData>[] = [
@@ -39,21 +40,30 @@ const columns: ColumnDef<StockData>[] = [
   },
   {
     accessorKey: "profit",
-    header: "수익률",
+    header: "수익",
     size: 200,
     cell: ({ row }) => {
-      const profitText = row.getValue("profit") as string;
-      const [currentPrice, profit] = profitText.split("\n");
-      const isProfit = profit.includes("+");
+      const { valueMoney, profitMoney, profitRate } = row.getValue("profit") as {
+        valueMoney: number;
+        profitMoney: number;
+        profitRate: number;
+      };
+
+      const isProfit = profitMoney >= 0;
+      const sign = isProfit ? "+" : "-";
+      const absMoney = Math.abs(profitMoney).toLocaleString("ko-KR");
+      const absRate = roundToFixed(Math.abs(profitRate), 3)
 
       return (
         <RateWrapper>
-          <span>{`${currentPrice}원`}</span>
-          <ProfitSpan isProfit={isProfit}>{profit}</ProfitSpan>{" "}
+          {valueMoney.toLocaleString("ko-KR")}원
+          <ProfitSpan isProfit={isProfit}>
+            {`${sign}${absMoney}원 (${sign}${absRate}%)`}
+          </ProfitSpan>
         </RateWrapper>
       );
     },
-  },
+  }
 ];
 
 export const StockTable = () => {
@@ -71,9 +81,11 @@ export const StockTable = () => {
       quantity: item.itemCnt.toString(),
       tradeAmount: item.totalMoney.toLocaleString("ko-KR"),
       currentPrice: item.nowMoney.toLocaleString("ko-KR"),
-      profit: `${item.nowMoney.toLocaleString("ko-KR")}\n${formatProfitRate(
-        item.valProfit
-      )}`,
+      profit: {
+        valueMoney: item.valMoney,
+        profitMoney: item.valProfit,
+        profitRate: item.profitNum,
+      },
     };
   });
 
