@@ -19,33 +19,29 @@ export const AppLayout = () => {
   const splitedPath = pathname.split("/");
   const isResultPage = splitedPath[splitedPath.length - 1] === "result";
 
-  useSSE(
-    `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    undefined,
-    undefined,
-    {
-      CLASS_NEXT_INV_START: () => {
-        localStorage.removeItem("trade");
-        classItemRefetch();
-        teamDataRefetch();
-        articleDataRefetch();
-        queryClient.invalidateQueries({ queryKey: ["getStock"], exact: false });
-        Toast("다음 투자가 시작되었습니다", { type: "info" });
-      },
-      CLASS_CANCEL: async () => {
-        Toast("수업이 취소되었습니다.", { type: "error" });
+  useSSE(`${import.meta.env.VITE_SERVER_URL}/team/sse`, undefined, undefined, {
+    CLASS_NEXT_INV_START: () => {
+      localStorage.removeItem("trade");
+      classItemRefetch();
+      teamDataRefetch();
+      articleDataRefetch();
+      queryClient.invalidateQueries({ queryKey: ["getStock"], exact: false });
+      Toast("다음 투자가 시작되었습니다", { type: "info" });
+    },
+    CLASS_CANCEL: async () => {
+      Toast("수업이 취소되었습니다.", { type: "error" });
 
-        const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
-        await removeCookiesAsync(["accessToken", "authority"], {
-          path: "/",
-          secure: true,
-          sameSite: "none",
-          domain,
-        });
-        navigate("/signin");
-      },
-    }
-  );
+      queryClient.clear();
+      const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
+      await removeCookiesAsync(["accessToken", "authority"], {
+        path: "/",
+        secure: true,
+        sameSite: "none",
+        domain,
+      });
+      navigate("/signin");
+    },
+  });
 
   // useEffect(() => {
   //   const subscription = liveQuery(async () => {
@@ -80,12 +76,7 @@ export const AppLayout = () => {
       <Layout>
         {!isResultPage && (
           <>
-            {
-              isLoading ?
-                <ItemSidebarSkeleton />
-                :
-                <ItemSidebar />
-            }
+            {isLoading ? <ItemSidebarSkeleton /> : <ItemSidebar />}
             <HistorySidebar />
           </>
         )}
