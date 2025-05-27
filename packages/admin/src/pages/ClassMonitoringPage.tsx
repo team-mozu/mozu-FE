@@ -43,7 +43,9 @@ export const ClassMonitoringPage = () => {
     undefined,
     {
       TEAM_INV_END: (data) => {
-        Toast("투자가 종료되었습니다!", { type: "success" });
+        Toast(`${data.teamName}팀의 투자가 종료되었습니다!`, {
+          type: "success",
+        });
         setTradeResults((prev) => [...prev, data]);
       },
     }
