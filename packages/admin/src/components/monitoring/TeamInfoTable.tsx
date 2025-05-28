@@ -5,11 +5,11 @@ import {
   flexRender,
   ColumnDef,
 } from "@tanstack/react-table";
-import styled from "@emotion/styled";
-import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { TeamCurrentModal } from "./TeamCurrentModal";
 import { roundToFixed } from "@/utils";
+import { color, font } from "@mozu/design-token";
+import styled from "@emotion/styled";
 
 interface Team {
   teamId: number;
@@ -54,55 +54,66 @@ export const TeamInfoTable = ({
   tradeResults: TradeResult[];
   invDeg: number;
 }) => {
-  const [isOpenTeam, setIsOpenTeam] = useState<boolean>(false);
+  const [isOpenTeam, setIsOpenTeam] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
-  const [selectedTeamName, setSelectedTeamName] = useState<string>("");
+  const [selectedTeamName, setSelectedTeamName] = useState("");
 
-  const data = useMemo<TeamRow[]>(() => {
+  const TradeKeys = [1, 2, 3, 4, 5] as const;
+  type TradePhaseKey = `${(typeof TradeKeys)[number]}차 투자`;
+
+  type TeamRow = {
+    팀명: string;
+    isCompleted: boolean;
+    "총 자산": TableCell;
+  } & Record<TradePhaseKey, TableCell>;
+
+  const tableData: TeamRow[] = useMemo(() => {
     return teamInfo.map((team) => {
-      const teamResults = tradeResults.filter(
-        (result) => result.teamId === team.teamId
-      );
+      const teamResults = tradeResults.filter((r) => r.teamId === team.teamId);
 
       const row: TeamRow = {
         팀명: team.teamName,
+        isCompleted: false,
+        "총 자산": { text: "", rate: "" },
         "1차 투자": { text: "", rate: "" },
         "2차 투자": { text: "", rate: "" },
         "3차 투자": { text: "", rate: "" },
         "4차 투자": { text: "", rate: "" },
         "5차 투자": { text: "", rate: "" },
-        "총 자산": { text: "", rate: "" },
-        isCompleted: teamResults.length === 5,
       };
 
-      // 차수별 투자 결과 채우기
-      for (let i = 1; i <= 5; i++) {
-        const key = `${i}차 투자` as keyof TeamRow;
+      TradeKeys.forEach((deg) => {
+        const key = `${deg}차 투자` as TradePhaseKey;
+        const result = teamResults.find((r) => Number(r.invDeg) === deg);
 
-        if (i === invDeg) {
-          (row[key] as { text: string; rate?: string }) = {
-            text: "진행중..",
-            rate: "",
-          };
-          continue;
-        }
-
-        const result = teamResults.find((r) => r.invDeg === i);
-        if (result) {
-          const valMoneyNumber = Number(result.valMoney);
-          const valMoneyStr = `${valMoneyNumber >= 0 ? '+' : '-'}${Math.abs(valMoneyNumber).toLocaleString()}`;
-
-          const profitNumStr = result.profitNum.startsWith('-')
+        if (deg === invDeg) {
+          row[key] = { text: "진행중..", rate: "" };
+        } else if (result) {
+          const val = Number(result.valMoney);
+          const valStr = `${val >= 0 ? "+" : "-"}${Math.abs(
+            val
+          ).toLocaleString()}`;
+          const profitStr = result.profitNum.startsWith("-")
             ? result.profitNum
             : `+${result.profitNum}`;
-
-          (row[key] as { text: string; rate?: string }) = {
+          row[key] = {
             text: `${Number(result.totalMoney).toLocaleString()}원`,
-            rate: `${valMoneyStr}(${profitNumStr})`,
+            rate: `${valStr}(${profitStr})`,
           };
         }
+      });
+
+      const latest = teamResults[teamResults.length - 1];
+      if (latest) {
+        row["총 자산"] = {
+          text: `${Number(latest.totalMoney).toLocaleString()}원`,
+          rate: `${latest.profitNum.startsWith("-") ? "" : "+"}${
+            latest.profitNum
+          }`,
+        };
       }
 
+      row.isCompleted = teamResults.length >= 5;
       return row;
     });
   }, [teamInfo, tradeResults, invDeg]);
@@ -121,7 +132,6 @@ export const TeamInfoTable = ({
         cell: ({ row }) => {
           const teamName = row.getValue("팀명") as string;
           const isCompleted = row.original.isCompleted;
-
           const matchedTeam = teamInfo.find((t) => t.teamName === teamName);
 
           return (
@@ -158,18 +168,20 @@ export const TeamInfoTable = ({
         accessorKey: key,
         header: () => (key === "총 자산" ? "총 자산\n(총 수익률)" : key),
         cell: ({ getValue }) => {
-          const { text, rate } = getValue() as { text: string; rate?: string };
-          const isNegative = rate?.includes("-");
+          const { text, rate } = getValue() as TableCell;
           const isPending = text === "진행중..";
+          const isNegative = rate?.includes("-");
 
           const roundedRate =
-            rate !== undefined ? `${roundToFixed(parseFloat(rate), 3)}%` : null;
-
+            rate !== undefined && rate.includes("%")
+              ? `${roundToFixed(parseFloat(rate), 3)}%`
+              : rate !== undefined
+              ? `${roundToFixed(parseFloat(rate), 3)}%`
+              : null;
 
           return (
             <div
               style={{
-                width: "100%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: isPending ? "center" : "flex-end",
@@ -191,7 +203,7 @@ export const TeamInfoTable = ({
   );
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -233,6 +245,7 @@ export const TeamInfoTable = ({
           ))}
         </Tbody>
       </Table>
+
       {isOpenTeam && selectedTeamId !== null && (
         <TeamCurrentModal
           teamId={selectedTeamId}
@@ -244,6 +257,8 @@ export const TeamInfoTable = ({
     </div>
   );
 };
+
+// Styled Components
 
 export const RateDiv = styled.div<IRateType>`
   font: ${font.l1};
