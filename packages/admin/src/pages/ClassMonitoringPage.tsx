@@ -24,9 +24,10 @@ export const ClassMonitoringPage = () => {
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
 
-  const { mutate: nextDegree } = useNextDegree(classId);
+  const { data: classData, refetch: classDataRefetch } =
+    useGetClassDetail(classId);
+  const { mutate: nextDegree } = useNextDegree(classId, classDataRefetch);
   const { mutate: stopClass } = useClassStop(classId);
-  const { data: classData } = useGetClassDetail(classId);
   const { teamInfoMap } = useTeamStore();
 
   const articleInfoClick = () => {
