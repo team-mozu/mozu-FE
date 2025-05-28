@@ -7,13 +7,11 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
-} from 'recharts';
-import { useState, useMemo, useCallback, useEffect } from 'react';
-import { color } from '@mozu/design-token';
-
-const BASE_PRICE = 53500;
-const MIN_PRICE = BASE_PRICE - 3500;
-const MAX_PRICE = BASE_PRICE + 3500;
+} from "recharts";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { color } from "@mozu/design-token";
+import { useGetStockDetail, useGetTeamDetail } from "@/apis";
+import { useParams } from "react-router-dom";
 
 const CustomLabel = ({ viewBox, value }: any) => {
   if (!viewBox || !value) return null;
@@ -41,6 +39,12 @@ const CustomLabel = ({ viewBox, value }: any) => {
 
 export const StockGraph = () => {
   const [shouldAnimate, setShouldAnimate] = useState<boolean>(true);
+  const { stockId } = useParams();
+  const {
+    data: stockDetail,
+    isLoading,
+    error,
+  } = useGetStockDetail(Number(stockId));
 
   useEffect(() => {
     setTimeout(() => setShouldAnimate(false), 500);
@@ -49,7 +53,7 @@ export const StockGraph = () => {
   const generateRandomOffset = () => Math.floor(Math.random() * 1500) - 750;
 
   const generateDataWithFluctuation = (
-    baseData: Array<{ phase: string; price: number }>,
+    baseData: Array<{ phase: string; price: number }>
   ) => {
     const newData = [];
     for (let i = 0; i < baseData.length - 1; i++) {
@@ -63,7 +67,7 @@ export const StockGraph = () => {
           generateRandomOffset();
 
         newData.push({
-          phase: '',
+          phase: "",
           price: midPrice,
           isMidPoint: true,
         });
@@ -74,26 +78,43 @@ export const StockGraph = () => {
   };
 
   // 데이터 생성 부분 수정
-  const data = useMemo(
-    () =>
-      generateDataWithFluctuation([
-        { phase: '1차', price: BASE_PRICE + 800 },
-        { phase: '2차', price: BASE_PRICE - 300 },
-        { phase: '3차', price: BASE_PRICE + 450 },
-        { phase: '4차', price: BASE_PRICE - 700 },
-        { phase: '5차', price: BASE_PRICE + 200 },
-      ]),
-    [],
-  );
+  const data = useMemo(() => {
+    if (!stockDetail?.moneyList) return [];
+    const baseData = stockDetail.moneyList.map((price, index) => ({
+      phase: `${index + 1}차`,
+      price,
+    }));
+    return generateDataWithFluctuation(baseData);
+  }, [stockDetail]);
 
-  const generateFixedTicks = useMemo(() => {
-    const ticks: number[] = [];
-    const step = 1000;
-    for (let i = 0; i < 8; i++) {
-      ticks.push(MIN_PRICE + step * i);
+  const { MIN_PRICE, MAX_PRICE, generateFixedTicks } = useMemo(() => {
+    if (!stockDetail?.moneyList || stockDetail.moneyList.length === 0) {
+      return { MIN_PRICE: 0, MAX_PRICE: 10000, generateFixedTicks: [] };
     }
-    return ticks;
-  }, []);
+    const prices = stockDetail.moneyList;
+    const basePrice = prices.reduce((acc, p) => acc + p, 0) / prices.length;
+    const priceRange = Math.max(...prices) - Math.min(...prices);
+    const dynamicMinPrice = Math.max(
+      0,
+      Math.floor((basePrice - priceRange / 2 - 500) / 1000) * 1000
+    );
+    const dynamicMaxPrice =
+      Math.ceil((basePrice + priceRange / 2 + 500) / 1000) * 1000;
+
+    const ticks: number[] = [];
+    const step = Math.max(
+      1000,
+      Math.ceil((dynamicMaxPrice - dynamicMinPrice) / 8 / 1000) * 1000
+    );
+    for (let i = dynamicMinPrice; i <= dynamicMaxPrice; i += step) {
+      ticks.push(i);
+    }
+    return {
+      MIN_PRICE: dynamicMinPrice,
+      MAX_PRICE: dynamicMaxPrice,
+      generateFixedTicks: ticks,
+    };
+  }, [stockDetail]);
 
   const [activePoint, setActivePoint] = useState<{
     price: number | null;
@@ -111,8 +132,16 @@ export const StockGraph = () => {
     setActivePoint({ price: null, phase: null });
   }, []);
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching data</div>;
+  }
+
   return (
-    <div style={{ width: '100%', height: '556px', padding: '0 20px' }}>
+    <div style={{ width: "100%", height: "556px", padding: "0 20px" }}>
       <ResponsiveContainer>
         <LineChart
           data={data}
@@ -126,10 +155,12 @@ export const StockGraph = () => {
             dataKey="phase"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#000' }}
+            tick={{ fill: "#000" }}
             tickSize={16}
             padding={{ left: 15, right: 15 }}
-            ticks={['1차', '2차', '3차', '4차', '5차']} // 중간 포인트 라벨 숨김
+            ticks={
+              stockDetail?.moneyList.map((_, index) => `${index + 1}차`) ?? []
+            }
           />
           <YAxis
             orientation="right"
@@ -138,7 +169,7 @@ export const StockGraph = () => {
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) => `${Math.round(v).toLocaleString()}`}
-            tick={{ fill: '#000' }}
+            tick={{ fill: "#000" }}
             tickSize={16}
           />
           <Tooltip content={() => null} />
@@ -171,7 +202,7 @@ export const StockGraph = () => {
             activeDot={{
               fill: color.blue[500],
               stroke: color.blue[500],
-              style: { transition: 'none' },
+              style: { transition: "none" },
             }}
             isAnimationActive={shouldAnimate}
             animationBegin={0}
