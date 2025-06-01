@@ -22,7 +22,15 @@ export const AppLayout = () => {
         role={"관리자"}
         navTitle={"관리"}
       />
-      <MainContent>
+      <MainContent
+        isMargin={
+          !(
+            pathname.split("/")[1] === "class-management" &&
+            (pathname.split("/")[3] === "start" ||
+              pathname.split("/")[3] === "monitoring")
+          )
+        }
+      >
         <Outlet />
       </MainContent>
     </AppContainer>
@@ -37,8 +45,8 @@ const AppContainer = styled.div`
   overflow-x: hidden;
 `;
 
-const MainContent = styled.div`
-  margin-left: 280px;
+const MainContent = styled.div<{ isMargin: boolean }>`
+  margin-left: ${({ isMargin }) => (isMargin ? "280px" : "0")};
   margin-top: 64px;
   flex: 1;
 `;

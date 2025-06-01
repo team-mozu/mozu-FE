@@ -29,11 +29,18 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
   const isWaitPage = currentPage === "wait";
 
   return (
-    <HeaderContainer isAdmin={isAdmin}>
+    <HeaderContainer
+      isAdmin={isAdmin}
+      isMargin={
+        !(
+          pathname.split("/")[1] === "class-management" &&
+          (pathname.split("/")[3] === "start" ||
+            pathname.split("/")[3] === "monitoring")
+        )
+      }
+    >
       <LogoContainer
-        onClick={() =>
-          navigate(isAdmin ? "/class-management" : `/${classId}`)
-        }
+        onClick={() => navigate(isAdmin ? "/class-management" : `/${classId}`)}
       >
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
@@ -75,12 +82,14 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
 };
 
 /** 스타일 */
-const HeaderContainer = styled.header<{ isAdmin: boolean }>`
+const HeaderContainer = styled.header<{ isAdmin: boolean; isMargin: boolean }>`
   position: fixed;
   top: 0;
   z-index: 1;
-  width: ${({ isAdmin }) => (isAdmin ? "calc(100% - 280px)" : "100%")};
-  margin-left: ${({ isAdmin }) => (isAdmin ? "280px" : "0")};
+  width: ${({ isAdmin, isMargin }) =>
+    isAdmin && isMargin ? "calc(100% - 280px)" : "100%"};
+  margin-left: ${({ isAdmin, isMargin }) =>
+    isAdmin && isMargin ? "280px" : "0"};
   height: 64px;
   padding: 0 40px;
   display: flex;

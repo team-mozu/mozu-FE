@@ -34,6 +34,15 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
     }
   }, [pathname]);
 
+  console.log(pathname.split("/"));
+
+  if (
+    pathname.split("/")[1] === "class-management" &&
+    (pathname.split("/")[3] === "start" ||
+      pathname.split("/")[3] === "monitoring")
+  )
+    return null;
+
   return (
     <SideBarContainer>
       <ProfileContainer>
