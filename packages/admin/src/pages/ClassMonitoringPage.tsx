@@ -7,6 +7,7 @@ import { TeamInfoTable } from "@/components";
 import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";
+import { FullPageLoader } from "@/components";
 
 interface TradeResult {
   teamId: number;
@@ -20,11 +21,10 @@ export const ClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [tradeResults, setTradeResults] = useState<TradeResult[]>([]);
-
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
 
-  const { data: classData, refetch: classDataRefetch } =
+  const { data: classData, isLoading, refetch: classDataRefetch } =
     useGetClassDetail(classId);
   const { mutate: nextDegree } = useNextDegree(classId, classDataRefetch);
   const { mutate: stopClass } = useClassStop(classId);
@@ -64,6 +64,8 @@ export const ClassMonitoringPage = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
+
+  if (isLoading) return <FullPageLoader />;
 
   return (
     <Container>

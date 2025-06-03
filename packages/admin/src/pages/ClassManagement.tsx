@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, DeleteModal, PostTitle, PageTitle } from "@mozu/ui";
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { ClassPost, SkeletonClassPost } from "@/components";
+import { ClassPost, FullPageLoader, SkeletonClassPost } from "@/components";
 import {
   ClassItem,
   useClassDelete,
@@ -36,6 +36,7 @@ export const ClassManagement = () => {
   // 즐겨찾기 여부를 저장할 state
   const [isClickFavorites, setIsClickFavorites] = useState<boolean[]>([]);
   const [isClickCommon, setIsClickCommon] = useState<boolean[]>([]);
+  const [isStarLoading, setIsStarLoading] = useState(false);
 
   // 데이터가 변경될 때 상태 초기화
   useEffect(() => {
@@ -65,33 +66,42 @@ export const ClassManagement = () => {
     setIsModal(false);
   };
 
-  const onClick = () => {
-    console.log("onClcik");
-  };
-
   const { mutate: apiClassStar } = useClassStar();
 
-  const toggleFavorite = (
-    index: number,
-    type: "favorites" | "common",
-    id?: number
-  ) => {
-    if (type === "favorites") {
-      setIsClickFavorites((prev) => {
-        const updated = [...prev];
-        updated[index] = !updated[index];
-        return updated;
-      });
-      apiClassStar(id);
-    } else {
-      setIsClickCommon((prev) => {
-        const updated = [...prev];
-        updated[index] = !updated[index];
-        return updated;
-      });
-      apiClassStar(id);
-    }
-  };
+  const toggleFavorite = (() => {
+    let isPending = false;
+
+    return async (
+      index: number,
+      type: "favorites" | "common",
+      id?: number
+    ) => {
+      if (isPending || id === undefined) return;
+
+      isPending = true
+      setIsStarLoading(true);
+
+      try {
+        const updateList =
+          type === "favorites" ? setIsClickFavorites : setIsClickCommon;
+
+        updateList((prev) => {
+          const updated = [...prev];
+          updated[index] = !updated[index];
+          return updated;
+        });
+
+        await apiClassStar(id);
+      } catch (error) {
+        console.error("즐겨찾기 요청 실패", error);
+      } finally {
+        isPending = false;
+        setIsStarLoading(false);
+      }
+    };
+  })();
+
+  if (apiLoading) return <FullPageLoader />;
 
   return (
     <>
@@ -129,27 +139,26 @@ export const ClassManagement = () => {
                 <PostTitle title="즐겨찾기" count={favorites.length} />
                 <PostContents>
                   {isLoading
-                    ? favorites.map((item, index) => (
-                        <SkeletonClassPost
-                          key={index}
-                          title={item.name}
-                          creationDate={item.date}
-                          onClick={() => navigate(`${item.id}`)}
-                        />
-                      ))
+                    ? favorites.map((_, index) => (
+                      <SkeletonClassPost
+                        key={index}
+                        title={""}
+                        creationDate={""}
+                      />
+                    ))
                     : favorites.map((item, index) => (
-                        <ClassPost
-                          key={item.id}
-                          title={item.name}
-                          creationDate={item.date}
-                          isClick={item.starYN}
-                          starOnClick={() =>
-                            toggleFavorite(index, "favorites", item.id)
-                          }
-                          delClick={() => openDeleteModal(item.id)}
-                          onClick={() => navigate(`${item.id}`)}
-                        />
-                      ))}
+                      <ClassPost
+                        key={item.id}
+                        title={item.name}
+                        creationDate={item.date}
+                        isClick={item.starYN}
+                        starOnClick={() =>
+                          toggleFavorite(index, "favorites", item.id)
+                        }
+                        delClick={() => openDeleteModal(item.id)}
+                        onClick={() => navigate(`${item.id}`)}
+                      />
+                    ))}
                 </PostContents>
               </PostContainer>
             )}
@@ -157,27 +166,26 @@ export const ClassManagement = () => {
               <PostTitle title="전체" count={common.length} />
               <PostContents>
                 {isLoading
-                  ? common.map((item, index) => (
-                      <SkeletonClassPost
-                        key={index}
-                        title={item.name}
-                        creationDate={item.date}
-                        onClick={() => navigate(`${item.id}`)}
-                      />
-                    ))
+                  ? common.map((_, index) => (
+                    <SkeletonClassPost
+                      key={index}
+                      title={""}
+                      creationDate={""}
+                    />
+                  ))
                   : common.map((item, index) => (
-                      <ClassPost
-                        key={item.id}
-                        title={item.name}
-                        creationDate={item.date}
-                        isClick={isClickCommon[index]}
-                        starOnClick={() =>
-                          toggleFavorite(index, "common", item.id)
-                        }
-                        delClick={() => openDeleteModal(item.id)}
-                        onClick={() => navigate(`${item.id}`)}
-                      />
-                    ))}
+                    <ClassPost
+                      key={item.id}
+                      title={item.name}
+                      creationDate={item.date}
+                      isClick={isClickCommon[index]}
+                      starOnClick={() =>
+                        toggleFavorite(index, "common", item.id)
+                      }
+                      delClick={() => openDeleteModal(item.id)}
+                      onClick={() => navigate(`${item.id}`)}
+                    />
+                  ))}
               </PostContents>
             </PostContainer>
           </PostAllContainer>
