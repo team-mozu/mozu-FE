@@ -23,7 +23,7 @@ export const InvestmentPreparation = () => {
 
   useEffect(() => {
     clearTeamInfo();
-  }, [])
+  }, []);
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
@@ -51,6 +51,7 @@ export const InvestmentPreparation = () => {
           teamId: teamData.teamId,
           teamName: teamData.teamName,
           schoolName: teamData.schoolName,
+          trade: [],
         });
         Toast("새로운 팀이 참가했습니다", { type: "success" });
       },

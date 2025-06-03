@@ -5,18 +5,18 @@ import * as pages from '@/pages';
 
 export const Router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <AppLayout />,
     children: [
       {
-        path: 'stock-management',
+        path: "stock-management",
         children: [
           {
             index: true,
             element: <pages.StockManagementPage />,
           },
           {
-            path: ':id',
+            path: ":id",
             children: [
               {
                 index: true,
@@ -35,14 +35,14 @@ export const Router = createBrowserRouter([
         ],
       },
       {
-        path: 'article-management',
+        path: "article-management",
         children: [
           {
             index: true,
             element: <pages.ArticleManagementPage />,
           },
           {
-            path: ':id',
+            path: ":id",
             children: [
               {
                 index: true,
@@ -61,14 +61,14 @@ export const Router = createBrowserRouter([
         ],
       },
       {
-        path: 'class-management',
+        path: "class-management",
         children: [
           {
             index: true,
             element: <pages.ClassManagement />,
           },
           {
-            path: ':id',
+            path: ":id",
             children: [
               {
                 index: true,
@@ -101,7 +101,7 @@ export const Router = createBrowserRouter([
     element: <pages.SignInPage />,
   },
   {
-    path: '*', // 404 페이지
+    path: "*", // 404 페이지
     element: <div>404</div>,
   },
 ]);
