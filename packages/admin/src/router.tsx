@@ -156,7 +156,7 @@
 //   },
 // ]);
 
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter } from "react-router-dom";
 import {
   StockManagementPage,
   SignInPage,
@@ -171,96 +171,97 @@ import {
   ArticleManagementEditPage,
   ClassMonitoringPage,
   InvestmentPreparation,
-} from '@/pages';
-import { AppLayout } from '@/layout';
+} from "@/pages";
+import { AppLayout } from "@/layout";
+import { ImprovedClassMonitoringPage } from "./pages/ImprovedClassMonitoringPage";
 
 export const Router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <AppLayout />,
     children: [
       {
-        path: 'stock-management',
+        path: "stock-management",
         children: [
           {
             index: true,
             element: <StockManagementPage />,
           },
           {
-            path: ':id',
+            path: ":id",
             children: [
               {
                 index: true,
                 element: <StockManagementPage />,
               },
               {
-                path: 'edit',
+                path: "edit",
                 element: <StockManagementEditPage />,
               },
             ],
           },
           {
-            path: 'add',
+            path: "add",
             element: <StockManagementAddPage />,
           },
         ],
       },
       {
-        path: 'article-management',
+        path: "article-management",
         children: [
           {
             index: true,
             element: <ArticleManagementPage />,
           },
           {
-            path: ':id',
+            path: ":id",
             children: [
               {
                 index: true,
                 element: <ArticleManagementPage />,
               },
               {
-                path: 'edit',
+                path: "edit",
                 element: <ArticleManagementEditPage />,
               },
             ],
           },
           {
-            path: 'add',
+            path: "add",
             element: <ArticleManagementAddPage />,
           },
         ],
       },
       {
-        path: 'class-management',
+        path: "class-management",
         children: [
           {
             index: true,
             element: <ClassManagement />,
           },
           {
-            path: ':id',
+            path: ":id",
             children: [
               {
                 index: true,
                 element: <ClassEnvironment />,
               },
               {
-                path: 'edit',
+                path: "edit",
                 element: <ClassEdit />,
               },
               {
-                path: 'start',
+                path: "start",
                 element: <InvestmentPreparation />,
               },
               {
-                path: 'monitoring',
-                element: <ClassMonitoringPage />,
+                path: "monitoring",
+                element: <ImprovedClassMonitoringPage />,
               },
             ],
           },
           {
-            path: 'create',
+            path: "create",
             element: <CreateClass />,
           },
         ],
@@ -268,11 +269,11 @@ export const Router = createBrowserRouter([
     ],
   },
   {
-    path: '/signin',
+    path: "/signin",
     element: <SignInPage />,
   },
   {
-    path: '*', // 404 페이지
+    path: "*", // 404 페이지
     element: <div>404</div>,
   },
 ]);
