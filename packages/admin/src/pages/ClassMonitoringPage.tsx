@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { ArticleInfoModal, Button, ClassInfoModal, Toast } from "@mozu/ui";
+import { ArticleInfoModal, Button, Cancel, ClassInfoModal, DeleteModal, Toast } from "@mozu/ui";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { TeamInfoTable } from "@/components";
@@ -21,6 +21,7 @@ export const ClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [tradeResults, setTradeResults] = useState<TradeResult[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
 
@@ -65,111 +66,128 @@ export const ClassMonitoringPage = () => {
     };
   }, []);
 
+  const handleStopClass = () => {
+    setIsOpen(true);
+  };
+
   if (isLoading) return <FullPageLoader />;
 
   return (
-    <Container>
-      {isOpenArticle && (
-        <ArticleInfoModal
-          classArticles={classData?.classArticles}
-          isOpen={isOpenArticle}
-          setIsOpen={setIsOpenArticle}
-        />
-      )}
-      {isOpenClass && (
-        <ClassInfoModal
-          classItems={classData?.classItems}
-          isOpen={isOpenClass}
-          setIsOpen={setIsOpenClass}
-        />
-      )}
-      <Header>
-        <TitleContainer>
-          <Title>모의투자 현황</Title>
-          <SubTitle>{classData?.name}</SubTitle>
-        </TitleContainer>
-        <ButtonContainer>
-          <Button
-            type={"logOutImg"}
-            isIcon={true}
-            iconColor={color.zinc[800]}
-            iconSize={24}
-            backgroundColor={color.zinc[50]}
-            borderColor={color.zinc[200]}
-            color={color.zinc[800]}
-            onClick={() => stopClass()}
-            hoverBackgroundColor={color.zinc[100]}
-          >
-            모의투자 취소
-          </Button>
-          <Button
-            type={"startImg"}
-            isIcon={true}
-            iconColor={color.white}
-            iconSize={24}
-            backgroundColor={color.orange[500]}
-            borderColor={color.orange[500]}
-            color={color.white}
-            hoverBackgroundColor={color.orange[600]}
-            onClick={() => nextDegree()}
-          >
-            다음 투자 진행
-          </Button>
-        </ButtonContainer>
-      </Header>
-      <MainContainer>
-        <p>
-          <span>{classData?.curInvDeg}차 투자</span>
-          진행중
-        </p>
-        <InfoContainer>
-          <ClassInfo>
-            <p>
-              투자 차수 <span>{classData?.maxInvDeg}차</span>
-            </p>
-            <span>|</span>
-            <p>
-              기초자산 <span>{classData?.baseMoney.toLocaleString()}</span>
-            </p>
-          </ClassInfo>
-          <InfoBtn>
-            <Button
-              type={"articleImg"}
-              isIcon={true}
-              color={color.zinc[800]}
-              backgroundColor={color.zinc[50]}
-              borderColor={color.zinc[200]}
-              iconColor={color.zinc[800]}
-              iconSize={24}
-              onClick={articleInfoClick}
-              hoverBackgroundColor={color.zinc[100]}
-            >
-              기사정보
-            </Button>
-            <Button
-              type={"classImg"}
-              isIcon={true}
-              color={color.zinc[800]}
-              backgroundColor={color.zinc[50]}
-              borderColor={color.zinc[200]}
-              iconColor={color.zinc[800]}
-              iconSize={24}
-              onClick={classInfoClick}
-              hoverBackgroundColor={color.zinc[100]}
-            >
-              투자정보
-            </Button>
-          </InfoBtn>
-        </InfoContainer>
-        <TableContainer>
-          <TeamInfoTable
-            teamInfo={Object.values(teamInfoMap)}
-            tradeResults={tradeResults}
-            invDeg={classData?.curInvDeg}
+    <>
+      {
+        isOpen && (
+          <DeleteModal
+            titleComment="모의투자 취소"
+            subComment="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
+            onCancel={() => setIsOpen(false)}
+            onDelete={() => stopClass()}
           />
-        </TableContainer>
-      </MainContainer>
-    </Container>
+        )
+      }
+      <Container>
+        {isOpenArticle && (
+          <ArticleInfoModal
+            classArticles={classData?.classArticles}
+            isOpen={isOpenArticle}
+            setIsOpen={setIsOpenArticle}
+          />
+        )}
+        {isOpenClass && (
+          <ClassInfoModal
+            classItems={classData?.classItems}
+            isOpen={isOpenClass}
+            setIsOpen={setIsOpenClass}
+          />
+        )}
+        <Header>
+          <TitleContainer>
+            <Title>모의투자 현황</Title>
+            <SubTitle>{classData?.name}</SubTitle>
+          </TitleContainer>
+          <ButtonContainer>
+            <Button
+              type={"logOutImg"}
+              isIcon={true}
+              iconColor={color.zinc[800]}
+              iconSize={24}
+              backgroundColor={color.zinc[50]}
+              borderColor={color.zinc[200]}
+              color={color.zinc[800]}
+              onClick={() => handleStopClass()}
+              hoverBackgroundColor={color.zinc[100]}
+            >
+              모의투자 취소
+            </Button>
+            <Button
+              type={"startImg"}
+              isIcon={true}
+              iconColor={color.white}
+              iconSize={24}
+              backgroundColor={color.orange[500]}
+              borderColor={color.orange[500]}
+              color={color.white}
+              hoverBackgroundColor={color.orange[600]}
+              onClick={() => nextDegree()}
+            >
+              다음 투자 진행
+            </Button>
+          </ButtonContainer>
+        </Header>
+        <MainContainer>
+          <p>
+            <span>{classData?.curInvDeg}차 투자</span>
+            진행중
+          </p>
+          <InfoContainer>
+            <ClassInfo>
+              <p>
+                투자 차수 <span>{classData?.maxInvDeg}차</span>
+              </p>
+              <span>|</span>
+              <p>
+                기초자산 <span>{classData?.baseMoney.toLocaleString()}</span>
+              </p>
+            </ClassInfo>
+            <InfoBtn>
+              <Button
+                type={"articleImg"}
+                isIcon={true}
+                color={color.zinc[800]}
+                backgroundColor={color.zinc[50]}
+                borderColor={color.zinc[200]}
+                iconColor={color.zinc[800]}
+                iconSize={24}
+                onClick={articleInfoClick}
+                hoverBackgroundColor={color.zinc[100]}
+              >
+                기사정보
+              </Button>
+              <Button
+                type={"classImg"}
+                isIcon={true}
+                color={color.zinc[800]}
+                backgroundColor={color.zinc[50]}
+                borderColor={color.zinc[200]}
+                iconColor={color.zinc[800]}
+                iconSize={24}
+                onClick={classInfoClick}
+                hoverBackgroundColor={color.zinc[100]}
+              >
+                투자정보
+              </Button>
+            </InfoBtn>
+          </InfoContainer>
+          <TableContainer>
+            <TeamInfoTable
+              teamInfo={Object.values(teamInfoMap)}
+              tradeResults={tradeResults}
+              invDeg={classData?.curInvDeg}
+            />
+          </TableContainer>
+        </MainContainer>
+      </Container>
+    </>
+
   );
 };
 
