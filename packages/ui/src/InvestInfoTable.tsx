@@ -11,6 +11,7 @@ interface classItem {
   money: number[];
 }
 
+// Original InvestInfoTable Component (keeping original styles)
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
   const header = ['종목 이름', '1차', '2차', '3차', '4차', '5차'];
 
@@ -43,10 +44,28 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
   );
 };
 
-// 💡 테이블을 감싸는 래퍼 - 반응형 처리
 const TableWrapper = styled.div`
   width: 100%;
   overflow-x: auto;
+  
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${color.zinc[100]};
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${color.zinc[300]};
+    border-radius: 4px;
+    
+    &:hover {
+      background: ${color.zinc[400]};
+    }
+  }
 `;
 
 const StyledTable = styled.table`
@@ -57,7 +76,6 @@ const StyledTable = styled.table`
   border-radius: 8px;
 `;
 
-// 💡 동적으로 width 설정
 const Th = styled.th<IThProp>`
   width: ${({ width }) => width};
   font: ${font.b1};

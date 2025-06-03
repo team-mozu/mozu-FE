@@ -27,15 +27,15 @@ interface IButtonType {
   iconSize?: number;
   iconColor?: string;
   type?:
-    | "startImg"
-    | "delImg"
-    | "editImg"
-    | "plusImg"
-    | "saveImg"
-    | "cancelImg"
-    | "logOutImg"
-    | "articleImg"
-    | "classImg";
+  | "startImg"
+  | "delImg"
+  | "editImg"
+  | "plusImg"
+  | "saveImg"
+  | "cancelImg"
+  | "logOutImg"
+  | "articleImg"
+  | "classImg";
   isIcon?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   event?: MouseEventHandler<HTMLButtonElement>;
@@ -116,14 +116,14 @@ const ButtonContainer = styled.button<IButtonType>`
   &:hover {
     transition: 0.35s ease-in-out;
     background-color: ${(props) =>
-      props.hoverBackgroundColor || props.backgroundColor};
+    props.hoverBackgroundColor || props.backgroundColor};
     color: ${(props) => props.hoverColor || props.color};
     border: 1px solid ${(props) => props.hoverBorderColor || props.borderColor};
   }
 
   &:active {
     background-color: ${(props) =>
-      props.activeBackgroundColor || props.backgroundColor};
+    props.activeBackgroundColor || props.backgroundColor};
     color: ${(props) => props.activeColor || props.color};
     border: 1px solid ${(props) => props.activeBorderColor || props.borderColor};
   }

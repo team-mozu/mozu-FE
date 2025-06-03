@@ -28,3 +28,4 @@ export * from './Toast';
 export * from './ToastContainer';
 export * from './AccountsSkeleton';
 export * from './CompanySkeleton';
+export * from './Spinner';
