@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArticleDiv } from "./ArticleDiv";
 import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useGetArticleList } from "@/apis";
+import { FullPageLoader } from "../common";
 
 interface ArticleSearchSideBarProps {
   setSelectedId: Dispatch<SetStateAction<number | null>>;
@@ -19,7 +20,7 @@ export const ArticleSearchSideBar = ({
   const [datas, setDatas] = useState<
     { id: number; title: string; date: string }[]
   >([]);
-  const { data: articleData } = useGetArticleList();
+  const { data: articleData, isLoading } = useGetArticleList();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
@@ -45,6 +46,8 @@ export const ArticleSearchSideBar = ({
       setSelectedId(mappedData[0].id);
     }
   }, [articleData, id, navigate, setSelectedId]);
+
+  if (isLoading) return <FullPageLoader />;
 
   return (
     <SideBarContainer>

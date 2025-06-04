@@ -60,13 +60,15 @@ export const ClassEdit = lazy(() =>
     default: module.ClassEdit,
   })),
 );
-export const ClassMonitoringPage = lazy(() =>
-  import('@/pages/ClassMonitoringPage').then((module) => ({
-    default: module.ClassMonitoringPage,
-  })),
-);
+
 export const InvestmentPreparation = lazy(() =>
   import('@/pages/InvestmentPreparation').then((module) => ({
     default: module.InvestmentPreparation,
+  })),
+);
+
+export const ClassMonitoringPage = lazy(() =>
+  import('@/pages/ClassMonitoringPage').then((module) => ({
+    default: module.ClassMonitoringPage,
   })),
 );

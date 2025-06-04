@@ -44,6 +44,7 @@ export const ClassEnvironment = () => {
   // 상태 관리
   const [isModal, setIsModal] = useState<boolean>(false);
   const [selectedRound, setSelectedRound] = useState<number>(1);
+  const [isStarting, setIsStarting] = useState<boolean>(false);
 
   // 차수 변경 시 최대 차수로 업데이트
   useEffect(() => {
@@ -85,7 +86,13 @@ export const ClassEnvironment = () => {
 
   // 수업 시작
   const handleStartClass = () => {
-    startClass();
+    if (isStarting || !classId) return;
+    setIsStarting(true);
+    startClass(undefined, {
+      onSettled: () => {
+        setIsStarting(false);
+      }
+    });
   };
 
   // 정보 배열 구성
@@ -156,7 +163,7 @@ export const ClassEnvironment = () => {
               hoverBackgroundColor={color.orange[400]}
               hoverBorderColor={color.orange[400]}
               onClick={handleStartClass}
-              disabled={isLoading}
+              disabled={isLoading || isStarting}
             >
               모의주식투자 시작하기
               <Play />

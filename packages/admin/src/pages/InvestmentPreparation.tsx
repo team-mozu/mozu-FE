@@ -9,14 +9,15 @@ import { useClassStop, useGetClassDetail, useNextDegree } from "@/apis";
 import { useTeamStore } from "@/store";
 
 export const InvestmentPreparation = () => {
-  const navigate = useNavigate();
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
   const { data: classNameData } = useGetClassDetail(classId);
-  const [inviteCode, setInviteCode] = useState(
+  const [inviteCode,] = useState(
     () => localStorage.getItem("inviteCode") || "로딩중..."
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [datas, setDatas] = useState({ teams: [] });
+
   const { mutate: nextDegree } = useNextDegree(classId);
   const { mutate: stopClass } = useClassStop(classId);
   const { setTeamInfo, clearTeamInfo } = useTeamStore();
@@ -24,6 +25,18 @@ export const InvestmentPreparation = () => {
   useEffect(() => {
     clearTeamInfo();
   }, []);
+
+
+  const handleNext = () => {
+    if (isSubmitting) return;
+    if (datas.teams.length === 0) {
+      Toast("최소 한 팀 이상이 참여해야 합니다.", { type: "error" });
+      return;
+    }
+
+    setIsSubmitting(true);
+    nextDegree();
+  };
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
@@ -96,8 +109,8 @@ export const InvestmentPreparation = () => {
             borderColor={color.orange[500]}
             color={color.white}
             hoverBackgroundColor={color.orange[600]}
-            onClick={() => nextDegree()}
-            disabled={datas.teams.length === 0}
+            onClick={handleNext}
+            disabled={datas.teams.length === 0 || isSubmitting}
           >
             진행하기 ({datas.teams.length ?? 0})
           </Button>
