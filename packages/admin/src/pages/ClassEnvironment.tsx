@@ -4,10 +4,11 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from "@mozu/ui";
 import { useEffect, useState } from "react";
-import { data, useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useClassStart, useGetClassDetail, useClassDelete } from "@/apis";
 import { formatPrice } from "@/utils/formatPrice";
 import { Skeleton } from "../../../design-token/src/theme/Skeleton";
+import { FullPageLoader } from "@/components";
 
 export const ClassEnvironment = () => {
   const { id } = useParams();
@@ -36,12 +37,14 @@ export const ClassEnvironment = () => {
     }
   }, [apiLoading, classData]);
 
+
   const { mutate: startClass } = useClassStart(classId);
   const { mutate: deleteClass } = useClassDelete();
 
   // 상태 관리
   const [isModal, setIsModal] = useState<boolean>(false);
   const [selectedRound, setSelectedRound] = useState<number>(1);
+  const [isStarting, setIsStarting] = useState<boolean>(false);
 
   // 차수 변경 시 최대 차수로 업데이트
   useEffect(() => {
@@ -83,7 +86,13 @@ export const ClassEnvironment = () => {
 
   // 수업 시작
   const handleStartClass = () => {
-    startClass();
+    if (isStarting || !classId) return;
+    setIsStarting(true);
+    startClass(undefined, {
+      onSettled: () => {
+        setIsStarting(false);
+      }
+    });
   };
 
   // 정보 배열 구성
@@ -115,9 +124,7 @@ export const ClassEnvironment = () => {
   // 기사 데이터 가공
   const articleTableData = classData?.classArticles || [];
 
-  // if (isLoading) {
-  //   return <LoadingWrapper>데이터를 불러오는 중입니다...</LoadingWrapper>;
-  // }
+  if (apiLoading) return <FullPageLoader />;
 
   return (
     <>
@@ -132,7 +139,7 @@ export const ClassEnvironment = () => {
       <Wrapper>
         <Head>
           <Container>
-            <BackBtn onClick={() => navigate(-1)}>
+            <BackBtn onClick={() => navigate('/class-management')}>
               <ArrowLeft />
             </BackBtn>
             <TextBox>
@@ -156,6 +163,7 @@ export const ClassEnvironment = () => {
               hoverBackgroundColor={color.orange[400]}
               hoverBorderColor={color.orange[400]}
               onClick={handleStartClass}
+              disabled={isLoading || isStarting}
             >
               모의주식투자 시작하기
               <Play />
@@ -186,6 +194,7 @@ export const ClassEnvironment = () => {
                 hoverBackgroundColor={color.zinc[100]}
                 hoverBorderColor={color.zinc[100]}
                 onClick={openDeleteModal}
+                disabled={isLoading}
               >
                 삭제하기
                 <Del color="black" size={20} />
@@ -197,6 +206,7 @@ export const ClassEnvironment = () => {
                 hoverBackgroundColor={color.orange[100]}
                 hoverBorderColor={color.orange[100]}
                 onClick={() => navigate(`/class-management/${classId}/edit`)}
+                disabled={isLoading}
               >
                 수정하기
                 <Edit color={color.orange[500]} size={20} />

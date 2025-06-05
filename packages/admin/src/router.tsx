@@ -1,179 +1,7 @@
-// import { createBrowserRouter } from 'react-router-dom';
-// import {
-//   StockManagementPage,
-//   SignInPage,
-//   ClassManagement,
-//   ArticleManagementAddPage,
-//   StockManagementAddPage,
-//   StockManagementEditPage,
-//   ArticleManagementPage,
-//   CreateClass,
-//   ClassEnvironment,
-//   ClassEdit,
-//   ArticleManagementEditPage,
-//   ClassMonitoringPage,
-//   InvestmentPreparation,
-//   Protected,
-// } from '@/pages';
-// import { AppLayout } from '@/layout';
+import { createBrowserRouter } from 'react-router-dom';
+import { AppLayout } from '@/layout';
+import * as pages from '@/pages';
 
-// export const Router = createBrowserRouter([
-//   {
-//     path: '/',
-//     element: <Protected element={<AppLayout />} option={true} />,
-//     children: [
-//       {
-//         path: 'stock-management',
-//         children: [
-//           {
-//             index: true,
-//             element: (
-//               <Protected element={<StockManagementPage />} option={true} />
-//             ),
-//           },
-//           {
-//             path: ':id',
-//             children: [
-//               {
-//                 index: true,
-//                 element: (
-//                   <Protected element={<StockManagementPage />} option={true} />
-//                 ),
-//               },
-//               {
-//                 path: 'edit',
-//                 element: (
-//                   <Protected
-//                     element={<StockManagementEditPage />}
-//                     option={true}
-//                   />
-//                 ),
-//               },
-//             ],
-//           },
-//           {
-//             path: 'add',
-//             element: (
-//               <Protected element={<StockManagementAddPage />} option={true} />
-//             ),
-//           },
-//         ],
-//       },
-//       {
-//         path: 'article-management',
-//         children: [
-//           {
-//             index: true,
-//             element: (
-//               <Protected element={<ArticleManagementPage />} option={true} />
-//             ),
-//           },
-//           {
-//             path: ':id',
-//             children: [
-//               {
-//                 index: true,
-//                 element: (
-//                   <Protected
-//                     element={<ArticleManagementPage />}
-//                     option={true}
-//                   />
-//                 ),
-//               },
-//               {
-//                 path: 'edit',
-//                 element: (
-//                   <Protected
-//                     element={<ArticleManagementEditPage />}
-//                     option={true}
-//                   />
-//                 ),
-//               },
-//             ],
-//           },
-//           {
-//             path: 'add',
-//             element: (
-//               <Protected element={<ArticleManagementAddPage />} option={true} />
-//             ),
-//           },
-//         ],
-//       },
-//       {
-//         path: 'class-management',
-//         children: [
-//           {
-//             index: true,
-//             element: <Protected element={<ClassManagement />} option={true} />,
-//           },
-
-//           {
-//             path: ':id',
-//             children: [
-//               {
-//                 index: true,
-//                 element: (
-//                   <Protected element={<ClassEnvironment />} option={true} />
-//                 ),
-//               },
-//               {
-//                 path: 'edit',
-//                 element: <Protected element={<ClassEdit />} option={true} />,
-//               },
-//               {
-//                 path: 'start',
-//                 element: (
-//                   <Protected
-//                     element={<InvestmentPreparation />}
-//                     option={true}
-//                   />
-//                 ),
-//               },
-//               {
-//                 path: 'monitoring',
-//                 element: (
-//                   <Protected element={<ClassMonitoringPage />} option={true} />
-//                 ),
-//               },
-//             ],
-//           },
-
-//           {
-//             path: 'create',
-//             element: <Protected element={<CreateClass />} option={true} />,
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     path: 'signin',
-//     element: <Protected element={<SignInPage />} option={false} />,
-//   },
-//   {
-//     path: '*', // 404 페이지
-//     element: <div>404</div>,
-//   },
-// ]);
-
-import { createBrowserRouter } from "react-router-dom";
-import {
-  StockManagementPage,
-  SignInPage,
-  ClassManagement,
-  ArticleManagementAddPage,
-  StockManagementAddPage,
-  StockManagementEditPage,
-  ArticleManagementPage,
-  CreateClass,
-  ClassEnvironment,
-  ClassEdit,
-  ArticleManagementEditPage,
-  ClassMonitoringPage,
-  InvestmentPreparation,
-} from "@/pages";
-import { AppLayout } from "@/layout";
-import { ImprovedClassMonitoringPage } from "./pages/ImprovedClassMonitoringPage";
 
 export const Router = createBrowserRouter([
   {
@@ -185,24 +13,24 @@ export const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <StockManagementPage />,
+            element: <pages.StockManagementPage />,
           },
           {
             path: ":id",
             children: [
               {
                 index: true,
-                element: <StockManagementPage />,
+                element: <pages.StockManagementPage />,
               },
               {
-                path: "edit",
-                element: <StockManagementEditPage />,
+                path: 'edit',
+                element: <pages.StockManagementEditPage />,
               },
             ],
           },
           {
-            path: "add",
-            element: <StockManagementAddPage />,
+            path: 'add',
+            element: <pages.StockManagementAddPage />,
           },
         ],
       },
@@ -211,24 +39,24 @@ export const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <ArticleManagementPage />,
+            element: <pages.ArticleManagementPage />,
           },
           {
             path: ":id",
             children: [
               {
                 index: true,
-                element: <ArticleManagementPage />,
+                element: <pages.ArticleManagementPage />,
               },
               {
-                path: "edit",
-                element: <ArticleManagementEditPage />,
+                path: 'edit',
+                element: <pages.ArticleManagementEditPage />,
               },
             ],
           },
           {
-            path: "add",
-            element: <ArticleManagementAddPage />,
+            path: 'add',
+            element: <pages.ArticleManagementAddPage />,
           },
         ],
       },
@@ -237,40 +65,40 @@ export const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <ClassManagement />,
+            element: <pages.ClassManagement />,
           },
           {
             path: ":id",
             children: [
               {
                 index: true,
-                element: <ClassEnvironment />,
+                element: <pages.ClassEnvironment />,
               },
               {
-                path: "edit",
-                element: <ClassEdit />,
+                path: 'edit',
+                element: <pages.ClassEdit />,
               },
               {
-                path: "start",
-                element: <InvestmentPreparation />,
+                path: 'start',
+                element: <pages.InvestmentPreparation />,
               },
               {
-                path: "monitoring",
-                element: <ImprovedClassMonitoringPage />,
+                path: 'monitoring',
+                element: <pages.ClassMonitoringPage />,
               },
             ],
           },
           {
-            path: "create",
-            element: <CreateClass />,
+            path: 'create',
+            element: <pages.CreateClass />,
           },
         ],
       },
     ],
   },
   {
-    path: "/signin",
-    element: <SignInPage />,
+    path: '/signin',
+    element: <pages.SignInPage />,
   },
   {
     path: "*", // 404 페이지

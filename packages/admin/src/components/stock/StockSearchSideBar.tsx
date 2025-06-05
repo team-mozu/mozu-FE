@@ -5,6 +5,7 @@ import { StockDiv } from "./StockDiv";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useGetStockList } from "@/apis";
+import { FullPageLoader } from "@/components";
 
 interface StockSearchSideBarProps {
   setSelectedId: Dispatch<SetStateAction<number | null>>;
@@ -17,7 +18,7 @@ export const StockSearchSideBar = ({
 }: StockSearchSideBarProps) => {
   const { classId, id } = useParams<{ classId: string; id: string }>();
   const [datas, setDatas] = useState<{ id: number; name: string }[]>([]);
-  const { data: stockData } = useGetStockList();
+  const { data: stockData, isLoading } = useGetStockList();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
@@ -39,6 +40,8 @@ export const StockSearchSideBar = ({
       setSelectedId(mappedData[0].id);
     }
   }, [stockData, id, navigate, setSelectedId]);
+
+  if (isLoading) return <FullPageLoader />;
 
   return (
     <SideBarContainer>

@@ -10,8 +10,7 @@ import {
   SelectField,
   TableField,
   TextField,
-  TableHeader,
-  Text,
+
 } from './ClassCreate';
 import { color } from '@mozu/design-token';
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -31,6 +30,7 @@ import {
   Article,
   ClassData,
 } from '@/apis/class/type';
+import { FullPageLoader } from '@/components';
 
 export const ClassEdit = () => {
   const navigate = useNavigate();
@@ -295,7 +295,7 @@ export const ClassEdit = () => {
   });
 
   if (isLoading) {
-    return <div>로딩 중...</div>;
+    return <FullPageLoader />;
   }
 
   return (
