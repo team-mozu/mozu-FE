@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from './Button';
+import { ArticleIcon } from './assets';
 
 interface ArticleType {
   id: number;
@@ -78,7 +79,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
         <ModalContainer>
           <Header>
             <IconWrapper>
-              <ArticleIcon>📰</ArticleIcon>
+              <ArticleIcon size={28} color={color.zinc[800]} />
             </IconWrapper>
             <TitleSection>
               <Title>기사 정보</Title>
@@ -212,10 +213,6 @@ const IconWrapper = styled.div`
   align-items: center;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
   flex-shrink: 0;
-`;
-
-const ArticleIcon = styled.span`
-  font-size: 28px;
 `;
 
 const TitleSection = styled.div`

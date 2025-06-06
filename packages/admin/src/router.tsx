@@ -84,7 +84,7 @@ export const Router = createBrowserRouter([
               },
               {
                 path: 'monitoring',
-                element: <pages.ClassMonitoringPage />,
+                element: <pages.ImprovedClassMonitoringPage />,
               },
             ],
           },

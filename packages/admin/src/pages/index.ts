@@ -72,3 +72,9 @@ export const ClassMonitoringPage = lazy(() =>
     default: module.ClassMonitoringPage,
   })),
 );
+
+export const ImprovedClassMonitoringPage = lazy(() =>
+  import('@/pages/ImprovedClassMonitoringPage').then((module) => ({
+    default: module.ImprovedClassMonitoringPage,
+  })),
+);

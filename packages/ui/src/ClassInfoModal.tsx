@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRef, useCallback, useEffect } from 'react';
 import { Button } from './Button';
 import { InvestInfoTable } from './InvestInfoTable';
+import { ClassIcon } from './assets';
 
 interface classItem {
   itemId: number;
@@ -50,11 +51,11 @@ export const ClassInfoModal = ({ isOpen, setIsOpen, classItems }: IClassInfoType
       <ModalContainer>
         <Header>
           <IconWrapper>
-            <InvestIcon>💰</InvestIcon>
+            <ClassIcon size={28} color={color.zinc[800]} />
           </IconWrapper>
           <TitleSection>
             <Title>투자 정보</Title>
-            <Subtitle>모둠별 차수별 투자 현황을 확인하세요</Subtitle>
+            <Subtitle>차수별 투자 종목 정보를 확인하세요</Subtitle>
           </TitleSection>
         </Header>
 

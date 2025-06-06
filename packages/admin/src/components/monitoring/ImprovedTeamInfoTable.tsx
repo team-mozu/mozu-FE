@@ -1,9 +1,10 @@
 import { Check } from "@mozu/ui";
-import { TeamCurrentModal } from "./TeamCurrentModal";
 import { roundToFixed } from "@/utils";
 import { color, font } from "@mozu/design-token";
 import styled from "@emotion/styled";
 import { TeamInfo } from "@/store";
+import { useState } from "react";
+import { TeamCurrentModal } from "./TeamCurrentModal";
 
 interface Props {
   teamInfo: TeamInfo[];
@@ -16,6 +17,10 @@ export const ImprovedTeamInfoTable = ({
   invDeg,
   maxInvDeg,
 }: Props) => {
+
+  const [isOpenTeam, setIsOpenTeam] = useState(false);
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const [selectedTeamName, setSelectedTeamName] = useState("");
   const TableHeaderList = [
     "팀명",
     "1차 투자",
@@ -27,83 +32,99 @@ export const ImprovedTeamInfoTable = ({
 
   console.log(teamInfo);
 
+  const handleOpenModal = (teamId: number, teamName: string) => {
+    setSelectedTeamId(teamId);
+    setSelectedTeamName(teamName);
+    setIsOpenTeam(true);
+  };
+
   if (!teamInfo && teamInfo.length <= 0) return;
 
   return (
-    <Table>
-      <Tr isHeader>
-        {TableHeaderList.map((tableHead, index) => {
-          if (index > maxInvDeg) return;
+    <>
+      <Table>
+        <Tr isHeader>
+          {TableHeaderList.map((tableHead, index) => {
+            if (index > maxInvDeg) return;
+            return (
+              <Th key={index} isLeft={index === 0}>
+                {tableHead}
+              </Th>
+            );
+          })}
+          <Th>총자산</Th>
+        </Tr>
+        {teamInfo.map((team, index) => {
+          const isNegative = team.trade.at(-1)?.profitNum.includes("-");
+
           return (
-            <Th key={index} isLeft={index === 0}>
-              {tableHead}
-            </Th>
+            <Tr isNotBorded={index + 1 === teamInfo.length} key={index}>
+              <Td isLeft>
+                <TeamName onClick={() => handleOpenModal(team.teamId, team.teamName)}>{team.teamName}</TeamName>
+                {team.trade.length === invDeg && (
+                  <CompletedBadge>
+                    투자완료 <Check size={18} color={color.green[500]} />
+                  </CompletedBadge>
+                )}
+              </Td>
+              {Array.from({ length: maxInvDeg }).map((_, index) => {
+                if (index + 1 > invDeg) {
+                  return <Td key={index} />;
+                }
+
+                const isNegative =
+                  team.trade[index] === undefined
+                    ? null
+                    : team.trade[index].profitNum.includes("-");
+
+                return (
+                  <Td key={index}>
+                    {team.trade[index] === undefined ? (
+                      "진행중"
+                    ) : (
+                      <Rate isNegative={isNegative}>
+                        <span>{team.trade[index].totalMoney}원</span>
+                        <span>
+                          {!isNegative && "+"}
+                          {team.trade[index].valMoney}원 ({!isNegative && "+"}
+                          {roundToFixed(
+                            parseFloat(team.trade[index].profitNum),
+                            2
+                          )}
+                          )
+                        </span>
+                      </Rate>
+                    )}
+                  </Td>
+                );
+              })}
+              <Td isNotBorded>
+                {team.trade.length > 0 ? (
+                  <Rate isNegative={isNegative}>
+                    <span>{team.trade.at(-1).totalMoney}원</span>
+                    <span>
+                      {!isNegative && "+"}
+                      {team.trade.at(-1).valMoney}원 ({!isNegative && "+"}
+                      {roundToFixed(parseFloat(team.trade.at(-1).profitNum), 2)})
+                    </span>
+                  </Rate>
+                ) : (
+                  "진행중"
+                )}
+              </Td>
+            </Tr>
           );
         })}
-        <Th>총자산</Th>
-      </Tr>
-      {teamInfo.map((team, index) => {
-        const isNegative = team.trade.at(-1)?.profitNum.includes("-");
-
-        return (
-          <Tr isNotBorded={index + 1 === teamInfo.length} key={index}>
-            <Td isLeft>
-              {team.teamName}
-              {team.trade.length === invDeg && (
-                <CompletedBadge>
-                  투자완료 <Check size={18} color={color.green[500]} />
-                </CompletedBadge>
-              )}
-            </Td>
-            {Array.from({ length: maxInvDeg }).map((_, index) => {
-              if (index + 1 > invDeg) {
-                return <Td key={index} />;
-              }
-
-              const isNegative =
-                team.trade[index] === undefined
-                  ? null
-                  : team.trade[index].profitNum.includes("-");
-
-              return (
-                <Td key={index}>
-                  {team.trade[index] === undefined ? (
-                    "진행중"
-                  ) : (
-                    <Rate isNegative={isNegative}>
-                      <span>{team.trade[index].totalMoney}원</span>
-                      <span>
-                        {!isNegative && "+"}
-                        {team.trade[index].valMoney}원 ({!isNegative && "+"}
-                        {roundToFixed(
-                          parseFloat(team.trade[index].profitNum),
-                          2
-                        )}
-                        )
-                      </span>
-                    </Rate>
-                  )}
-                </Td>
-              );
-            })}
-            <Td isNotBorded>
-              {team.trade.length > 0 ? (
-                <Rate isNegative={isNegative}>
-                  <span>{team.trade.at(-1).totalMoney}원</span>
-                  <span>
-                    {!isNegative && "+"}
-                    {team.trade.at(-1).valMoney}원 ({!isNegative && "+"}
-                    {roundToFixed(parseFloat(team.trade.at(-1).profitNum), 2)})
-                  </span>
-                </Rate>
-              ) : (
-                "진행중"
-              )}
-            </Td>
-          </Tr>
-        );
-      })}
-    </Table>
+      </Table>
+      {isOpenTeam && selectedTeamId !== null && (
+        <TeamCurrentModal
+          teamId={selectedTeamId}
+          isOpen={isOpenTeam}
+          setIsOpen={setIsOpenTeam}
+          teamName={selectedTeamName}
+        />
+      )}
+    </>
   );
 };
 
@@ -183,6 +204,14 @@ const Rate = styled.div<{ isNegative: boolean }>`
   & > span:nth-of-type(2) {
     ${font.l1};
     color: ${({ isNegative }) =>
-      isNegative ? color.blue[500] : color.red[500]};
+    isNegative ? color.blue[500] : color.red[500]};
+  }
+`;
+
+const TeamName = styled.span`
+  cursor: pointer;
+  font: ${font.t2};
+  :hover {
+    text-decoration: underline;
   }
 `;
