@@ -59,7 +59,7 @@ export const ImprovedTeamInfoTable = ({
 
           return (
             <Tr isNotBorded={index + 1 === teamInfo.length} key={index}>
-              <Td isLeft>
+              <Td isLeft isTeamName>
                 <TeamName onClick={() => handleOpenModal(team.teamId, team.teamName)}>{team.teamName}</TeamName>
                 {team.trade.length === invDeg && (
                   <CompletedBadge>
