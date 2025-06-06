@@ -40,7 +40,7 @@ export const StockStatusBar = ({
                 data?.profitNum.includes('+') ? color.red[500] : color.blue[500]
               }
             >
-              {data?.moneyList[1]?.toLocaleString()}원{' '}
+              {data?.nowMoney?.toLocaleString()}원{' '}
               <span>{data?.profitNum}</span>
             </StockPrice>
           </StockInfo>
