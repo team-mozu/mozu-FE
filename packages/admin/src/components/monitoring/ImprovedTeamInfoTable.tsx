@@ -168,6 +168,7 @@ const Th = styled.th<{
 const Td = styled.td<{
   isNotBorded?: boolean;
   isLeft?: boolean;
+  isTeamName?: boolean;
 }>`
   flex: ${({ isLeft }) => (isLeft ? "1" : "0 0 13.23%")};
   border-right: ${({ isNotBorded }) =>
@@ -178,6 +179,10 @@ const Td = styled.td<{
   align-items: center;
   gap: 6px;
   ${font.t4};
+  ${({ isTeamName }) => isTeamName && "cursor: pointer"};
+  &:hover {
+    text-decoration: ${({ isTeamName }) => isTeamName && "underline"};
+  }
 `;
 
 const CompletedBadge = styled.span`

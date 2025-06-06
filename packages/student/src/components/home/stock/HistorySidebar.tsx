@@ -39,7 +39,8 @@ const TransactionContent = ({
       <TransactionContentContainer>
         <TransactionPriceContainer>
           <UpDownDiv isBuy={isBuy}>
-            {totalPrice.toLocaleString()}원 ({(totalPrice / stockPrice).toLocaleString()}주)
+            {totalPrice.toLocaleString()}원 (
+            {(totalPrice / stockPrice).toLocaleString()}주)
           </UpDownDiv>
 
           <StockPrice>{stockPrice.toLocaleString()}원</StockPrice>
@@ -66,7 +67,7 @@ export const HistorySidebar = () => {
   const totalSell = tradeData
     .filter((tradeItem) => tradeItem.orderType === "SELL")
     .reduce((acc, item) => acc + item.totalMoney, 0);
-  const buyableAmount = cashMoney - totalBuy + totalSell;
+  const buyableAmount = cashMoney;
 
   useEffect(() => {
     if (data?.cashMoney !== undefined) {
@@ -80,7 +81,7 @@ export const HistorySidebar = () => {
     teamName: data.name,
     totalMoney: data.totalMoney.toLocaleString(),
     cashMoney: cashMoney.toLocaleString(),
-    valueMoney: data.valueMoney.toLocaleString(),
+    valueMoney: (data.valueMoney + totalBuy - totalSell).toLocaleString(),
     valueProfit: data.valueProfit,
     profitNum: data.profitNum,
     totalBuy: totalBuy.toLocaleString(),
@@ -89,7 +90,9 @@ export const HistorySidebar = () => {
   };
 
   const fixedProfitNum = Number(data.profitNum.replace("%", "")).toFixed(3);
-  const formattedProfitNum = fixedProfitNum.includes("-") ? `${fixedProfitNum}%` : `+${fixedProfitNum}%`;
+  const formattedProfitNum = fixedProfitNum.includes("-")
+    ? `${fixedProfitNum}%`
+    : `+${fixedProfitNum}%`;
 
   const sameValue: boolean = useUnchangedValue(
     data.totalMoney.toLocaleString(),
@@ -101,13 +104,22 @@ export const HistorySidebar = () => {
   };
 
   const handleDeleteTransaction = (deletedId: number) => {
+    const deletedTrade = tradeData.find((tradeItem) => {
+      return tradeItem.itemId === deletedId;
+    });
+
+    if (deletedTrade.orderType === "BUY") {
+      setCashMoney(cashMoney + deletedTrade.totalMoney);
+    } else {
+      setCashMoney(cashMoney - deletedTrade.totalMoney);
+    }
+
     setTradeData(
       tradeData.filter((tradeItem) => {
         return tradeItem.itemId !== deletedId;
       })
     );
   };
-
 
   return (
     <>
@@ -124,8 +136,8 @@ export const HistorySidebar = () => {
                 sameValue
                   ? color.green[600]
                   : data.valueProfit > 0
-                    ? color.red[500]
-                    : color.blue[500]
+                  ? color.red[500]
+                  : color.blue[500]
               }
             >
               {formattedData.totalMoney}원
@@ -133,14 +145,17 @@ export const HistorySidebar = () => {
             {formattedData.valueProfit !== 0 ? (
               <div
                 style={{
-                  color: formattedData.valueProfit > 0
-                    ? color.red[500]
-                    : color.blue[500],
+                  color:
+                    formattedData.valueProfit > 0
+                      ? color.red[500]
+                      : color.blue[500],
                   fontWeight: 500,
                   fontSize: 16,
                 }}
               >
-                {formattedData.valueProfit.toLocaleString().includes("-") ? "" : "+"}
+                {formattedData.valueProfit.toLocaleString().includes("-")
+                  ? ""
+                  : "+"}
                 {formattedData.valueProfit.toLocaleString()}원 (
                 {formattedProfitNum})
               </div>
