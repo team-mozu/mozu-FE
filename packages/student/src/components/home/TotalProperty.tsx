@@ -47,8 +47,8 @@ export const TotalProperty = ({
             {valueProfit.toLocaleString().includes("-") ? "" : "+"}
             {valueProfit.toLocaleString()}원 (
             {profitNum.includes("-")
-              ? `${roundToFixed(Number(profitNum.replace("%", "")), 3)}%`
-              : `+${roundToFixed(Number(profitNum.replace("%", "")), 3)}%`}
+              ? `${roundToFixed(Number(profitNum.replace("%", "")), 2)}%`
+              : `+${roundToFixed(Number(profitNum.replace("%", "")), 2)}%`}
             )
           </MoneyRate>
         )}

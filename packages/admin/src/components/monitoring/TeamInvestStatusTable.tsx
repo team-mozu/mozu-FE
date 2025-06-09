@@ -45,7 +45,6 @@ export const TeamInvestStatusTable = ({
     const rateAmount = item.totalMoney - buyAmount;
     const ratePercent = ((rateAmount / buyAmount) * 100).toFixed(2);
     const sign = rateAmount >= 0 ? "+" : "-";
-
     return `${sign}${Math.abs(rateAmount).toLocaleString()} (${sign}${Math.abs(
       +ratePercent
     )}%)`;
@@ -79,8 +78,8 @@ export const TeamInvestStatusTable = ({
                   item.orderType === "BUY"
                     ? color.red[500]
                     : item.orderType === "SELL"
-                    ? color.blue[500]
-                    : color.black
+                      ? color.blue[500]
+                      : color.black
                 }
               >
                 {item.orderType === "BUY" ? "매수" : "매도"}
@@ -131,9 +130,11 @@ export const TeamInvestStatusTable = ({
                 {item.totalMoney.toLocaleString()}
                 <RateDiv
                   color={
-                    item.totalMoney - item.itemMoney * item.orderCount >= 0
+                    item.totalMoney - item.itemMoney * item.orderCount > 0
                       ? color.red[500]
-                      : color.blue[500]
+                      : item.totalMoney - item.itemMoney * item.orderCount < 0
+                        ? color.blue[500]
+                        : color.green[600]
                   }
                 >
                   {renderRate(item)}

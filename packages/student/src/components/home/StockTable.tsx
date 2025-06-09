@@ -52,7 +52,7 @@ const columns: ColumnDef<StockData>[] = [
       const isProfit = profitMoney >= 0;
       const sign = isProfit ? "+" : "-";
       const absMoney = Math.abs(profitMoney).toLocaleString("ko-KR");
-      const absRate = roundToFixed(Math.abs(profitRate), 3)
+      const absRate = roundToFixed(Math.abs(profitRate), 2)
 
       return (
         <RateWrapper>
@@ -71,7 +71,7 @@ export const StockTable = () => {
 
   const formatProfitRate = (rate: number) => {
     const sign = rate > 0 ? "+" : rate < 0 ? "-" : "";
-    return `${sign}${Math.abs(rate).toFixed(2)}%`;
+    return `${sign}${roundToFixed(rate, 2)}%`;
   };
 
   const stockRows: StockData[] = (data ?? []).map((item) => {

@@ -83,15 +83,14 @@ export const ImprovedTeamInfoTable = ({
                       "진행중"
                     ) : (
                       <Rate isNegative={isNegative}>
-                        <span>{team.trade[index].totalMoney}원</span>
+                        <span>{team.trade[index].totalMoney.toLocaleString()}원</span>
                         <span>
                           {!isNegative && "+"}
-                          {team.trade[index].valMoney}원 ({!isNegative && "+"}
+                          {team.trade[index].valMoney.toLocaleString()}원 ({!isNegative && "+"}
                           {roundToFixed(
                             parseFloat(team.trade[index].profitNum),
                             2
-                          )}
-                          )
+                          )}%)
                         </span>
                       </Rate>
                     )}
@@ -101,11 +100,11 @@ export const ImprovedTeamInfoTable = ({
               <Td isNotBorded>
                 {team.trade.length > 0 ? (
                   <Rate isNegative={isNegative}>
-                    <span>{team.trade.at(-1).totalMoney}원</span>
+                    <span>{team.trade.at(-1).totalMoney.toLocaleString()}원</span>
                     <span>
                       {!isNegative && "+"}
-                      {team.trade.at(-1).valMoney}원 ({!isNegative && "+"}
-                      {roundToFixed(parseFloat(team.trade.at(-1).profitNum), 2)})
+                      {team.trade.at(-1).valMoney.toLocaleString()}원 ({!isNegative && "+"}
+                      {roundToFixed(parseFloat(team.trade.at(-1).profitNum), 2)}%)
                     </span>
                   </Rate>
                 ) : (

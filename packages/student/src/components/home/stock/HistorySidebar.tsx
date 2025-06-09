@@ -6,6 +6,7 @@ import { useGetTeamDetail } from "@/apis";
 import { InvestCompleteModal } from "@/components";
 import { useLocalStorage } from "@/hook";
 import { TeamEndProps } from "@/apis/team/type";
+import { roundToFixed } from "@/utils";
 
 interface ITransactionContentType {
   id: number;
@@ -136,8 +137,8 @@ export const HistorySidebar = () => {
                 sameValue
                   ? color.green[600]
                   : data.valueProfit > 0
-                  ? color.red[500]
-                  : color.blue[500]
+                    ? color.red[500]
+                    : color.blue[500]
               }
             >
               {formattedData.totalMoney}원
@@ -157,7 +158,7 @@ export const HistorySidebar = () => {
                   ? ""
                   : "+"}
                 {formattedData.valueProfit.toLocaleString()}원 (
-                {formattedProfitNum})
+                {roundToFixed(parseFloat(formattedProfitNum), 2)}%)
               </div>
             ) : null}
           </TotalAssetContainer>

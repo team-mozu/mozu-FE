@@ -6,6 +6,7 @@ import { Check, Button, Toast } from "@mozu/ui";
 import { useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAsyncButton } from "@/hook";
 
 interface IInvestCompleteType {
   isOpen?: boolean;
@@ -66,8 +67,12 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
       teamEnd(parsedHistory);
     } catch (e) {
       console.error("localStorage 파싱 오류:", e);
+      Toast("알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.", { type: "error" });
+      setIsOpen?.(false);
     }
   };
+
+  const { onClick, isLoading, disabled } = useAsyncButton(invDeg, 5000);
 
   return (
     <AnimatePresence>
@@ -128,10 +133,14 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
                 <ButtonIcon>❌</ButtonIcon>
                 취소
               </CancelButton>
-              <ConfirmButton onClick={invDeg}>
-                <ButtonIcon>🚀</ButtonIcon>
-                투자 완료하기
-                <ButtonShine />
+              <ConfirmButton onClick={onClick} disabled={disabled}>
+                {isLoading ? "로딩 중..." : (
+                  <>
+                    <ButtonIcon>🚀</ButtonIcon>
+                    투자 완료하기
+                    <ButtonShine />
+                  </>
+                )}
               </ConfirmButton>
             </ActionSection>
           </MotionModalContainer>
@@ -394,6 +403,12 @@ const ConfirmButton = styled.button`
   
   &:active {
     transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
   }
 `;
 
