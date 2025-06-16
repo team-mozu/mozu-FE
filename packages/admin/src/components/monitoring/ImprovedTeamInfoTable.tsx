@@ -59,8 +59,8 @@ export const ImprovedTeamInfoTable = ({
 
           return (
             <Tr isNotBorded={index + 1 === teamInfo.length} key={index}>
-              <Td isLeft isTeamName>
-                <TeamName onClick={() => handleOpenModal(team.teamId, team.teamName)}>{team.teamName}</TeamName>
+              <Td isLeft>
+                <TeamName isTeamName onClick={() => handleOpenModal(team.teamId, team.teamName)}>{team.teamName}</TeamName>
                 {team.trade.length === invDeg && (
                   <CompletedBadge>
                     투자완료 <Check size={18} color={color.green[500]} />
@@ -179,9 +179,6 @@ const Td = styled.td<{
   gap: 6px;
   ${font.t4};
   ${({ isTeamName }) => isTeamName && "cursor: pointer"};
-  &:hover {
-    text-decoration: ${({ isTeamName }) => isTeamName && "underline"};
-  }
 `;
 
 const CompletedBadge = styled.span`
@@ -212,10 +209,14 @@ const Rate = styled.div<{ isNegative: boolean }>`
   }
 `;
 
-const TeamName = styled.span`
+const TeamName = styled.span<{ isTeamName?: boolean }>`
   cursor: pointer;
   font: ${font.t2};
   :hover {
     text-decoration: underline;
+  }
+
+  &:hover {
+    text-decoration: ${({ isTeamName }) => isTeamName && "underline"};
   }
 `;

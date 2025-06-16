@@ -13,7 +13,9 @@ interface classItem {
 
 // Original InvestInfoTable Component (keeping original styles)
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
-  const header = ['종목 이름', '1차', '2차', '3차', '4차', '5차'];
+  const maxRound = Math.max(...classItems.map((item) => item.money.length - 1));
+
+  const header = ['종목 이름', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`)];
 
   return (
     <TableWrapper>

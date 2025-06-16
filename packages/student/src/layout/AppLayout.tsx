@@ -6,6 +6,7 @@ import { ItemSidebar, HistorySidebar, ItemSidebarSkeleton } from "@/components";
 import { useSSE } from "@/hook";
 import { removeCookiesAsync } from "@configs/util";
 import { queryClient } from "..";
+import { headerConfigMap } from "@/routes";
 
 export const AppLayout = () => {
   const { data: teamData, refetch: teamDataRefetch } = useGetTeamDetail();
@@ -43,36 +44,23 @@ export const AppLayout = () => {
     },
   });
 
-  // useEffect(() => {
-  //   const subscription = liveQuery(async () => {
-  //     const [buySum, sellSum] = await Promise.all([
-  //       db.tradeHistory
-  //         .where("orderType")
-  //         .equals("BUY")
-  //         .toArray()
-  //         .then((data) =>
-  //           data.reduce((acc, cur) => acc + cur.itemMoney * cur.orderCount, 0)
-  //         ),
-
-  //       db.tradeHistory
-  //         .where("orderType")
-  //         .equals("SELL")
-  //         .toArray()
-  //         .then((data) =>
-  //           data.reduce((acc, cur) => acc + cur.itemMoney * cur.orderCount, 0)
-  //         ),
-  //     ]);
-
-  //     setTotalBuy(buySum);
-  //     setTotalSell(sellSum);
-  //   }).subscribe();
-
-  //   return () => subscription.unsubscribe();
-  // }, []);
+  const resolvedPath = pathname.replace(/\d+/g, ":classId");
+  const headerConfig = headerConfigMap[resolvedPath] ?? {
+    showNav: false,
+    showRound: false,
+    isAdminMargin: true,
+  };
 
   return (
     <AppContainer>
-      <Header isAdmin={false} invDeg={teamData?.invDeg ?? 0} />
+      <Header
+        isAdmin={false}
+        invDeg={teamData?.invDeg ?? 0}
+        showNav={headerConfig.showNav}
+        showRound={headerConfig.showRound}
+        isMargin={headerConfig.isAdminMargin}
+      />
+
       <Layout>
         {!isResultPage && (
           <>

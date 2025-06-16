@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { ArticleInfoModal, Button, Cancel, ClassInfoModal, DeleteModal, Toast } from "@mozu/ui";
+import { Button, ClassInfoModal, DeleteModal, Toast } from "@mozu/ui";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { TeamInfoTable } from "@/components";
+import { ArticleInfoModal, TeamInfoTable } from "@/components";
 import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";

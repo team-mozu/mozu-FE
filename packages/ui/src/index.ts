@@ -18,7 +18,6 @@ export * from './SelectError';
 export * from './EditDiv';
 export * from './TeamContainer';
 export * from './WarningMsg';
-export * from './ArticleInfoModal';
 export * from './InvestInfoTable';
 export * from './ClassInfoModal';
 export * from './Accounts';

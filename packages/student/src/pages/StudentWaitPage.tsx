@@ -42,7 +42,7 @@ export const StudentWaitPage = () => {
 
   return (
     <AppContainer>
-      <Header isAdmin={false} />
+      <Header isAdmin={false} showNav={false} showRound={false} />
       <Container>
         <MainSection>
           <IconDiv>

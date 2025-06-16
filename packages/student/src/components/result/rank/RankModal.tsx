@@ -1,14 +1,16 @@
-import { useTeamRank } from '@/apis';
+import { useTeamRank, useTeamResult } from '@/apis';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { Button, RankingDiv, Trophy } from '@mozu/ui';
 
 interface IRankModal {
   onCancle: () => void;
+  endRound?: number;
 }
 
-export const RankModal = ({ onCancle }: IRankModal) => {
+export const RankModal = ({ onCancle, endRound }: IRankModal) => {
   const { data: rankData } = useTeamRank();
+  const { data: teamResult } = useTeamResult();
 
   return (
     <ModalBackdrop onClick={onCancle}>
@@ -18,7 +20,7 @@ export const RankModal = ({ onCancle }: IRankModal) => {
             <Trophy size={24} color={color.orange[500]} />
           </IconDiv>
           <TitleSection>
-            <Title>현재 모둠 랭킹</Title>
+            {teamResult?.invDeg ?? 0 === endRound ? <Title>최종 모둠 랭킹</Title> : <Title>현재 모둠 랭킹</Title>}
             <Subtitle>실시간 모둠별 순위를 확인해보세요</Subtitle>
           </TitleSection>
         </Header>

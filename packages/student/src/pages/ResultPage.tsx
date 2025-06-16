@@ -1,11 +1,10 @@
-// TODO: 소수점이 너무 길게 나와요
 import { ResultContainer, RankModal } from "@/components";
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { useGetTeamDetail } from "@/apis";
 
 export const ResultPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -14,10 +13,13 @@ export const ResultPage = () => {
     setIsModalOpen(false);
   };
 
+  const { data: teamInfo } = useGetTeamDetail();
+  const endRound = teamInfo?.maxInvDeg;
+
   return (
     <Container>
-      <ResultContainer onRankClick={handleOpenModal} />
-      {isModalOpen && <RankModal onCancle={handleCloseModal} />}
+      <ResultContainer onRankClick={handleOpenModal} endRound={endRound} />
+      {isModalOpen && <RankModal onCancle={handleCloseModal} endRound={endRound} />}
     </Container>
   );
 };

@@ -6,6 +6,7 @@ export type TeamDeatilResponse = {
   cashMoney: number;
   valueMoney: number;
   invDeg: number;
+  maxInvDeg: number;
   valueProfit: number;
   profitNum: string;
 };

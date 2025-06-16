@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { ArticleInfoModal, Button, ClassInfoModal, DeleteModal, Toast } from "@mozu/ui";
+import { Button, ClassInfoModal, DeleteModal, Toast } from "@mozu/ui";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { FullPageLoader, TeamInfoTable, ImprovedTeamInfoTable } from "@/components";
+import { FullPageLoader, ArticleInfoModal, ImprovedTeamInfoTable } from "@/components";
 import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";
@@ -19,7 +19,7 @@ export const ImprovedClassMonitoringPage = () => {
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
 
-  const { data: classData, isLoading } = useGetClassDetail(classId);
+  const { data: classData, isLoading, isFetching } = useGetClassDetail(classId);
   const { mutate: nextDegree } = useNextDegree(classId, () => {
     if (!classData) return;
 
@@ -65,7 +65,7 @@ export const ImprovedClassMonitoringPage = () => {
     setIsOpen(true);
   };
 
-  if (isLoading) return <FullPageLoader />;
+  if (isLoading || !classData || isFetching) return <FullPageLoader />;
 
   return (
     <>

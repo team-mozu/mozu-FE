@@ -7,21 +7,24 @@ import { useMemo } from "react";
 interface IHeaderProps {
   isAdmin: boolean;
   invDeg?: number;
+  showNav: boolean;
+  showRound: boolean;
+  isMargin?: boolean;
 }
 
-export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
+export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeaderProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { classId, newsId } = useParams();
 
   /** 📌 현재 페이지 상태를 useMemo로 계산 */
   const currentPage = useMemo(() => {
-    if (pathname.startsWith("/:classId")) return "home";
-    if (pathname.startsWith("/:classId/news")) return "news";
-    if (pathname === "/:classId/result") return "result";
+    if (pathname === `/${classId}`) return "home";
+    if (pathname === `/${classId}/news`) return "news";
+    if (pathname === `/${classId}/result`) return "result";
     if (pathname === "/signin/wait") return "wait";
     return "default";
-  }, [pathname]);
+  }, [pathname, classId]);
 
   const isNavHome = currentPage === "home";
   const isNavNews = currentPage === "news";

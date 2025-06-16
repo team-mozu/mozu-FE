@@ -1,12 +1,14 @@
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 import { useState, useRef, useEffect } from 'react';
-import { Button } from './Button';
-import { ArticleIcon } from './assets';
+import { Button } from '@mozu/ui';
+import { ArticleIcon } from '@mozu/ui';
+import { useGetArticleDetail } from '@/apis';
 
 interface ArticleType {
   id: number;
   title: string;
+  content?: string; // 기사 내용 추가
 }
 
 interface ClassArticle {
@@ -22,8 +24,15 @@ interface IArticleInfoType {
 
 export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleInfoType) => {
   const [datas, setDatas] = useState<
-    { isClicked: boolean; articleContent: { title: string }[] }[]
+    { isClicked: boolean; articleContent: ArticleType[] }[]
   >([]);
+
+
+  // 기사 상세 보기 상태 추가
+  const [selectedArticle, setSelectedArticle] = useState<ArticleType | null>(null);
+  const [isDetailView, setIsDetailView] = useState<boolean>(false);
+
+  const { data: articleDetailData } = useGetArticleDetail(selectedArticle?.id);
 
   const outSideRef = useRef<HTMLDivElement | null>(null);
   const outSideClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -48,6 +57,21 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
         )
         : [],
     );
+    // 탭 변경시 상세 보기 해제
+    setIsDetailView(false);
+    setSelectedArticle(null);
+  };
+
+  // 기사 클릭 핸들러
+  const handleArticleClick = (article: ArticleType) => {
+    setSelectedArticle(article);
+    setIsDetailView(true);
+  };
+
+  // 뒤로가기 핸들러
+  const handleBackToList = () => {
+    setIsDetailView(false);
+    setSelectedArticle(null);
   };
 
   useEffect(() => {
@@ -71,6 +95,14 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
     };
   }, [isOpen]);
 
+  // 모달이 닫힐 때 상세 보기 상태 초기화
+  useEffect(() => {
+    if (!isOpen) {
+      setIsDetailView(false);
+      setSelectedArticle(null);
+    }
+  }, [isOpen]);
+
   const selectedData = datas.find(data => data.isClicked);
 
   return (
@@ -82,41 +114,66 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
               <ArticleIcon size={28} color={color.zinc[800]} />
             </IconWrapper>
             <TitleSection>
-              <Title>기사 정보</Title>
-              <Subtitle>차수별 기사 목록을 확인하세요</Subtitle>
+              <Title>
+                {isDetailView ? selectedArticle?.title : '기사 정보'}
+              </Title>
+              <Subtitle>
+                {isDetailView ? '기사 내용을 확인하세요' : '차수별 기사 목록을 확인하세요'}
+              </Subtitle>
             </TitleSection>
+            {isDetailView && (
+              <BackButton onClick={handleBackToList}>
+                ← 목록으로
+              </BackButton>
+            )}
           </Header>
 
-          <TabContainer>
-            {datas.map((data, index) => (
-              <TabButton
-                isActive={data.isClicked}
-                onClick={() => barClick(index)}
-                key={index}
-              >
-                <TabNumber>{index + 1}</TabNumber>
-                <TabLabel>차</TabLabel>
-                {data.isClicked && <ActiveIndicator />}
-              </TabButton>
-            ))}
-          </TabContainer>
+          {!isDetailView && (
+            <TabContainer>
+              {datas.map((data, index) => (
+                <TabButton
+                  isActive={data.isClicked}
+                  onClick={() => barClick(index)}
+                  key={index}
+                >
+                  <TabNumber>{index + 1}</TabNumber>
+                  <TabLabel>차</TabLabel>
+                  {data.isClicked && <ActiveIndicator />}
+                </TabButton>
+              ))}
+            </TabContainer>
+          )}
 
           <ContentWrapper>
-            <ArticleContainer>
-              {selectedData?.articleContent.length ? (
-                selectedData.articleContent.map((content, idx) => (
-                  <ArticleItem key={idx}>
-                    <ArticleNumber>{idx + 1}</ArticleNumber>
-                    <ArticleTitle>{content.title}</ArticleTitle>
-                  </ArticleItem>
-                ))
-              ) : (
-                <EmptyState>
-                  <EmptyIcon>📝</EmptyIcon>
-                  <EmptyText>해당 차수에 등록된 기사가 없습니다</EmptyText>
-                </EmptyState>
-              )}
-            </ArticleContainer>
+            {isDetailView ? (
+              // 기사 상세 보기
+              <ArticleDetailContainer>
+                <ArticleDetailContent>
+                  {articleDetailData?.description || selectedArticle?.content || '기사 내용을 불러오는 중입니다...'}
+                </ArticleDetailContent>
+              </ArticleDetailContainer>
+            ) : (
+              // 기사 목록 보기
+              <ArticleContainer>
+                {selectedData?.articleContent.length ? (
+                  selectedData.articleContent.map((content, idx) => (
+                    <ArticleItem
+                      key={content.id}
+                      onClick={() => handleArticleClick(content)}
+                    >
+                      <ArticleNumber>{idx + 1}</ArticleNumber>
+                      <ArticleTitle>{content.title}</ArticleTitle>
+                      <ClickIndicator className="click-indicator">클릭하여 보기 →</ClickIndicator>
+                    </ArticleItem>
+                  ))
+                ) : (
+                  <EmptyState>
+                    <EmptyIcon>📝</EmptyIcon>
+                    <EmptyText>해당 차수에 등록된 기사가 없습니다</EmptyText>
+                  </EmptyState>
+                )}
+              </ArticleContainer>
+            )}
           </ContentWrapper>
 
           <FooterContainer>
@@ -200,6 +257,7 @@ const Header = styled.div`
   gap: 20px;
   padding: 32px 32px 24px 32px;
   border-bottom: 1px solid ${color.zinc[200]};
+  position: relative;
 `;
 
 const IconWrapper = styled.div`
@@ -219,6 +277,7 @@ const TitleSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1;
 `;
 
 const Title = styled.h2`
@@ -232,6 +291,23 @@ const Subtitle = styled.p`
   font: ${font.b2};
   color: ${color.zinc[600]};
   margin: 0;
+`;
+
+const BackButton = styled.button`
+  background: ${color.orange[50]};
+  color: ${color.orange[600]};
+  border: 1px solid ${color.orange[200]};
+  border-radius: 12px;
+  padding: 8px 16px;
+  font: ${font.b2};
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${color.orange[100]};
+    border-color: ${color.orange[300]};
+  }
 `;
 
 const TabContainer = styled.div`
@@ -334,11 +410,17 @@ const ArticleItem = styled.div`
   border: 1px solid ${color.zinc[200]};
   border-radius: 16px;
   transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
   
   &:hover {
     border-color: ${color.orange[300]};
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
     transform: translateY(-1px);
+  }
+  
+  &:hover .click-indicator {
+    opacity: 1;
   }
 `;
 
@@ -361,6 +443,52 @@ const ArticleTitle = styled.div`
   font: ${font.t3};
   line-height: 1.8;
   color: ${color.zinc[800]};
+  word-break: keep-all;
+  flex: 1;
+`;
+
+const ClickIndicator = styled.div`
+  font: ${font.b2};
+  color: ${color.orange[500]};
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+`;
+
+const ArticleDetailContainer = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${color.zinc[100]};
+    border-radius: 4px;
+    margin: 8px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${color.zinc[300]};
+    border-radius: 4px;
+    
+    &:hover {
+      background: ${color.zinc[400]};
+    }
+  }
+`;
+
+const ArticleDetailContent = styled.div`
+  background: ${color.white};
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid ${color.zinc[200]};
+  font: ${font.b1};
+  line-height: 1.8;
+  color: ${color.zinc[800]};
+  white-space: pre-wrap;
   word-break: keep-all;
 `;
 

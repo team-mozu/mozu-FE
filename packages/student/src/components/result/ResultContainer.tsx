@@ -13,9 +13,10 @@ import { roundToFixed } from "@/utils";
 interface ValueStyleProps {
   isPositive?: boolean;
   onRankClick?: () => void;
+  endRound?: number;
 }
 
-export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
+export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
   const { data: teamOrders } = useTeamOrders();
   const { data: teamResult } = useTeamResult();
   const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
@@ -26,7 +27,7 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
 
   const profitNumRaw = teamResult?.profitNum ?? "0%";
   const profitNum = parseFloat(profitNumRaw.toString().replace("%", ""));
-  const roundedProfitNum = roundToFixed(profitNum, 3);
+  const roundedProfitNum = roundToFixed(profitNum, 2);
   const profitNumStr = `${roundedProfitNum}%`;
 
   // 숫자 파싱을 통해 부호 판단
@@ -35,7 +36,6 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
 
   const isValueProfitPositive = valueProfitNum >= 0;
   const isProfitNumPositive = profitNumNum >= 0;
-
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
@@ -60,12 +60,21 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
         <Logo>
           <HandCoins size={24} color={color.orange[500]} />
         </Logo>
-        <p>
-          {teamOrders &&
-            teamOrders.length > 0 &&
-            teamOrders[teamOrders.length - 1]?.invDeg}
-          차 투자 종료
-        </p>
+        {teamResult?.invDeg === endRound ? (
+          <p>
+            {teamOrders &&
+              teamOrders.length > 0 &&
+              teamOrders[teamOrders.length - 1]?.invDeg}
+            차(최종) 투자 종료
+          </p>
+        ) : (
+          <p>
+            {teamOrders &&
+              teamOrders.length > 0 &&
+              teamOrders[teamOrders.length - 1]?.invDeg}
+            차 투자 종료
+          </p>
+        )}
       </Title>
       <Main>
         <Transaction>
@@ -105,7 +114,10 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
         </Transaction>
         <RightContainer>
           <Result>
-            <label>결과 요약</label>
+            {teamResult?.invDeg === endRound ? (
+              <label>총 결과 요약</label>
+            ) : <label>결과 요약</label>
+            }
             <AssetChange
               baseMoney={teamResult?.baseMoney}
               totalMoney={teamResult?.totalMoney}
@@ -143,24 +155,42 @@ export const ResultContainer = ({ onRankClick }: ValueStyleProps) => {
               hoverBackgroundColor={color.orange[100]}
               hoverBorderColor={color.orange[300]}
             >
-              현재 랭킹 보기
+              {teamResult?.invDeg === endRound ? "최종 랭킹 보기" : "현재 랭킹 보기"}
               <Trophy size={24} color={color.orange[500]} />
             </Button>
-            <Button
-              backgroundColor={color.orange[500]}
-              color={color.white}
-              width={205}
-              isIcon={true}
-              iconColor={color.white}
-              iconSize={24}
-              hoverBackgroundColor={color.orange[600]}
-              disabled={isWait}
-              onClick={() => {
-                navigate(`/${data.classId}`);
-              }}
-            >
-              계속하기
-            </Button>
+            {teamResult?.invDeg === endRound ? (
+              <Button
+                backgroundColor={color.zinc[50]}
+                color={color.zinc[800]}
+                width={205}
+                isIcon={true}
+                iconColor={color.zinc[800]}
+                iconSize={24}
+                borderColor={color.zinc[200]}
+                hoverBackgroundColor={color.zinc[100]}
+                type="logOutImg"
+                onClick={() => {
+                  navigate(`/signin`);
+                }}
+              >
+                투자 마치기
+              </Button>
+            ) :
+              <Button
+                backgroundColor={color.orange[500]}
+                color={color.white}
+                width={205}
+                isIcon={true}
+                iconColor={color.white}
+                iconSize={24}
+                hoverBackgroundColor={color.orange[600]}
+                disabled={isWait}
+                onClick={() => {
+                  navigate(`/${data.classId}`);
+                }}
+              >
+                계속하기
+              </Button>}
           </ButtonDiv>
         </RightContainer>
       </Main>
@@ -189,46 +219,6 @@ const _TestContainer = styled.div`
     background-color: ${color.zinc[50]};
   }
 `;
-
-// !
-
-const TestContainer = styled.div`
-  width: 100%;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-`;
-
-// color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
-const BS = styled.p`
-  font: ${font.b1};
-  color: ${color.red[500]};
-`;
-
-const Stock = styled.p`
-  color: ${color.black};
-  font: ${font.b1};
-  flex: 1;
-`;
-
-const Price = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-// color: ${({ type }) => (type === 'buy' ? color.red[500] : color.blue[500])};
-// 금액도 type에 따라 색상 변경
-const Amount = styled.p`
-  font: ${font.b1};
-  color: ${color.red[500]};
-`;
-
-const Total = styled.p`
-  font: ${font.l2};
-  color: ${color.zinc[600]};
-`;
-
-// !
 
 const Container = styled.div`
   width: 848px;
@@ -278,6 +268,9 @@ const Transaction = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
+  overflow-y: auto;
+  max-height: 600px;
+
   > label {
     font: ${font.t2};
     color: ${color.black};
