@@ -7,11 +7,13 @@ import { useSSE } from "@/hook";
 import { removeCookiesAsync } from "@configs/util";
 import { queryClient } from "..";
 import { headerConfigMap } from "@/routes";
+import { useRef } from "react";
 
 export const AppLayout = () => {
   const { data: teamData, refetch: teamDataRefetch } = useGetTeamDetail();
   const { refetch: articleDataRefetch } = useGetArticleList();
   const { pathname } = useLocation();
+  const dirtyFix = useRef<number>(0); // FIXME: 임시적인 예외 처리입니다
 
   const { isLoading, refetch: classItemRefetch } = useGetClassItem();
 
@@ -30,6 +32,11 @@ export const AppLayout = () => {
       Toast("다음 투자가 시작되었습니다", { type: "info" });
     },
     CLASS_CANCEL: async () => {
+      if (dirtyFix.current === 0) {
+        dirtyFix.current++;
+        return;
+      }
+
       Toast("수업이 취소되었습니다.", { type: "error" });
 
       queryClient.clear();
