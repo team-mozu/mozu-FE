@@ -36,9 +36,7 @@ export const AppLayout = () => {
         dirtyFix.current++;
         return;
       }
-
       Toast("수업이 취소되었습니다.", { type: "error" });
-
       queryClient.clear();
       const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
       await removeCookiesAsync(["accessToken", "authority"], {

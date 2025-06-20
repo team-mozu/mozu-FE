@@ -11,7 +11,6 @@ interface classItem {
   money: number[];
 }
 
-// Original InvestInfoTable Component (keeping original styles)
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
   const maxRound = Math.max(...classItems.map((item) => item.money.length - 1));
 
@@ -33,11 +32,19 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
           {classItems.map((item) => (
             <tr key={item.itemId}>
               <Td width="30%">{item.itemName}</Td>
-              {item.money.slice(1).map((amount, idx) => (
-                <Td key={idx} width="14%">
-                  {amount.toLocaleString()}
-                </Td>
-              ))}
+              {Array.from({ length: maxRound }, (_, idx) => {
+                const amount = item.money[idx + 1];
+                const isNumber = typeof amount === 'number';
+                return (
+                  <Td
+                    key={idx}
+                    width="14%"
+                    alignRight={isNumber}
+                  >
+                    {isNumber ? amount.toLocaleString() : '진행중..'}
+                  </Td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
@@ -45,6 +52,7 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
     </TableWrapper>
   );
 };
+
 
 const TableWrapper = styled.div`
   width: 100%;
@@ -81,17 +89,17 @@ const StyledTable = styled.table`
 const Th = styled.th<IThProp>`
   width: ${({ width }) => width};
   font: ${font.b1};
-  text-align: left;
+  text-align: center;
   padding: 12px 16px;
   background-color: ${color.orange[50]};
   border: 1px solid ${color.zinc[200]};
 `;
 
-const Td = styled.td<IThProp>`
+const Td = styled.td<IThProp & { alignRight?: boolean }>`
   width: ${({ width }) => width};
   font: ${font.b2};
   padding: 12px 16px;
-  text-align: left;
+  text-align: ${(props) => (props.alignRight ? "right" : "left")};
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.white};
 `;

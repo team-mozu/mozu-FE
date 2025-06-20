@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { RateDiv } from "./TeamInfoTable";
 
 interface IThProps {
   width?: string;
@@ -153,6 +152,11 @@ export const TeamInvestStatusTable = ({
     </Table>
   );
 };
+
+const RateDiv = styled.div<{ color: string }>`
+  font: ${font.l1};
+  color: ${(props) => props.color};
+`;
 
 const Table = styled.table`
   border-radius: 4px;

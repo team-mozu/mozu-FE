@@ -67,12 +67,6 @@ export const InvestmentPreparation = lazy(() =>
   })),
 );
 
-export const ClassMonitoringPage = lazy(() =>
-  import('@/pages/ClassMonitoringPage').then((module) => ({
-    default: module.ClassMonitoringPage,
-  })),
-);
-
 export const ImprovedClassMonitoringPage = lazy(() =>
   import('@/pages/ImprovedClassMonitoringPage').then((module) => ({
     default: module.ImprovedClassMonitoringPage,

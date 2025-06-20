@@ -353,7 +353,6 @@ export const StockTables = ({
                 <Th
                   key={header.id}
                   width={`${header.column.getSize()}px`}
-                  align={(header.column.columnDef.meta as any)?.align}
                 >
                   {flexRender(
                     header.column.columnDef.header,
@@ -467,7 +466,7 @@ const Tbody = styled.tbody`
   background-color: ${color.white};
 `;
 
-const Th = styled.th<{ width: string; align?: string }>`
+const Th = styled.th<{ width: string; }>`
   font: ${font.t2};
   height: 48px;
   background: ${color.orange[50]};
@@ -477,7 +476,7 @@ const Th = styled.th<{ width: string; align?: string }>`
   padding: 16px 14px;
   min-width: 80px;
   width: ${(props) => props.width};
-  text-align: ${(props) => props.align || "left"};
+  text-align: center;
 
   &:first-of-type {
     border-top-left-radius: 8px;

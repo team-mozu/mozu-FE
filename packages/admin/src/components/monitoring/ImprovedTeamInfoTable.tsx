@@ -4,7 +4,7 @@ import { color, font } from "@mozu/design-token";
 import styled from "@emotion/styled";
 import { TeamInfo } from "@/store";
 import { useState } from "react";
-import { TeamCurrentModal } from "./TeamCurrentModal";
+import { TeamCurrentModal, DegCurrentModal } from "@/components";
 
 interface Props {
   teamInfo: TeamInfo[];
@@ -19,7 +19,9 @@ export const ImprovedTeamInfoTable = ({
 }: Props) => {
 
   const [isOpenTeam, setIsOpenTeam] = useState(false);
+  const [isOpenDeg, setIsOpenDeg] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const [selectedDegId, setSelectedDegId] = useState<number | null>(null)
   const [selectedTeamName, setSelectedTeamName] = useState("");
   const TableHeaderList = [
     "팀명",
@@ -37,6 +39,11 @@ export const ImprovedTeamInfoTable = ({
     setSelectedTeamName(teamName);
     setIsOpenTeam(true);
   };
+
+  const handleOpenDegModal = (invDeg: number) => {
+    setSelectedDegId(invDeg);
+    setIsOpenDeg(true);
+  }
 
   if (!teamInfo && teamInfo.length <= 0) return;
 
@@ -82,7 +89,7 @@ export const ImprovedTeamInfoTable = ({
                     {team.trade[index] === undefined ? (
                       "진행중"
                     ) : (
-                      <Rate isNegative={isNegative}>
+                      <Rate isNegative={isNegative} onClick={() => handleOpenDegModal(index + 1)}>
                         <span>{team.trade[index].totalMoney.toLocaleString()}원</span>
                         <span>
                           {!isNegative && "+"}
@@ -117,10 +124,14 @@ export const ImprovedTeamInfoTable = ({
       </Table>
       {isOpenTeam && selectedTeamId !== null && (
         <TeamCurrentModal
-          teamId={selectedTeamId}
           isOpen={isOpenTeam}
           setIsOpen={setIsOpenTeam}
-          teamName={selectedTeamName}
+        />
+      )}
+      {isOpenDeg && selectedDegId !== null && (
+        <DegCurrentModal
+          isOpen={isOpenDeg}
+          setIsOpen={setIsOpenDeg}
         />
       )}
     </>
@@ -199,6 +210,7 @@ const Rate = styled.div<{ isNegative: boolean }>`
   gap: 4px;
   align-items: end;
   width: 100%;
+  cursor: pointer;
   & > span:nth-of-type(1) {
     ${font.t1};
   }
@@ -207,16 +219,16 @@ const Rate = styled.div<{ isNegative: boolean }>`
     color: ${({ isNegative }) =>
     isNegative ? color.blue[500] : color.red[500]};
   }
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const TeamName = styled.span<{ isTeamName?: boolean }>`
   cursor: pointer;
   font: ${font.t2};
-  :hover {
-    text-decoration: underline;
-  }
-
   &:hover {
-    text-decoration: ${({ isTeamName }) => isTeamName && "underline"};
+    text-decoration: underline;
   }
 `;

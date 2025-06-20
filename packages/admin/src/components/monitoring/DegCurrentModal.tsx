@@ -1,17 +1,44 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useRef, useCallback, useEffect } from "react";
-import { HoldStockTable } from "@/components";
-// import { useMyHoldings } from "@/apis";
+import { useRef, useCallback, useEffect, useState } from "react";
+import { TeamInvestStatusTable } from "@/components";
+// import { useDegDeals } from "@/apis";
 
-export const TeamCurrentModal = ({
-  isOpen,
-  setIsOpen,
-}: {
+interface DegDealContent {
+  id: number;
+  itemName: string;
+  itemMoney: number;
+  orderCount: number;
+  orderType: string;
+  totalMoney: number;
+  degNumber?: number;
+}
+
+interface DegData {
+  degNumber: number;
+  teamName: string;
+  deals: DegDealContent[];
+}
+
+interface IDegCurrentType {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-}) => {
+  // degDataList: DegData[]; // 차수별 데이터 리스트 추가
+}
+
+export const DegCurrentModal = ({
+  isOpen,
+  setIsOpen,
+  // degDataList,
+}: IDegCurrentType) => {
   const backgroundRef = useRef<HTMLDivElement>(null);
+  const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+
+  const [degDataList, setDegDataList] = useState<DegData[]>([
+    { degNumber: 1, teamName: "팀1", deals: [] },
+    { degNumber: 2, teamName: "팀2", deals: [] },
+    { degNumber: 3, teamName: "팀3", deals: [] },
+  ]);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
@@ -26,52 +53,30 @@ export const TeamCurrentModal = ({
     [setIsOpen]
   );
 
+  const handleTabClick = useCallback((index: number) => {
+    setActiveTabIndex(index);
+  }, []);
+
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "unset";
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
-  interface DealContent {
-    id: number;
-    itemName: string;
-    itemMoney: number;
-    orderCount: number;
-    orderType: string;
-    totalMoney: number;
-  }
+  // 모달이 열릴 때 첫 번째 탭으로 초기화
+  useEffect(() => {
+    if (isOpen && degDataList.length > 0) {
+      setActiveTabIndex(0);
+    }
+  }, [isOpen, degDataList.length]);
 
-
-  // const { data } = useMyHoldings();
-  const data: DealContent[] = [
-    {
-      id: 1,
-      itemName: "삼성전자",
-      itemMoney: 1000000,
-      orderCount: 1,
-      orderType: "매수",
-      totalMoney: 1000000,
-    },
-    {
-      id: 2,
-      itemName: "카카오",
-      itemMoney: 2000000,
-      orderCount: 1,
-      orderType: "매수",
-      totalMoney: 2000000,
-    },
-    {
-      id: 3,
-      itemName: "LG전자",
-      itemMoney: 3000000,
-      orderCount: 1,
-      orderType: "매수",
-      totalMoney: 3000000,
-    },
-  ];
-
-  const totalValuation = data?.reduce((sum, item) => sum + item.totalMoney, 0) ?? 0;
+  const currentDegData = degDataList[activeTabIndex];
+  const currentDeals = currentDegData?.deals || [];
 
   return (
     isOpen && (
@@ -80,8 +85,10 @@ export const TeamCurrentModal = ({
           <ContentContainer>
             <TitleContainer>
               <TitleSection>
-                <Title>보유 주식 현황</Title>
-                <Subtitle>현재 보유 중인 주식 내역</Subtitle>
+                <Title>
+                  {currentDegData ? `${currentDegData.degNumber}차 '${currentDegData.teamName}' 거래 현황` : '거래 현황'}
+                </Title>
+                <Subtitle>차수별 투자 포트폴리오</Subtitle>
               </TitleSection>
               <CloseButton onClick={handleClose}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -90,20 +97,45 @@ export const TeamCurrentModal = ({
               </CloseButton>
             </TitleContainer>
 
+            {/* 탭 컨테이너 추가 */}
+            {degDataList.length > 0 && (
+              <TabContainer>
+                {degDataList.map((degData, index) => (
+                  <TabButton
+                    key={degData.degNumber}
+                    isActive={index === activeTabIndex}
+                    onClick={() => handleTabClick(index)}
+                  >
+                    <TabNumber>{degData.degNumber}</TabNumber>
+                    <TabLabel>차</TabLabel>
+                    {index === activeTabIndex && <ActiveIndicator />}
+                  </TabButton>
+                ))}
+              </TabContainer>
+            )}
+
             <TableContainer>
-              <HoldStockTable />
+              <TeamInvestStatusTable contents={currentDeals} />
             </TableContainer>
 
             <FooterContainer>
               <FooterStats>
                 <StatItem>
-                  <StatLabel>총 보유 종목</StatLabel>
-                  <StatValue>{data?.length || 0} 종목</StatValue>
+                  <StatLabel>총 거래 건수</StatLabel>
+                  <StatValue>{currentDeals.length}건</StatValue>
                 </StatItem>
                 <StatDivider />
                 <StatItem>
-                  <StatLabel>총 평가 금액</StatLabel>
-                  <StatValue>{totalValuation.toLocaleString()} 원</StatValue>
+                  <StatLabel>차수</StatLabel>
+                  <StatValue>{currentDegData?.degNumber || 0}차</StatValue>
+                </StatItem>
+                <StatDivider />
+                <StatItem>
+                  <StatLabel>현재 시각</StatLabel>
+                  <StatValue>{new Date().toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</StatValue>
                 </StatItem>
               </FooterStats>
 
@@ -239,6 +271,63 @@ const CloseButton = styled.button`
   &:active {
     transform: scale(0.95);
   }
+`;
+
+// ArticleInfoModal에서 가져온 탭 관련 스타일
+const TabContainer = styled.div`
+  display: flex;
+  border-bottom: 2px solid ${color.zinc[100]};
+  background: ${color.white};
+  padding: 0 32px;
+  gap: 8px;
+`;
+
+const TabButton = styled.button<{ isActive: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 24px;
+  background: ${({ isActive }) => isActive ? color.orange[50] : 'transparent'};
+  color: ${({ isActive }) => isActive ? color.orange[600] : color.zinc[600]};
+  border: none;
+  border-radius: 12px 12px 0 0;
+  font: ${font.b2};
+  font-weight: ${({ isActive }) => isActive ? '600' : '500'};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  outline: none;
+  min-width: 80px;
+  justify-content: center;
+  
+  &:hover {
+    background: ${({ isActive }) => isActive ? color.orange[100] : color.zinc[50]};
+    color: ${({ isActive }) => isActive ? color.orange[700] : color.zinc[700]};
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+`;
+
+const TabNumber = styled.span`
+  font-weight: 700;
+  font-size: 18px;
+`;
+
+const TabLabel = styled.span`
+  font-size: 14px;
+`;
+
+const ActiveIndicator = styled.div`
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  background: linear-gradient(90deg, ${color.orange[500]} 0%, ${color.orange[400]} 100%);
+  border-radius: 2px 2px 0 0;
 `;
 
 const TableContainer = styled.div`

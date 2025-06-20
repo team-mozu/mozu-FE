@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, ClassInfoModal, DeleteModal, Toast } from "@mozu/ui";
 import { useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FullPageLoader, ArticleInfoModal, ImprovedTeamInfoTable } from "@/components";
 import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
