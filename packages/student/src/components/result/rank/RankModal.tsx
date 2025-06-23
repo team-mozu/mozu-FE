@@ -133,7 +133,7 @@ const Title = styled.h2`
 `;
 
 const Subtitle = styled.p`
-  font: ${font.body2};
+  font: ${font.b2};
   color: ${color.zinc[600]};
   margin: 0;
 `;
@@ -203,7 +203,7 @@ const LoadingSpinner = styled.div`
 `;
 
 const LoadingText = styled.p`
-  font: ${font.body2};
+  font: ${font.b2};
   color: ${color.zinc[600]};
   margin: 0;
 `;

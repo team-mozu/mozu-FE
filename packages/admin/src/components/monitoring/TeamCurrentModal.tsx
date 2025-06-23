@@ -299,7 +299,7 @@ const StatItem = styled.div`
 `;
 
 const StatLabel = styled.span`
-  font: ${font.c1};
+  font: ${font.b2};
   color: ${color.zinc[500]};
   font-weight: 500;
 `;

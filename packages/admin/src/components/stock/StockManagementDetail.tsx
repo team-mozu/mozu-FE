@@ -218,12 +218,12 @@ export const StockManagementDetail = ({
 };
 
 const CompanyText = styled.div`
-  font: ${font.h5};
+  font: ${font.b2};
   word-break: break-all;
 `;
 
 const CompanyDiv = styled(Skeleton)`
-  font: ${font.h5};
+  font: ${font.b2};
   word-break: break-all;
   color: transparent;
   width: fit-content;
