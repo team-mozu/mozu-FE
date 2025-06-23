@@ -76,6 +76,7 @@ export const ImprovedClassMonitoringPage = () => {
             subComment="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
             onCancel={() => setIsOpen(false)}
             onDelete={() => stopClass()}
+            isMonitor={true}
           />
         )
       }
