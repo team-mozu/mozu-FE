@@ -433,7 +433,7 @@ const ArticleNumber = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font: ${font.caption1};
+  font: ${font.b2};
   font-weight: 700;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
