@@ -1,29 +1,6 @@
-import App from './App';
-import CreateDOM from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { GlobalStyle } from '@mozu/design-token';
-import { CustomToastContainer } from '@mozu/ui';
+import App from "./App";
+import CreateDOM from "react-dom/client";
 
-const root = CreateDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
-);
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      staleTime: 5000,
-      retry: 1,
-    },
-  },
-});
-
-root.render(
-  <QueryClientProvider client={queryClient}>
-    <ReactQueryDevtools initialIsOpen={false} />
-    <GlobalStyle />
-    <App />
-    <CustomToastContainer />
-  </QueryClientProvider>,
+CreateDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <App />
 );

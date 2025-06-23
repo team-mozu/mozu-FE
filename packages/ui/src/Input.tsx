@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Eye, EyeOff } from './assets';
+import { useState } from "react";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Eye, EyeOff } from "./assets";
 
 interface IInputType {
   placeholder: string;
@@ -34,7 +34,7 @@ export const Input = ({
   disabled,
   setPasswordVisible,
 }: IInputType) => {
-  const inputType = type === 'password' && passwordVisible ? 'text' : type;
+  const inputType = type === "password" && passwordVisible ? "text" : type;
 
   return (
     <InputContainer>
@@ -47,11 +47,11 @@ export const Input = ({
           name={name}
           value={value}
           disabled={disabled}
-          maxLength={type !== 'number' ? maxLength : undefined}
-          max={type === 'number' ? max : undefined}
+          maxLength={type !== "number" ? maxLength : undefined}
+          max={type === "number" ? max : undefined}
           onChange={onChange}
         />
-        {type === 'password' && setPasswordVisible && (
+        {type === "password" && setPasswordVisible && (
           <PasswordToggle onClick={() => setPasswordVisible(!passwordVisible)}>
             {passwordVisible ? (
               <Eye size={24} color={color.black} />
@@ -71,6 +71,7 @@ const InputContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   align-items: start;
+  width: 100%;
 `;
 
 const Label = styled.label`
@@ -86,7 +87,7 @@ const InputWrapper = styled.div`
 `;
 
 const InputContent = styled.input<{ width?: string }>`
-  width: ${(props) => props.width || '100%'};
+  width: ${(props) => props.width || "100%"};
   height: 48px;
   background-color: ${color.zinc[50]};
   border: 1px solid ${color.zinc[200]};

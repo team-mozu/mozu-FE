@@ -1,8 +1,8 @@
-import { useGetArticleList } from '@/apis';
-import { NewsPost } from '@/components';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useNavigate } from 'react-router-dom';
+import { useGetArticleList } from "@/apis";
+import { NewsPost } from "@/components";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useNavigate } from "react-router-dom";
 
 export const NewsPage = () => {
   const navigate = useNavigate();
@@ -22,25 +22,33 @@ export const NewsPage = () => {
       <Wrapper>
         <Container>
           <Label>전체 뉴스</Label>
-          {articleData.map((data) => {
-            return (
-              <NewsPost
-                imgUrl={data?.image ?? ''}
-                title={data?.title ?? ''}
-                content={data?.description ?? ''}
-                key={data?.articleId ?? 0}
-                onClick={() => navigate(`${data.articleId}`)}
-              />
-            );
-          })}
+          <NewsContainer>
+            {articleData.map((data) => {
+              return (
+                <NewsPost
+                  imgUrl={data?.image ?? ""}
+                  title={data?.title ?? ""}
+                  content={data?.description ?? ""}
+                  key={data?.articleId ?? 0}
+                  onClick={() => navigate(`${data.articleId}`)}
+                />
+              );
+            })}
+          </NewsContainer>
         </Container>
       </Wrapper>
     </div>
   );
 };
 
-const Container = styled.div`
+const NewsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   width: 100%;
+`;
+
+const Container = styled.div`
   padding: 32px;
   background-color: ${color.white};
   border: 1px solid ${color.zinc[200]};

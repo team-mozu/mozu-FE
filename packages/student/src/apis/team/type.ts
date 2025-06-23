@@ -6,6 +6,7 @@ export type TeamDeatilResponse = {
   cashMoney: number;
   valueMoney: number;
   invDeg: number;
+  maxInvDeg: number;
   valueProfit: number;
   profitNum: string;
 };
@@ -27,13 +28,18 @@ export type ItemType = {
 
 export type TeamEndProps = TeamEndData[];
 
+export type TeamCashType = {
+  cashMoney: number;
+  valueMoney: number;
+};
+
 export type TeamEndData = {
   itemId: number;
   itemName: string;
   itemMoney: number;
   orderCount: number;
   totalMoney: number;
-  orderType: string;
+  orderType: 'BUY' | 'SELL';
 };
 
 export type TeamOrdersResponse = TeamOrdersData[];

@@ -12,7 +12,9 @@ interface classItem {
 }
 
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
-  const header = ['종목 이름', '1차', '2차', '3차', '4차', '5차'];
+  const maxRound = Math.max(...classItems.map((item) => item.money.length - 1));
+
+  const header = ['종목 이름', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`)];
 
   return (
     <TableWrapper>
@@ -30,11 +32,19 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
           {classItems.map((item) => (
             <tr key={item.itemId}>
               <Td width="30%">{item.itemName}</Td>
-              {item.money.slice(1).map((amount, idx) => (
-                <Td key={idx} width="14%">
-                  {amount.toLocaleString()}
-                </Td>
-              ))}
+              {Array.from({ length: maxRound }, (_, idx) => {
+                const amount = item.money[idx + 1];
+                const isNumber = typeof amount === 'number';
+                return (
+                  <Td
+                    key={idx}
+                    width="14%"
+                    alignRight={isNumber}
+                  >
+                    {isNumber ? amount.toLocaleString() : '진행중..'}
+                  </Td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
@@ -43,10 +53,29 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
   );
 };
 
-// 💡 테이블을 감싸는 래퍼 - 반응형 처리
+
 const TableWrapper = styled.div`
   width: 100%;
   overflow-x: auto;
+  
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${color.zinc[100]};
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${color.zinc[300]};
+    border-radius: 4px;
+    
+    &:hover {
+      background: ${color.zinc[400]};
+    }
+  }
 `;
 
 const StyledTable = styled.table`
@@ -57,21 +86,20 @@ const StyledTable = styled.table`
   border-radius: 8px;
 `;
 
-// 💡 동적으로 width 설정
 const Th = styled.th<IThProp>`
   width: ${({ width }) => width};
   font: ${font.b1};
-  text-align: left;
+  text-align: center;
   padding: 12px 16px;
   background-color: ${color.orange[50]};
   border: 1px solid ${color.zinc[200]};
 `;
 
-const Td = styled.td<IThProp>`
+const Td = styled.td<IThProp & { alignRight?: boolean }>`
   width: ${({ width }) => width};
   font: ${font.b2};
   padding: 12px 16px;
-  text-align: left;
+  text-align: ${(props) => (props.alignRight ? "right" : "left")};
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.white};
 `;

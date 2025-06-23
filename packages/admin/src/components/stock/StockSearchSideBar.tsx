@@ -1,10 +1,11 @@
-import { AddButton, SearchInput } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { StockDiv } from './StockDiv';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState, Dispatch, SetStateAction } from 'react';
-import { useGetStockList } from '@/apis';
+import { AddButton, SearchInput } from "@mozu/ui";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { StockDiv } from "./StockDiv";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, Dispatch, SetStateAction } from "react";
+import { useGetStockList } from "@/apis";
+import { FullPageLoader } from "@/components";
 
 interface StockSearchSideBarProps {
   setSelectedId: Dispatch<SetStateAction<number | null>>;
@@ -17,8 +18,16 @@ export const StockSearchSideBar = ({
 }: StockSearchSideBarProps) => {
   const { classId, id } = useParams<{ classId: string; id: string }>();
   const [datas, setDatas] = useState<{ id: number; name: string }[]>([]);
-  const { data: stockData } = useGetStockList();
+  const { data: stockData, isLoading } = useGetStockList();
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
+
+  const filteredDatas = datas.filter(
+    (item) =>
+      searchText === "" ||
+      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      String(item.id).includes(searchText)
+  );
 
   useEffect(() => {
     if (!stockData?.items) return;
@@ -32,16 +41,22 @@ export const StockSearchSideBar = ({
     }
   }, [stockData, id, navigate, setSelectedId]);
 
+  if (isLoading) return <FullPageLoader />;
+
   return (
     <SideBarContainer>
       <UpperWrapper>
         <p>
           전체 <span>{datas.length}</span>
         </p>
-        <SearchInput inputText="종목 검색.." onChange={(value) => { }} />
+        <SearchInput
+          inputText="종목 검색.."
+          value={searchText}
+          onChange={(value) => setSearchText(value)}
+        />
       </UpperWrapper>
       <ArticleWrapper>
-        {datas.map((data, index) => (
+        {filteredDatas.map((data, index) => (
           <StockDiv
             key={data.id}
             name={data.name}
@@ -56,7 +71,7 @@ export const StockSearchSideBar = ({
       </ArticleWrapper>
 
       <AddButton
-        onClick={() => navigate('/stock-management/add')}
+        onClick={() => navigate("/stock-management/add")}
         text="종목 추가하기"
       />
     </SideBarContainer>
@@ -66,7 +81,7 @@ export const StockSearchSideBar = ({
 const SideBarContainer = styled.div`
   min-width: 280px;
   height: 100%;
-  backgroundcolor: white;
+  background-color: white;
   border-right: 1px solid ${color.zinc[200]};
   display: flex;
   flex-direction: column;

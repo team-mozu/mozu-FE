@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { font, color } from '@mozu/design-token';
-import { ManagerLogo } from './assets';
-import { NavBtn } from './NavBtn';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import styled from "@emotion/styled";
+import { font, color } from "@mozu/design-token";
+import { ManagerLogo } from "./assets";
+import { NavBtn } from "./NavBtn";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 interface ISideBarType {
   name?: string;
@@ -19,62 +19,67 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
   const [isArticleColor, setIsArticleColor] = useState<boolean>(false);
 
   useEffect(() => {
-    if (pathname.includes('/class-management')) {
+    if (pathname.includes("/class-management")) {
       setIsClassColor(true);
       setIsStockColor(false);
       setIsArticleColor(false);
-    } else if (pathname.includes('/stock-management')) {
+    } else if (pathname.includes("/stock-management")) {
       setIsClassColor(false);
       setIsStockColor(true);
       setIsArticleColor(false);
-    } else if (pathname.includes('/article-management')) {
+    } else if (pathname.includes("/article-management")) {
       setIsClassColor(false);
       setIsStockColor(false);
       setIsArticleColor(true);
     }
   }, [pathname]);
 
+  if (
+    pathname.split("/")[1] === "class-management" &&
+    (pathname.split("/")[3] === "start" ||
+      pathname.split("/")[3] === "monitoring")
+  )
+    return null;
+
   return (
-    <>
-      <SideBarContainer>
-        <ProfileContainer>
-          <LogoContainer>
-            <ManagerLogo />
-          </LogoContainer>
-          <ProfileContents>
-            <Name>{name}</Name>
-            <RoleType>{role}</RoleType>
-          </ProfileContents>
-        </ProfileContainer>
-        <Divider />
-        <ContentContainer>
-          <NavTitle>{navTitle}</NavTitle>
-          <BtnContainer>
-            <NavBtn
-              type={'classIcon'}
-              isColor={isClassColor}
-              onClick={() => navigate('/class-management')}
-            >
-              수업 관리
-            </NavBtn>
-            <NavBtn
-              type={'stockIcon'}
-              isColor={isStockColor}
-              onClick={() => navigate('/stock-management')}
-            >
-              종목 관리
-            </NavBtn>
-            <NavBtn
-              type={'articleIcon'}
-              isColor={isArticleColor}
-              onClick={() => navigate('/article-management')}
-            >
-              기사 관리
-            </NavBtn>
-          </BtnContainer>
-        </ContentContainer>
-      </SideBarContainer>
-    </>
+    <SideBarContainer>
+      <ProfileContainer>
+        <LogoContainer>
+          <ManagerLogo />
+        </LogoContainer>
+        <ProfileContents>
+          <Name>{name}</Name>
+          <RoleType>{role}</RoleType>
+        </ProfileContents>
+      </ProfileContainer>
+      <Divider />
+      <ContentContainer>
+        <NavTitle>{navTitle}</NavTitle>
+        <BtnContainer>
+          <NavBtn
+            type={"classIcon"}
+            isColor={isClassColor}
+            onClick={() => navigate("/class-management")}
+          >
+            수업 관리
+          </NavBtn>
+          <NavBtn
+            type={"stockIcon"}
+            isColor={isStockColor}
+            onClick={() => navigate("/stock-management")}
+          >
+            종목 관리
+          </NavBtn>
+          <NavBtn
+            type={"articleIcon"}
+            isColor={isArticleColor}
+            onClick={() => navigate("/article-management")}
+          >
+            기사 관리
+          </NavBtn>
+        </BtnContainer>
+      </ContentContainer>
+    </SideBarContainer>
   );
 };
 
@@ -141,7 +146,7 @@ const ContentContainer = styled.div`
 
 const SideBarContainer = styled.div`
   position: fixed;
-  z-index: 2;
+  z-index: 1;
   top: 0;
   left: 0;
   height: 100vh;

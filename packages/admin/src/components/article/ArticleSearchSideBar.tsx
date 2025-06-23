@@ -1,10 +1,11 @@
-import { AddButton, SearchInput } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ArticleDiv } from './ArticleDiv';
-import { useEffect, useState, Dispatch, SetStateAction } from 'react';
-import { useGetArticleList } from '@/apis';
+import { AddButton, SearchInput } from "@mozu/ui";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArticleDiv } from "./ArticleDiv";
+import { useEffect, useState, Dispatch, SetStateAction } from "react";
+import { useGetArticleList } from "@/apis";
+import { FullPageLoader } from "../common";
 
 interface ArticleSearchSideBarProps {
   setSelectedId: Dispatch<SetStateAction<number | null>>;
@@ -19,8 +20,16 @@ export const ArticleSearchSideBar = ({
   const [datas, setDatas] = useState<
     { id: number; title: string; date: string }[]
   >([]);
-  const { data: articleData } = useGetArticleList();
+  const { data: articleData, isLoading } = useGetArticleList();
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
+
+  const filteredDatas = datas.filter(
+    (item) =>
+      searchText === "" ||
+      item.title.toLowerCase().includes(searchText.toLowerCase()) ||
+      String(item.id).includes(searchText)
+  );
 
   useEffect(() => {
     if (!articleData?.article) return;
@@ -38,16 +47,22 @@ export const ArticleSearchSideBar = ({
     }
   }, [articleData, id, navigate, setSelectedId]);
 
+  if (isLoading) return <FullPageLoader />;
+
   return (
     <SideBarContainer>
       <UpperWrapper>
         <p>
           전체 <span>{datas.length}</span>
         </p>
-        <SearchInput inputText="기사 검색.." onChange={(value) => { }} />
+        <SearchInput
+          inputText="기사 검색.."
+          value={searchText}
+          onChange={(value) => setSearchText(value)}
+        />
       </UpperWrapper>
       <ArticleWrapper>
-        {datas.map((data, index) => (
+        {filteredDatas.map((data, index) => (
           <ArticleDiv
             key={data.id}
             articleNumber={index + 1}
@@ -62,7 +77,7 @@ export const ArticleSearchSideBar = ({
         ))}
       </ArticleWrapper>
       <AddButton
-        onClick={() => navigate('/article-management/add')}
+        onClick={() => navigate("/article-management/add")}
         text="기사 추가하기"
       />
     </SideBarContainer>
@@ -70,7 +85,7 @@ export const ArticleSearchSideBar = ({
 };
 
 const SideBarContainer = styled.div`
-  min-width: 520px;
+  min-width: 490px;
   height: 100%;
   background-color: ${color.white};
   border-right: 1px solid ${color.zinc[200]};

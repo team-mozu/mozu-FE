@@ -1,10 +1,10 @@
-import { color } from '@mozu/design-token';
-import { EditDiv, Input, TextArea } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
-import { ImgContainer } from '@/components';
-import { useGetArticleDetail, useEditArticle, useGetClassDetail } from '@/apis';
-import { useParams } from 'react-router';
+import { color } from "@mozu/design-token";
+import { EditDiv, Input, TextArea } from "@mozu/ui";
+import styled from "@emotion/styled";
+import { useEffect, useState } from "react";
+import { ImgContainer } from "@/components";
+import { useGetArticleDetail, useEditArticle, useGetClassDetail } from "@/apis";
+import { useParams } from "react-router";
 
 export const ArticleManagementEditPage = () => {
   const { classId, id } = useParams();
@@ -15,8 +15,8 @@ export const ArticleManagementEditPage = () => {
     content: string;
     imgUrl: File | string;
   }>({
-    title: '',
-    content: '',
+    title: "",
+    content: "",
     imgUrl: null,
   });
 
@@ -25,8 +25,8 @@ export const ArticleManagementEditPage = () => {
   useEffect(() => {
     if (articleData) {
       setDatas({
-        title: articleData.title || '',
-        content: articleData.description || '',
+        title: articleData.title || "",
+        content: articleData.description || "",
         imgUrl: articleData.image || null,
       });
     }
@@ -44,8 +44,8 @@ export const ArticleManagementEditPage = () => {
   const saveClick = () => {
     let imageFile = datas.imgUrl;
 
-    if (typeof datas.imgUrl === 'string') {
-      imageFile = '';
+    if (typeof datas.imgUrl === "string") {
+      imageFile = "";
     } else if (datas.imgUrl instanceof File) {
       imageFile = datas.imgUrl;
     }

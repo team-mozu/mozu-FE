@@ -1,17 +1,36 @@
-import { SideBar, Header } from '@mozu/ui';
-import { Outlet } from 'react-router-dom';
-import styled from '@emotion/styled';
+import { SideBar, Header } from "@mozu/ui";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import styled from "@emotion/styled";
+import { useEffect } from "react";
+import { getCookies } from "@configs/util";
 
 export const AppLayout = () => {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const accessToken = getCookies<string>("accessToken");
+
+  useEffect(() => {
+    if (accessToken === undefined) navigate("signin", { replace: true });
+    if (pathname === "/") navigate("/class-management", { replace: true });
+  }, [pathname, navigate, accessToken]);
+
   return (
     <AppContainer>
-      <Header isAdmin={true} />
+      <Header isAdmin={true} showNav={false} showRound={false} />
       <SideBar
-        name={'대전시 진로융합원 창업마을'}
-        role={'관리자'}
-        navTitle={'관리'}
+        name={"대전시 진로융합원 창업마을"}
+        role={"관리자"}
+        navTitle={"관리"}
       />
-      <MainContent>
+      <MainContent
+        isMargin={
+          !(
+            pathname.split("/")[1] === "class-management" &&
+            (pathname.split("/")[3] === "start" ||
+              pathname.split("/")[3] === "monitoring")
+          )
+        }
+      >
         <Outlet />
       </MainContent>
     </AppContainer>
@@ -26,8 +45,8 @@ const AppContainer = styled.div`
   overflow-x: hidden;
 `;
 
-const MainContent = styled.div`
-  margin-left: 280px;
+const MainContent = styled.div<{ isMargin: boolean }>`
+  margin-left: ${({ isMargin }) => (isMargin ? "280px" : "0")};
   margin-top: 64px;
   flex: 1;
 `;

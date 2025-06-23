@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { noImg, noImgIcon } from '@mozu/ui';
-import { font, color } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { noImg, noImgIcon } from "@mozu/ui";
+import { font, color } from "@mozu/design-token";
 
 interface INewsPostType {
   imgUrl?: string;
@@ -38,11 +38,15 @@ const PostContainer = styled.div`
   align-items: center;
   gap: 24px;
   width: 100%;
-  height: 90px;
+  padding: 20px;
+  border-radius: 20px;
   cursor: pointer;
   :hover {
     background-color: ${color.zinc[50]};
+    transition: 0.35s ease-in-out;
+    transform: translateY(-5px);
   }
+  transition: 0.35s ease-in-out;
 `;
 
 const Title = styled.div`
@@ -59,7 +63,9 @@ const Content = styled.div`
   color: ${color.zinc[600]};
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap;
+  display: -webkit-box; 
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical; 
   width: 100%;
 `;
 
@@ -68,7 +74,8 @@ const TitleContainer = styled.div`
   flex-direction: column;
   gap: 12px;
   align-items: start;
-  width: 912px;
+  width: 100%;
+  overflow: hidden; 
 `;
 
 const NewsImg = styled.img<{ hasImage: boolean }>`
@@ -76,7 +83,8 @@ const NewsImg = styled.img<{ hasImage: boolean }>`
   height: 90px;
   border-radius: 12px;
   border: 1px solid
-    ${({ hasImage }) => (hasImage ? 'transparent' : color.zinc[200])};
+    ${({ hasImage }) => (hasImage ? "transparent" : color.zinc[200])};
 
   background-color: ${color.zinc[50]};
+  flex-shrink: 0; 
 `;

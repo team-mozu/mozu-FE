@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { noImgIcon } from '@mozu/ui';
-import { useNavigate } from 'react-router-dom';
-import { useUnchangedValue } from '@/hook';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { noImgIcon } from "@mozu/ui";
+import { useNavigate } from "react-router-dom";
+import { useUnchangedValue } from "@/hook";
+import { useGetClassItem } from "@/apis";
 
 interface IItemContentType {
   itemId?: number;
@@ -54,28 +55,29 @@ const ItemContent = ({
           <ItemCode>{itemId}</ItemCode>
         </ItemTitleContainer>
       </LogoContainer>
-      <ItemPriceContainer>
-        <Price>{nowMoney.toLocaleString()}원</Price>
-        <Percent isUp={isUp}>
-          {profitMoney.toLocaleString()}원 ({[profitNum]})
-        </Percent>
-      </ItemPriceContainer>
+      {profitMoney !== 0 && (
+        <ItemPriceContainer>
+          <Price>{nowMoney.toLocaleString()}원</Price>
+          <Percent isUp={isUp}>
+            {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""
+              }${profitNum})`}
+          </Percent>
+        </ItemPriceContainer>
+      )}
     </ItemContainer>
   );
 };
 
-export const ItemSidebar = ({
-  classData = [],
-}: {
-  classData: ClassResponse[];
-}) => {
+export const ItemSidebar = () => {
+  const { data } = useGetClassItem();
   const navigate = useNavigate();
+
   return (
     <SideBarContainer>
       <Title>전체 종목</Title>
       <ItemContentContainer>
-        {Array.isArray(classData) && classData.length > 0 ? (
-          classData.map((data, id) => (
+        {Array.isArray(data) && data.length > 0 ? (
+          data.map((data, id) => (
             <ItemContent
               key={id}
               itemId={data.itemId}
@@ -83,8 +85,8 @@ export const ItemSidebar = ({
               itemLogo={data.itemLogo}
               nowMoney={data.nowMoney ?? 0}
               isUp={
-                typeof data.profitNum === 'string' &&
-                data.profitNum.includes('-')
+                typeof data.profitNum === "string" &&
+                  data.profitNum.includes("-")
                   ? false
                   : true
               }
@@ -92,9 +94,9 @@ export const ItemSidebar = ({
               profitNum={
                 data.profitNum && !isNaN(parseFloat(data.profitNum))
                   ? data.profitNum
-                  : '0%'
+                  : "0%"
               }
-              onClick={() => navigate(`home/stock/${data.itemId}/stock-info`)}
+              onClick={() => navigate(`stock/${data.itemId}`)}
             />
           ))
         ) : (
@@ -142,6 +144,9 @@ const ItemTitleContainer = styled.div`
 const ItemTitle = styled.div`
   font: ${font.b1};
   color: ${color.black};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const ItemCode = styled.div`
@@ -152,9 +157,10 @@ const ItemCode = styled.div`
 const Price = styled.div`
   font: ${font.t3};
   color: ${color.black};
+  white-space: nowrap;
 `;
 
-const Percent = styled.div<Pick<IItemContentType, 'isUp'>>`
+const Percent = styled.div<Pick<IItemContentType, "isUp">>`
   font: ${font.l2};
   color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
 `;
@@ -181,7 +187,8 @@ const SideBarContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 4px rgba(93, 93, 93, 0.1);
+  z-index: 1;
 `;
 
 const ItemContentContainer = styled.div`

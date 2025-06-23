@@ -1,9 +1,12 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+} from '@tanstack/react-query';
 import { instance } from '@configs/util';
 import {
   HoldItemsResponse,
   TeamDeatilResponse,
-  TeamEndData,
   TeamEndProps,
   TeamOrdersResponse,
   TeamRankResponse,
@@ -20,6 +23,8 @@ export const useGetTeamDetail = () => {
       const { data } = await instance.get<TeamDeatilResponse>(`${router}`);
       return data;
     },
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
@@ -36,18 +41,15 @@ export const useGetHoldItems = () => {
   });
 };
 
-export const useTeamEnd = () => {
+export const useTeamEnd = (
+  options?: UseMutationOptions<void, AxiosError, TeamEndProps>,
+) => {
   return useMutation<void, AxiosError, TeamEndProps>({
     mutationFn: async (teamData) => {
       const response = await instance.post('/team/end', teamData);
       return response.data;
     },
-    onSuccess: () => {
-      console.log('팀 종료 성공');
-    },
-    onError: (error) => {
-      console.error('팀 종료 실패:', error);
-    },
+    ...options,
   });
 };
 
@@ -82,5 +84,7 @@ export const useTeamRank = () => {
       const { data } = await instance.get<TeamRankResponse>(`${router}/rank`);
       return data;
     },
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };

@@ -1244,6 +1244,7 @@ __metadata:
     "@yarnpkg/sdks": "npm:^3.2.0"
     axios: "npm:^1.7.9"
     event-source-polyfill: "npm:^1.0.31"
+    framer-motion: "npm:^12.15.0"
     hoist-non-react-statics: "npm:^3.3.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1311,6 +1312,7 @@ __metadata:
     dexie: "npm:^4.0.11"
     dexie-react-hooks: "npm:^1.1.7"
     event-source-polyfill: "npm:^1.0.31"
+    framer-motion: "npm:^12.15.0"
     globals: "npm:^15.14.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1332,6 +1334,7 @@ __metadata:
     "@mozu/design-token": "workspace:^"
     "@types/react": "npm:18.3.18"
     "@types/react-dom": "npm:18.3.5"
+    framer-motion: "npm:^12.15.0"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     react-router-dom: "npm:^7.1.1"
@@ -3399,6 +3402,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"framer-motion@npm:^12.15.0":
+  version: 12.15.0
+  resolution: "framer-motion@npm:12.15.0"
+  dependencies:
+    motion-dom: "npm:^12.15.0"
+    motion-utils: "npm:^12.12.1"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@emotion/is-prop-valid": "*"
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/b4e54a06d2ceb8ebccd0c79c4ab080ae5dab5fcaee6af0c6a2070dc922054a2403290914f0179b4a250c309654e3fc1f9f173d98e0bc4a78a1f42576013f586c
+  languageName: node
+  linkType: hard
+
 "fs-minipass@npm:^2.0.0":
   version: 2.1.0
   resolution: "fs-minipass@npm:2.1.0"
@@ -4418,6 +4443,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"motion-dom@npm:^12.15.0":
+  version: 12.15.0
+  resolution: "motion-dom@npm:12.15.0"
+  dependencies:
+    motion-utils: "npm:^12.12.1"
+  checksum: 10c0/b6cc4c158f5e37d4da6d33044642fa5dbdb6b331b5a1c4d4d738770c12cb56a700c839af64c81de2a69bea7832693da5705612f6e15f5b04fac55d0339eb84d2
+  languageName: node
+  linkType: hard
+
+"motion-utils@npm:^12.12.1":
+  version: 12.12.1
+  resolution: "motion-utils@npm:12.12.1"
+  checksum: 10c0/880a174769d1be42b46cfb34af81b4a629c068d30d5cf7e07d249fbf2f5121d577482d3ea5bdc1db549c0288733e1e987efecb195fae350995270651559c6697
+  languageName: node
+  linkType: hard
+
 "mozu-fe@workspace:.":
   version: 0.0.0-use.local
   resolution: "mozu-fe@workspace:."
@@ -4430,6 +4471,7 @@ __metadata:
     husky: "npm:^8.0.0"
     inquirer: "npm:^12.3.0"
     lint-staged: "npm:^15.3.0"
+    react-spinners: "npm:^0.17.0"
     typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
@@ -4861,6 +4903,16 @@ __metadata:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 10c0/d94cb27f808721ec040d320ca1927919199495fd212e54eb9dc8ee3f73ff1d808a34be9f4b09fe49b01f411ac2387fdf0e4bee297f18faf56f94bfbef5fd204c
+  languageName: node
+  linkType: hard
+
+"react-spinners@npm:^0.17.0":
+  version: 0.17.0
+  resolution: "react-spinners@npm:0.17.0"
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/175107ba7b9ab2954559376ebe12c7561d4856402773b044c74972e9ba3e8c274454910bf23eb21000064e827a269ef4e48e69432a57395a1fa7edd05a428e7c
   languageName: node
   linkType: hard
 

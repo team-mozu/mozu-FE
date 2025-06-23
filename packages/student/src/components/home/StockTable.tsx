@@ -2,14 +2,11 @@ import {
   ColumnDef,
   useReactTable,
   getCoreRowModel,
-} from '@tanstack/react-table';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useState, useEffect } from 'react';
-import { db } from '@/db';
-import { useGetHoldItems } from '@/apis';
-import { ItemType } from '@/apis/team/type';
-import { liveQuery } from 'dexie';
+} from "@tanstack/react-table";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useGetHoldItems } from "@/apis";
+import { roundToFixed } from "@/utils";
 
 interface StockData {
   name: string;
@@ -17,122 +14,86 @@ interface StockData {
   quantity: string;
   tradeAmount: string;
   currentPrice: string;
-  profit: string;
+  profit: { valueMoney: number; profitMoney: number; profitRate: number };
 }
 
-const data: StockData[] = [];
-
 const columns: ColumnDef<StockData>[] = [
-  { accessorKey: 'name', header: '종목 이름', size: 376 },
-  { accessorKey: 'tradePrice', header: '거래 가격', size: 140 },
-  { accessorKey: 'quantity', header: '수량', size: 100 },
-  { accessorKey: 'tradeAmount', header: '거래 금액', size: 140 },
-  { accessorKey: 'currentPrice', header: '현재 가격', size: 140 },
+  { accessorKey: "name", header: "종목 이름", size: 376 },
   {
-    accessorKey: 'profit',
-    header: '수익률',
+    accessorKey: "tradePrice",
+    header: "거래 가격",
+    size: 140,
+    cell: ({ row }) => `${row.getValue("tradePrice")}원`,
+  },
+  { accessorKey: "quantity", header: "수량", size: 100 },
+  {
+    accessorKey: "tradeAmount",
+    header: "거래 금액",
+    size: 140,
+    cell: ({ row }) => `${row.getValue("tradeAmount")}원`,
+  },
+  {
+    accessorKey: "currentPrice",
+    header: "현재 가격",
+    size: 140,
+    cell: ({ row }) => `${row.getValue("currentPrice")}원`,
+  },
+  {
+    accessorKey: "profit",
+    header: "수익",
     size: 200,
     cell: ({ row }) => {
-      const profitText = row.getValue('profit') as string;
-      const [currentPrice, profit] = profitText.split('\n');
-      const isProfit = profit.includes('+');
+      const { valueMoney, profitMoney, profitRate } = row.getValue("profit") as {
+        valueMoney: number;
+        profitMoney: number;
+        profitRate: number;
+      };
+
+      const isProfit = profitMoney >= 0;
+      const sign = isProfit ? "+" : "-";
+      const absMoney = Math.abs(profitMoney).toLocaleString("ko-KR");
+      const absRate = roundToFixed(Math.abs(profitRate), 2)
 
       return (
         <RateWrapper>
-          <span>{currentPrice}</span>
-          <ProfitSpan isProfit={isProfit}>{profit}</ProfitSpan>{' '}
+          {valueMoney.toLocaleString("ko-KR")}원
+          <ProfitSpan isProfit={isProfit}>
+            {`${sign}${absMoney}원 (${sign}${absRate}%)`}
+          </ProfitSpan>
         </RateWrapper>
       );
     },
-  },
+  }
 ];
 
 export const StockTable = () => {
-  const [stockData, setStockData] = useState<StockData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { data: response } = useGetHoldItems();
+  const { data } = useGetHoldItems();
 
-  const fetchDataToIndexedDB = () => {
-    try {
-      if (!response) return;
-      db.items.bulkPut(
-        response.map((item) => ({
-          id: item.id,
-          itemId: item.itemId,
-          itemName: item.itemName,
-          buyMoney: item.buyMoney,
-          itemCnt: item.itemCnt,
-          totalMoney: item.totalMoney,
-          nowMoney: item.nowMoney,
-          valMoney: item.valMoney,
-          valProfit: item.valProfit,
-          profitNum: item.profitNum,
-        })),
-      );
-
-      return response;
-    } catch (error) {
-      throw new Error('데이터 갱신 실패');
-    }
+  const formatProfitRate = (rate: number) => {
+    const sign = rate > 0 ? "+" : rate < 0 ? "-" : "";
+    return `${sign}${roundToFixed(rate, 2)}%`;
   };
 
-  const transformToTableData = (items: ItemType[]): StockData[] => {
-    return items.map((item) => ({
+  const stockRows: StockData[] = (data ?? []).map((item) => {
+    return {
       name: item.itemName,
-      tradePrice: formatCurrency(item.buyMoney),
+      tradePrice: item.buyMoney.toLocaleString("ko-KR"),
       quantity: item.itemCnt.toString(),
-      tradeAmount: formatCurrency(item.totalMoney),
-      currentPrice: formatCurrency(item.nowMoney),
-      profit: `${formatCurrency(item.valProfit)}\n${formatPercentage(item.profitNum)}`,
-    }));
-  };
-
-  useEffect(() => {
-    const subscription = liveQuery(() => db.items.toArray()).subscribe({
-      next: (items) => setStockData(transformToTableData(items)),
-      error: (error) => console.error('IndexedDB error:', error),
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const cachedItems = await db.items.toArray();
-        if (cachedItems.length > 0) {
-          setStockData(transformToTableData(cachedItems));
-        }
-
-        const freshItems = await fetchDataToIndexedDB();
-        setStockData(transformToTableData(freshItems));
-      } catch (error) {
-        console.error('Error:', error);
-      } finally {
-        setLoading(false);
-      }
+      tradeAmount: item.totalMoney.toLocaleString("ko-KR"),
+      currentPrice: item.nowMoney.toLocaleString("ko-KR"),
+      profit: {
+        valueMoney: item.valMoney,
+        profitMoney: item.valProfit,
+        profitRate: item.profitNum,
+      },
     };
-
-    fetchData();
-  }, [response]);
+  });
 
   const table = useReactTable({
-    data: stockData,
+    data: stockRows,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('ko-KR', {
-      style: 'currency',
-      currency: 'KRW',
-    })
-      .format(value)
-      .replace('₩', '');
-  };
-
-  const formatPercentage = (value: number) => {
-    return `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
-  };
 
   return (
     <Table>
@@ -158,7 +119,7 @@ export const StockTable = () => {
                     width: cell.column.getSize(),
                   }}
                 >
-                  {cell.column.id === 'profit'
+                  {cell.column.id === "profit"
                     ? cell.column.columnDef.cell
                       ? (cell.column.columnDef.cell as any)({ row })
                       : cell.renderValue()
@@ -169,7 +130,7 @@ export const StockTable = () => {
           ))
         ) : (
           <tr>
-            <Td colSpan={columns.length} style={{ textAlign: 'center' }}>
+            <Td colSpan={columns.length} style={{ textAlign: "center" }}>
               보유중인 종목이 없습니다.
             </Td>
           </tr>

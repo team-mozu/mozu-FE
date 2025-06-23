@@ -1,45 +1,61 @@
-import { font } from '@mozu/design-token';
-import { Accounts } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color } from '@mozu/design-token';
-import { useGetStockDetail } from '@/apis';
-import { useParams } from 'react-router-dom';
+import { font } from "@mozu/design-token";
+import { Accounts, AccountsSkeleton, CompanySkeleton } from "@mozu/ui";
+import styled from "@emotion/styled";
+import { color } from "@mozu/design-token";
+import { useGetStockDetail } from "@/apis";
+import { useParams } from "react-router-dom";
 
 export const StockInfo = () => {
   const { stockId } = useParams();
   const itemId = stockId ? parseInt(stockId) : null;
-  const { data } = useGetStockDetail(itemId);
+  const { data, isLoading } = useGetStockDetail(itemId);
 
   return (
     <Container>
       <CompanyInfo>
         <Label>회사 정보</Label>
-        <div>
-          <StyledText>
-            {data?.itemInfo
-              ? JSON.parse(`"${data.itemInfo.replace(/"/g, '\\"')}"`)
-              : ''}
-          </StyledText>
-        </div>
+        {isLoading ? (
+          <CompanySkeleton />
+        ) : (
+          <div>
+            <StyledText>{data?.itemInfo}</StyledText>
+          </div>
+        )}
       </CompanyInfo>
       <CompanyMain>
         <Section>
           <div>
             <Label>재무상태표</Label>
-            <ContentWrapper>
-              <Accounts title={'부채'} content={data?.debt ?? 0} />
-              <Accounts title={'자본금'} content={data?.capital ?? 0} />
-            </ContentWrapper>
+            {isLoading ? (
+              <ContentWrapper>
+                <AccountsSkeleton />
+                <AccountsSkeleton />
+              </ContentWrapper>
+            ) : (
+              <ContentWrapper>
+                <Accounts title={"부채"} content={data?.debt ?? 0} />
+                <Accounts title={"자본금"} content={data?.capital ?? 0} />
+              </ContentWrapper>
+            )}
           </div>
 
           <div>
             <Label>손익계산서</Label>
-            <ContentWrapper>
-              <Accounts title={'매출액'} content={data?.profit ?? 0} />
-              <Accounts title={'매출원가'} content={data?.profitOG ?? 0} />
-              <Accounts title={'매출이익'} content={data?.profitBen ?? 0} />
-              <Accounts title={'당기순이익'} content={data?.netProfit ?? 0} />
-            </ContentWrapper>
+            {isLoading ? (
+              <ContentWrapper>
+                <AccountsSkeleton />
+                <AccountsSkeleton />
+                <AccountsSkeleton />
+                <AccountsSkeleton />
+              </ContentWrapper>
+            ) : (
+              <ContentWrapper>
+                <Accounts title={"매출액"} content={data?.profit ?? 0} />
+                <Accounts title={"매출원가"} content={data?.profitOG ?? 0} />
+                <Accounts title={"매출이익"} content={data?.profitBen ?? 0} />
+                <Accounts title={"당기순이익"} content={data?.netProfit ?? 0} />
+              </ContentWrapper>
+            )}
           </div>
         </Section>
       </CompanyMain>
@@ -65,7 +81,7 @@ const CompanyInfo = styled.div`
 const StyledText = styled.p`
   white-space: pre-line;
   line-height: 1.7;
-  word-break: keep-all;
+  word-break: break-all;
 `;
 
 const CompanyMain = styled.div`
@@ -115,7 +131,7 @@ const Container = styled.div`
   overflow: scroll;
   padding: 32px;
   background-color: ${color.white};
-  width: 1500px;
+  width: 100%;
   height: 95%;
   border: 1px solid ${color.zinc[200]};
   border-radius: 16px;

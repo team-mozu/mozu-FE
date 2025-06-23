@@ -1,10 +1,19 @@
-import { Del, Edit, Button, Accounts, StockNoLogo } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
-import { useDeleteStock, useGetStockDetail } from '@/apis';
-import { usePriceFormatter } from '@/hooks';
+import {
+  Del,
+  Edit,
+  Button,
+  Accounts,
+  StockNoLogo,
+  AccountsSkeleton,
+  CompanySkeleton,
+} from "@mozu/ui";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { useDeleteStock, useGetStockDetail } from "@/apis";
+import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
+import { FullPageLoader } from "@/components";
 
 interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
@@ -31,8 +40,8 @@ export const StockManagementDetail = ({
     profitBen: number;
     netProfit: number;
   }>({
-    name: '',
-    info: '',
+    name: "",
+    info: "",
     logo: null,
     money: null,
     debt: null,
@@ -43,29 +52,41 @@ export const StockManagementDetail = ({
     netProfit: null,
   });
   const initialPrices = [
-    datas.debt?.toString() || '',
-    datas.capital?.toString() || '',
-    datas.profit?.toString() || '',
-    datas.profitOG?.toString() || '',
-    datas.profitBen?.toString() || '',
-    datas.netProfit?.toString() || '',
+    datas.debt?.toString() || "",
+    datas.capital?.toString() || "",
+    datas.profit?.toString() || "",
+    datas.profitOG?.toString() || "",
+    datas.profitBen?.toString() || "",
+    datas.netProfit?.toString() || "",
   ];
 
-  const { data: stockData, isLoading } = useGetStockDetail(stockId);
-  const { mutate: stockDelete } = useDeleteStock(stockId);
+  const { data: stockData, isLoading: apiLoading } = useGetStockDetail(stockId);
 
-  if (isLoading) {
-    <div>로딩중...</div>;
-  }
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+  }, [stockId]);
+
+  useEffect(() => {
+    if (!apiLoading && stockData) {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [apiLoading, stockData]);
+
+
+  const lines = datas.info ? datas.info.split("\n") : [];
 
   useEffect(() => {
     if (stockData) {
       setDatas({
-        name: stockData.name || '',
-        info: stockData.info || '',
+        name: stockData.name || "",
+        info: stockData.info || "",
         logo:
           stockData.logo ==
-          'https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg'
+            "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg"
             ? null
             : stockData.logo,
         money: stockData.money || null,
@@ -90,19 +111,27 @@ export const StockManagementDetail = ({
   //   }
   // }, [datas.logo]);
 
+  if (apiLoading) return <FullPageLoader />;
+
   return (
     <Container>
       <UpperContainer>
         <div>
           <Logo>
-            {datas.logo ? (
+            {isLoading ? (
+              <LogoImgDiv />
+            ) : datas.logo ? (
               <LogoImg src={datas.logo} alt="로고" />
             ) : (
               <StockNoLogo />
             )}
           </Logo>
           <Text>
-            <Title>{datas.name}</Title>
+            {isLoading ? (
+              <TitleDiv>{datas.name}</TitleDiv>
+            ) : (
+              <Title>{datas.name}</Title>
+            )}
           </Text>
         </div>
         <ButtonContainer>
@@ -112,6 +141,7 @@ export const StockManagementDetail = ({
               color={color.zinc[800]}
               borderColor={color.zinc[200]}
               hoverBackgroundColor={color.zinc[100]}
+              disabled={isLoading}
             >
               삭제하기
               <Del size={20} color={color.zinc[800]} />
@@ -123,6 +153,7 @@ export const StockManagementDetail = ({
             borderColor={color.orange[200]}
             hoverBackgroundColor={color.orange[100]}
             onClick={() => navigate(`/stock-management/${stockId}/edit`)}
+            disabled={isLoading}
           >
             수정하기
             <Edit size={20} color={color.orange[500]} />
@@ -132,27 +163,52 @@ export const StockManagementDetail = ({
       <UnderContainer>
         <CompanyInfo>
           <Label>회사 정보</Label>
-          <div>
-            <p>{datas.info}</p>
-          </div>
+          {isLoading ? (
+            <CompanySkeleton />
+          ) : (
+
+            lines.map((line, index) =>
+              line.trim() === "" ? (
+                <br key={index} />
+              ) : (
+                <CompanyText key={index}>{line}</CompanyText>
+              )
+            )
+          )}
         </CompanyInfo>
         <CompanyMain>
           <Section>
             <div>
               <Label>재무상태표</Label>
-              <ContentWrapper>
-                <Accounts title={'부채'} content={datas.debt} />
-                <Accounts title={'자본금'} content={datas.capital} />
-              </ContentWrapper>
+              {isLoading ? (
+                <ContentWrapper>
+                  <AccountsSkeleton />
+                  <AccountsSkeleton />
+                </ContentWrapper>
+              ) : (
+                <ContentWrapper>
+                  <Accounts title={"부채"} content={datas.debt} />
+                  <Accounts title={"자본금"} content={datas.capital} />
+                </ContentWrapper>
+              )}
             </div>
             <div>
               <Label>손익계산서</Label>
-              <ContentWrapper>
-                <Accounts title={'매출액'} content={datas.profit} />
-                <Accounts title={'매출원가'} content={datas.profitOG} />
-                <Accounts title={'매출이익'} content={datas.profitBen} />
-                <Accounts title={'당기순이익'} content={datas.netProfit} />
-              </ContentWrapper>
+              {isLoading ? (
+                <ContentWrapper>
+                  <AccountsSkeleton />
+                  <AccountsSkeleton />
+                  <AccountsSkeleton />
+                  <AccountsSkeleton />
+                </ContentWrapper>
+              ) : (
+                <ContentWrapper>
+                  <Accounts title={"매출액"} content={datas.profit} />
+                  <Accounts title={"매출원가"} content={datas.profitOG} />
+                  <Accounts title={"매출이익"} content={datas.profitBen} />
+                  <Accounts title={"당기순이익"} content={datas.netProfit} />
+                </ContentWrapper>
+              )}
             </div>
           </Section>
         </CompanyMain>
@@ -161,8 +217,24 @@ export const StockManagementDetail = ({
   );
 };
 
+const CompanyText = styled.div`
+  font: ${font.h5};
+  word-break: break-all;
+`;
+
+const CompanyDiv = styled(Skeleton)`
+  font: ${font.h5};
+  word-break: break-all;
+  color: transparent;
+  width: fit-content;
+`;
+
 const LogoImg = styled.img`
   width: 64px;
+`;
+const LogoImgDiv = styled(Skeleton)`
+  width: 64px;
+  height: 64px;
 `;
 
 const Container = styled.div`
@@ -205,6 +277,12 @@ const Text = styled.div`
 const Title = styled.p`
   font: ${font.h3};
   color: ${color.black};
+`;
+
+const TitleDiv = styled(Skeleton)`
+  color: transparent;
+  width: fit-content;
+  font: ${font.h3};
 `;
 
 const Number = styled.p`

@@ -2,13 +2,7 @@ import { useEffect, useRef } from 'react';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { getCookies } from '@configs/util';
 
-type EventType = 'TEAM_PART_IN' | 'TEAM_INV_END' | 'CLASS_NEXT_INV_START';
-
-interface SSEEvent {
-  type: EventType;
-  data: any;
-  message?: string;
-}
+type EventType = 'TEAM_PART_IN' | 'TEAM_INV_END';
 
 interface TeamPartInData {
   teamId: number;
@@ -16,85 +10,71 @@ interface TeamPartInData {
   schoolName: string;
 }
 
+interface TeamInvEndData {
+  teamId: number;
+  teamName: string;
+  invDeg: number;
+  totalMoney: number;
+  valMoney: number;
+  profitNum: string;
+}
+
+interface EventHandlers {
+  TEAM_PART_IN?: (data: TeamPartInData) => void;
+  TEAM_INV_END?: (data: TeamInvEndData) => void;
+}
+
 export const useSSE = (
   url: string,
   onMessage?: (data: any) => void,
   onError?: (error: any) => void,
-  eventHandlers?: {
-    TEAM_PART_IN?: (data: TeamPartInData) => void;
-    TEAM_INV_END?: (data: any) => void;
-    CLASS_NEXT_INV_START?: (data: any) => void;
-  },
+  eventHandlers?: EventHandlers,
 ) => {
   const token = getCookies<string>('accessToken');
   const eventSourceRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
-    if (!url) return;
+    if (!url || !token) return;
 
     const eventSource = new EventSourcePolyfill(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
+      heartbeatTimeout: 1000 * 60 * 30,
     });
 
     eventSourceRef.current = eventSource;
 
+    (Object.keys(eventHandlers || {}) as EventType[]).forEach((eventType) => {
+      eventSource.addEventListener(eventType, (e: MessageEvent) => {
+        try {
+          const eventData = JSON.parse(e.data);
+          console.log(`[SSE] ${eventType} 수신:`, eventData);
+          eventHandlers?.[eventType]?.(eventData);
+        } catch (err) {
+          console.error(`[SSE] ${eventType} 파싱 오류:`, err);
+        }
+      });
+    });
+
     eventSource.onmessage = (e) => {
       console.log('수신된 SSE 데이터:', e.data);
-      if (e.target.headers.Authorization) {
-        console.warn(
-          'SSE에서 받은 Authorization 헤더 무시:',
-          e.target.headers.Authorization,
-        );
-        delete e.target.headers.Authorization;
-      }
       try {
         const parsedData = JSON.parse(e.data);
-        const eventType = parsedData.event?.type as EventType;
-        const eventData = parsedData.data;
-
-        if (onMessage) {
-          onMessage(parsedData);
-        }
-
-        if (eventHandlers && eventType) {
-          console.log('sse event', eventType);
-          switch (eventType) {
-            case 'TEAM_INV_END':
-              eventHandlers.TEAM_INV_END?.(eventData);
-              break;
-            case 'CLASS_NEXT_INV_START':
-              eventHandlers.CLASS_NEXT_INV_START?.(eventData);
-              break;
-            default:
-              console.warn('알 수 없는 이벤트 타입:', eventType);
-          }
-        }
+        onMessage?.(parsedData);
       } catch (error) {
         console.error('SSE JSON 파싱 오류', error);
       }
     };
 
-    eventSource.addEventListener('TEAM_PART_IN', (e: MessageEvent) => {
-      console.log(e);
-
-      const eventData = JSON.parse(e.data);
-      eventHandlers?.TEAM_PART_IN?.(eventData);
-    });
-
-    eventSource.addEventListener('TEAM_INV_END', (e: MessageEvent) => {
-      console.log(e);
-
-      const eventData = JSON.parse(e.data);
-      eventHandlers?.TEAM_INV_END?.(eventData);
-    });
+    eventSource.onerror = (err) => {
+      console.error('SSE 연결 오류', err);
+      onError?.(err);
+    };
 
     return () => {
       eventSource.close();
       eventSourceRef.current = null;
     };
-  }, [url, onMessage, eventHandlers]);
+  }, []);
 
   const disconnect = () => {
     if (eventSourceRef.current) {

@@ -1,15 +1,11 @@
 import { instance } from '@configs/util';
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ClassCreateRequest,
   ClassData,
   ClassDetailResponse,
   ClassResponse,
+  TeamDealsResponse,
 } from '@/apis';
 import { Toast } from '@mozu/ui';
 import { useLocation, useNavigate } from 'react-router';
@@ -72,7 +68,6 @@ export const useClassStar = () => {
     mutationFn: async (id: number) =>
       await instance.post(`${router}/star/${id}`),
     onSuccess: (_, id) => {
-      Toast('즐겨찾기 변경에 성공 했습니다.', { type: 'success' });
       queryClient.setQueryData(
         ['getClass'],
         (oldData: ClassResponse | undefined) => {
@@ -128,7 +123,7 @@ export const useClassStart = (id: number) => {
   });
 };
 
-export const useNextDegree = (id: number) => {
+export const useNextDegree = (id: number, onSuccessCallback?: () => void) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -139,8 +134,12 @@ export const useNextDegree = (id: number) => {
     onSuccess: () => {
       Toast(`수업이 진행되었습니다.`, { type: 'success' });
 
-      const newPath = pathname.replace(/\/start$/, '/monitoring');
-      navigate(newPath);
+      if (onSuccessCallback) {
+        onSuccessCallback();
+      } else {
+        const newPath = pathname.replace(/\/start$/, '/monitoring');
+        navigate(newPath);
+      }
     },
     onError: (err) => {
       Toast(`수업 진행에 실패했습니다. ${err}`, { type: 'error' });
@@ -159,5 +158,18 @@ export const useEditClass = (classId: number) => {
     onError: (err) => {
       Toast(`수업 수정에 실패했습니다. ${err}`, { type: 'error' });
     },
+  });
+};
+
+export const useTeamDeals = (teamId: number) => {
+  return useQuery({
+    queryKey: ['teamDeals', teamId],
+    queryFn: async () => {
+      const { data } = await instance.get<TeamDealsResponse[]>(
+        `/team/${teamId}`,
+      );
+      return data;
+    },
+    enabled: !!teamId,
   });
 };

@@ -1,15 +1,9 @@
 import { instance, setCookies, setTokens } from '@configs/util';
 import { useMutation } from '@tanstack/react-query';
-import { AuthResponse } from './type';
+import { AuthResponse, StudentLoginProps } from './type';
 import { AxiosError } from 'axios';
 import { Toast } from '@mozu/ui';
 import { useNavigate } from 'react-router-dom';
-
-interface StudentLoginProps {
-  classNum: number | null;
-  schoolName: string;
-  teamName: string;
-}
 
 export const useStudentLogin = () => {
   const navigate = useNavigate();
@@ -23,8 +17,7 @@ export const useStudentLogin = () => {
       return response.data;
     },
     onSuccess: async (res) => {
-      console.log(`res => ${res.accessToken}`);
-      const accessToken = res.accessToken; // 여기가 정확한지 확인
+      const accessToken = res.accessToken;
 
       if (!accessToken) {
         console.error('토큰이 없습니다!', res);
@@ -41,13 +34,6 @@ export const useStudentLogin = () => {
         domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
       });
 
-      // setCookies('accessToken', res.accessToken, {
-      //   path: '/',
-      //   secure: true,
-      //   sameSite: 'none',
-      //   domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
-      //   expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
-      // });
       navigate(redirectUrl);
     },
     onError: (res: AxiosError<unknown>) => {
@@ -63,9 +49,6 @@ export const useStudentLogin = () => {
             break;
         }
       } else {
-        Toast('네트워크 연결을 확인해주세요.', {
-          type: 'error',
-        });
         console.log(res);
       }
     },

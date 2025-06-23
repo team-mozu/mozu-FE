@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { font } from "@mozu/design-token";
 import {
   Cancel,
   Del,
@@ -10,8 +10,8 @@ import {
   Start,
   ArticleIcon,
   ClassIcon,
-} from './assets';
-import { ReactNode, MouseEventHandler } from 'react';
+} from "./assets";
+import { ReactNode, MouseEventHandler } from "react";
 
 interface IButtonType {
   children?: ReactNode;
@@ -27,15 +27,15 @@ interface IButtonType {
   iconSize?: number;
   iconColor?: string;
   type?:
-    | 'startImg'
-    | 'delImg'
-    | 'editImg'
-    | 'plusImg'
-    | 'saveImg'
-    | 'cancelImg'
-    | 'logOutImg'
-    | 'articleImg'
-    | 'classImg';
+  | "startImg"
+  | "delImg"
+  | "editImg"
+  | "plusImg"
+  | "saveImg"
+  | "cancelImg"
+  | "logOutImg"
+  | "articleImg"
+  | "classImg";
   isIcon?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   event?: MouseEventHandler<HTMLButtonElement>;
@@ -58,7 +58,7 @@ export const Button = ({
   activeColor,
   iconSize,
   iconColor,
-  type = 'startImg',
+  type = "startImg",
   onClick,
   onChange,
   isIcon = false,
@@ -114,15 +114,16 @@ const ButtonContainer = styled.button<IButtonType>`
   font: ${font.b1};
 
   &:hover {
+    transition: 0.35s ease-in-out;
     background-color: ${(props) =>
-      props.hoverBackgroundColor || props.backgroundColor};
+    props.hoverBackgroundColor || props.backgroundColor};
     color: ${(props) => props.hoverColor || props.color};
     border: 1px solid ${(props) => props.hoverBorderColor || props.borderColor};
   }
 
   &:active {
     background-color: ${(props) =>
-      props.activeBackgroundColor || props.backgroundColor};
+    props.activeBackgroundColor || props.backgroundColor};
     color: ${(props) => props.activeColor || props.color};
     border: 1px solid ${(props) => props.activeBorderColor || props.borderColor};
   }

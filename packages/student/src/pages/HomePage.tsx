@@ -1,19 +1,21 @@
-import { useGetTeamDetail } from '@/apis';
-import { StockTable, TotalProperty } from '@/components';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import { useGetTeamDetail } from "@/apis";
+import { StockTable, TotalProperty } from "@/components";
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 export const HomePage = () => {
-  const { data: teamData } = useGetTeamDetail();
+  const { data: teamData, isLoading } = useGetTeamDetail();
+  if (isLoading) return;
+
   return (
     <Wrapper>
       <TotalProperty
-        totalMoney={teamData?.totalMoney.toLocaleString() ?? '0'}
-        profitNum={teamData?.profitNum ?? '0'}
+        totalMoney={teamData?.totalMoney.toLocaleString() ?? "0"}
+        profitNum={teamData?.profitNum ?? "0"}
         valueProfit={teamData?.valueProfit ?? 0}
-        basicMoney={teamData?.baseMoney.toLocaleString() ?? '0'}
-        cashMoney={teamData?.cashMoney.toLocaleString() ?? '0'}
-        valueMoney={teamData?.valueMoney.toLocaleString() ?? '0'}
+        basicMoney={teamData?.baseMoney.toLocaleString() ?? "0"}
+        cashMoney={teamData?.cashMoney.toLocaleString() ?? "0"}
+        valueMoney={teamData?.valueMoney.toLocaleString() ?? "0"}
       />
       <TableDiv>
         보유주식
@@ -39,6 +41,7 @@ const TableDiv = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 700px;
   gap: 24px;
   align-items: center;
   padding: 40px;

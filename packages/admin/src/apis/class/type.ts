@@ -76,3 +76,14 @@ export type ClassData = {
     articles: number[];
   }[];
 };
+
+export type TeamDealsResponse = {
+  id: number;
+  itemId: number;
+  itemName: string;
+  itemMoney: number;
+  orderCount: number;
+  totalMoney: number;
+  orderType: string;
+  invDeg: number;
+};

@@ -3,40 +3,48 @@ import styled from '@emotion/styled';
 import { Button, noImgIcon } from '@mozu/ui';
 import { useGetStockDetail } from '@/apis';
 import { useParams } from 'react-router-dom';
+import { Skeleton } from "../../../../../design-token/src/theme/Skeleton";
 
 export const StockStatusBar = ({
   openModal,
 }: {
-  openModal: (type: '매수' | '매도') => void;
+  openModal: (type: "매수" | "매도") => void;
 }) => {
   const { stockId } = useParams();
   const ItemId = stockId ? parseInt(stockId) : null;
-
-  const { data } = useGetStockDetail(ItemId);
+  const { data, isLoading } = useGetStockDetail(ItemId);
 
   return (
     <Wrapper>
       <Stock>
-        <Logo
-          src={data?.itemLogo ?? ''}
-          onError={(e) => {
-            e.currentTarget.src = noImgIcon;
-          }}
-        />
-        <StockInfo>
-          <StockName>
-            {data?.itemName ?? ''}
-            <span>{data?.itemId ?? 0}</span>
-          </StockName>
-          <StockPrice
-            color={
-              data?.profitNum.includes('+') ? color.red[500] : color.blue[500]
-            }
-          >
-            {data?.moneyList[1]?.toLocaleString()}원{' '}
-            <span>{data?.profitNum}</span>
-          </StockPrice>
-        </StockInfo>
+        {isLoading ? (
+          <LogoImgDiv />
+        ) : (
+          <Logo
+            src={data?.itemLogo ?? ''}
+            onError={(e) => {
+              e.currentTarget.src = noImgIcon;
+            }}
+          />
+        )}
+        {isLoading ? (
+          <TitleDiv />
+        ) : (
+          <StockInfo>
+            <StockName>
+              {data?.itemName ?? ''}
+              <span>{data?.itemId ?? 0}</span>
+            </StockName>
+            <StockPrice
+              color={
+                data?.profitNum.includes('+') ? color.red[500] : color.blue[500]
+              }
+            >
+              {data?.nowMoney?.toLocaleString()}원{' '}
+              <span>{data?.profitNum}</span>
+            </StockPrice>
+          </StockInfo>
+        )}
       </Stock>
       <Btn>
         <Button
@@ -44,7 +52,7 @@ export const StockStatusBar = ({
           backgroundColor={color.red[500]}
           color="white"
           width={80}
-          onClick={() => openModal('매수' /*currentStock*/)}
+          onClick={() => openModal("매수" /*currentStock*/)}
           hoverBackgroundColor={color.red[600]}
           hoverBorderColor={color.red[600]}
         >
@@ -55,7 +63,7 @@ export const StockStatusBar = ({
           backgroundColor={color.blue[500]}
           color="white"
           width={80}
-          onClick={() => openModal('매도' /*currentStock*/)}
+          onClick={() => openModal("매도" /*currentStock*/)}
           hoverBackgroundColor={color.blue[600]}
           hoverBorderColor={color.blue[600]}
         >
@@ -120,4 +128,15 @@ const Wrapper = styled.div`
   justify-content: space-between;
   width: 100%;
   align-items: flex-end;
+`;
+
+const LogoImgDiv = styled(Skeleton)`
+  width: 64px;
+  height: 64px;
+`;
+
+const TitleDiv = styled(Skeleton)`
+  color: transparent;
+  width: 70px;
+  font: ${font.h3};
 `;

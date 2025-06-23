@@ -1,39 +1,49 @@
-import { LogoWithText } from '@mozu/ui';
-import { color, font } from '@mozu/design-token';
-import styled from '@emotion/styled';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { useMemo } from 'react';
+import { LogoWithText } from "@mozu/ui";
+import { color, font } from "@mozu/design-token";
+import styled from "@emotion/styled";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useMemo } from "react";
 
 interface IHeaderProps {
   isAdmin: boolean;
   invDeg?: number;
+  showNav: boolean;
+  showRound: boolean;
+  isMargin?: boolean;
 }
 
-export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
+export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeaderProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { classId, newsId } = useParams();
 
   /** 📌 현재 페이지 상태를 useMemo로 계산 */
   const currentPage = useMemo(() => {
-    if (pathname.startsWith('/:classId/home')) return 'home';
-    if (pathname.startsWith('/:classId/news')) return 'news';
-    if (pathname === '/:classId/result') return 'result';
-    if (pathname === '/signin/wait') return 'wait';
-    return 'default';
-  }, [pathname]);
+    if (pathname === `/${classId}`) return "home";
+    if (pathname === `/${classId}/news`) return "news";
+    if (pathname === `/${classId}/result`) return "result";
+    if (pathname === "/signin/wait") return "wait";
+    return "default";
+  }, [pathname, classId]);
 
-  const isNavHome = currentPage === 'home';
-  const isNavNews = currentPage === 'news';
-  const isResultPage = currentPage === 'result';
-  const isWaitPage = currentPage === 'wait';
+  const isNavHome = currentPage === "home";
+  const isNavNews = currentPage === "news";
+  const isResultPage = currentPage === "result";
+  const isWaitPage = currentPage === "wait";
 
   return (
-    <HeaderContainer isAdmin={isAdmin}>
+    <HeaderContainer
+      isAdmin={isAdmin}
+      isMargin={
+        !(
+          pathname.split("/")[1] === "class-management" &&
+          (pathname.split("/")[3] === "start" ||
+            pathname.split("/")[3] === "monitoring")
+        )
+      }
+    >
       <LogoContainer
-        onClick={() =>
-          navigate(isAdmin ? '/class-management' : `/${classId}/home`)
-        }
+        onClick={() => navigate(isAdmin ? "/class-management" : `/${classId}`)}
       >
         <LogoWithText width={74} height={28} />
         <MozuTitle>모의주식투자</MozuTitle>
@@ -41,10 +51,7 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
 
       {!isAdmin && !isResultPage && !isWaitPage && (
         <NavContainer>
-          <Nav
-            onClick={() => navigate(`/${classId}/home`)}
-            isActive={isNavHome}
-          >
+          <Nav onClick={() => navigate(`/${classId}`)} isActive={isNavHome}>
             홈
           </Nav>
           <Nav
@@ -78,12 +85,14 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
 };
 
 /** 스타일 */
-const HeaderContainer = styled.header<{ isAdmin: boolean }>`
+const HeaderContainer = styled.header<{ isAdmin: boolean; isMargin: boolean }>`
   position: fixed;
   top: 0;
   z-index: 1;
-  width: ${({ isAdmin }) => (isAdmin ? 'calc(100% - 280px)' : '100%')};
-  margin-left: ${({ isAdmin }) => (isAdmin ? '280px' : '0')};
+  width: ${({ isAdmin, isMargin }) =>
+    isAdmin && isMargin ? "calc(100% - 280px)" : "100%"};
+  margin-left: ${({ isAdmin, isMargin }) =>
+    isAdmin && isMargin ? "280px" : "0"};
   height: 64px;
   padding: 0 40px;
   display: flex;
@@ -91,7 +100,7 @@ const HeaderContainer = styled.header<{ isAdmin: boolean }>`
   justify-content: space-between;
   background-color: ${color.white};
   border-bottom: 1px solid ${color.zinc[200]};
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(93, 93, 93, 0.1);
 `;
 
 const LogoContainer = styled.div`
@@ -150,7 +159,7 @@ const InvestmentRoundExplain = styled.div`
 `;
 
 const InvestmentRoundContent = styled.div`
-  font: ${font.t1};
+  font: ${font.t2};
   color: ${color.orange[500]};
 `;
 

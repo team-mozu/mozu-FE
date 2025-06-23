@@ -1,4 +1,5 @@
 import { useUnchangedValue } from '@/hook';
+import { roundToFixed } from '@/utils';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
 
@@ -25,28 +26,30 @@ export const TotalProperty = ({
       <TitleBox>
         <Title>총 평가 자산</Title>
         <Money
-          color={
+          $color={
             sameValue
               ? color.green[600]
-              : profitNum.indexOf('+') !== -1
-                ? color.red[500]
-                : color.blue[500]
+              : profitNum.includes('-')
+                ? color.blue[500]
+                : color.red[500]
           }
         >
           {totalMoney}원
         </Money>
         {!valueProfit ? null : (
           <MoneyRate
-            color={
-              sameValue
-                ? color.green[600]
-                : profitNum.indexOf('+') !== -1
-                  ? color.red[500]
-                  : color.blue[500]
+            $color={
+              profitNum.includes('-')
+                ? color.blue[500]
+                : color.red[500]
             }
           >
+            {valueProfit.toLocaleString().includes("-") ? "" : "+"}
             {valueProfit.toLocaleString()}원 (
-            {Number(profitNum.replace('%', '')).toFixed(2)}%)
+            {profitNum.includes("-")
+              ? `${roundToFixed(Number(profitNum.replace("%", "")), 2)}%`
+              : `+${roundToFixed(Number(profitNum.replace("%", "")), 2)}%`}
+            )
           </MoneyRate>
         )}
       </TitleBox>
@@ -101,14 +104,14 @@ const DetailBox = styled.div`
   border-radius: 8px;
 `;
 
-const MoneyRate = styled.div<{ color?: string }>`
+const MoneyRate = styled.div<{ $color?: string }>`
   font: ${font.t2};
-  color: ${({ color }) => color};
+  color: ${({ $color }) => $color};
 `;
 
-const Money = styled.div<{ color?: string }>`
+const Money = styled.div<{ $color?: string }>`
   font: ${font.h1};
-  color: ${({ color }) => color};
+  color: ${({ $color }) => $color};
 `;
 
 const Title = styled.div`
