@@ -21,7 +21,7 @@ export const ImprovedTeamInfoTable = ({
   const [isOpenTeam, setIsOpenTeam] = useState(false);
   const [isOpenDeg, setIsOpenDeg] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
-  const [selectedDegId, setSelectedDegId] = useState<number | null>(null)
+  const [selectedDegId, setSelectedDegId] = useState<number | null>(null);
   const [selectedTeamName, setSelectedTeamName] = useState("");
   const TableHeaderList = [
     "팀명",
@@ -40,10 +40,11 @@ export const ImprovedTeamInfoTable = ({
     setIsOpenTeam(true);
   };
 
-  const handleOpenDegModal = (invDeg: number) => {
+  const handleOpenDegModal = (teamId: number, invDeg: number) => {
+    setSelectedTeamId(teamId);
     setSelectedDegId(invDeg);
     setIsOpenDeg(true);
-  }
+  };
 
   if (!teamInfo && teamInfo.length <= 0) return;
 
@@ -89,7 +90,7 @@ export const ImprovedTeamInfoTable = ({
                     {team.trade[index] === undefined ? (
                       "진행중"
                     ) : (
-                      <Rate isNegative={isNegative} onClick={() => handleOpenDegModal(index + 1)}>
+                      <Rate isNegative={isNegative} onClick={() => handleOpenDegModal(team.teamId, index + 1)}>
                         <span>{team.trade[index].totalMoney.toLocaleString()}원</span>
                         <span>
                           {!isNegative && "+"}
@@ -126,12 +127,14 @@ export const ImprovedTeamInfoTable = ({
         <TeamCurrentModal
           isOpen={isOpenTeam}
           setIsOpen={setIsOpenTeam}
+          id={selectedTeamId}
         />
       )}
       {isOpenDeg && selectedDegId !== null && (
         <DegCurrentModal
           isOpen={isOpenDeg}
           setIsOpen={setIsOpenDeg}
+          id={selectedTeamId}
         />
       )}
     </>

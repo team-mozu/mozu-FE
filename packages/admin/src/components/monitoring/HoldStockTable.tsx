@@ -5,7 +5,6 @@ import {
 } from "@tanstack/react-table";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-// import { useGetHoldItems } from "@/apis";
 import { roundToFixed } from "@/utils";
 
 interface StockData {
@@ -16,6 +15,20 @@ interface StockData {
   currentPrice: string;
   profit: { valueMoney: number; profitMoney: number; profitRate: number };
 }
+
+interface HoldItem {
+  id: number; // 거래 ID
+  itemId: number; // 종목 ID
+  itemName: string; // 종목 이름
+  itemCnt: number; // 수량
+  buyMoney: number; // 매입 단가
+  totalMoney: number; // 총 매입 금액
+  nowMoney: number; // 현재 가격
+  valMoney: number; // 평가 금액
+  valProfit: number; // 평가 손익
+  profitNum: number; // 수익률 (단위: %, 소수)
+};
+
 
 const columns: ColumnDef<StockData>[] = [
   { accessorKey: "name", header: "종목 이름", size: 376 },
@@ -66,47 +79,14 @@ const columns: ColumnDef<StockData>[] = [
   }
 ];
 
-export const HoldStockTable = () => {
-  // const { data } = useGetHoldItems();
-  const data = [
-    {
-      itemName: "삼성전자",
-      buyMoney: 1000000,
-      itemCnt: 1,
-      totalMoney: 1000000,
-      nowMoney: 1000000,
-      valMoney: 0,
-      valProfit: 0,
-      profitNum: 0,
-    },
-    {
-      itemName: "카카오",
-      buyMoney: 2000000,
-      itemCnt: 1,
-      totalMoney: 2000000,
-      nowMoney: 2000000,
-      valMoney: 0,
-      valProfit: 0,
-      profitNum: 0,
-    },
-    {
-      itemName: "LG전자",
-      buyMoney: 3000000,
-      itemCnt: 1,
-      totalMoney: 3000000,
-      nowMoney: 3000000,
-      valMoney: 0,
-      valProfit: 0,
-      profitNum: 0,
-    },
-  ];
+export const HoldStockTable = ({ holdItems }: { holdItems: HoldItem[] }) => {
 
   const formatProfitRate = (rate: number) => {
     const sign = rate > 0 ? "+" : rate < 0 ? "-" : "";
     return `${sign}${roundToFixed(rate, 2)}%`;
   };
 
-  const stockRows: StockData[] = (data ?? []).map((item) => {
+  const stockRows: StockData[] = (holdItems ?? []).map((item) => {
     return {
       name: item.itemName,
       tradePrice: item.buyMoney.toLocaleString("ko-KR"),

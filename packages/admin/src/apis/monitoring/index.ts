@@ -1,7 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { instance } from '@configs/util';
 import { Toast } from '@mozu/ui';
+import { TeamTradeStatus, HoldItem } from './type';
 
 const router = '/class';
 
@@ -17,6 +18,26 @@ export const useClassStop = (id: number) => {
     onSuccess: () => {
       Toast('수업을 성공적으로 종료했습니다.', { type: 'success' });
       navigate(`/class-management/${id}`);
+    },
+  });
+};
+
+export const useGetTeamTradeStatus = (id: number) => {
+  return useQuery({
+    queryKey: ['getTeamTradeStatus', id],
+    queryFn: async () => {
+      const { data } = await instance.get<TeamTradeStatus[]>(`/team/${id}`);
+      return data;
+    },
+  });
+};
+
+export const useGetTeamHoldItems = (id: number) => {
+  return useQuery({
+    queryKey: ['getTeamHoldItems', id],
+    queryFn: async () => {
+      const { data } = await instance.get<HoldItem[]>(`/team/${id}/holdItems`);
+      return data;
     },
   });
 };

@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, ClassInfoModal, DeleteModal, Toast } from "@mozu/ui";
+import { Button, DeleteModal, Toast } from "@mozu/ui";
 import { useParams } from "react-router";
 import { useState } from "react";
-import { FullPageLoader, ArticleInfoModal, ImprovedTeamInfoTable } from "@/components";
+import { FullPageLoader, ArticleInfoModal, ImprovedTeamInfoTable, ClassInfoModal } from "@/components";
 import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";
@@ -13,6 +13,7 @@ export const ImprovedClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
   const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenEnd, setIsOpenEnd] = useState<boolean>(false);
   const { teamInfoMap, appendTrade } = useTeamStore();
   const teamInfo = Object.values(teamInfoMap);
 
@@ -65,6 +66,10 @@ export const ImprovedClassMonitoringPage = () => {
     setIsOpen(true);
   };
 
+  const handleEndClass = () => {
+    setIsOpenEnd(true);
+  };
+
   if (isLoading || !classData || isFetching) return <FullPageLoader />;
 
   return (
@@ -76,7 +81,18 @@ export const ImprovedClassMonitoringPage = () => {
             subComment="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
             onCancel={() => setIsOpen(false)}
             onDelete={() => stopClass()}
-            isMonitor={true}
+            message={"취소하기"}
+          />
+        )
+      }
+      {
+        isOpenEnd && (
+          <DeleteModal
+            titleComment="모의투자 종료"
+            subComment="모의투자를 종료하시겠습니까? 종료 후 투자 데이터는 삭제됩니다."
+            onCancel={() => setIsOpenEnd(false)}
+            onDelete={() => stopClass()}
+            message={"종료하기"}
           />
         )
       }
@@ -115,20 +131,37 @@ export const ImprovedClassMonitoringPage = () => {
             >
               모의투자 취소
             </Button>
-            <Button
-              type={"startImg"}
-              isIcon={true}
-              iconColor={color.white}
-              iconSize={24}
-              backgroundColor={color.orange[500]}
-              borderColor={color.orange[500]}
-              color={color.white}
-              hoverBackgroundColor={color.orange[600]}
-              onClick={() => nextDegree()}
-              disabled={!isDegEnd}
-            >
-              다음 투자 진행
-            </Button>
+            {
+              classData.curInvDeg === classData.maxInvDeg ?
+                <Button
+                  type={"startImg"}
+                  isIcon={true}
+                  iconColor={color.zinc[800]}
+                  iconSize={24}
+                  backgroundColor={color.zinc[50]}
+                  borderColor={color.zinc[200]}
+                  color={color.zinc[800]}
+                  hoverBackgroundColor={color.zinc[100]}
+                  onClick={() => handleEndClass()}
+                  disabled={!isDegEnd}
+                >
+                  투자 종료
+                </Button> :
+                <Button
+                  type={"startImg"}
+                  isIcon={true}
+                  iconColor={color.white}
+                  iconSize={24}
+                  backgroundColor={color.orange[500]}
+                  borderColor={color.orange[500]}
+                  color={color.white}
+                  hoverBackgroundColor={color.orange[600]}
+                  onClick={() => nextDegree()}
+                  disabled={!isDegEnd}
+                >
+                  다음 투자 진행
+                </Button>
+            }
           </ButtonContainer>
         </Header>
         <MainContainer>

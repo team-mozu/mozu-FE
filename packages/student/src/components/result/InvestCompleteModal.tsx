@@ -2,7 +2,7 @@ import { useTeamEnd } from "@/apis";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { color, font } from "@mozu/design-token";
-import { Check, Button, Toast } from "@mozu/ui";
+import { Check, Toast } from "@mozu/ui";
 import { useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -72,7 +72,7 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
     }
   };
 
-  const { onClick, isLoading, disabled } = useAsyncButton(invDeg, 5000);
+  const { onClick, isLoading, disabled } = useAsyncButton(invDeg, 10000);
 
   return (
     <AnimatePresence>
@@ -97,7 +97,7 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
               damping: 30
             }}
           >
-            <CloseButton onClick={() => setIsOpen?.(false)}>
+            <CloseButton onClick={() => setIsOpen?.(false)} disabled={isLoading}>
               <CloseIcon>✕</CloseIcon>
             </CloseButton>
 
@@ -129,12 +129,17 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
             </ContentContainer>
 
             <ActionSection>
-              <CancelButton onClick={() => setIsOpen?.(false)}>
+              <CancelButton onClick={() => setIsOpen?.(false)} disabled={isLoading}>
                 <ButtonIcon>❌</ButtonIcon>
                 취소
               </CancelButton>
-              <ConfirmButton onClick={onClick} disabled={disabled}>
-                {isLoading ? "로딩 중..." : (
+              <ConfirmButton onClick={onClick} disabled={disabled || isLoading}>
+                {isLoading ? (
+                  <>
+                    <LoadingSpinner />
+                    처리 중...
+                  </>
+                ) : (
                   <>
                     <ButtonIcon>🚀</ButtonIcon>
                     투자 완료하기
@@ -174,6 +179,11 @@ const float = keyframes`
 const slideInUp = keyframes`
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+`;
+
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 `;
 
 // 스타일 컴포넌트들
@@ -222,10 +232,15 @@ const CloseButton = styled.button`
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   
-  &:hover {
+  &:hover:not(:disabled) {
     background: rgba(255, 255, 255, 1);
     transform: scale(1.1) rotate(90deg);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 
@@ -364,15 +379,22 @@ const CancelButton = styled.button`
   position: relative;
   overflow: hidden;
   
-  &:hover {
+  &:hover:not(:disabled) {
     background: ${color.zinc[50]};
     border-color: ${color.zinc[300]};
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   }
   
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(0);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background: ${color.zinc[100]};
+    color: ${color.zinc[400]};
   }
 `;
 
@@ -395,20 +417,22 @@ const ConfirmButton = styled.button`
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(255, 153, 51, 0.3);
   
-  &:hover {
+  &:hover:not(:disabled) {
     transform: translateY(-3px);
     box-shadow: 0 12px 35px rgba(255, 153, 51, 0.4);
     background: linear-gradient(135deg, ${color.orange[600]} 0%, ${color.orange[700]} 100%);
   }
   
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(-1px);
   }
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
-    pointer-events: none;
+    opacity: 0.6;
+    background: linear-gradient(135deg, ${color.zinc[400]} 0%, ${color.zinc[500]} 100%);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: none;
   }
 `;
 
@@ -429,4 +453,14 @@ const ButtonShine = styled.div`
     transparent
   );
   animation: ${shine} 2s ease-in-out infinite;
+`;
+
+const LoadingSpinner = styled.div`
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid ${color.white};
+  border-radius: 50%;
+  animation: ${spin} 1s linear infinite;
+  flex-shrink: 0;
 `;
