@@ -2,16 +2,18 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useRef, useCallback, useEffect, useState } from "react";
 import { TeamInvestStatusTable } from "@/components";
-// import { useDegDeals } from "@/apis";
+import { useGetTeamTradeStatus } from "@/apis";
+import { useTeamStore } from "@/store";
 
 interface DegDealContent {
   id: number;
+  itemId: number;
   itemName: string;
   itemMoney: number;
   orderCount: number;
-  orderType: string;
   totalMoney: number;
-  degNumber?: number;
+  orderType: 'BUY' | 'SELL';
+  invDeg: number;
 }
 
 interface DegData {
@@ -23,22 +25,40 @@ interface DegData {
 interface IDegCurrentType {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  // degDataList: DegData[]; // 차수별 데이터 리스트 추가
+  id: number;
 }
 
 export const DegCurrentModal = ({
   isOpen,
   setIsOpen,
-  // degDataList,
+  id
 }: IDegCurrentType) => {
+  const { data: degData } = useGetTeamTradeStatus(id);
+  const { teamInfoMap } = useTeamStore();
   const backgroundRef = useRef<HTMLDivElement>(null);
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+  const degDataList: DegData[] = [];
 
-  const [degDataList, setDegDataList] = useState<DegData[]>([
-    { degNumber: 1, teamName: "팀1", deals: [] },
-    { degNumber: 2, teamName: "팀2", deals: [] },
-    { degNumber: 3, teamName: "팀3", deals: [] },
-  ]);
+  if (degData && degData.length > 0) {
+    const grouped: Record<number, DegDealContent[]> = {};
+
+    degData.forEach((deal) => {
+      if (!grouped[deal.invDeg]) grouped[deal.invDeg] = [];
+      grouped[deal.invDeg].push(deal);
+    });
+
+    const sortedDegNumbers = Object.keys(grouped)
+      .map(Number)
+      .sort((a, b) => a - b);
+
+    for (const degNumber of sortedDegNumbers) {
+      degDataList.push({
+        degNumber,
+        teamName: teamInfoMap[id]?.teamName || '',
+        deals: grouped[degNumber],
+      });
+    }
+  }
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
@@ -68,15 +88,15 @@ export const DegCurrentModal = ({
     };
   }, [isOpen]);
 
-  // 모달이 열릴 때 첫 번째 탭으로 초기화
   useEffect(() => {
-    if (isOpen && degDataList.length > 0) {
+    if (isOpen && degData?.length > 0) {
       setActiveTabIndex(0);
     }
-  }, [isOpen, degDataList.length]);
+  }, [isOpen, degData?.length]);
 
   const currentDegData = degDataList[activeTabIndex];
   const currentDeals = currentDegData?.deals || [];
+
 
   return (
     isOpen && (
@@ -97,7 +117,6 @@ export const DegCurrentModal = ({
               </CloseButton>
             </TitleContainer>
 
-            {/* 탭 컨테이너 추가 */}
             {degDataList.length > 0 && (
               <TabContainer>
                 {degDataList.map((degData, index) => (
@@ -114,6 +133,7 @@ export const DegCurrentModal = ({
               </TabContainer>
             )}
 
+
             <TableContainer>
               <TeamInvestStatusTable contents={currentDeals} />
             </TableContainer>
@@ -127,7 +147,7 @@ export const DegCurrentModal = ({
                 <StatDivider />
                 <StatItem>
                   <StatLabel>차수</StatLabel>
-                  <StatValue>{currentDegData?.degNumber || 0}차</StatValue>
+                  <StatValue>{currentDegData?.degNumber}차</StatValue>
                 </StatItem>
                 <StatDivider />
                 <StatItem>

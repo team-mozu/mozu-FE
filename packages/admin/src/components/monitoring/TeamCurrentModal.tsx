@@ -2,14 +2,17 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useRef, useCallback, useEffect } from "react";
 import { HoldStockTable } from "@/components";
+import { useGetTeamHoldItems } from "@/apis";
 // import { useMyHoldings } from "@/apis";
 
 export const TeamCurrentModal = ({
   isOpen,
   setIsOpen,
+  id,
 }: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  id: number;
 }) => {
   const backgroundRef = useRef<HTMLDivElement>(null);
 
@@ -33,45 +36,10 @@ export const TeamCurrentModal = ({
     };
   }, [isOpen]);
 
-  interface DealContent {
-    id: number;
-    itemName: string;
-    itemMoney: number;
-    orderCount: number;
-    orderType: string;
-    totalMoney: number;
-  }
 
+  const { data: holdItems } = useGetTeamHoldItems(id);
 
-  // const { data } = useMyHoldings();
-  const data: DealContent[] = [
-    {
-      id: 1,
-      itemName: "삼성전자",
-      itemMoney: 1000000,
-      orderCount: 1,
-      orderType: "매수",
-      totalMoney: 1000000,
-    },
-    {
-      id: 2,
-      itemName: "카카오",
-      itemMoney: 2000000,
-      orderCount: 1,
-      orderType: "매수",
-      totalMoney: 2000000,
-    },
-    {
-      id: 3,
-      itemName: "LG전자",
-      itemMoney: 3000000,
-      orderCount: 1,
-      orderType: "매수",
-      totalMoney: 3000000,
-    },
-  ];
-
-  const totalValuation = data?.reduce((sum, item) => sum + item.totalMoney, 0) ?? 0;
+  const totalValuation = holdItems?.reduce((sum, item) => sum + item.valMoney, 0) ?? 0;
 
   return (
     isOpen && (
@@ -91,14 +59,14 @@ export const TeamCurrentModal = ({
             </TitleContainer>
 
             <TableContainer>
-              <HoldStockTable />
+              <HoldStockTable holdItems={holdItems || []} />
             </TableContainer>
 
             <FooterContainer>
               <FooterStats>
                 <StatItem>
                   <StatLabel>총 보유 종목</StatLabel>
-                  <StatValue>{data?.length || 0} 종목</StatValue>
+                  <StatValue>{holdItems?.length || 0} 종목</StatValue>
                 </StatItem>
                 <StatDivider />
                 <StatItem>

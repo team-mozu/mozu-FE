@@ -16,11 +16,13 @@ interface ITdProps {
 
 interface DealContent {
   id: number;
+  itemId: number;
   itemName: string;
   itemMoney: number;
   orderCount: number;
-  orderType: string;
   totalMoney: number;
+  orderType: 'BUY' | 'SELL';
+  invDeg: number;
 }
 
 interface TeamInvestStatusTableProps {

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 type AsyncFn<T extends any[]> = (...args: T) => Promise<void> | void;
 
@@ -12,31 +12,43 @@ type AsyncFn<T extends any[]> = (...args: T) => Promise<void> | void;
  *  - isLoading: 로딩 여부
  *  - disabled: 버튼 비활성화 여부
  */
-export const useAsyncButton = <T extends any[]>(asyncFn: AsyncFn<T>, delay = 1000): {
-  onClick: (...args: T) => Promise<void> | void;
+export const useAsyncButton = <T extends any[]>(
+  asyncFn: AsyncFn<T>,
+  cooldownMs = 1000
+): {
+  onClick: (...args: T) => Promise<void>;
   isLoading: boolean;
   disabled: boolean;
 } => {
   const [isLoading, setIsLoading] = useState(false);
-  const isClickedRef = useRef(false);
+  const [isOnCooldown, setIsOnCooldown] = useState(false);
 
   const onClick = async (...args: T) => {
-    if (isClickedRef.current || isLoading) return;
+    if (isLoading || isOnCooldown) return;
 
-    isClickedRef.current = true;
     setIsLoading(true);
+    setIsOnCooldown(true);
 
     try {
-      await asyncFn(...args);
+      const result = asyncFn(...args);
+      if (result instanceof Promise) {
+        await result;
+      }
+    } catch (error) {
+      console.error('AsyncButton error:', error);
     } finally {
-      setTimeout(() => {
-        isClickedRef.current = false;
-      }, delay);
       setIsLoading(false);
+
+      // 쿨다운 시간 후 다시 클릭 가능
+      setTimeout(() => {
+        setIsOnCooldown(false);
+      }, cooldownMs);
     }
   };
 
-  return { onClick, isLoading, disabled: isLoading };
+  return {
+    onClick,
+    isLoading,
+    disabled: isLoading || isOnCooldown
+  };
 };
-
-

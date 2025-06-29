@@ -8,7 +8,7 @@ interface IDeleteModal {
   subComment: string;
   onCancel: () => void;
   onDelete: () => void;
-  isMonitor?: boolean;
+  message?: string;
 }
 
 export const DeleteModal = ({
@@ -16,7 +16,7 @@ export const DeleteModal = ({
   subComment,
   onCancel,
   onDelete,
-  isMonitor = false,
+  message = "삭제하기",
 }: IDeleteModal) => {
   return (
     <Backdrop onClick={(e) => e.stopPropagation()}>
@@ -38,7 +38,7 @@ export const DeleteModal = ({
             취소
           </CancelButton>
           <DeleteButton onClick={onDelete}>
-            {isMonitor ? '취소하기' : '삭제하기'}
+            {message}
           </DeleteButton>
         </UnderContainer>
       </ModalContainer>

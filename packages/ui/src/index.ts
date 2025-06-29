@@ -19,7 +19,6 @@ export * from './EditDiv';
 export * from './TeamContainer';
 export * from './WarningMsg';
 export * from './InvestInfoTable';
-export * from './ClassInfoModal';
 export * from './Accounts';
 export * from './RankingDiv';
 export * from './ExitBtn';

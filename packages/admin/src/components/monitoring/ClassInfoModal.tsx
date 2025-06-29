@@ -1,9 +1,7 @@
 import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
 import { useRef, useCallback, useEffect } from 'react';
-import { Button } from './Button';
-import { InvestInfoTable } from './InvestInfoTable';
-import { ClassIcon } from './assets';
+import { ClassIcon, InvestInfoTable, Button } from '@mozu/ui';
 
 interface classItem {
   itemId: number;
