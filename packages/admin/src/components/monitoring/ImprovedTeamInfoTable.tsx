@@ -17,7 +17,6 @@ export const ImprovedTeamInfoTable = ({
   invDeg,
   maxInvDeg,
 }: Props) => {
-
   const [isOpenTeam, setIsOpenTeam] = useState(false);
   const [isOpenDeg, setIsOpenDeg] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
@@ -68,7 +67,7 @@ export const ImprovedTeamInfoTable = ({
           return (
             <Tr isNotBorded={index + 1 === teamInfo.length} key={index}>
               <Td isLeft>
-                <TeamName isTeamName onClick={() => handleOpenModal(team.teamId, team.teamName)}>{team.teamName}</TeamName>
+                <TeamName isTeamName>{team.teamName}</TeamName>
                 {team.trade.length === invDeg && (
                   <CompletedBadge>
                     투자완료 <Check size={18} color={color.green[500]} />
@@ -90,15 +89,24 @@ export const ImprovedTeamInfoTable = ({
                     {team.trade[index] === undefined ? (
                       "진행중"
                     ) : (
-                      <Rate isNegative={isNegative} onClick={() => handleOpenDegModal(team.teamId, index + 1)}>
-                        <span>{team.trade[index].totalMoney.toLocaleString()}원</span>
+                      <Rate
+                        isNegative={isNegative}
+                        onClick={() =>
+                          handleOpenDegModal(team.teamId, index + 1)
+                        }
+                      >
+                        <span>
+                          {team.trade[index].totalMoney.toLocaleString()}원
+                        </span>
                         <span>
                           {!isNegative && "+"}
-                          {team.trade[index].valMoney.toLocaleString()}원 ({!isNegative && "+"}
+                          {team.trade[index].valMoney.toLocaleString()}원 (
+                          {!isNegative && "+"}
                           {roundToFixed(
                             parseFloat(team.trade[index].profitNum),
                             2
-                          )}%)
+                          )}
+                          %)
                         </span>
                       </Rate>
                     )}
@@ -107,12 +115,19 @@ export const ImprovedTeamInfoTable = ({
               })}
               <Td isNotBorded>
                 {team.trade.length > 0 ? (
-                  <Rate isNegative={isNegative}>
-                    <span>{team.trade.at(-1).totalMoney.toLocaleString()}원</span>
+                  <Rate
+                    isNegative={isNegative}
+                    onClick={() => handleOpenModal(team.teamId, team.teamName)}
+                  >
+                    <span>
+                      {team.trade.at(-1).totalMoney.toLocaleString()}원
+                    </span>
                     <span>
                       {!isNegative && "+"}
-                      {team.trade.at(-1).valMoney.toLocaleString()}원 ({!isNegative && "+"}
-                      {roundToFixed(parseFloat(team.trade.at(-1).profitNum), 2)}%)
+                      {team.trade.at(-1).valMoney.toLocaleString()}원 (
+                      {!isNegative && "+"}
+                      {roundToFixed(parseFloat(team.trade.at(-1).profitNum), 2)}
+                      %)
                     </span>
                   </Rate>
                 ) : (
@@ -220,7 +235,7 @@ const Rate = styled.div<{ isNegative: boolean }>`
   & > span:nth-of-type(2) {
     ${font.l1};
     color: ${({ isNegative }) =>
-    isNegative ? color.blue[500] : color.red[500]};
+      isNegative ? color.blue[500] : color.red[500]};
   }
 
   &:hover {
@@ -229,9 +244,5 @@ const Rate = styled.div<{ isNegative: boolean }>`
 `;
 
 const TeamName = styled.span<{ isTeamName?: boolean }>`
-  cursor: pointer;
   font: ${font.t2};
-  &:hover {
-    text-decoration: underline;
-  }
 `;
