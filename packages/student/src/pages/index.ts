@@ -1,9 +1,34 @@
-export * from "./SignInPage";
-export * from "./HomePage";
-export * from "./StockPage";
-export * from "./NewsPage";
-export * from "./ResultPage";
-export * from "./NewsDetailPage";
-export * from "./StockPage";
-export * from "./StudentWaitPage";
-export * from "./404";
+import { lazy } from 'react';
+
+export const HomePage = lazy(() =>
+  import('@/pages/HomePage').then((module) => ({ default: module.HomePage })),
+);
+export const NewsPage = lazy(() =>
+  import('@/pages/NewsPage').then((module) => ({ default: module.NewsPage })),
+);
+export const SignInPage = lazy(() =>
+  import('@/pages/SignInPage').then((module) => ({
+    default: module.SignInPage,
+  })),
+);
+export const StockPage = lazy(() =>
+  import('@/pages/StockPage').then((module) => ({ default: module.StockPage })),
+);
+export const ResultPage = lazy(() =>
+  import('@/pages/ResultPage').then((module) => ({
+    default: module.ResultPage,
+  })),
+);
+export const NewsDetailPage = lazy(() =>
+  import('@/pages/NewsDetailPage').then((module) => ({
+    default: module.NewsDetailPage,
+  })),
+);
+export const StudentWaitPage = lazy(() =>
+  import('@/pages/StudentWaitPage').then((module) => ({
+    default: module.StudentWaitPage,
+  })),
+);
+export const NotFoundPage = lazy(() =>
+  import('@/pages/404').then((module) => ({ default: module.NotFoundPage })),
+);

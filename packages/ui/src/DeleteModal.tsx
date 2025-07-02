@@ -11,6 +11,14 @@ interface IDeleteModal {
   message?: string;
 }
 
+/**
+ * DeleteModal 컴포넌트
+ * @param titleComment 제목
+ * @param subComment 설명
+ * @param onCancel 취소 버튼 클릭 이벤트
+ * @param onDelete 삭제 버튼 클릭 이벤트
+ * @param message 버튼 텍스트 (기본값: "삭제하기")
+ */
 export const DeleteModal = ({
   titleComment,
   subComment,

@@ -21,7 +21,7 @@ export const ImprovedClassMonitoringPage = () => {
   const classId = id ? parseInt(id) : null;
 
   const { data: classData, isLoading, isFetching } = useGetClassDetail(classId);
-  const { mutate: nextDegree } = useNextDegree(classId, () => {
+  const { mutate: nextDegree, isPending: isNextDegreePending } = useNextDegree(classId, () => {
     if (!classData) return;
 
     queryClient.setQueryData(["getClass", classId], {
@@ -157,7 +157,7 @@ export const ImprovedClassMonitoringPage = () => {
                   color={color.white}
                   hoverBackgroundColor={color.orange[600]}
                   onClick={() => nextDegree()}
-                  disabled={!isDegEnd}
+                  disabled={!isDegEnd || isNextDegreePending}
                 >
                   다음 투자 진행
                 </Button>

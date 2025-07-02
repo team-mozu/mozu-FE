@@ -1,16 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import {
-  HomePage,
-  NewsPage,
-  SignInPage,
-  StockPage,
-  ResultPage,
-  NewsDetailPage,
-  StudentWaitPage,
-  NotFoundPage,
-} from "@/pages";
 import { AppLayout } from "@/layout";
 import { StockGraph, StockInfo } from "./components";
+import * as pages from '@/pages';
 
 export const Router = createBrowserRouter([
   {
@@ -18,11 +9,11 @@ export const Router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <SignInPage />,
+        element: <pages.SignInPage />,
       },
       {
         path: "wait",
-        element: <StudentWaitPage />,
+        element: <pages.StudentWaitPage />,
       },
     ],
   },
@@ -32,11 +23,11 @@ export const Router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <pages.HomePage />,
       },
       {
         path: "stock/:stockId",
-        element: <StockPage />,
+        element: <pages.StockPage />,
         children: [
           { index: true, element: <Navigate to="stock-info" replace /> },
           { path: "price-info", element: <StockGraph /> },
@@ -46,18 +37,18 @@ export const Router = createBrowserRouter([
       {
         path: "news",
         children: [
-          { index: true, element: <NewsPage /> },
-          { path: ":newsId", element: <NewsDetailPage /> },
+          { index: true, element: <pages.NewsPage /> },
+          { path: ":newsId", element: <pages.NewsDetailPage /> },
         ],
       },
       {
         path: "result",
-        element: <ResultPage />,
+        element: <pages.ResultPage />,
       },
     ],
   },
   {
     path: "*",
-    element: <NotFoundPage />,
+    element: <pages.NotFoundPage />,
   },
 ]);

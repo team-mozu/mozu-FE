@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CustomToastContainer } from "@mozu/ui";
 import { GlobalStyle } from "@mozu/design-token";
+import { Suspense } from "react";
 
 const root = CreateDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -22,7 +23,9 @@ export const queryClient = new QueryClient({
 root.render(
   <QueryClientProvider client={queryClient}>
     <ReactQueryDevtools initialIsOpen={false} />
-    <App />
+    <Suspense fallback={<div>로딩중...</div>}>
+      <App />
+    </Suspense>
     <CustomToastContainer />
     <GlobalStyle />
   </QueryClientProvider>

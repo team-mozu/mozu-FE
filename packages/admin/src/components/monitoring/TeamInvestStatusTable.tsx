@@ -59,8 +59,8 @@ export const TeamInvestStatusTable = ({
             <Th
               key={index}
               width={data.width}
-              textAlign={index === 0 || index === 5 ? "center" : "left"}
-              padding={index === 0 || index === 5 ? "0px" : "16px"}
+              textAlign={index !== 1 ? "center" : "left"}
+              padding={index !== 1 ? "0px" : "16px"}
             >
               {data.text}
             </Th>
@@ -97,8 +97,8 @@ export const TeamInvestStatusTable = ({
 
               <Td
                 width="140px"
-                textAlign="left"
-                padding="0 0 0 16px"
+                textAlign="right"
+                padding="0 16px 0 0"
                 color={color.black}
               >
                 {item.itemMoney.toLocaleString()}
@@ -106,8 +106,8 @@ export const TeamInvestStatusTable = ({
 
               <Td
                 width="100px"
-                textAlign="left"
-                padding="0 0 0 16px"
+                textAlign="center"
+                padding="0"
                 color={color.black}
               >
                 {item.orderCount}
@@ -115,8 +115,8 @@ export const TeamInvestStatusTable = ({
 
               <Td
                 width="140px"
-                textAlign="left"
-                padding="0 0 0 16px"
+                textAlign="right"
+                padding="0 16px 0 0"
                 color={color.black}
               >
                 {(item.totalMoney / item.orderCount).toLocaleString()}
@@ -151,7 +151,7 @@ export const TeamInvestStatusTable = ({
           </tr>
         )}
       </Tbody>
-    </Table>
+    </Table >
   );
 };
 
