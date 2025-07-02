@@ -83,7 +83,7 @@ export const HomePage = () => {
       />
       <TableDiv>
         보유주식
-        {/* <StockTable /> */}
+        <StockTable />
       </TableDiv>
     </Wrapper>
   );
