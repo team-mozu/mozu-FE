@@ -39,7 +39,7 @@ export const ClassEnvironment = () => {
 
 
   const { mutate: startClass } = useClassStart(classId);
-  const { mutate: deleteClass } = useClassDelete();
+  const { mutate: deleteClass, isPending } = useClassDelete();
 
   // 상태 관리
   const [isModal, setIsModal] = useState<boolean>(false);
@@ -134,6 +134,7 @@ export const ClassEnvironment = () => {
           subComment="삭제하면 복구가 불가능합니다."
           onCancel={closeDeleteModal}
           onDelete={handleDelete}
+          isPending={isPending}
         />
       )}
       <Wrapper>

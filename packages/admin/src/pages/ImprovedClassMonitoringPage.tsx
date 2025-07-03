@@ -29,7 +29,7 @@ export const ImprovedClassMonitoringPage = () => {
       curInvDeg: classData.curInvDeg + 1,
     });
   });
-  const { mutate: stopClass } = useClassStop(classId);
+  const { mutate: stopClass, isPending: isStopClassPending } = useClassStop(classId);
 
   const isDegEnd = classData
     ? teamInfo.every((team) => (team.trade?.length ?? 0) >= classData.curInvDeg)
@@ -81,6 +81,7 @@ export const ImprovedClassMonitoringPage = () => {
             subComment="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
             onCancel={() => setIsOpen(false)}
             onDelete={() => stopClass()}
+            isPending={isStopClassPending}
             message={"취소하기"}
           />
         )
@@ -92,6 +93,7 @@ export const ImprovedClassMonitoringPage = () => {
             subComment="모의투자를 종료하시겠습니까? 종료 후 투자 데이터는 삭제됩니다."
             onCancel={() => setIsOpenEnd(false)}
             onDelete={() => stopClass()}
+            isPending={isStopClassPending}
             message={"종료하기"}
           />
         )

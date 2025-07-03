@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 import { Del } from './assets';
 import { color, font } from '@mozu/design-token';
-import { Button } from './Button';
 
 interface IDeleteModal {
   titleComment: string;
   subComment: string;
   onCancel: () => void;
   onDelete: () => void;
+  isPending: boolean;
   message?: string;
 }
 
@@ -24,6 +24,7 @@ export const DeleteModal = ({
   subComment,
   onCancel,
   onDelete,
+  isPending,
   message = "삭제하기",
 }: IDeleteModal) => {
   return (
@@ -45,7 +46,7 @@ export const DeleteModal = ({
           <CancelButton onClick={onCancel}>
             취소
           </CancelButton>
-          <DeleteButton onClick={onDelete}>
+          <DeleteButton onClick={onDelete} disabled={isPending}>
             {message}
           </DeleteButton>
         </UnderContainer>
@@ -229,5 +230,10 @@ const DeleteButton = styled(BaseButton)`
   &:hover {
     background: linear-gradient(135deg, ${color.red[600]} 0%, ${color.red[700]} 100%);
     box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
