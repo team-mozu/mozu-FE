@@ -67,7 +67,7 @@ export const ImprovedTeamInfoTable = ({
           return (
             <Tr isNotBorded={index + 1 === teamInfo.length} key={index}>
               <Td isLeft>
-                <TeamName isTeamName>{team.teamName}</TeamName>
+                <TeamName isTeamName onClick={() => handleOpenModal(team.teamId, team.teamName)}>{team.teamName}</TeamName>
                 {team.trade.length === invDeg && (
                   <CompletedBadge>
                     투자완료 <Check size={18} color={color.green[500]} />
@@ -235,7 +235,7 @@ const Rate = styled.div<{ isNegative: boolean }>`
   & > span:nth-of-type(2) {
     ${font.l1};
     color: ${({ isNegative }) =>
-      isNegative ? color.blue[500] : color.red[500]};
+    isNegative ? color.blue[500] : color.red[500]};
   }
 
   &:hover {
@@ -244,5 +244,9 @@ const Rate = styled.div<{ isNegative: boolean }>`
 `;
 
 const TeamName = styled.span<{ isTeamName?: boolean }>`
+  cursor: pointer;
   font: ${font.t2};
+  &:hover {
+    text-decoration: underline;
+  }
 `;
