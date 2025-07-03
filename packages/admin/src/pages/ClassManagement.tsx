@@ -55,7 +55,7 @@ export const ClassManagement = () => {
   };
 
   //삭제 api 불러옴
-  const { mutate: delClassApi } = useClassDelete();
+  const { mutate: delClassApi, isPending } = useClassDelete();
 
   //삭제하기
   const handleDelete = () => {
@@ -109,6 +109,7 @@ export const ClassManagement = () => {
         <DeleteModal
           titleComment={"이 수업을 삭제하시겠습니까?"}
           subComment={"삭제하면 복구가 불가능합니다."}
+          isPending={isPending}
           onCancel={handleCloseModal}
           onDelete={handleDelete}
         />

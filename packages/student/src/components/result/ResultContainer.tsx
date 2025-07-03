@@ -67,6 +67,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
             titleComment="투자 마치기"
             subComment="투자 마치면 총 결과 결산 페이지로 이동합니다."
             message="마치기"
+            isPending={false}
             onDelete={() => navigate(`/signin`)}
             onCancel={() => setIsOpen(false)}
           />

@@ -12,7 +12,7 @@ export const StockManagementPage = () => {
   const { id } = useParams();
   const stockId = id ? parseInt(id) : null;
 
-  const { mutate: stockDelete } = useDeleteStock(selectedId);
+  const { mutate: stockDelete, isPending } = useDeleteStock(selectedId);
   const { data: stockData, isLoading: apiLoading } = useGetStockDetail(stockId);
 
   const handleDetailClick = () => {
@@ -49,6 +49,7 @@ export const StockManagementPage = () => {
         <DeleteModal
           titleComment={`${stockData?.name}를 삭제하실선가요?`}
           subComment={'삭제하면 복구가 불가능합니다.'}
+          isPending={isPending}
           onCancel={handleCloseModal}
           onDelete={handleDelete}
         />

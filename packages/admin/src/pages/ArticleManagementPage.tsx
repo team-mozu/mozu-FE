@@ -22,7 +22,13 @@ export const ArticleManagementPage = () => {
 
   const delApiData = useDeleteArticle();
 
+  const isDeleting = delApiData.isPending;
+
   const handleDelete = (articleId: number) => {
+    if (delApiData.isPending) {
+      return;
+    }
+
     if (articleId) {
       delApiData.mutate(articleId);
     }
@@ -46,6 +52,7 @@ export const ArticleManagementPage = () => {
           titleComment={'현재 선택된 기사를 삭제하실건가요?'}
           subComment={'삭제하면 복구가 불가능합니다.'}
           onCancel={handleCloseModal}
+          isPending={isDeleting}
           onDelete={() => handleDelete(articleId)}
         />
       )}
