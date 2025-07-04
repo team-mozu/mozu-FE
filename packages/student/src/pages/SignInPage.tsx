@@ -25,16 +25,13 @@ export const SignInPage = () => {
     state.teamName.trim() !== "" &&
     !isPending;
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (!isValidForm()) return;
 
     studentLogin(state, {
       onError: () => setErrorMessage("형식을 다시 확인해주세요."),
     });
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter") handleLogin();
   };
 
   const handleChange =
@@ -58,7 +55,7 @@ export const SignInPage = () => {
         <LogoWithText width={74} height={28} />
         모의주식투자
       </LogoWrapper>
-      <SigninContainer onKeyDown={handleKeyDown}>
+      <SigninContainer onSubmit={handleLogin}>
         <Title>학생 로그인</Title>
         <FormGroup>
           <Input
@@ -84,7 +81,7 @@ export const SignInPage = () => {
           />
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </FormGroup>
-        <LoginButton onClick={handleLogin} disabled={!isValidForm() || isPending}>
+        <LoginButton type="submit" disabled={!isValidForm() || isPending}>
           로그인
         </LoginButton>
       </SigninContainer>
@@ -112,7 +109,7 @@ const LogoWrapper = styled.div`
   color: ${color.zinc[500]};
 `;
 
-const SigninContainer = styled.div`
+const SigninContainer = styled.form`
   width: 100%;
   padding: 24px;
   background-color: ${color.white};
