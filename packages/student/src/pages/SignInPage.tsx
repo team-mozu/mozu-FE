@@ -39,16 +39,18 @@ export const SignInPage = () => {
 
   const handleChange =
     (field: "classNum" | "schoolName" | "teamName") =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      let value: string | number = e.target.value;
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value: string | number = e.target.value;
 
-      if (field === "classNum") {
-        value = value.replace(/\D/g, "").slice(0, 7);
-      }
+        if (field === "classNum") {
+          value = value.replace(/\D/g, "").slice(0, 7);
+        }
 
-      onChangeInputValue({ target: { name: field, value } });
-      setErrorMessage("");
-    };
+        onChangeInputValue({ target: { name: field, value } });
+        setErrorMessage("");
+      };
+
+  if (isPending) return;
 
   return (
     <Container>
@@ -82,7 +84,7 @@ export const SignInPage = () => {
           />
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </FormGroup>
-        <LoginButton onClick={handleLogin} disabled={!isValidForm()}>
+        <LoginButton onClick={handleLogin} disabled={!isValidForm() || isPending}>
           로그인
         </LoginButton>
       </SigninContainer>
