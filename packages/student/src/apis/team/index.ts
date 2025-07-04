@@ -84,7 +84,7 @@ export const useTeamRank = () => {
       const { data } = await instance.get<TeamRankResponse>(`${router}/rank`);
       return data;
     },
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: 0,
+    gcTime: 0,
   });
 };
