@@ -3,43 +3,43 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 
 interface ArticleModalProps {
-    article: any;
-    total: number;
-    current: number;
-    onPrev: () => void;
-    onNext: () => void;
-    onClose: () => void;
-    isFirst: boolean;
-    isLast: boolean;
+  article: any;
+  total: number;
+  current: number;
+  onPrev: () => void;
+  onNext: () => void;
+  onClose: () => void;
+  isFirst: boolean;
+  isLast: boolean;
 }
 
 export function ArticleModal({ article, total, current, onPrev, onNext, onClose, isFirst, isLast }: ArticleModalProps) {
-    return (
-        <ModalBackdrop>
-            <ModalContainer>
-                <NewsDetail
-                    img={article.image || ""}
-                    title={article.title || ""}
-                    main={article.description || ""}
-                />
-                <StepperWrapper>
-                    {Array.from({ length: total }).map((_, idx) => (
-                        <StepCircle key={idx} active={idx === current} />
-                    ))}
-                </StepperWrapper>
-                <ModalButtonRow>
-                    <ModalButton onClick={onPrev} disabled={isFirst}>
-                        이전
-                    </ModalButton>
-                    {!isLast ? (
-                        <ModalButton onClick={onNext}>다음</ModalButton>
-                    ) : (
-                        <ModalButton onClick={onClose}>마침</ModalButton>
-                    )}
-                </ModalButtonRow>
-            </ModalContainer>
-        </ModalBackdrop>
-    );
+  return (
+    <ModalBackdrop onClick={onClose}>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
+        <NewsDetail
+          img={article.image || ""}
+          title={article.title || ""}
+          main={article.description || ""}
+        />
+        <StepperWrapper>
+          {Array.from({ length: total }).map((_, idx) => (
+            <StepCircle key={idx} active={idx === current} />
+          ))}
+        </StepperWrapper>
+        <ModalButtonRow>
+          <ModalButton onClick={onPrev} disabled={isFirst}>
+            이전
+          </ModalButton>
+          {!isLast ? (
+            <ModalButton onClick={onNext}>다음</ModalButton>
+          ) : (
+            <ModalButton onClick={onClose}>마침</ModalButton>
+          )}
+        </ModalButtonRow>
+      </ModalContainer>
+    </ModalBackdrop>
+  );
 }
 
 const ModalBackdrop = styled.div`

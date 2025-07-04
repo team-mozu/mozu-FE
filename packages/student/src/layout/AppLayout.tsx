@@ -36,7 +36,6 @@ export const AppLayout = () => {
         dirtyFix.current++;
         return;
       }
-      console.log("CLASS_CANCELasdasdas");
       Toast("수업이 취소되었습니다.", { type: "error" });
 
       queryClient.clear();

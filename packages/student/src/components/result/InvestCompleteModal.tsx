@@ -17,7 +17,7 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
   const navigate = useNavigate();
   const outSideRef = useRef<HTMLDivElement | null>(null);
   const { classId } = useParams();
-  const { mutate: teamEnd } = useTeamEnd({
+  const { mutate: teamEnd, isPending: isTeamEndPending } = useTeamEnd({
     onSuccess: () => {
       Toast("투자 완료에 성공하였습니다", { type: "success" });
       setIsOpen(false);
@@ -72,8 +72,6 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
     }
   };
 
-  const { onClick, isLoading, disabled } = useAsyncButton(invDeg, 10000);
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -97,7 +95,7 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
               damping: 30
             }}
           >
-            <CloseButton onClick={() => setIsOpen?.(false)} disabled={isLoading}>
+            <CloseButton onClick={() => setIsOpen?.(false)} disabled={isTeamEndPending}>
               <CloseIcon>✕</CloseIcon>
             </CloseButton>
 
@@ -129,12 +127,12 @@ export const InvestCompleteModal = ({ isOpen, setIsOpen }: IInvestCompleteType) 
             </ContentContainer>
 
             <ActionSection>
-              <CancelButton onClick={() => setIsOpen?.(false)} disabled={isLoading}>
+              <CancelButton onClick={() => setIsOpen?.(false)} disabled={isTeamEndPending}>
                 <ButtonIcon>❌</ButtonIcon>
                 취소
               </CancelButton>
-              <ConfirmButton onClick={onClick} disabled={disabled || isLoading}>
-                {isLoading ? (
+              <ConfirmButton onClick={invDeg} disabled={isTeamEndPending}>
+                {isTeamEndPending ? (
                   <>
                     <LoadingSpinner />
                     처리 중...
