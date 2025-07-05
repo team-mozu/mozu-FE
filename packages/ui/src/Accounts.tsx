@@ -7,51 +7,50 @@ interface IAccountsType {
 }
 
 export const Accounts = ({ title, content }: IAccountsType) => {
-  const formattedContent =
-    typeof content === 'number' ? content.toLocaleString('ko-KR') : content;
+  const formattedContent = typeof content === 'number'
+    ? content.toLocaleString('ko-KR')
+    : content;
 
   return (
     <AccountsContainer>
       <ContentContainer>
         <Title>{title}</Title>
+        <Content>{formattedContent}원</Content>
       </ContentContainer>
-      <Content>{formattedContent}원</Content>
     </AccountsContainer>
   );
 };
 
+// 스타일 컴포넌트들
+const AccountsContainer = styled.div`
+  width: 100%;
+  min-height: 108px;
+  border-radius: 12px;
+  background-color: ${color.zinc[50]};
+  border: 1px solid ${color.zinc[100]};
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  transition: all 0.2s ease;
+`;
+
 const ContentContainer = styled.div`
   display: flex;
-  flex-direction: column;
   gap: 8px;
-  align-items: start;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const Title = styled.div`
   font: ${font.h4};
-  white-space: nowrap;
-  min-width: 10ch;
-  width: fit-content;
   color: ${color.zinc[600]};
-`;
-
-const AccountsContainer = styled.div`
-  flex-grow: 1;
-  width: 100%;
-  height: 108px;
-  border-radius: 12px;
-  background-color: ${color.zinc[50]};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px;
+  white-space: nowrap;
 `;
 
 const Content = styled.div`
   font: ${font.h4};
-white-space: nowrap;
-  min-width: 10ch;
-  width: fit-content;
   color: ${color.black};
-  margin-left: auto;
+  white-space: nowrap;
+  font-weight: 600;
 `;

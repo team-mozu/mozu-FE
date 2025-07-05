@@ -16,6 +16,8 @@ export const HomePage = () => {
   // invDeg 변경 감지 및 새 기사 모달 표시
   useEffect(() => {
     if (isLoading || !teamData || !newsData) return;
+    const modalShown = sessionStorage.getItem("newsModalShown");
+    if (modalShown === "true") return;
 
     const currentInvDeg = teamData.invDeg;
 
@@ -55,6 +57,7 @@ export const HomePage = () => {
     setIsModalOpen(false);
     setNewArticles([]);
     setCurrentArticleIndex(0);
+    sessionStorage.setItem("newsModalShown", "true");
   };
 
   if (isLoading) return <div>Loading...</div>;

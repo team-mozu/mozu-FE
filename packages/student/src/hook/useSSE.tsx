@@ -46,7 +46,6 @@ export const useSSE = (
     });
 
     eventSourceRef.current = eventSource;
-
     (Object.keys(eventHandlers || {}) as EventType[]).forEach((eventType) => {
       eventSource.addEventListener(eventType, (e: MessageEvent) => {
         try {

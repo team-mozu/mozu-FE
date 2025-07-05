@@ -14,7 +14,7 @@ interface classItem {
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
   const maxRound = Math.max(...classItems.map((item) => item.money.length - 1));
 
-  const header = ['종목 이름', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`)];
+  const header = ['종목 이름', '현재가', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`), '최종 투자'];
 
   return (
     <TableWrapper>
@@ -22,7 +22,7 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
         <thead>
           <tr>
             {header.map((data, index) => (
-              <Th key={index} width={index === 0 ? '30%' : '14%'}>
+              <Th key={index} width={index === 0 ? '25%' : '12.5%'}>
                 {data}
               </Th>
             ))}
@@ -31,20 +31,26 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
         <tbody>
           {classItems.map((item) => (
             <tr key={item.itemId}>
-              <Td width="30%">{item.itemName}</Td>
+              <Td width="25%">{item.itemName}</Td>
+              <Td width="12.5%" alignRight>
+                {item.money[0].toLocaleString()}
+              </Td>
               {Array.from({ length: maxRound }, (_, idx) => {
                 const amount = item.money[idx + 1];
                 const isNumber = typeof amount === 'number';
                 return (
                   <Td
                     key={idx}
-                    width="14%"
+                    width="12.5%"
                     alignRight={isNumber}
                   >
                     {isNumber ? amount.toLocaleString() : '진행중..'}
                   </Td>
                 );
               })}
+              <Td width="12.5%" alignRight>
+                {item.money[item.money.length - 1].toLocaleString()}
+              </Td>
             </tr>
           ))}
         </tbody>

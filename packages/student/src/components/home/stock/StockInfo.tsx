@@ -4,138 +4,247 @@ import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { useGetStockDetail } from "@/apis";
 import { useParams } from "react-router-dom";
+import { useMemo } from "react";
+
+interface StockData {
+  itemInfo: string;
+  debt: number;
+  capital: number;
+  profit: number;
+  profitOG: number;
+  profitBen: number;
+  netProfit: number;
+}
 
 export const StockInfo = () => {
-  const { stockId } = useParams();
-  const itemId = stockId ? parseInt(stockId) : null;
-  const { data, isLoading } = useGetStockDetail(itemId);
+  const { stockId } = useParams<{ stockId: string }>();
+
+  const itemId = useMemo(() => {
+    if (!stockId) return null;
+    const parsed = parseInt(stockId, 10);
+    return isNaN(parsed) ? null : parsed;
+  }, [stockId]);
+
+  const { data, isLoading, error } = useGetStockDetail(itemId);
+
+  // 에러 처리
+  if (error) {
+    return (
+      <ErrorContainer>
+        <ErrorMessage>주식 정보를 불러오는 중 오류가 발생했습니다.</ErrorMessage>
+      </ErrorContainer>
+    );
+  }
+
+  // 잘못된 ID 처리
+  if (!itemId) {
+    return (
+      <ErrorContainer>
+        <ErrorMessage>잘못된 주식 ID입니다.</ErrorMessage>
+      </ErrorContainer>
+    );
+  }
 
   return (
     <Container>
       <CompanyInfo>
-        <Label>회사 정보</Label>
+        <SectionTitle>회사 정보</SectionTitle>
         {isLoading ? (
           <CompanySkeleton />
         ) : (
-          <div>
-            <StyledText>{data?.itemInfo}</StyledText>
-          </div>
+          <InfoCard>
+            <StyledText>{data?.itemInfo || "회사 정보가 없습니다."}</StyledText>
+          </InfoCard>
         )}
       </CompanyInfo>
-      <CompanyMain>
-        <Section>
-          <div>
-            <Label>재무상태표</Label>
-            {isLoading ? (
-              <ContentWrapper>
-                <AccountsSkeleton />
-                <AccountsSkeleton />
-              </ContentWrapper>
-            ) : (
-              <ContentWrapper>
-                <Accounts title={"부채"} content={data?.debt ?? 0} />
-                <Accounts title={"자본금"} content={data?.capital ?? 0} />
-              </ContentWrapper>
-            )}
-          </div>
 
-          <div>
-            <Label>손익계산서</Label>
-            {isLoading ? (
-              <ContentWrapper>
-                <AccountsSkeleton />
-                <AccountsSkeleton />
-                <AccountsSkeleton />
-                <AccountsSkeleton />
-              </ContentWrapper>
-            ) : (
-              <ContentWrapper>
-                <Accounts title={"매출액"} content={data?.profit ?? 0} />
-                <Accounts title={"매출원가"} content={data?.profitOG ?? 0} />
-                <Accounts title={"매출이익"} content={data?.profitBen ?? 0} />
-                <Accounts title={"당기순이익"} content={data?.netProfit ?? 0} />
-              </ContentWrapper>
-            )}
-          </div>
-        </Section>
-      </CompanyMain>
+      <FinancialInfo>
+        <FinancialSection>
+          <SectionTitle>재무상태표</SectionTitle>
+          {isLoading ? (
+            <ContentWrapper>
+              <AccountsSkeleton />
+              <AccountsSkeleton />
+            </ContentWrapper>
+          ) : (
+            <ContentWrapper>
+              <Accounts title="부채" content={data?.debt ?? 0} />
+              <Accounts title="자본금" content={data?.capital ?? 0} />
+            </ContentWrapper>
+          )}
+        </FinancialSection>
+
+        <FinancialSection>
+          <SectionTitle>손익계산서</SectionTitle>
+          {isLoading ? (
+            <ContentWrapper>
+              <AccountsSkeleton />
+              <AccountsSkeleton />
+              <AccountsSkeleton />
+              <AccountsSkeleton />
+            </ContentWrapper>
+          ) : (
+            <ContentWrapper>
+              <Accounts title="매출액" content={data?.profit ?? 0} />
+              <Accounts title="매출원가" content={data?.profitOG ?? 0} />
+              <Accounts title="매출이익" content={data?.profitBen ?? 0} />
+              <Accounts title="당기순이익" content={data?.netProfit ?? 0} />
+            </ContentWrapper>
+          )}
+        </FinancialSection>
+      </FinancialInfo>
     </Container>
   );
 };
 
+// 스타일 컴포넌트들
+const Container = styled.div`
+  width: 100%;
+  min-height: 95vh;
+  padding: 32px;
+  background-color: ${color.white};
+  border: 1px solid ${color.zinc[200]};
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  
+  overflow-y: auto;
+  
+  /* 태블릿 */
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+  }
+  
+  /* 모바일 */
+  @media (max-width: 768px) {
+    padding: 16px;
+    border-radius: 12px;
+    gap: 20px;
+    min-height: calc(100vh - 40px);
+  }
+  
+  /* 스크롤바 스타일링 */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${color.zinc[100]};
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${color.zinc[400]};
+    border-radius: 4px;
+  }
+`;
+
 const CompanyInfo = styled.div`
-  grid-column: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  & > div {
-    width: 100%;
+  
+  /* 태블릿 이하에서는 전체 너비 사용 */
+  @media (max-width: 1024px) {
+    grid-column: 1;
+  }
+`;
+
+const InfoCard = styled.div`
+  width: 100%;
+  padding: 24px;
+  background-color: ${color.zinc[50]};
+  border-radius: 12px;
+  border: 1px solid ${color.zinc[100]};
+  
+  @media (max-width: 768px) {
     padding: 16px;
-    background-color: ${color.zinc[50]};
-    font: ${font.t2};
-    color: ${color.black};
-    border-radius: 12px;
   }
 `;
 
 const StyledText = styled.p`
+  font: ${font.t2};
+  color: ${color.black};
   white-space: pre-line;
   line-height: 1.7;
-  word-break: break-all;
-`;
-
-const CompanyMain = styled.div`
-  grid-column: 2; /* 두 번째 열에 배치 */
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;
-
-const LeftSection = styled.div`
-  flex: 1; /* 동일한 비율로 공간 차지 */
-  display: flex;
-  gap: 16px;
-  flex-direction: column;
-`;
-
-const RightSection = styled.div`
-  flex: 1; /* 동일한 비율로 공간 차지 */
-  display: flex;
-  gap: 16px;
-  flex-direction: column;
-`;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const Label = styled.label`
-  color: ${color.black};
-  font: ${font.t3};
-`;
-
-const Section = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  > div {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  word-break: break-word;
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    line-height: 1.6;
   }
 `;
 
-const Container = styled.div`
-  overflow: scroll;
-  padding: 32px;
+const FinancialInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  
+  @media (max-width: 768px) {
+    gap: 24px;
+  }
+`;
+
+const FinancialSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const SectionTitle = styled.h2`
+  font: ${font.t3};
+  color: ${color.black};
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const ErrorContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
   background-color: ${color.white};
-  width: 100%;
-  height: 95%;
   border: 1px solid ${color.zinc[200]};
   border-radius: 16px;
-  display: grid;
-  grid-template-columns: 50% 1fr;
-  gap: 52px;
+  padding: 32px;
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    min-height: 150px;
+  }
+`;
+
+const ErrorMessage = styled.p`
+  font: ${font.t2};
+  color: ${color.red[600]};
+  text-align: center;
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;

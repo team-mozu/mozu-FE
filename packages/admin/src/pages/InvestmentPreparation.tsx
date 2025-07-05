@@ -45,7 +45,7 @@ export const InvestmentPreparation = () => {
     },
     (error) => {
       console.log(error);
-      Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
+      Toast(`네트워크 에러가 발생했습니다. 페이지를 새로고침 해주세요`, { type: "error" });
     },
     {
       TEAM_PART_IN: (teamData) => {
@@ -68,7 +68,7 @@ export const InvestmentPreparation = () => {
         });
         Toast("새로운 팀이 참가했습니다", { type: "success" });
       },
-      TEAM_INV_END: (data) => {
+      TEAM_INV_END: () => {
         Toast("팀 투자가 종료되었습니다", { type: "info" });
       },
     }

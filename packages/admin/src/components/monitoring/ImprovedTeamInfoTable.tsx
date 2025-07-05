@@ -24,6 +24,7 @@ export const ImprovedTeamInfoTable = ({
   const [selectedTeamName, setSelectedTeamName] = useState("");
   const TableHeaderList = [
     "팀명",
+    "현재가",
     "1차 투자",
     "2차 투자",
     "3차 투자",
