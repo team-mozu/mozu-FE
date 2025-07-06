@@ -29,7 +29,7 @@ export const ImprovedTeamInfoTable = ({
     "2차 투자",
     "3차 투자",
     "4차 투자",
-    "5차 투자",
+    "5차 투자"
   ];
 
   console.log(teamInfo);
@@ -53,13 +53,15 @@ export const ImprovedTeamInfoTable = ({
       <Table>
         <Tr isHeader>
           {TableHeaderList.map((tableHead, index) => {
-            if (index > maxInvDeg) return;
+            // maxInvDeg + 1로 수정하여 5차까지 표시되도록 함
+            if (index > maxInvDeg + 1) return;
             return (
               <Th key={index} isLeft={index === 0}>
                 {tableHead}
               </Th>
             );
           })}
+          <Th>종료가</Th>
           <Th>총자산</Th>
         </Tr>
         {teamInfo.map((team, index) => {
@@ -114,6 +116,10 @@ export const ImprovedTeamInfoTable = ({
                   </Td>
                 );
               })}
+              {/* 종료 컬럼 추가 */}
+              <Td>
+                {team.trade.length === maxInvDeg + 1 ? "종료가" : "진행중"}
+              </Td>
               <Td isNotBorded>
                 {team.trade.length > 0 ? (
                   <Rate
@@ -184,7 +190,7 @@ const Th = styled.th<{
   isNotBorded?: boolean;
   isLeft?: boolean;
 }>`
-  flex: ${({ isLeft }) => (isLeft ? "1" : "0 0 13.23%")};
+  flex: ${({ isLeft }) => (isLeft ? "1" : "0 0 11.11%")};
   border-right: ${({ isNotBorded }) =>
     isNotBorded ? "none" : `1px solid ${color.zinc[200]}`};
   padding: 16px;
@@ -199,7 +205,7 @@ const Td = styled.td<{
   isLeft?: boolean;
   isTeamName?: boolean;
 }>`
-  flex: ${({ isLeft }) => (isLeft ? "1" : "0 0 13.23%")};
+  flex: ${({ isLeft }) => (isLeft ? "1" : "0 0 11.11%")};
   border-right: ${({ isNotBorded }) =>
     isNotBorded ? "none" : `1px solid ${color.zinc[200]}`};
   padding: 16px;

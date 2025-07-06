@@ -32,6 +32,14 @@ import {
 } from '@/apis/class/type';
 import { FullPageLoader } from '@/components';
 
+interface StockData {
+  itemId: number;
+  itemCode: string;
+  itemName: string;
+  money: (number | null)[];
+  stockChecked?: boolean;
+}
+
 export const ClassEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -49,7 +57,7 @@ export const ClassEdit = () => {
   const [baseMoney, setBaseMoney] = useState<number>(1000000);
   const [classItems, setClassItems] = useState<ClassItemRequest[]>([]);
   const [classArticles, setClassArticles] = useState<ClassArticleRequest[]>([]);
-  const [stockData, setStockData] = useState<any[]>([]);
+  const [stockData, setStockData] = useState<StockData[]>([]);
 
   // 클래스 데이터 로딩
   useEffect(() => {
@@ -67,13 +75,23 @@ export const ClassEdit = () => {
       setClassItems(items);
 
       // 스톡 테이블 데이터 설정
-      const stockItems = classDetailData.classItems.map((item) => ({
-        itemId: item.itemId,
-        itemCode: String(item.itemId),
-        itemName: item.itemName,
-        money: item.money,
-        stockChecked: false,
-      }));
+      const stockItems = classDetailData.classItems.map((item) => {
+        const money = [...item.money];
+
+        // 투자 차수에 맞춰 길이 맞춤
+        const requiredLength = parseInt(classDetailData.maxInvDeg.toString());
+        while (money.length <= requiredLength + 1) {
+          money.push(null);
+        }
+
+        return {
+          itemId: item.itemId,
+          itemCode: String(item.itemId),
+          itemName: item.itemName,
+          money: money,
+          stockChecked: false,
+        };
+      });
       setStockData(stockItems);
 
       // 기사 데이터 설정
@@ -91,7 +109,77 @@ export const ClassEdit = () => {
   };
 
   const onDegreeChange = (value: string) => {
+    const newDegree = parseInt(value);
+    const prevDegree = parseInt(classDeg);
+
     setClassDeg(value);
+
+    // 차수가 변경되면 money 배열 구조 업데이트
+    if (newDegree !== prevDegree) {
+      // classItems 업데이트
+      setClassItems(prevItems =>
+        prevItems.map(item => {
+          const updatedMoney = [...item.money];
+          const endPrice = updatedMoney[prevDegree + 1]; // 기존 종료가 저장
+
+          // 차수가 늘어나는 경우
+          if (newDegree > prevDegree) {
+            // 종료가를 제거하고 새로운 차수들을 0으로 초기화
+            updatedMoney.splice(prevDegree + 1, 1); // 기존 종료가 제거
+
+            // 새로운 차수들을 0으로 초기화해서 추가
+            for (let i = prevDegree + 1; i <= newDegree; i++) {
+              updatedMoney.splice(i, 0, 0);
+            }
+
+            // 종료가를 맨 마지막에 다시 추가
+            updatedMoney[newDegree + 1] = endPrice;
+          }
+          // 차수가 줄어드는 경우
+          else if (newDegree < prevDegree) {
+            // 줄어든 차수들을 제거하고 종료가를 올바른 위치로 이동
+            updatedMoney.splice(newDegree + 1, prevDegree - newDegree, endPrice);
+          }
+
+          return {
+            ...item,
+            money: updatedMoney
+          };
+        })
+      );
+
+      // stockData 업데이트
+      setStockData(prevData =>
+        prevData.map(item => {
+          const updatedMoney = [...item.money];
+          const endPrice = updatedMoney[prevDegree + 1]; // 기존 종료가 저장
+
+          // 차수가 늘어나는 경우
+          if (newDegree > prevDegree) {
+            // 종료가를 제거하고 새로운 차수들을 0으로 초기화
+            updatedMoney.splice(prevDegree + 1, 1); // 기존 종료가 제거
+
+            // 새로운 차수들을 0으로 초기화해서 추가
+            for (let i = prevDegree + 1; i <= newDegree; i++) {
+              updatedMoney.splice(i, 0, 0);
+            }
+
+            // 종료가를 맨 마지막에 다시 추가
+            updatedMoney[newDegree + 1] = endPrice;
+          }
+          // 차수가 줄어드는 경우
+          else if (newDegree < prevDegree) {
+            // 줄어든 차수들을 제거하고 종료가를 올바른 위치로 이동
+            updatedMoney.splice(newDegree + 1, prevDegree - newDegree, endPrice);
+          }
+
+          return {
+            ...item,
+            money: updatedMoney
+          };
+        })
+      );
+    }
   };
 
   const onBaseMoneyChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -140,7 +228,7 @@ export const ClassEdit = () => {
       items.map((item) => {
         if (item.id === itemId) {
           const updatedMoney = [...item.money];
-          updatedMoney[levelIndex] = value || 0;
+          updatedMoney[levelIndex] = value ?? 0;
           return { ...item, money: updatedMoney };
         }
         return item;
@@ -151,7 +239,7 @@ export const ClassEdit = () => {
       data.map((item) => {
         if (item.itemId === itemId) {
           const updatedMoney = [...item.money];
-          updatedMoney[levelIndex] = value;
+          updatedMoney[levelIndex] = value ?? 0;
           return { ...item, money: updatedMoney };
         }
         return item;
@@ -233,6 +321,7 @@ export const ClassEdit = () => {
   };
 
   // 수정 제출 핸들러
+  // handleSubmit 함수 수정된 부분
   const handleSubmit = () => {
     // 유효성 검사
     if (!className.trim()) {
@@ -247,18 +336,24 @@ export const ClassEdit = () => {
 
     // API 제출 데이터 구성
     const classData: ClassData = {
-      // id: classId,
       className: className,
       classDeg: parseInt(classDeg),
       baseMoney: baseMoney,
       classItems: classItems.map((item) => {
-        // 스톡 데이터에서 이름 찾기
-        const stockItem = stockData.find((stock) => stock.itemId === item.id);
-        const itemName = stockItem?.itemName || `Item ${item.id}`;
+        // 현재가(0) + 차수별 가격(1~classDeg) + 종료가(classDeg+1)를 모두 포함
+        const moneyForRequest = [
+          ...item.money.slice(0, parseInt(classDeg) + 2) // +2로 변경하여 종료가까지 포함
+        ];
+
+        // 배열 길이가 부족한 경우 null로 채움
+        const requiredLength = parseInt(classDeg) + 2; // 현재가 + 차수들 + 종료가
+        while (moneyForRequest.length < requiredLength) {
+          moneyForRequest.push(null);
+        }
 
         return {
           id: item.id,
-          money: item.money.slice(0, parseInt(classDeg) + 1), // 선택된 차수까지만 포함
+          money: moneyForRequest,
         };
       }),
       classArticles: classArticles.map((group) => {
@@ -369,7 +464,7 @@ export const ClassEdit = () => {
           <StockTables
             isEdit
             degree={classDeg}
-            data={stockData}
+            data={stockData || []}
             onPriceChange={handleUpdateItemPrice}
             onDeleteItems={onDeleteItems}
             onAddItems={handleAddItems}

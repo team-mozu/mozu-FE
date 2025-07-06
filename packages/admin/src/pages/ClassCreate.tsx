@@ -46,11 +46,33 @@ export const CreateClass = () => {
     console.log("New items received in CreateClass:", newItems);
 
     // Add new items to the classItems array
-    setClassItems((prevItems) => [...prevItems, ...newItems]);
+    setClassItems((prevItems) => [
+      ...prevItems,
+      ...newItems.map((item) => {
+        const requiredLength = parseInt(classDeg, 10) + 2;
+        const money = [...(item.money || [])];
+
+        // money 배열 길이 보정
+        while (money.length < requiredLength) {
+          money.push(0);
+        }
+
+        return {
+          ...item,
+          money,
+        };
+      }),
+    ]);
 
     // Convert to display format for the table
     const newStockData = newItems.map((item) => {
-      // Find the item name from the API response
+      const requiredLength = parseInt(classDeg, 10) + 2;
+      const money = [...(item.money || [])];
+
+      while (money.length < requiredLength) {
+        money.push(0);
+      }
+
       const stockItem = stockListData?.items.find(
         (stockItem) => stockItem.id === item.id
       );
@@ -60,13 +82,14 @@ export const CreateClass = () => {
         itemId: item.id,
         itemCode: String(item.id),
         itemName: itemName,
-        money: item.money,
+        money: money,
         stockChecked: false,
       };
     });
 
     setStockData((prevData) => [...prevData, ...newStockData]);
   };
+
 
   const onDeleteItems = (itemIds: number[]) => {
     // Remove items from the classItems array
@@ -81,24 +104,25 @@ export const CreateClass = () => {
     levelIndex: number,
     value: number | null
   ) => {
-    // Update the price in classItems
+    // classItems 업데이트
     setClassItems((items) =>
       items.map((item) => {
         if (item.id === itemId) {
           const updatedMoney = [...item.money];
-          updatedMoney[levelIndex] = value || 0;
+          // levelIndex가 종료가일 수도 있음
+          updatedMoney[levelIndex] = value ?? 0;
           return { ...item, money: updatedMoney };
         }
         return item;
       })
     );
 
-    // Update the price in stockData for display
+    // stockData 업데이트
     setStockData((data) =>
       data.map((item) => {
         if (item.itemId === itemId) {
           const updatedMoney = [...item.money];
-          updatedMoney[levelIndex] = value;
+          updatedMoney[levelIndex] = value ?? 0;
           return { ...item, money: updatedMoney };
         }
         return item;
@@ -291,7 +315,7 @@ export const CreateClass = () => {
           <StockTables
             isEdit
             degree={classDeg}
-            data={stockData}
+            data={stockData || []}
             onPriceChange={handleUpdateItemPrice}
             onDeleteItems={onDeleteItems}
             onAddItems={handleAddItems}

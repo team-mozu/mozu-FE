@@ -39,19 +39,21 @@ interface InvestmentItemsTableProps {
 interface PriceInputProps {
   value: number | null;
   onChange: (value: number | null) => void;
-  placeholder?: string;
+  placeholder?: number | string;
 }
 
 const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>(
   ({ value, onChange, placeholder }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
     const [localValue, setLocalValue] = useState(
-      value === null ? "" : value.toString().replace(/,/g, "")
+      // FIX: Handle undefined/null values properly
+      value == null ? "" : value.toString().replace(/,/g, "")
     );
 
     const handleFocus = () => {
       setIsFocused(true);
-      setLocalValue(value === null ? "" : value.toString().replace(/,/g, ""));
+      // FIX: Handle undefined/null values properly
+      setLocalValue(value == null ? "" : value.toString().replace(/,/g, ""));
     };
 
     const handleBlur = () => {
@@ -74,12 +76,13 @@ const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>(
         ref={ref}
         type="text"
         value={
-          isFocused ? localValue : value === null ? "" : formatPrice(value)
+          // FIX: Handle undefined/null values properly
+          isFocused ? localValue : value == null ? "" : formatPrice(value)
         }
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        placeholder={placeholder}
+        placeholder={placeholder.toString()}
       />
     );
   }
@@ -187,13 +190,14 @@ export const StockTables = ({
     for (let i = 1; i <= selectedRound; i++) {
       columns.push(`${i}차`);
     }
+    columns.push("종료가");
     return columns;
   }, [selectedRound]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsLoading(isApiLoading);
+    setIsLoading(isApiLoading || false);
   }, [isApiLoading]);
 
   // 테이블 컬럼 정의
@@ -233,11 +237,8 @@ export const StockTables = ({
         if (isLoading) {
           return <EmptyValueTextDiv>{value}</EmptyValueTextDiv>;
         } else {
-          return value === null ? (
-            <EmptyValueText>{value}</EmptyValueText>
-          ) : (
-            formatPrice(value)
-          );
+          // 종목 코드는 문자열이므로 formatPrice를 사용하지 않음
+          return value || <EmptyValueText>-</EmptyValueText>;
         }
       },
     },
@@ -251,53 +252,59 @@ export const StockTables = ({
         if (isLoading) {
           return <EmptyValueTextDiv>{value}</EmptyValueTextDiv>;
         } else {
-          return value === null ? (
-            <EmptyValueText>{value}</EmptyValueText>
-          ) : (
-            formatPrice(value)
-          );
+          // 종목 이름은 문자열이므로 formatPrice를 사용하지 않음
+          return value || <EmptyValueText>-</EmptyValueText>;
         }
       },
     },
     // 현재가와 차수별 가격 컬럼 동적 생성
-    ...dynamicColumns.map((header, index) => ({
-      id: `level${index}`,
-      header: () => <>{header}</>,
-      size: 140,
-      meta: { align: "right" },
-      cell: ({ row }) => {
-        const value = row.original.money[index];
-        const inputId = `${row.original.itemId}-${index}`;
-        const placeholder = `${index > 0 ? index + "차" : "현재"} 금액`;
+    ...dynamicColumns.map((header, index) => {
+      const isClosePrice = header === "종료가";
 
-        if (isEdit) {
-          return (
-            <PriceInput
-              ref={(el) => (inputRefs.current[inputId] = el)}
-              value={value}
-              onChange={(newValue) =>
-                handlePriceChange(row.original.itemId, index, newValue)
-              }
-              placeholder={placeholder}
-            />
-          );
-        } else {
-          if (isLoading) {
+      return {
+        id: `level${index}`,
+        header: () => <>{header}</>,
+        size: 140,
+        meta: { align: "right" },
+        cell: ({ row }) => {
+          // FIX: Safely access money array with proper bounds checking
+          const money = row.original.money || [];
+          const value = money[index] ?? 0;
+          const inputId = `${row.original.itemId}-${index}`;
+          const placeholder = isClosePrice
+            ? 0
+            : `${index > 0 ? index + "차" : "현재"} 금액`;
+
+          if (isEdit) {
             return (
-              <EmptyValueTextDiv>
-                {value === null ? placeholder : formatPrice(value)}
-              </EmptyValueTextDiv>
+              <PriceInput
+                ref={(el) => (inputRefs.current[inputId] = el)}
+                value={value}
+                onChange={(newValue) =>
+                  handlePriceChange(row.original.itemId, index, newValue)
+                }
+                placeholder={placeholder}
+              />
             );
           } else {
-            return value === null ? (
-              <EmptyValueText>{placeholder}</EmptyValueText>
-            ) : (
-              formatPrice(value)
-            );
+            if (isLoading) {
+              return (
+                <EmptyValueTextDiv>
+                  {value === null ? placeholder : formatPrice(value)}
+                </EmptyValueTextDiv>
+              );
+            } else {
+              return value === null ? (
+                <EmptyValueText>{placeholder}</EmptyValueText>
+              ) : (
+                // value가 숫자인지 확인 후 formatPrice 사용
+                typeof value === 'number' ? formatPrice(value) : value
+              );
+            }
           }
-        }
-      },
-    })),
+        },
+      };
+    }),
   ];
 
   // 테이블 인스턴스 생성

@@ -12,9 +12,9 @@ interface classItem {
 }
 
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
-  const maxRound = Math.max(...classItems.map((item) => item.money.length - 1));
+  const maxRound = Math.max(...classItems.map((item) => item.money.length - 2));
 
-  const header = ['종목 이름', '현재가', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`), '최종 투자'];
+  const header = ['종목 이름', '현재가', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`), '종료가'];
 
   return (
     <TableWrapper>
