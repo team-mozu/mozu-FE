@@ -51,14 +51,7 @@ export const StockManagementDetail = ({
     profitBen: null,
     netProfit: null,
   });
-  const initialPrices = [
-    datas.debt?.toString() || "",
-    datas.capital?.toString() || "",
-    datas.profit?.toString() || "",
-    datas.profitOG?.toString() || "",
-    datas.profitBen?.toString() || "",
-    datas.netProfit?.toString() || "",
-  ];
+
 
   const { data: stockData, isLoading: apiLoading } = useGetStockDetail(stockId);
 
@@ -99,17 +92,6 @@ export const StockManagementDetail = ({
       });
     }
   }, [stockData]);
-
-  // useEffect(() => {
-  //   if (datas.logo) {
-  //     const img = URL.createObjectURL(datas.logo || '');
-  //     setImgUrl(img);
-
-  //     return () => URL.revokeObjectURL(img);
-  //   } else {
-  //     setImgUrl(datas.logo);
-  //   }
-  // }, [datas.logo]);
 
   if (apiLoading) return <FullPageLoader />;
 
@@ -166,14 +148,9 @@ export const StockManagementDetail = ({
           {isLoading ? (
             <CompanySkeleton />
           ) : (
-
-            lines.map((line, index) =>
-              line.trim() === "" ? (
-                <br key={index} />
-              ) : (
-                <CompanyText key={index}>{line}</CompanyText>
-              )
-            )
+            <CompanyText>
+              {datas.info}
+            </CompanyText>
           )}
         </CompanyInfo>
         <CompanyMain>
@@ -220,15 +197,8 @@ export const StockManagementDetail = ({
 const CompanyText = styled.div`
   font: ${font.b2};
   word-break: break-all;
+  white-space: pre-wrap; /* 줄바꿈 문자를 실제 줄바꿈으로 처리 */
 `;
-
-const CompanyDiv = styled(Skeleton)`
-  font: ${font.b2};
-  word-break: break-all;
-  color: transparent;
-  width: fit-content;
-`;
-
 const LogoImg = styled.img`
   width: 64px;
 `;
@@ -283,11 +253,6 @@ const TitleDiv = styled(Skeleton)`
   color: transparent;
   width: fit-content;
   font: ${font.h3};
-`;
-
-const Number = styled.p`
-  font: ${font.b2};
-  color: ${color.zinc[600]};
 `;
 
 const ButtonContainer = styled.div`

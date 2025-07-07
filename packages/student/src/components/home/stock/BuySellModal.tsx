@@ -1,11 +1,9 @@
-// TODO: 매수 or 매도 불가 메시지 띄우기 || 버튼 Disable 처리 because 사용자 경험 향상
-
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { color, font } from "@mozu/design-token";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Input, Toast } from "@mozu/ui";
-import { useParams } from "react-router-dom";
+import { Toast } from "@mozu/ui";
+import { useParams, useNavigate } from "react-router-dom";
 import { useGetHoldItems, useGetStockDetail, useGetTeamDetail } from "@/apis";
 import { useLocalStorage } from "@/hook/useLocalStorage";
 import { TeamEndData, TeamEndProps } from "@/apis/team/type";
@@ -27,6 +25,19 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
   const [cashMoney, setCashMoney] = useLocalStorage<number>("cashMoney", 0);
   const outSideRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const { classId } = useParams();
+
+  useEffect(() => {
+    if (isOpen) {
+      // Focus the input after the modal's entry animation (300ms)
+      const timerId = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+      return () => clearTimeout(timerId);
+    }
+  }, [isOpen]);
 
   const handleConfirm = async () => {
     const itemIdNum = Number(stockId);
@@ -110,6 +121,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       Toast(`거래가 성공적으로 완료되었습니다.`, { type: "success" });
 
       onClose();
+      navigate(`/${classId}`);
     } catch (error) {
       console.error("거래 저장 중 오류 발생:", error);
       Toast("거래 중 오류가 발생했습니다. 다시 시도해주세요.", {
@@ -142,7 +154,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
 
   // 데이터 초기화
   useEffect(() => {
-    const newQuantity = maxQuantity > 0 ? "1" : "0";
+    const newQuantity = maxQuantity > 0 ? "0" : "0";
     setQuantity(newQuantity);
   }, [stockData.nowMoney, teamData.cashMoney]);
 
@@ -217,6 +229,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
               <SectionLabel>주문 수량</SectionLabel>
               <QuantityInputWrapper>
                 <StyledInput
+                  ref={inputRef}
                   placeholder="0"
                   value={quantity}
                   onChange={priceChangeHandler}

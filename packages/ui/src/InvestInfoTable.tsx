@@ -13,8 +13,7 @@ interface classItem {
 
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
   const maxRound = Math.max(...classItems.map((item) => item.money.length - 2));
-
-  const header = ['종목 이름', '현재가', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`), '종료가'];
+  const header = ['종목 이름', '이전가', '현재가', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`)];
 
   return (
     <TableWrapper>
@@ -35,8 +34,11 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
               <Td width="12.5%" alignRight>
                 {item.money[0].toLocaleString()}
               </Td>
+              <Td width="12.5%" alignRight>
+                {item.money[1].toLocaleString()}
+              </Td>
               {Array.from({ length: maxRound }, (_, idx) => {
-                const amount = item.money[idx + 1];
+                const amount = item.money[idx + 2];
                 const isNumber = typeof amount === 'number';
                 return (
                   <Td
@@ -48,9 +50,6 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
                   </Td>
                 );
               })}
-              <Td width="12.5%" alignRight>
-                {item.money[item.money.length - 1].toLocaleString()}
-              </Td>
             </tr>
           ))}
         </tbody>
@@ -59,25 +58,20 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
   );
 };
 
-
 const TableWrapper = styled.div`
   width: 100%;
   overflow-x: auto;
-  
   &::-webkit-scrollbar {
     height: 8px;
     width: 8px;
   }
-  
   &::-webkit-scrollbar-track {
     background: ${color.zinc[100]};
     border-radius: 4px;
   }
-  
   &::-webkit-scrollbar-thumb {
     background: ${color.zinc[300]};
     border-radius: 4px;
-    
     &:hover {
       background: ${color.zinc[400]};
     }

@@ -5,9 +5,11 @@ import { Header, Users, Info, Toast } from "@mozu/ui";
 import { useSSE } from "@/hook";
 import { useNavigate } from "react-router-dom";
 import { removeCookiesAsync } from "@configs/util";
+import { useRef } from "react";
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
+  const dirtyFix = useRef<number>(0);
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
@@ -17,15 +19,19 @@ export const StudentWaitPage = () => {
     },
     (error) => {
       console.log(error);
-      Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
+      Toast(`네트워크 에러 발생`, { type: "error" });
     },
     {
       CLASS_NEXT_INV_START: (data) => {
         localStorage.removeItem("trade");
         Toast("투자가 시작되었습니다", { type: "info" });
-        navigate(`/${data.classId}`);
+        navigate(`/${data.classId}`, { replace: true });
       },
       CLASS_CANCEL: async () => {
+        if (dirtyFix.current === 0) {
+          dirtyFix.current++;
+          return;
+        }
         Toast("수업이 취소되었습니다.", { type: "error" });
 
         const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
@@ -52,7 +58,7 @@ export const StudentWaitPage = () => {
           <ContentArea>
             <TextDiv>
               <p>모의투자 시작을 기다리는중...</p>
-              <span>2024년도 모의투자</span>
+              <span>2025년도 모의투자</span>
             </TextDiv>
 
             <LoadingSection>

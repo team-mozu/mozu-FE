@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { noImgIcon } from "@mozu/ui";
 import { useNavigate } from "react-router-dom";
-import { useUnchangedValue } from "@/hook";
 import { useGetClassItem } from "@/apis";
 
 interface IItemContentType {
@@ -14,20 +13,6 @@ interface IItemContentType {
   profitNum: string;
   isUp: boolean;
   onClick?: () => void;
-}
-
-interface IClassProp {
-  classData: ClassResponse[];
-}
-
-interface ClassResponse {
-  itemId: number;
-  itemLogo: string;
-  itemName: string;
-  nowMoney: number;
-  profitMoney: number;
-  profitNum: string;
-  isUp: boolean;
 }
 
 const ItemContent = ({
@@ -109,11 +94,11 @@ export const ItemSidebar = () => {
 
 const ItemContainer = styled.div`
   display: flex;
-  padding: 16px;
+  padding: 1rem;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 74px;
+  min-height: 4.625rem;
   cursor: pointer;
 
   :hover {
@@ -123,22 +108,27 @@ const ItemContainer = styled.div`
 
 const LogoContainer = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
   align-items: center;
+  flex: 1;
+  min-width: 0;
 `;
 
 const ItemPriceContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   align-items: end;
+  flex-shrink: 0;
 `;
 
 const ItemTitleContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   align-items: start;
+  min-width: 0;
+  flex: 1;
 `;
 
 const ItemTitle = styled.div`
@@ -147,6 +137,7 @@ const ItemTitle = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 100%;
 `;
 
 const ItemCode = styled.div`
@@ -166,29 +157,31 @@ const Percent = styled.div<Pick<IItemContentType, "isUp">>`
 `;
 
 const Logo = styled.img`
-  width: 36px;
-  height: 36px;
-  border-radius: 18px;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.zinc[50]};
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 `;
 
 const SideBarContainer = styled.div`
   position: fixed;
   left: 0;
   border-right: 1px solid ${color.zinc[200]};
-  width: 320px;
-  height: 100%;
+  width: clamp(240px, 25vw, 320px);
+  height: 100vh;
   background-color: ${color.white};
-  padding: 24px 0;
+  padding: 1.5rem 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  box-shadow: 2px 0 4px rgba(93, 93, 93, 0.1);
+  gap: 0.5rem;
+  box-shadow: 0.125rem 0 0.25rem rgba(93, 93, 93, 0.1);
   z-index: 1;
+  overflow-y: auto;
 `;
 
 const ItemContentContainer = styled.div`
@@ -203,5 +196,5 @@ const ItemContentContainer = styled.div`
 const Title = styled.div`
   font: ${font.b1};
   color: ${color.zinc[600]};
-  padding-left: 16px;
+  padding-left: 1rem;
 `;

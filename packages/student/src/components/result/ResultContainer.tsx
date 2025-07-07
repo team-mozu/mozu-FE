@@ -9,6 +9,8 @@ import { useSSE } from "@/hook";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { roundToFixed } from "@/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import { resetShownInvDegs } from "@/pages/HomePage";
 
 interface ValueStyleProps {
   isPositive?: boolean;
@@ -30,8 +32,8 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
   const profitNum = parseFloat(profitNumRaw.toString().replace("%", ""));
   const roundedProfitNum = roundToFixed(profitNum, 2);
   const profitNumStr = `${roundedProfitNum}%`;
+  const queryClient = useQueryClient();
 
-  // 숫자 파싱을 통해 부호 판단
   const valueProfitNum = parseFloat(valueProfitStr.toString().replace(/,/g, ""));
   const profitNumNum = parseFloat(profitNumStr.toString().replace("%", ""));
 
@@ -42,18 +44,29 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     setIsOpen(true);
   }
 
+  const handleContinue = async () => {
+    resetShownInvDegs();
+
+    queryClient.invalidateQueries({ queryKey: ['getClass'] });
+    queryClient.invalidateQueries({ queryKey: ['getArticle'] });
+    queryClient.invalidateQueries({ queryKey: ['getTeam'] });
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    navigate(`/${data.classId}`, { replace: true })
+  }
+
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     (data) => { },
     (error) => {
       console.log(error);
-      Toast(`SSE 에러 발생: ${error.message}`, { type: "error" });
+      Toast(`네트워크 에러 발생`, { type: "error" });
     },
     {
       CLASS_NEXT_INV_START: (data) => {
         Toast("다음 투자가 시작되었습니다", { type: "info" });
         setData(data);
-        // navigate(`/${data.classId}/home`);
         setIsWait(false);
       },
     }
@@ -201,41 +214,17 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                   iconSize={24}
                   hoverBackgroundColor={color.orange[600]}
                   disabled={isWait}
-                  onClick={() => {
-                    navigate(`/${data.classId}`);
-                  }}
+                  onClick={handleContinue}
                 >
                   계속하기
                 </Button>}
             </ButtonDiv>
           </RightContainer>
         </Main>
-      </Container>
+      </Container >
     </>
   );
 };
-
-// !
-
-const _TestContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  > label {
-    font: ${font.b1};
-    color: ${color.zinc[600]};
-  }
-  > div {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid ${color.zinc[100]};
-    border-radius: 8px;
-    background-color: ${color.zinc[50]};
-  }
-`;
 
 const Container = styled.div`
   width: 848px;

@@ -6,6 +6,7 @@ interface IRankingDivProp {
   teamName: string;
   schoolName: string;
   price: number;
+  isOurTeam?: boolean;
 }
 
 export const RankingDiv = ({
@@ -13,14 +14,18 @@ export const RankingDiv = ({
   teamName,
   schoolName,
   price,
+  isOurTeam = false,
 }: IRankingDivProp) => {
   return (
-    <Wrapper rank={rank}>
+    <Wrapper rank={rank} isOurTeam={isOurTeam}>
       <Rank>
         <span>{rank}</span>등
       </Rank>
       <Team>
-        <TeamName>{teamName}</TeamName>
+        <TeamNameContainer>
+          <TeamName>{teamName}</TeamName>
+          {isOurTeam && <OurTeamBadge>우리팀</OurTeamBadge>}
+        </TeamNameContainer>
         <School>{schoolName}</School>
       </Team>
       <Price>
@@ -30,56 +35,71 @@ export const RankingDiv = ({
   );
 };
 
-// rank에 따라 border 색상을 변경
-const Wrapper = styled.div<{ rank: number }>`
+// RankingDiv 컴포넌트 스타일
+const Wrapper = styled.div<{ rank: number; isOurTeam: boolean }>`
   width: 100%;
-  height: 86px;
-  padding: 20px;
+  padding: 16px 20px;
   display: flex;
-  gap: 8px;
-  background-color: ${color.white};
-  border-radius: 4px;
+  gap: 16px;
   align-items: center;
-  border: 2px solid
-    ${({ rank }) => {
-      switch (rank) {
-        case 1:
-          return color.orange[500]; // 1등: 빨간색
-        case 2:
-          return color.orange[200]; // 2등: 주황색
-        default:
-          return color.zinc[100]; // 기타 등수: 기본 회색
-      }
-    }};
+  border-radius: 8px;
+  background-color: ${({ isOurTeam }) => isOurTeam ? color.orange[50] : color.white};
+  border: 2px solid ${({ isOurTeam }) => isOurTeam ? color.orange[300] : color.zinc[100]};
+  box-sizing: border-box;
+  flex-wrap: wrap;
 `;
 
 const Rank = styled.p`
   font: ${font.t3};
   color: ${color.zinc[800]};
-  min-width: 48px;
+  flex: 0 0 60px;
+  text-align: left;
 `;
 
 const Team = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 150px;
+`;
+
+const TeamNameContainer = styled.div`
+  display: flex;
+  align-items: center;
   gap: 8px;
-  min-width: 300px;
 `;
 
 const TeamName = styled.p`
   font: ${font.t3};
   color: ${color.zinc[800]};
+  word-break: keep-all;
+`;
+
+const OurTeamBadge = styled.span`
+  padding: 2px 8px;
+  background-color: ${color.orange[100]};
+  color: ${color.orange[700]};
+  font: ${font.l1};
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
 `;
 
 const School = styled.p`
   font: ${font.l2};
   color: ${color.zinc[600]};
+  word-break: keep-all;
 `;
 
 const Price = styled.p`
   font: ${font.t1};
   color: ${color.zinc[800]};
+  flex: 0 0 auto;
+  white-space: nowrap;
+  text-align: right;
   > span {
-    width: 100%;
+    display: inline-block;
+    min-width: 80px;
   }
 `;

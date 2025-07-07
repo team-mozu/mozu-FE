@@ -8,8 +8,10 @@ import { color, font } from "@mozu/design-token";
 import { useGetHoldItems } from "@/apis";
 import { roundToFixed } from "@/utils";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface StockData {
+  id: string | number;
   name: string;
   tradePrice: string;
   quantity: string;
@@ -20,11 +22,33 @@ interface StockData {
 
 export const StockTable = () => {
   const { data, isLoading, error } = useGetHoldItems();
+  const navigate = useNavigate();
+
+  // 종목 이름 클릭 핸들러
+  const handleStockClick = (stockId: string | number) => {
+    navigate(`stock/${stockId}`);
+  };
 
   // 컬럼 정의를 useMemo로 메모이제이션
   const columns: ColumnDef<StockData>[] = useMemo(
     () => [
-      { accessorKey: "name", header: "종목 이름", size: 376 },
+      {
+        accessorKey: "name",
+        header: "종목 이름",
+        size: 376,
+        cell: ({ row }) => {
+          const stockName = row.getValue("name") as string;
+          const stockId = row.original.id;
+          return (
+            <StockNameButton
+              onClick={() => handleStockClick(stockId)}
+              type="button"
+            >
+              {stockName}
+            </StockNameButton>
+          );
+        },
+      },
       {
         accessorKey: "tradePrice",
         header: "거래 가격",
@@ -114,6 +138,7 @@ export const StockTable = () => {
     return data.map((item) => {
       // 안전한 데이터 접근
       const safeItem = {
+        itemId: item?.itemId || item?.id || "",
         itemName: item?.itemName || "",
         buyMoney: typeof item?.buyMoney === "number" ? item.buyMoney : 0,
         itemCnt: typeof item?.itemCnt === "number" ? item.itemCnt : 0,
@@ -125,6 +150,7 @@ export const StockTable = () => {
       };
 
       return {
+        id: safeItem.itemId || item?.id || "", // ID 필드 추가
         name: safeItem.itemName,
         tradePrice: safeItem.buyMoney.toLocaleString("ko-KR"),
         quantity: safeItem.itemCnt.toString(),
@@ -201,11 +227,11 @@ export const StockTable = () => {
                 >
                   {cell.column.columnDef.cell
                     ? (cell.column.columnDef.cell as any)({
-                        row: cell.row,
-                        getValue: () => cell.getValue(),
-                        renderValue: () => cell.getValue(),
-                        cell: cell,
-                      })
+                      row: cell.row,
+                      getValue: () => cell.getValue(),
+                      renderValue: () => cell.getValue(),
+                      cell: cell,
+                    })
                     : String(cell.getValue() || "")}
                 </Td>
               ))}
@@ -282,4 +308,25 @@ const RateWrapper = styled.div`
 const ProfitSpan = styled.span<{ isProfit: boolean }>`
   color: ${(props) => (props.isProfit ? color.red[500] : color.blue[500])};
   font: ${font.b2};
+`;
+
+// 종목 이름 클릭 가능한 버튼 스타일
+const StockNameButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  font: ${font.b2};
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  text-decoration: underline;
+  
+  &:hover {
+    text-decoration: none;
+  }
+  
+  &:focus {
+    outline: 2px solid ${color.black};
+    outline-offset: 2px;
+  }
 `;

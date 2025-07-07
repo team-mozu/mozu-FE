@@ -1,7 +1,7 @@
-import { useTeamRank, useTeamResult } from '@/apis';
+import { useTeamRank, useTeamResult, useGetTeamDetail } from '@/apis';
 import styled from '@emotion/styled';
 import { color, font } from '@mozu/design-token';
-import { Button, RankingDiv, Trophy } from '@mozu/ui';
+import { Button, Trophy, RankingDiv } from '@mozu/ui';
 
 interface IRankModal {
   onCancle: () => void;
@@ -11,6 +11,9 @@ interface IRankModal {
 export const RankModal = ({ onCancle, endRound }: IRankModal) => {
   const { data: rankData } = useTeamRank();
   const { data: teamResult } = useTeamResult();
+  const { data: teamDetail } = useGetTeamDetail();
+
+  console.log(teamResult?.invDeg, endRound);
 
   return (
     <ModalBackdrop onClick={onCancle}>
@@ -27,7 +30,14 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
 
         <RankingContainer>
           {rankData?.map((data, index) => (
-            <RankingDiv key={index} rank={index + 1} teamName={data.name} schoolName={data.schoolName} price={data.totalMoney} />
+            <RankingDiv
+              key={index}
+              rank={index + 1}
+              teamName={data.name}
+              schoolName={data.schoolName}
+              price={data.totalMoney}
+              isOurTeam={data.name === teamDetail?.name}
+            />
           )) || (
               <LoadingWrapper>
                 <LoadingSpinner />
@@ -47,6 +57,7 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
     </ModalBackdrop>
   );
 };
+
 
 const ModalBackdrop = styled.div`
   position: fixed;

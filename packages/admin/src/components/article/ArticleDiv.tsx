@@ -51,7 +51,7 @@ const ArticleDivContiner = styled.div<{ selected: boolean }>`
 `;
 
 const ArticleTitle = styled.p<{ selected: boolean }>`
-  max-width: 398px;
+  max-width: 340px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

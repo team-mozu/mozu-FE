@@ -1,6 +1,8 @@
+import { useGetClassDetail } from "@/apis";
 import { NewsDetail } from "./NewsDetail";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
+import { useNavigate } from "react-router-dom";
 
 interface ArticleModalProps {
   article: any;
@@ -14,19 +16,42 @@ interface ArticleModalProps {
 }
 
 export function ArticleModal({ article, total, current, onPrev, onNext, onClose, isFirst, isLast }: ArticleModalProps) {
+  const MAX_CONTENT_LENGTH = 300; // 최대 글자 수 설정
+  const navigate = useNavigate();
+  const description = article.description || "";
+  const isTruncated = description.length > MAX_CONTENT_LENGTH;
+  const truncatedDescription = isTruncated
+    ? description.substring(0, MAX_CONTENT_LENGTH) + "..."
+    : description;
+
+  const handleViewFullArticle = () => {
+    if (article.articleId) {
+      navigate(`news/${article.articleId}`);
+    }
+  };
+  console.log(article.articleId)
+
   return (
     <ModalBackdrop onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <NewsDetail
           img={article.image || ""}
           title={article.title || ""}
-          main={article.description || ""}
+          main={truncatedDescription}
         />
+
+        {isTruncated && (
+          <ViewFullArticleButton onClick={handleViewFullArticle}>
+            해당 기사 보러가기
+          </ViewFullArticleButton>
+        )}
+
         <StepperWrapper>
           {Array.from({ length: total }).map((_, idx) => (
             <StepCircle key={idx} active={idx === current} />
           ))}
         </StepperWrapper>
+
         <ModalButtonRow>
           <ModalButton onClick={onPrev} disabled={isFirst}>
             이전
@@ -68,6 +93,32 @@ const ModalContainer = styled.div`
   align-items: center;
 `;
 
+const ViewFullArticleButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  margin-top: 16px;
+  border: 1px solid ${color.blue[300]};
+  border-radius: 8px;
+  background: ${color.blue[50]};
+  color: ${color.blue[600]};
+  font: ${font.b2};
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  
+  &:hover {
+    background: ${color.blue[100]};
+    border-color: ${color.blue[400]};
+    color: ${color.blue[700]};
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+`;
+
 const ModalButtonRow = styled.div`
   display: flex;
   gap: 16px;
@@ -84,9 +135,11 @@ const ModalButton = styled.button`
   color: ${color.zinc[800]};
   cursor: pointer;
   transition: background 0.2s;
+  
   &:hover:not(:disabled) {
     background: ${color.zinc[200]};
   }
+  
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -107,4 +160,4 @@ const StepCircle = styled.div<{ active: boolean }>`
   background: ${({ active }) => (active ? color.blue[500] : color.zinc[200])};
   border: 2px solid ${({ active }) => (active ? color.blue[500] : color.zinc[200])};
   transition: background 0.2s, border 0.2s;
-`; 
+`;

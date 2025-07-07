@@ -69,7 +69,7 @@ export const useSSE = (
     };
 
     eventSource.onerror = (err) => {
-      console.error("[SSE] 연결 오류:", err);
+      console.error("[SSE] 연결 오류", err);
       onError?.(err);
     };
 

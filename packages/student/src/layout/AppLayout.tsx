@@ -1,7 +1,7 @@
 import { Header, Toast } from "@mozu/ui";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { useGetArticleList, useGetClassItem, useGetTeamDetail } from "@/apis";
+import { useGetClassItem, useGetTeamDetail } from "@/apis";
 import { ItemSidebar, HistorySidebar, ItemSidebarSkeleton } from "@/components";
 import { useSSE } from "@/hook";
 import { removeCookiesAsync } from "@configs/util";
@@ -10,12 +10,11 @@ import { headerConfigMap } from "@/routes";
 import { useRef } from "react";
 
 export const AppLayout = () => {
-  const { data: teamData, refetch: teamDataRefetch } = useGetTeamDetail();
-  const { refetch: articleDataRefetch } = useGetArticleList();
+  const { data: teamData } = useGetTeamDetail();
   const { pathname } = useLocation();
   const dirtyFix = useRef<number>(0); // FIXME: 임시적인 예외 처리입니다
-
-  const { isLoading, refetch: classItemRefetch } = useGetClassItem();
+  const invStartFix = useRef<number>(0);
+  const { isLoading } = useGetClassItem();
 
   const navigate = useNavigate();
 
@@ -24,11 +23,12 @@ export const AppLayout = () => {
 
   useSSE(`${import.meta.env.VITE_SERVER_URL}/team/sse`, undefined, undefined, {
     CLASS_NEXT_INV_START: () => {
+      console.log("asnansn")
       localStorage.removeItem("trade");
-      classItemRefetch();
-      teamDataRefetch();
-      articleDataRefetch();
-      queryClient.invalidateQueries({ queryKey: ["getStock"], exact: false });
+      if (invStartFix.current === 0) {
+        invStartFix.current++;
+        return;
+      }
       Toast("다음 투자가 시작되었습니다", { type: "info" });
     },
     CLASS_CANCEL: async () => {
@@ -37,7 +37,6 @@ export const AppLayout = () => {
         return;
       }
       Toast("수업이 취소되었습니다.", { type: "error" });
-
       queryClient.clear();
       const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
       await removeCookiesAsync(["accessToken", "authority"], {
@@ -96,7 +95,7 @@ const Layout = styled.div`
 `;
 
 const MainContent = styled.div<{ isResultPage: boolean }>`
-  padding-right: ${({ isResultPage }) => (isResultPage ? 0 : "360px")};
+  padding-right: ${({ isResultPage }) => (isResultPage ? 0 : "463px")};
   margin-left: ${({ isResultPage }) => (isResultPage ? 0 : "320px")};
   flex: 1;
 `;

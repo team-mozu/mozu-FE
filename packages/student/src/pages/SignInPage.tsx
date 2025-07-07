@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Input, LogoWithText } from "@mozu/ui";
@@ -15,6 +15,43 @@ export const SignInPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const { mutate: studentLogin, isPending } = useStudentLogin();
 
+  // 뒤로가기 방지 useEffect
+  useEffect(() => {
+    // 히스토리가 초기화되었는지 확인
+    const isHistoryCleared = sessionStorage.getItem("historyCleared");
+
+    if (isHistoryCleared) {
+      // 히스토리 초기화 플래그 제거
+      sessionStorage.removeItem("historyCleared");
+
+      // 현재 페이지를 히스토리의 첫 번째 엔트리로 만들기
+      window.history.replaceState(null, "", "/signin");
+    }
+
+    // 뒤로가기 방지 함수
+    const preventBackNavigation = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // 현재 페이지를 다시 푸시하여 뒤로가기 방지
+      window.history.pushState(null, "", "/signin");
+
+      // 선택적: 사용자에게 알림 (필요에 따라 주석 해제)
+      // alert("이전 페이지로 돌아갈 수 없습니다.");
+    };
+
+    // 페이지 로드 시 히스토리 엔트리 추가
+    window.history.pushState(null, "", "/signin");
+
+    // popstate 이벤트 리스너 추가
+    window.addEventListener("popstate", preventBackNavigation);
+
+    // 페이지 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener("popstate", preventBackNavigation);
+    };
+  }, []);
+
   /**
    * 입력값이 모두 유효하고 로그인 중이 아닐 때 true를 반환
    * @return {boolean}
@@ -28,7 +65,6 @@ export const SignInPage = () => {
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isValidForm()) return;
-
     studentLogin(state, {
       onError: () => setErrorMessage("형식을 다시 확인해주세요."),
     });
@@ -38,11 +74,9 @@ export const SignInPage = () => {
     (field: "classNum" | "schoolName" | "teamName") =>
       (e: React.ChangeEvent<HTMLInputElement>) => {
         let value: string | number = e.target.value;
-
         if (field === "classNum") {
           value = value.replace(/\D/g, "").slice(0, 7);
         }
-
         onChangeInputValue({ target: { name: field, value } });
         setErrorMessage("");
       };
@@ -146,11 +180,9 @@ const LoginButton = styled.button`
   font: ${font.b1};
   border: none;
   border-radius: 8px;
-
   :hover {
     background-color: ${color.orange[400]};
   }
-
   :disabled {
     cursor: not-allowed;
     opacity: 0.5;

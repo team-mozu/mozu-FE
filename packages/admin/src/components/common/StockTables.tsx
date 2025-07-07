@@ -184,13 +184,12 @@ export const StockTables = ({
     }
   };
 
-  // 차수에 따라 동적 컬럼 생성
+  // 차수에 따라 동적 컬럼 생성 (이전가, 현재가, 1차, 2차, 3차...)
   const dynamicColumns = useMemo(() => {
-    const columns = ["현재가"];
+    const columns = ["이전가", "현재가"];
     for (let i = 1; i <= selectedRound; i++) {
       columns.push(`${i}차`);
     }
-    columns.push("종료가");
     return columns;
   }, [selectedRound]);
 
@@ -257,10 +256,8 @@ export const StockTables = ({
         }
       },
     },
-    // 현재가와 차수별 가격 컬럼 동적 생성
+    // 이전가, 현재가, 차수별 가격 컬럼 동적 생성
     ...dynamicColumns.map((header, index) => {
-      const isClosePrice = header === "종료가";
-
       return {
         id: `level${index}`,
         header: () => <>{header}</>,
@@ -271,9 +268,9 @@ export const StockTables = ({
           const money = row.original.money || [];
           const value = money[index] ?? 0;
           const inputId = `${row.original.itemId}-${index}`;
-          const placeholder = isClosePrice
-            ? 0
-            : `${index > 0 ? index + "차" : "현재"} 금액`;
+
+          // placeholder를 헤더명으로 설정
+          const placeholder = `${header} 금액`;
 
           if (isEdit) {
             return (
