@@ -33,12 +33,11 @@ export const TeamInvestStatusTable = ({
   contents,
 }: TeamInvestStatusTableProps) => {
   const header = [
-    { text: "구분", width: "120px" },
-    { text: "종목 이름", width: "300px" },
-    { text: "거래 가격", width: "140px" },
-    { text: "수량", width: "100px" },
-    { text: "현재 가격", width: "140px" },
-    { text: "수익률", width: "200px" },
+    { text: "구분", width: "140px" },
+    { text: "종목 이름", width: "320px" },
+    { text: "거래 가격", width: "160px" },
+    { text: "수량", width: "120px" },
+    { text: "수익률", width: "260px" },
   ];
 
   const renderRate = (item: DealContent) => {
@@ -72,7 +71,7 @@ export const TeamInvestStatusTable = ({
           contents.map((item) => (
             <tr key={item.id}>
               <Td
-                width="120px"
+                width="140px"
                 textAlign="center"
                 padding="0px"
                 color={
@@ -87,7 +86,7 @@ export const TeamInvestStatusTable = ({
               </Td>
 
               <Td
-                width="300px"
+                width="320px"
                 textAlign="left"
                 padding="0 0 0 16px"
                 color={color.black}
@@ -96,7 +95,7 @@ export const TeamInvestStatusTable = ({
               </Td>
 
               <Td
-                width="140px"
+                width="160px"
                 textAlign="right"
                 padding="0 16px 0 0"
                 color={color.black}
@@ -105,7 +104,7 @@ export const TeamInvestStatusTable = ({
               </Td>
 
               <Td
-                width="100px"
+                width="120px"
                 textAlign="center"
                 padding="0"
                 color={color.black}
@@ -114,16 +113,7 @@ export const TeamInvestStatusTable = ({
               </Td>
 
               <Td
-                width="140px"
-                textAlign="right"
-                padding="0 16px 0 0"
-                color={color.black}
-              >
-                {(item.totalMoney / item.orderCount).toLocaleString()}
-              </Td>
-
-              <Td
-                width="200px"
+                width="260px"
                 textAlign="right"
                 padding="0px 16px 0px 0px"
                 color={color.black}
@@ -145,13 +135,13 @@ export const TeamInvestStatusTable = ({
           ))
         ) : (
           <tr>
-            <Td width="100%" padding="20px" colSpan={6}>
+            <Td width="100%" padding="20px" colSpan={5}>
               데이터가 없습니다.
             </Td>
           </tr>
         )}
       </Tbody>
-    </Table >
+    </Table>
   );
 };
 

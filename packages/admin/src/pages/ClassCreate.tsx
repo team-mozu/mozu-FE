@@ -109,8 +109,13 @@ export const CreateClass = () => {
       items.map((item) => {
         if (item.id === itemId) {
           const updatedMoney = [...item.money];
-          // levelIndex가 종료가일 수도 있음
           updatedMoney[levelIndex] = value ?? 0;
+
+          // 1번 인덱스(현재가)가 변경된 경우, 0번 인덱스도 같은 값으로 설정
+          if (levelIndex === 1) {
+            updatedMoney[0] = value ?? 0;
+          }
+
           return { ...item, money: updatedMoney };
         }
         return item;
@@ -123,6 +128,12 @@ export const CreateClass = () => {
         if (item.itemId === itemId) {
           const updatedMoney = [...item.money];
           updatedMoney[levelIndex] = value ?? 0;
+
+          // 1번 인덱스(현재가)가 변경된 경우, 0번 인덱스도 같은 값으로 설정
+          if (levelIndex === 1) {
+            updatedMoney[0] = value ?? 0;
+          }
+
           return { ...item, money: updatedMoney };
         }
         return item;
@@ -218,11 +229,24 @@ export const CreateClass = () => {
       return;
     }
 
+    // 요청 전에 classItems의 0번 인덱스를 1번 인덱스(현재가)와 같게 설정
+    const processedClassItems = classItems.map((item) => {
+      const updatedMoney = [...item.money];
+      // 0번 인덱스를 1번 인덱스(현재가)와 같게 설정
+      if (updatedMoney.length > 1) {
+        updatedMoney[0] = updatedMoney[1];
+      }
+      return {
+        ...item,
+        money: updatedMoney,
+      };
+    });
+
     const classCreateData: ClassCreateRequest = {
       className: className,
       classDeg: parseInt(classDeg),
       baseMoney: baseMoney,
-      classItems: classItems,
+      classItems: processedClassItems,
       classArticles: classArticles,
     };
 

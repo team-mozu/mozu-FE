@@ -13,7 +13,7 @@ interface classItem {
 
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
   const maxRound = Math.max(...classItems.map((item) => item.money.length - 2));
-  const header = ['종목 이름', '이전가', '현재가', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`)];
+  const header = ['종목 이름', '현재가', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`)];
 
   return (
     <TableWrapper>
@@ -31,9 +31,6 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
           {classItems.map((item) => (
             <tr key={item.itemId}>
               <Td width="25%">{item.itemName}</Td>
-              <Td width="12.5%" alignRight>
-                {item.money[0].toLocaleString()}
-              </Td>
               <Td width="12.5%" alignRight>
                 {item.money[1].toLocaleString()}
               </Td>

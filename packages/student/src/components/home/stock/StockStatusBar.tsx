@@ -14,6 +14,26 @@ export const StockStatusBar = ({
   const ItemId = stockId ? parseInt(stockId) : null;
   const { data, isLoading } = useGetStockDetail(ItemId);
 
+  // 새로 추가한 로직
+  const profitNum = data?.profitNum && !isNaN(parseFloat(data?.profitNum))
+    ? data.profitNum
+    : "0.00%";
+  const profitMoney = data?.profitMoney ?? 0;
+
+  const isZeroPercent =
+    profitMoney === 0 &&
+    profitNum === "0.00%";
+
+  const isUp = isZeroPercent
+    ? false
+    : !(typeof profitNum === "string" && profitNum.includes("-"));
+
+  const priceColor = isZeroPercent
+    ? color.zinc[500]
+    : isUp
+      ? color.red[500]
+      : color.blue[500];
+
   return (
     <Wrapper>
       <Stock>
@@ -35,13 +55,11 @@ export const StockStatusBar = ({
               {data?.itemName ?? ''}
               <span>{data?.itemId ?? 0}</span>
             </StockName>
-            <StockPrice
-              color={
-                data?.profitNum.includes('+') ? color.red[500] : color.blue[500]
-              }
-            >
+            <StockPrice color={priceColor}>
               {data?.nowMoney?.toLocaleString()}원{' '}
-              <span>{data?.profitNum}</span>
+              <span>
+                {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""}${profitNum})`}
+              </span>
             </StockPrice>
           </StockInfo>
         )}
@@ -52,7 +70,7 @@ export const StockStatusBar = ({
           backgroundColor={color.red[500]}
           color="white"
           width={80}
-          onClick={() => openModal("매수" /*currentStock*/)}
+          onClick={() => openModal("매수")}
           disabled={isLoading}
           hoverBackgroundColor={color.red[600]}
           hoverBorderColor={color.red[600]}
@@ -64,7 +82,7 @@ export const StockStatusBar = ({
           backgroundColor={color.blue[500]}
           color="white"
           width={80}
-          onClick={() => openModal("매도" /*currentStock*/)}
+          onClick={() => openModal("매도")}
           disabled={isLoading}
           hoverBackgroundColor={color.blue[600]}
           hoverBorderColor={color.blue[600]}
@@ -75,6 +93,7 @@ export const StockStatusBar = ({
     </Wrapper>
   );
 };
+
 
 const Btn = styled.div`
   display: flex;

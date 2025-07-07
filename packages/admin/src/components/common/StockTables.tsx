@@ -17,7 +17,7 @@ interface StockData {
   itemId: number;
   itemCode: string;
   itemName: string;
-  money: (number | null)[]; // null은 미입력 상태를 나타냄
+  money: (number | null)[]; // [현재가, 현재가, 1차, 2차, 3차] - 0번 인덱스는 렌더링 안함
   stockChecked?: boolean;
 }
 
@@ -99,6 +99,8 @@ export const StockTables = ({
 }: InvestmentItemsTableProps) => {
   const selectedRound = parseInt(degree, 10);
   const [stockData, setStockData] = useState<StockData[]>(data);
+
+  console.log(stockData);
 
   // Update local state when external data changes
   useEffect(() => {
@@ -184,9 +186,10 @@ export const StockTables = ({
     }
   };
 
-  // 차수에 따라 동적 컬럼 생성 (이전가, 현재가, 1차, 2차, 3차...)
+  // 차수에 따라 동적 컬럼 생성 (현재가, 1차, 2차, 3차...)
+  // 0번 인덱스(현재가)는 렌더링하지 않음
   const dynamicColumns = useMemo(() => {
-    const columns = ["이전가", "현재가"];
+    const columns = ["현재가"]; // 1번 인덱스의 현재가만 표시
     for (let i = 1; i <= selectedRound; i++) {
       columns.push(`${i}차`);
     }
@@ -256,18 +259,22 @@ export const StockTables = ({
         }
       },
     },
-    // 이전가, 현재가, 차수별 가격 컬럼 동적 생성
-    ...dynamicColumns.map((header, index) => {
+    // 현재가, 차수별 가격 컬럼 동적 생성
+    // 0번 인덱스는 건너뛰고 1번 인덱스부터 시작
+    ...dynamicColumns.map((header, displayIndex) => {
+      // 실제 데이터 배열에서의 인덱스 (1번부터 시작)
+      const actualIndex = displayIndex + 1;
+
       return {
-        id: `level${index}`,
+        id: `level${actualIndex}`,
         header: () => <>{header}</>,
         size: 140,
         meta: { align: "right" },
         cell: ({ row }) => {
-          // FIX: Safely access money array with proper bounds checking
+          // money 배열에서 실제 인덱스로 접근
           const money = row.original.money || [];
-          const value = money[index] ?? 0;
-          const inputId = `${row.original.itemId}-${index}`;
+          const value = money[actualIndex] ?? 0;
+          const inputId = `${row.original.itemId}-${actualIndex}`;
 
           // placeholder를 헤더명으로 설정
           const placeholder = `${header} 금액`;
@@ -278,7 +285,7 @@ export const StockTables = ({
                 ref={(el) => (inputRefs.current[inputId] = el)}
                 value={value}
                 onChange={(newValue) =>
-                  handlePriceChange(row.original.itemId, index, newValue)
+                  handlePriceChange(row.original.itemId, actualIndex, newValue)
                 }
                 placeholder={placeholder}
               />

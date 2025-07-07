@@ -466,7 +466,7 @@ const MaxButton = styled.button<{ themeColor: string }>`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+  min-width: 75px; 
   &:hover:not(:disabled) {
     background: ${props => props.themeColor};
     color: ${color.white};

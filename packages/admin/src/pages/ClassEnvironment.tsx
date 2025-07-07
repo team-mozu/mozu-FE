@@ -74,7 +74,7 @@ export const ClassEnvironment = () => {
 
     deleteClass(classId, {
       onSuccess: () => {
-        navigate(-1); // 삭제 후 이전 페이지로 이동
+        navigate('/class-management'); // 삭제 후 이전 페이지로 이동
       },
       onError: (error) => {
         console.error("클래스 삭제 중 오류 발생:", error);

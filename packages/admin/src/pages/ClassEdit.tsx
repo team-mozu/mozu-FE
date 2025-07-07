@@ -223,12 +223,17 @@ export const ClassEdit = () => {
     levelIndex: number,
     value: number | null,
   ) => {
-    // 가격 업데이트
     setClassItems((items) =>
       items.map((item) => {
         if (item.id === itemId) {
           const updatedMoney = [...item.money];
           updatedMoney[levelIndex] = value ?? 0;
+
+          // 만약 현재가(1번 인덱스)를 수정했다면
+          if (levelIndex === 1) {
+            updatedMoney[0] = value ?? 0;
+          }
+
           return { ...item, money: updatedMoney };
         }
         return item;
@@ -240,6 +245,12 @@ export const ClassEdit = () => {
         if (item.itemId === itemId) {
           const updatedMoney = [...item.money];
           updatedMoney[levelIndex] = value ?? 0;
+
+          // 마찬가지로 stockData에도 반영
+          if (levelIndex === 1) {
+            updatedMoney[0] = value ?? 0;
+          }
+
           return { ...item, money: updatedMoney };
         }
         return item;
@@ -321,7 +332,6 @@ export const ClassEdit = () => {
   };
 
   // 수정 제출 핸들러
-  // handleSubmit 함수 수정된 부분
   const handleSubmit = () => {
     // 유효성 검사
     if (!className.trim()) {
@@ -334,19 +344,29 @@ export const ClassEdit = () => {
       return;
     }
 
-    // API 제출 데이터 구성
+    // 모든 아이템의 0번 인덱스를 1번 인덱스로 덮어씌움
+    const processedClassItems = classItems.map(item => {
+      const updatedMoney = [...item.money];
+      if (updatedMoney.length > 1) {
+        updatedMoney[0] = updatedMoney[1] ?? 0;
+      }
+      return {
+        ...item,
+        money: updatedMoney
+      };
+    });
+
     const classData: ClassData = {
       className: className,
       classDeg: parseInt(classDeg),
       baseMoney: baseMoney,
-      classItems: classItems.map((item) => {
-        // 현재가(0) + 차수별 가격(1~classDeg) + 종료가(classDeg+1)를 모두 포함
+      classItems: processedClassItems.map((item) => {
         const moneyForRequest = [
-          ...item.money.slice(0, parseInt(classDeg) + 2) // +2로 변경하여 종료가까지 포함
+          ...item.money.slice(0, parseInt(classDeg) + 2) // +2로 종료가까지 포함
         ];
 
-        // 배열 길이가 부족한 경우 null로 채움
-        const requiredLength = parseInt(classDeg) + 2; // 현재가 + 차수들 + 종료가
+        // 배열 길이 부족 시 null 채우기
+        const requiredLength = parseInt(classDeg) + 2;
         while (moneyForRequest.length < requiredLength) {
           moneyForRequest.push(null);
         }
@@ -356,21 +376,19 @@ export const ClassEdit = () => {
           money: moneyForRequest,
         };
       }),
-      classArticles: classArticles.map((group) => {
-        return {
-          invDeg: group.invDeg,
-          articles: group.articles,
-        };
-      }),
+      classArticles: classArticles.map((group) => ({
+        invDeg: group.invDeg,
+        articles: group.articles,
+      })),
     };
 
     console.log('Submitting class edit data:', classData);
 
-    // API 호출
     editClass(classData, {
       onSuccess: () => navigate(`/class-management/${id}`),
     });
   };
+
 
   // 기사 테이블용 데이터 변환
   const articleTableData = classArticles.map((group) => {

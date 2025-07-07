@@ -15,6 +15,10 @@ interface IItemContentType {
   onClick?: () => void;
 }
 
+interface IPercentProps extends Pick<IItemContentType, "isUp"> {
+  isZero?: boolean;
+}
+
 const ItemContent = ({
   itemId,
   itemName,
@@ -25,6 +29,12 @@ const ItemContent = ({
   onClick,
   isUp,
 }: IItemContentType) => {
+  // profitMoney와 profitNum이 유효한 값인지 확인 (0%도 표시)
+  const hasValidData = profitMoney !== undefined && profitNum !== undefined;
+
+  // 0%인지 확인
+  const isZeroPercent = profitMoney === 0 && profitNum === "0.00%";
+
   return (
     <ItemContainer onClick={onClick}>
       <LogoContainer>
@@ -40,10 +50,10 @@ const ItemContent = ({
           <ItemCode>{itemId}</ItemCode>
         </ItemTitleContainer>
       </LogoContainer>
-      {profitMoney !== 0 && (
+      {hasValidData && (
         <ItemPriceContainer>
           <Price>{nowMoney.toLocaleString()}원</Price>
-          <Percent isUp={isUp}>
+          <Percent isUp={isUp} isZero={isZeroPercent}>
             {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""
               }${profitNum})`}
           </Percent>
@@ -62,28 +72,33 @@ export const ItemSidebar = () => {
       <Title>전체 종목</Title>
       <ItemContentContainer>
         {Array.isArray(data) && data.length > 0 ? (
-          data.map((data, id) => (
-            <ItemContent
-              key={id}
-              itemId={data.itemId}
-              itemName={data.itemName}
-              itemLogo={data.itemLogo}
-              nowMoney={data.nowMoney ?? 0}
-              isUp={
-                typeof data.profitNum === "string" &&
-                  data.profitNum.includes("-")
-                  ? false
-                  : true
-              }
-              profitMoney={data.profitMoney ?? 0}
-              profitNum={
-                data.profitNum && !isNaN(parseFloat(data.profitNum))
-                  ? data.profitNum
-                  : "0%"
-              }
-              onClick={() => navigate(`stock/${data.itemId}`)}
-            />
-          ))
+          data.map((data, id) => {
+            const profitNum = data.profitNum && !isNaN(parseFloat(data.profitNum))
+              ? data.profitNum
+              : "0%";
+
+            // 0%인지 확인
+            const isZeroPercent = (data.profitMoney ?? 0) === 0 && (profitNum === "0%" || profitNum === "0");
+
+            // isUp 계산 - 0%인 경우는 중립, 그 외엔 기존 로직
+            const isUp = isZeroPercent
+              ? false // 0%일 때는 기본적으로 false (색상은 isZero로 제어)
+              : !(typeof profitNum === "string" && profitNum.includes("-"));
+
+            return (
+              <ItemContent
+                key={id}
+                itemId={data.itemId}
+                itemName={data.itemName}
+                itemLogo={data.itemLogo}
+                nowMoney={data.nowMoney ?? 0}
+                isUp={isUp}
+                profitMoney={data.profitMoney ?? 0}
+                profitNum={profitNum}
+                onClick={() => navigate(`stock/${data.itemId}`)}
+              />
+            );
+          })
         ) : (
           <p>데이터가 없습니다.</p>
         )}
@@ -151,9 +166,12 @@ const Price = styled.div`
   white-space: nowrap;
 `;
 
-const Percent = styled.div<Pick<IItemContentType, "isUp">>`
+const Percent = styled.div<IPercentProps>`
   font: ${font.l2};
-  color: ${({ isUp }) => (isUp ? color.red[500] : color.blue[500])};
+  color: ${({ isUp, isZero }) => {
+    if (isZero) return color.zinc[500]; // 0%일 때 회색
+    return isUp ? color.red[500] : color.blue[500];
+  }};
 `;
 
 const Logo = styled.img`
