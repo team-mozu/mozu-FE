@@ -23,8 +23,8 @@ export const useGetTeamDetail = () => {
       const { data } = await instance.get<TeamDeatilResponse>(`${router}`);
       return data;
     },
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: 5000,
+    gcTime: 5000,
   });
 };
 
@@ -84,7 +84,7 @@ export const useTeamRank = () => {
       const { data } = await instance.get<TeamRankResponse>(`${router}/rank`);
       return data;
     },
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: 5000,
+    gcTime: 5000,
   });
 };

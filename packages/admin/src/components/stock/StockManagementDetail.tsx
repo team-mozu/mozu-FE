@@ -200,7 +200,10 @@ const CompanyText = styled.div`
   white-space: pre-wrap; /* 줄바꿈 문자를 실제 줄바꿈으로 처리 */
 `;
 const LogoImg = styled.img`
-  width: 64px;
+width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
 `;
 const LogoImgDiv = styled(Skeleton)`
   width: 64px;

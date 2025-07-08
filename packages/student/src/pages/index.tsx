@@ -24,11 +24,16 @@ export const NewsDetailPage = lazy(() =>
     default: module.NewsDetailPage,
   })),
 );
+
 export const StudentWaitPage = lazy(() =>
-  import('@/pages/StudentWaitPage').then((module) => ({
-    default: module.StudentWaitPage,
-  })),
+  import('@/pages/StudentWaitPage')
+    .then((module) => ({ default: module.StudentWaitPage }))
+    .catch((error) => {
+      console.error('StudentWaitPage 로드 실패:', error);
+      return { default: () => <div>페이지를 불러올 수 없습니다.</div> };
+    })
 );
+
 export const NotFoundPage = lazy(() =>
   import('@/pages/404').then((module) => ({ default: module.NotFoundPage })),
 );

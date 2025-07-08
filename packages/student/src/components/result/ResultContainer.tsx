@@ -41,7 +41,13 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
   const isProfitNumPositive = profitNumNum >= 0;
 
   const handleEndClass = () => {
-    setIsOpen(true);
+    resetShownInvDegs();
+
+    queryClient.invalidateQueries({ queryKey: ['getClass'] });
+    queryClient.invalidateQueries({ queryKey: ['getArticle'] });
+    queryClient.invalidateQueries({ queryKey: ['getTeam'] });
+
+    navigate(`/signin`, { replace: true });
   }
 
   const handleContinue = async () => {
@@ -80,7 +86,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
             subComment="투자 마치면 총 결과 결산 페이지로 이동합니다."
             message="마치기"
             isPending={false}
-            onDelete={() => navigate(`/signin`)}
+            onDelete={handleEndClass}
             onCancel={() => setIsOpen(false)}
           />
         ) : null
@@ -199,7 +205,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                   borderColor={color.zinc[200]}
                   hoverBackgroundColor={color.zinc[100]}
                   type="logOutImg"
-                  onClick={handleEndClass}
+                  onClick={() => setIsOpen(true)}
                 >
                   투자 마치기
                 </Button>
