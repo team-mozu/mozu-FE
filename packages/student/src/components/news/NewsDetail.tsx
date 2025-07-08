@@ -63,11 +63,10 @@ const ArticleTitle = styled.div`
 `;
 
 const ArticleMain = styled.div`
+  padding-bottom: 1.5rem;
   p {
     font: ${font.b2};
-    color: ${color.zinc[800]};
-    font: ${font.b2};
-    color: ${color.zinc[800]};
+    color: ${color.zinc[800]};  
     white-space: pre-wrap; // 줄바꿈 유지
     word-wrap: break-word; // 단어 단위로 줄바꿈
     overflow-wrap: break-word; // 긴 단어 처리

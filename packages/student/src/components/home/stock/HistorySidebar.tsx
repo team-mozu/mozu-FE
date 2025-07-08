@@ -127,29 +127,31 @@ export const HistorySidebar = () => {
       <SidebarContainer>
         <UpperContainer>
           <TotalAssetContainer>
-            <Title>총 평가 자산</Title>
-            <TotalAssetPrice
-              color={
-                sameValue
-                  ? color.green[600]
-                  : data.valueProfit > 0
-                    ? color.red[500]
-                    : color.blue[500]
-              }
-            >
-              {formattedData.totalMoney}원
-            </TotalAssetPrice>
-            {formattedData.valueProfit !== 0 ? (
-              <ProfitContainer
-                profit={formattedData.valueProfit}
+            <TotalAssetLeft>
+              <Title>총 평가 자산</Title>
+              <TotalAssetPrice
+                color={
+                  sameValue
+                    ? color.green[600]
+                    : data.valueProfit > 0
+                      ? color.red[500]
+                      : color.blue[500]
+                }
               >
-                {formattedData.valueProfit.toLocaleString().includes("-")
-                  ? ""
-                  : "+"}
-                {formattedData.valueProfit.toLocaleString()}원 (
-                {roundToFixed(parseFloat(formattedProfitNum), 2)}%)
-              </ProfitContainer>
-            ) : null}
+                {formattedData.totalMoney}원
+              </TotalAssetPrice>
+              {formattedData.valueProfit !== 0 ? (
+                <ProfitContainer profit={formattedData.valueProfit}>
+                  {formattedData.valueProfit.toLocaleString().includes("-") ? "" : "+"}
+                  {formattedData.valueProfit.toLocaleString()}원 (
+                  {roundToFixed(parseFloat(formattedProfitNum), 2)}%)
+                </ProfitContainer>
+              ) : null}
+            </TotalAssetLeft>
+
+            <TeamContainer>
+              <TeamContent>{data.name}</TeamContent>
+            </TeamContainer>
           </TotalAssetContainer>
           <HoldContainer>
             <HoldContent>
@@ -376,14 +378,19 @@ const TransactionPriceContainer = styled.div`
 const TotalAssetContainer = styled.div`
   width: 100%;
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const TotalAssetLeft = styled.div`
+  display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
   gap: clamp(0.5rem, 1vw, 0.75rem);
 `;
 
-const TeamContainer = styled.div`
-  width: 100%;
-`;
+const TeamContainer = styled.div``;
 
 const TeamContent = styled.div`
   padding: clamp(0.5rem, 1.2vw, 0.625rem) clamp(0.875rem, 1.8vw, 1.125rem);

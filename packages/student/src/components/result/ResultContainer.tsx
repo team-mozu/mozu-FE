@@ -65,7 +65,6 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     },
     {
       CLASS_NEXT_INV_START: (data) => {
-        Toast("다음 투자가 시작되었습니다", { type: "info" });
         setData(data);
         setIsWait(false);
       },

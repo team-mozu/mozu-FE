@@ -313,7 +313,7 @@ const MotionBackdrop = styled(motion.div)`
 const MotionModalContainer = styled(motion.div)`
   background: ${color.white};
   border-radius: 24px;
-  width: 480px;
+  width: 520px;
   max-width: 90vw;
   box-shadow: 
     0 25px 50px -12px rgba(0, 0, 0, 0.25),

@@ -6,6 +6,7 @@ import { useSSE } from "@/hook";
 import { useNavigate } from "react-router-dom";
 import { removeCookiesAsync } from "@configs/util";
 import { useRef } from "react";
+import { resetShownInvDegs } from "./HomePage";
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
@@ -22,9 +23,11 @@ export const StudentWaitPage = () => {
       Toast(`네트워크 에러 발생`, { type: "error" });
     },
     {
-      CLASS_NEXT_INV_START: (data) => {
+      CLASS_NEXT_INV_START: async (data) => {
+        resetShownInvDegs();
         localStorage.removeItem("trade");
-        Toast("투자가 시작되었습니다", { type: "info" });
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         navigate(`/${data.classId}`, { replace: true });
       },
       CLASS_CANCEL: async () => {
