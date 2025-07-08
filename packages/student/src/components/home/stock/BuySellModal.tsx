@@ -260,18 +260,26 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
           </ContentSection>
 
           <ActionSection>
-            <CancelButton onClick={onClose}>
-              취소
-            </CancelButton>
-            <ConfirmButton
-              disabled={numericQuantity === 0}
-              onClick={handleConfirm}
-              themeGradient={themeGradient}
-              isBuy={isBuyMode}
-            >
-              <ButtonIcon>{isBuyMode ? '💰' : '📊'}</ButtonIcon>
-              {modalType}하기
-            </ConfirmButton>
+            <FeeNotice>
+              <FeeNoticeIcon>💡</FeeNoticeIcon>
+              <FeeNoticeText>
+                {modalType} 시 수수료는 발생하지 않습니다
+              </FeeNoticeText>
+            </FeeNotice>
+            <ButtonWrapper>
+              <CancelButton onClick={onClose}>
+                취소
+              </CancelButton>
+              <ConfirmButton
+                disabled={numericQuantity === 0}
+                onClick={handleConfirm}
+                themeGradient={themeGradient}
+                isBuy={isBuyMode}
+              >
+                <ButtonIcon>{isBuyMode ? '💰' : '📊'}</ButtonIcon>
+                {modalType}하기
+              </ConfirmButton>
+            </ButtonWrapper>
           </ActionSection>
         </MotionModalContainer>
       </MotionBackdrop>
@@ -293,6 +301,11 @@ const pulse = keyframes`
 const slideUp = keyframes`
   from { transform: translateY(10px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 `;
 
 // 스타일 컴포넌트들
@@ -515,6 +528,34 @@ const InfoValue = styled.div<{ isTotal?: boolean; themeColor?: string }>`
 
 const ActionSection = styled.div`
   padding: 24px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const FeeNotice = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: ${color.green[50]};
+  border: 1px solid ${color.green[200]};
+  border-radius: 12px;
+  animation: ${fadeIn} 0.5s ease-out;
+`;
+
+const FeeNoticeIcon = styled.span`
+  font-size: 14px;
+`;
+
+const FeeNoticeText = styled.div`
+  font: ${font.l1};
+  color: ${color.green[700]};
+  font-weight: 600;
+`;
+
+const ButtonWrapper = styled.div`
   display: flex;
   gap: 16px;
 `;
