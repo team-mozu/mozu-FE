@@ -66,3 +66,12 @@ export const NotFoundPage = lazy(() =>
       return { default: () => <div>페이지를 불러올 수 없습니다.</div> };
     }),
 );
+
+export const EndingPage = lazy(() =>
+  import('@/pages/EndingPage')
+    .then((module) => ({ default: module.EndingPage }))
+    .catch((error) => {
+      console.error('EndingPage 로드 실패:', error);
+      return { default: () => <div>페이지를 불러올 수 없습니다.</div> };
+    }),
+);

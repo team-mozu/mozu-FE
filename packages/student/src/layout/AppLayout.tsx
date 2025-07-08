@@ -20,6 +20,7 @@ export const AppLayout = () => {
 
   const splitedPath = pathname.split("/");
   const isResultPage = splitedPath[splitedPath.length - 1] === "result";
+  const isEndingPage = splitedPath[splitedPath.length - 1] === "ending";
 
   useSSE(`${import.meta.env.VITE_SERVER_URL}/team/sse`, undefined, undefined, {
     CLASS_NEXT_INV_START: () => {
@@ -67,13 +68,13 @@ export const AppLayout = () => {
       />
 
       <Layout>
-        {!isResultPage && (
+        {!isResultPage && !isEndingPage && (
           <>
             {isLoading ? <ItemSidebarSkeleton /> : <ItemSidebar />}
             <HistorySidebar />
           </>
         )}
-        <MainContent isResultPage={isResultPage}>
+        <MainContent isResultPage={isResultPage} isEndingPage={isEndingPage}>
           <Outlet />
         </MainContent>
       </Layout>
@@ -94,8 +95,8 @@ const Layout = styled.div`
   display: flex;
 `;
 
-const MainContent = styled.div<{ isResultPage: boolean }>`
-  padding-right: ${({ isResultPage }) => (isResultPage ? 0 : "463px")};
-  margin-left: ${({ isResultPage }) => (isResultPage ? 0 : "320px")};
+const MainContent = styled.div<{ isResultPage: boolean; isEndingPage: boolean }>`
+  padding-right: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "463px")};
+  margin-left: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "320px")};
   flex: 1;
 `;

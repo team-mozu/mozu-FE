@@ -23,6 +23,7 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
     if (pathname === `/${classId}/news`) return "news";
     if (pathname === `/${classId}/result`) return "result";
     if (pathname === "/signin/wait") return "wait";
+    if (pathname === `/${classId}/ending`) return "ending";
     return "default";
   }, [pathname, classId]);
 
@@ -30,6 +31,7 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
   const isNavNews = currentPage === "news";
   const isResultPage = currentPage === "result";
   const isWaitPage = currentPage === "wait";
+  const isEndingPage = currentPage === "ending";
 
   return (
     <HeaderContainer
@@ -49,7 +51,7 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>
 
-      {!isAdmin && !isResultPage && !isWaitPage && (
+      {!isAdmin && !isResultPage && !isWaitPage && !isEndingPage && (
         <NavContainer>
           <Nav onClick={() => navigate(`/${classId}`)} isActive={isNavHome}>
             홈
@@ -63,7 +65,7 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
         </NavContainer>
       )}
 
-      {!isAdmin && !isResultPage && !isWaitPage && (
+      {!isAdmin && !isResultPage && !isWaitPage && !isEndingPage && (
         <InvestmentRoundContainer>
           <div>
             <InvestmentRoundContent>{invDeg}차 투자</InvestmentRoundContent>
@@ -75,7 +77,7 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
         </InvestmentRoundContainer>
       )}
 
-      {(isWaitPage || isAdmin || isResultPage) && (
+      {(isWaitPage || isAdmin || isResultPage || isEndingPage) && (
         <SchoolTag href="https://dsmhs.djsch.kr/main.do" target="_blank">
           © 대덕소프트웨어마이스터고등학교
         </SchoolTag>

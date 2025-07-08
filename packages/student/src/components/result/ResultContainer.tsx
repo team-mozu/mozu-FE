@@ -7,7 +7,7 @@ import { History } from "@/components";
 import { useTeamOrders, useTeamResult } from "@/apis";
 import { useSSE } from "@/hook";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { roundToFixed } from "@/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { resetShownInvDegs } from "@/pages/HomePage";
@@ -22,10 +22,10 @@ interface ValueStyleProps {
 export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
   const { data: teamOrders } = useTeamOrders();
   const { data: teamResult } = useTeamResult();
-  const [data, setData] = useState<{ classId: number; nextInvDeg: number }>();
   const [isWait, setIsWait] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const { classId } = useParams<{ classId: string }>();
 
   const valueProfitStr = teamResult?.valueProfit ?? "0";
 
@@ -48,7 +48,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     queryClient.invalidateQueries({ queryKey: ['getArticle'] });
     queryClient.invalidateQueries({ queryKey: ['getTeam'] });
 
-    navigate(`/signin`, { replace: true });
+    navigate(`/${classId}/ending`, { replace: true });
   }
 
   const handleContinue = async () => {
@@ -60,7 +60,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    navigate(`/${data.classId}`, { replace: true })
+    navigate(`/${classId}`, { replace: true })
   }
 
   useSSE(
@@ -71,8 +71,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
       Toast(`네트워크 에러 발생`, { type: "error" });
     },
     {
-      CLASS_NEXT_INV_START: (data) => {
-        setData(data);
+      CLASS_NEXT_INV_START: () => {
         setIsWait(false);
       },
     }

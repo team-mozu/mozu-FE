@@ -45,6 +45,10 @@ export const Router = createBrowserRouter([
         path: "result",
         element: <pages.ResultPage />,
       },
+      {
+        path: "ending",
+        element: <pages.EndingPage />,
+      },
     ],
   },
   {
