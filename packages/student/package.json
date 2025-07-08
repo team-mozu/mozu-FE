@@ -34,12 +34,14 @@
     "recharts": "^2.15.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.0",
     "@babel/plugin-transform-runtime": "^7.25.9",
     "@configs/util": "workspace:^",
     "@mozu/design-token": "workspace:^",
     "@mozu/ui": "workspace:^",
     "@tanstack/react-query-devtools": "^5.64.2",
     "@tanstack/react-table": "^8.20.6",
+    "@types/babel__core": "^7",
     "@types/babel__plugin-transform-runtime": "^7",
     "@types/event-source-polyfill": "^1",
     "@types/react": "18.3.18",
@@ -50,6 +52,7 @@
     "@yarnpkg/sdks": "^3.2.0",
     "event-source-polyfill": "^1.0.31",
     "globals": "^15.14.0",
+    "react-tooltip": "^5.29.1",
     "typescript": "^5.7.3",
     "vite": "^6.0.5"
   }

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { roundToFixed } from "@/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { resetShownInvDegs } from "@/pages/HomePage";
+import { Tooltip } from 'react-tooltip';
 
 interface ValueStyleProps {
   isPositive?: boolean;
@@ -210,23 +211,49 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                   투자 마치기
                 </Button>
               ) :
-                <Button
-                  backgroundColor={color.orange[500]}
-                  color={color.white}
-                  width={205}
-                  isIcon={true}
-                  iconColor={color.white}
-                  iconSize={24}
-                  hoverBackgroundColor={color.orange[600]}
-                  disabled={isWait}
-                  onClick={handleContinue}
+                <div
+                  data-tooltip-id="continue-tooltip"
+                  data-tooltip-content={isWait ? "다음 투자가 시작되지 않았습니다" : "다음 차수로 계속할 수 있습니다!"}
+                  data-tooltip-place="top"
+                  data-tooltip-effect="solid"
                 >
-                  계속하기
-                </Button>}
+                  <Button
+                    backgroundColor={color.orange[500]}
+                    color={color.white}
+                    width={205}
+                    isIcon={true}
+                    iconColor={color.white}
+                    iconSize={24}
+                    hoverBackgroundColor={color.orange[600]}
+                    disabled={isWait}
+                    onClick={handleContinue}
+                  >
+                    계속하기
+                  </Button>
+                </div>
+              }
             </ButtonDiv>
           </RightContainer>
         </Main>
-      </Container >
+
+        {/* Tooltip 컴포넌트 */}
+        <Tooltip
+          id="continue-tooltip"
+          style={{
+            backgroundColor: color.zinc[800],
+            color: color.white,
+            borderRadius: '6px',
+            padding: '8px 12px',
+            fontSize: '14px',
+            fontWeight: '500',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            zIndex: 1000,
+          }}
+          opacity={1}
+          delayShow={300}
+          delayHide={100}
+        />
+      </Container>
     </>
   );
 };

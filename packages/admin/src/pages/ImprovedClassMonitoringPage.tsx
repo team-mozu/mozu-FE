@@ -8,12 +8,13 @@ import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";
 import { queryClient } from "@/utils/queryClient";
+import { Tooltip } from 'react-tooltip';
 
 export const ImprovedClassMonitoringPage = () => {
-  const [isOpenArticle, setIsOpenArticle] = useState<boolean>(false);
-  const [isOpenClass, setIsOpenClass] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isOpenEnd, setIsOpenEnd] = useState<boolean>(false);
+  const [isOpenArticle, setIsOpenArticle] = useState(false);
+  const [isOpenClass, setIsOpenClass] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenEnd, setIsOpenEnd] = useState(false);
   const { teamInfoMap, appendTrade } = useTeamStore();
   const teamInfo = Object.values(teamInfoMap);
 
@@ -74,30 +75,26 @@ export const ImprovedClassMonitoringPage = () => {
 
   return (
     <>
-      {
-        isOpen && (
-          <DeleteModal
-            titleComment="모의투자 취소"
-            subComment="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
-            onCancel={() => setIsOpen(false)}
-            onDelete={() => stopClass()}
-            isPending={isStopClassPending}
-            message={"취소하기"}
-          />
-        )
-      }
-      {
-        isOpenEnd && (
-          <DeleteModal
-            titleComment="모의투자 종료"
-            subComment="모의투자를 종료하시겠습니까? 종료 후 투자 데이터는 삭제됩니다."
-            onCancel={() => setIsOpenEnd(false)}
-            onDelete={() => stopClass()}
-            isPending={isStopClassPending}
-            message={"종료하기"}
-          />
-        )
-      }
+      {isOpen && (
+        <DeleteModal
+          titleComment="모의투자 취소"
+          subComment="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
+          onCancel={() => setIsOpen(false)}
+          onDelete={() => stopClass()}
+          isPending={isStopClassPending}
+          message={"취소하기"}
+        />
+      )}
+      {isOpenEnd && (
+        <DeleteModal
+          titleComment="모의투자 종료"
+          subComment="모의투자를 종료하시겠습니까? 종료 후 투자 데이터는 삭제됩니다."
+          onCancel={() => setIsOpenEnd(false)}
+          onDelete={() => stopClass()}
+          isPending={isStopClassPending}
+          message={"종료하기"}
+        />
+      )}
       <Container>
         {isOpenArticle && (
           <ArticleInfoModal
@@ -133,22 +130,31 @@ export const ImprovedClassMonitoringPage = () => {
             >
               모의투자 취소
             </Button>
-            {
-              classData.curInvDeg === classData.maxInvDeg ?
-                <Button
-                  type={"startImg"}
-                  isIcon={true}
-                  iconColor={color.zinc[800]}
-                  iconSize={24}
-                  backgroundColor={color.zinc[50]}
-                  borderColor={color.zinc[200]}
-                  color={color.zinc[800]}
-                  hoverBackgroundColor={color.zinc[100]}
-                  onClick={() => handleEndClass()}
-                  disabled={!isDegEnd}
-                >
-                  투자 종료
-                </Button> :
+            {classData.curInvDeg === classData.maxInvDeg ? (
+              <Button
+                type={"startImg"}
+                isIcon={true}
+                iconColor={color.zinc[800]}
+                iconSize={24}
+                backgroundColor={color.zinc[50]}
+                borderColor={color.zinc[200]}
+                color={color.zinc[800]}
+                hoverBackgroundColor={color.zinc[100]}
+                onClick={() => handleEndClass()}
+                disabled={!isDegEnd}
+              >
+                투자 종료
+              </Button>
+            ) : (
+              <div
+                data-tooltip-id="next-degree-tooltip"
+                data-tooltip-content={
+                  !isDegEnd || isNextDegreePending
+                    ? "아직 투자를 모두 완료하지 않았습니다"
+                    : "다음 차수로 진행할 수 있습니다!"
+                }
+                data-tooltip-place="top"
+              >
                 <Button
                   type={"startImg"}
                   isIcon={true}
@@ -163,7 +169,8 @@ export const ImprovedClassMonitoringPage = () => {
                 >
                   다음 투자 진행
                 </Button>
-            }
+              </div>
+            )}
           </ButtonContainer>
         </Header>
         <MainContainer>
@@ -216,9 +223,26 @@ export const ImprovedClassMonitoringPage = () => {
             maxInvDeg={classData.maxInvDeg}
           />
         </MainContainer>
+
+        {/* Tooltip 컴포넌트 */}
+        <Tooltip
+          id="next-degree-tooltip"
+          style={{
+            backgroundColor: color.zinc[800],
+            color: color.white,
+            borderRadius: '6px',
+            padding: '8px 12px',
+            fontSize: '14px',
+            fontWeight: '500',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            zIndex: 1000,
+          }}
+          opacity={1}
+          delayShow={300}
+          delayHide={100}
+        />
       </Container>
     </>
-
   );
 };
 
