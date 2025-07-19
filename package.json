@@ -2,16 +2,16 @@
   "name": "mozu-fe",
   "packageManager": "yarn@4.8.1",
   "private": true,
-  "type": "module",
   "scripts": {
     "start": "node select.js",
-    "admin": "yarn workspaces admin",
-    "student": "yarn workspaces student",
-    "ui": "yarn workspaces ui",
+    "admin": "yarn workspace @mozu/admin",
+    "student": "yarn workspace @mozu/student",
+    "ui": "yarn workspace @mozu/ui",
     "util": "yarn workspace util",
-    "postinstall": "husky install",
+    "prepare": "husky install",
     "lint": "eslint packages --ext ts,tsx --report-unused-disable-directives --cache",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "commit": "cz"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
@@ -20,15 +20,16 @@
     ]
   },
   "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
+    "packages": ["packages/*"]
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@types/node": "^22.10.5",
+    "commitizen": "^4.3.1",
+    "corepack": "^0.33.0",
+    "cz-customizable": "^7.4.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.3.0",
     "typescript": "^5.7.3"
@@ -42,5 +43,10 @@
     "dotenv": "^16.4.7",
     "inquirer": "^12.3.0",
     "react-spinners": "^0.17.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-customizable"
+    }
   }
 }
