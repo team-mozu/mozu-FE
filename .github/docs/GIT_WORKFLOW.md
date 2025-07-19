@@ -1,5 +1,4 @@
-## Git Workflow Guide
----
+# Git Workflow Guide
 
 ### 목차
 - [브랜치 전략](#브랜치-전략)
