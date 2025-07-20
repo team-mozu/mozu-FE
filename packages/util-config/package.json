@@ -1,0 +1,27 @@
+{
+  "name": "@mozu/util-config",
+  "main": "./src",
+  "packageManager": "yarn@4.8.1",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-toastify": "^11.0.3",
+    "universal-cookie": "^7.2.2",
+    "vite": "^6.1.0"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.66.0"
+  },
+  "devDependencies": {
+    "@mozu/ui": "workspace:^",
+    "@types/node": "^22.13.1",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "typescript": "^5.7.3"
+  }
+}

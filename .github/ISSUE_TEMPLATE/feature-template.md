@@ -1,10 +1,9 @@
 ---
 name: Feature Template
 about: "\b기능 추가 이슈 템플릿"
-title: "[FEAT]"
+title: '[FEAT]'
 labels: ''
 assignees: ''
-
 ---
 
 ## 🆕 어떤 기능인가요?

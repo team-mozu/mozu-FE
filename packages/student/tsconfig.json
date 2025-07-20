@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "ESNext",
+    "resolveJsonModule": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+
+    "outDir": "./build",
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@mozu/ui": ["../ui/dist"],
+      "@mozu/design-token": ["../design-token/dist"],
+      "@util-config/*": ["../util-config/dist"]
+    },
+    "typeRoots": ["node_modules/@types", "src/@types"]
+  },
+  "references": [{ "path": "../ui" }],
+  "include": ["src/**/*", "vite.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}
