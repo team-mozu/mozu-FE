@@ -2,7 +2,13 @@
 . "$(dirname "$0")/_/husky.sh"
 
 branch_name=$(git symbolic-ref --short HEAD)
-if ! echo "$branch_name" | grep -Eq '^(feature|refactor|fix|hotfix|release|docs|test)/[a-z0-9._-]+$'; then
+
+# Allow pushing from main and develop branches
+if [ "$branch_name" = "main" ] || [ "$branch_name" = "develop" ]; then
+  exit 0
+fi
+
+if ! echo "$branch_name" | grep -Eq '^(feature|refactor|fix|hotfix|release|docs|test)/[a-z0-9._-]+; then
   echo ""
   echo "❌ 잘못된 브랜치 이름입니다."
   echo "💡 브랜치 이름은 '타입/설명' 형식이어야 합니다."
