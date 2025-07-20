@@ -1,14 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { instance, getCookies } from '@configs/util';
-import {
-  ArticleManagementEditRequest,
+import { instance } from "@mozu/util-config";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
+import type {
   ArticleAddRequest,
   ArticleDetailResponse,
   ArticleListResponse,
-} from './type';
-import { useNavigate } from 'react-router';
+  ArticleManagementEditRequest,
+} from "./type";
 
-const router = '/article';
+const router = "/article";
 
 export const useAddArticle = () => {
   const navigate = useNavigate();
@@ -17,16 +17,16 @@ export const useAddArticle = () => {
     mutationFn: async (addData: ArticleAddRequest) => {
       return await instance.post(`${router}`, addData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
     },
-    onSuccess: (response) => {
-      console.log('성공');
+    onSuccess: response => {
+      console.log("성공");
       const id = response.data.id;
       navigate(`/article-management/${id}`);
     },
-    onError: (error) => console.log('error', error),
+    onError: error => console.log("error", error),
   });
 };
 
@@ -38,21 +38,26 @@ export const useDeleteArticle = () => {
       return await instance.delete(`${router}/${articleId}`);
     },
     onSuccess: () => {
-      console.log('성공'),
-        queryClient.invalidateQueries({ queryKey: ['getArticle'] });
+      console.log("성공");
+      queryClient.invalidateQueries({
+        queryKey: [
+          "getArticle",
+        ],
+      });
     },
-    onError: (error) => console.log('error', error),
+    onError: error => console.log("error", error),
   });
 };
 
 export const useGetArticleDetail = (articleId: number) => {
   return useQuery({
-    queryKey: ['getArticle', articleId],
+    queryKey: [
+      "getArticle",
+      articleId,
+    ],
     queryFn: async () => {
-      if (!articleId) throw new Error('err');
-      const { data } = await instance.get<ArticleDetailResponse>(
-        `${router}/${articleId}`,
-      );
+      if (!articleId) throw new Error("err");
+      const { data } = await instance.get<ArticleDetailResponse>(`${router}/${articleId}`);
       return data;
     },
     enabled: !!articleId,
@@ -61,12 +66,14 @@ export const useGetArticleDetail = (articleId: number) => {
 
 export const useGetArticleList = () => {
   return useQuery({
-    queryKey: ['getArticle'],
+    queryKey: [
+      "getArticle",
+    ],
     queryFn: async () => {
       try {
-        const { data } = await instance.get<{ article: ArticleListResponse[] }>(
-          router,
-        );
+        const { data } = await instance.get<{
+          article: ArticleListResponse[];
+        }>(router);
         return data;
       } catch (error) {
         throw error;
@@ -84,17 +91,17 @@ export const useEditArticle = () => {
 
       return await instance.post(`${router}/${data.articleId}`, datas, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
     },
     onSuccess: () => {
-      console.log('성공');
+      console.log("성공");
       navigate(-1);
       setTimeout(() => {
         window.location.reload();
       }, 100);
     },
-    onError: (error) => console.log('error', error),
+    onError: error => console.log("error", error),
   });
 };
