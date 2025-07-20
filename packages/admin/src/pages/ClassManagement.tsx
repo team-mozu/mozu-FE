@@ -1,15 +1,10 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button, DeleteModal, PostTitle, PageTitle } from "@mozu/ui";
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
+import { Button, DeleteModal, PageTitle, PostTitle } from "@mozu/ui";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { type ClassItem, useClassDelete, useClassStar, useGetClassList } from "@/apis";
 import { ClassPost, FullPageLoader, SkeletonClassPost } from "@/components";
-import {
-  ClassItem,
-  useClassDelete,
-  useClassStar,
-  useGetClassList,
-} from "@/apis";
 
 export const ClassManagement = () => {
   const { data, isLoading: apiLoading } = useGetClassList();
@@ -22,7 +17,10 @@ export const ClassManagement = () => {
         setIsLoading(false);
       }, 500);
     }
-  }, [apiLoading, data]);
+  }, [
+    apiLoading,
+    data,
+  ]);
 
   const navigate = useNavigate();
   const [isModal, setIsModal] = useState(false);
@@ -30,8 +28,8 @@ export const ClassManagement = () => {
 
   // API 데이터 구조에 맞게 가공
   const classData: ClassItem[] = data?.classes || [];
-  const favorites = classData.filter((item) => item.starYN);
-  const common = classData.filter((item) => !item.starYN);
+  const favorites = classData.filter(item => item.starYN);
+  const common = classData.filter(item => !item.starYN);
 
   // 즐겨찾기 여부를 저장할 state
   const [isClickFavorites, setIsClickFavorites] = useState<boolean[]>([]);
@@ -39,10 +37,13 @@ export const ClassManagement = () => {
   const [isStarLoading, setIsStarLoading] = useState(false);
 
   // 데이터가 변경될 때 상태 초기화
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     setIsClickFavorites(Array(favorites.length).fill(false));
     setIsClickCommon(Array(common.length).fill(false));
-  }, [data]);
+  }, [
+    data,
+  ]);
 
   const openDeleteModal = (id: number) => {
     setSelectedClassId(id);
@@ -71,22 +72,19 @@ export const ClassManagement = () => {
   const toggleFavorite = (() => {
     let isPending = false;
 
-    return async (
-      index: number,
-      type: "favorites" | "common",
-      id?: number
-    ) => {
+    return async (index: number, type: "favorites" | "common", id?: number) => {
       if (isPending || id === undefined) return;
 
-      isPending = true
+      isPending = true;
       setIsStarLoading(true);
 
       try {
-        const updateList =
-          type === "favorites" ? setIsClickFavorites : setIsClickCommon;
+        const updateList = type === "favorites" ? setIsClickFavorites : setIsClickCommon;
 
-        updateList((prev) => {
-          const updated = [...prev];
+        updateList(prev => {
+          const updated = [
+            ...prev,
+          ];
           updated[index] = !updated[index];
           return updated;
         });
@@ -128,8 +126,7 @@ export const ClassManagement = () => {
             iconSize={24}
             iconColor={color.white}
             onClick={() => navigate("create")}
-            hoverBackgroundColor={color.orange[600]}
-          >
+            hoverBackgroundColor={color.orange[600]}>
             수업 생성하기
           </Button>
         </TitleContainer>
@@ -137,7 +134,10 @@ export const ClassManagement = () => {
           <PostAllContainer>
             {favorites.length > 0 && (
               <PostContainer>
-                <PostTitle title="즐겨찾기" count={favorites.length} />
+                <PostTitle
+                  title="즐겨찾기"
+                  count={favorites.length}
+                />
                 <PostContents>
                   {isLoading
                     ? favorites.map((_, index) => (
@@ -153,9 +153,7 @@ export const ClassManagement = () => {
                         title={item.name}
                         creationDate={item.date}
                         isClick={item.starYN}
-                        starOnClick={() =>
-                          toggleFavorite(index, "favorites", item.id)
-                        }
+                        starOnClick={() => toggleFavorite(index, "favorites", item.id)}
                         delClick={() => openDeleteModal(item.id)}
                         onClick={() => navigate(`${item.id}`)}
                       />
@@ -164,7 +162,10 @@ export const ClassManagement = () => {
               </PostContainer>
             )}
             <PostContainer>
-              <PostTitle title="전체" count={common.length} />
+              <PostTitle
+                title="전체"
+                count={common.length}
+              />
               <PostContents>
                 {isLoading
                   ? common.map((_, index) => (
@@ -180,9 +181,7 @@ export const ClassManagement = () => {
                       title={item.name}
                       creationDate={item.date}
                       isClick={isClickCommon[index]}
-                      starOnClick={() =>
-                        toggleFavorite(index, "common", item.id)
-                      }
+                      starOnClick={() => toggleFavorite(index, "common", item.id)}
                       delClick={() => openDeleteModal(item.id)}
                       onClick={() => navigate(`${item.id}`)}
                     />

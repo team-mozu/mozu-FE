@@ -1,7 +1,7 @@
-import { color, font } from '@mozu/design-token';
-import styled from '@emotion/styled';
-import { useRef, useState, useEffect } from 'react';
-import { Imglogo, Button } from '@mozu/ui';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, Imglogo } from "@mozu/ui";
+import { useEffect, useRef, useState } from "react";
 
 interface IImgType {
   label?: string;
@@ -19,21 +19,20 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
 
   useEffect(() => {
     if (img) {
-      if (typeof img === 'string') {
+      if (typeof img === "string") {
         setImgUrl(img);
       } else if (img instanceof File) {
         const url = URL.createObjectURL(img);
         setImgUrl(url);
       }
 
-      if (
-        img ===
-        'https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg'
-      ) {
-        setImgUrl('');
+      if (img === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg") {
+        setImgUrl("");
       }
     }
-  }, [img]);
+  }, [
+    img,
+  ]);
 
   const delClick = () => {
     setImgUrl(null);
@@ -41,7 +40,7 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
       onImageChange(null);
     }
     if (imgRef.current) {
-      imgRef.current.value = '';
+      imgRef.current.value = "";
     }
   };
 
@@ -56,19 +55,29 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
 
   return (
     <BtnImgContainer>
-      <ImgContent type="file" ref={imgRef} onChange={handleChange} />
+      <ImgContent
+        type="file"
+        ref={imgRef}
+        onChange={handleChange}
+      />
       <ImgContentContainer>
         <Label>{label}</Label>
         <FakeImgContent>
-          {!imgUrl ? <Imglogo /> : <Image src={imgUrl} alt="기사 이미지" />}
+          {!imgUrl ? (
+            <Imglogo />
+          ) : (
+            <Image
+              src={imgUrl}
+              alt="기사 이미지"
+            />
+          )}
         </FakeImgContent>
       </ImgContentContainer>
       <Button
         backgroundColor={color.zinc[50]}
         color={color.zinc[800]}
         borderColor={color.zinc[200]}
-        onClick={imgClick}
-      >
+        onClick={imgClick}>
         이미지 업로드
       </Button>
       <Button
@@ -76,8 +85,7 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
         color={color.white}
         borderColor={color.red[500]}
         onClick={delClick}
-        disabled={!imgUrl}
-      >
+        disabled={!imgUrl}>
         이미지 삭제
       </Button>
     </BtnImgContainer>

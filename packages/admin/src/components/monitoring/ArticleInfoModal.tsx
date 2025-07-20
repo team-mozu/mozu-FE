@@ -1,9 +1,8 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useState, useRef, useEffect } from 'react';
-import { Button } from '@mozu/ui';
-import { ArticleIcon } from '@mozu/ui';
-import { useGetArticleDetail } from '@/apis';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { ArticleIcon, Button } from "@mozu/ui";
+import { useEffect, useRef, useState } from "react";
+import { useGetArticleDetail } from "@/apis";
 
 interface ArticleType {
   id: number;
@@ -24,9 +23,11 @@ interface IArticleInfoType {
 
 export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleInfoType) => {
   const [datas, setDatas] = useState<
-    { isClicked: boolean; articleContent: ArticleType[] }[]
+    {
+      isClicked: boolean;
+      articleContent: ArticleType[];
+    }[]
   >([]);
-
 
   // 기사 상세 보기 상태 추가
   const [selectedArticle, setSelectedArticle] = useState<ArticleType | null>(null);
@@ -48,12 +49,18 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
   };
 
   const barClick = (index: number) => {
-    setDatas((prev) =>
+    setDatas(prev =>
       prev
         ? prev.map((data, idx) =>
           idx === index
-            ? { ...data, isClicked: true }
-            : { ...data, isClicked: false },
+            ? {
+              ...data,
+              isClicked: true,
+            }
+            : {
+              ...data,
+              isClicked: false,
+            },
         )
         : [],
     );
@@ -82,18 +89,22 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
       }));
       setDatas(formatted);
     }
-  }, [classArticles]);
+  }, [
+    classArticles,
+  ]);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, [
+    isOpen,
+  ]);
 
   // 모달이 닫힐 때 상세 보기 상태 초기화
   useEffect(() => {
@@ -101,31 +112,30 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
       setIsDetailView(false);
       setSelectedArticle(null);
     }
-  }, [isOpen]);
+  }, [
+    isOpen,
+  ]);
 
   const selectedData = datas.find(data => data.isClicked);
 
   return (
     isOpen && (
-      <BackgroundContainer onClick={outSideClick} ref={outSideRef}>
+      <BackgroundContainer
+        onClick={outSideClick}
+        ref={outSideRef}>
         <ModalContainer>
           <Header>
             <IconWrapper>
-              <ArticleIcon size={28} color={color.zinc[800]} />
+              <ArticleIcon
+                size={28}
+                color={color.zinc[800]}
+              />
             </IconWrapper>
             <TitleSection>
-              <Title>
-                {isDetailView ? selectedArticle?.title : '기사 정보'}
-              </Title>
-              <Subtitle>
-                {isDetailView ? '기사 내용을 확인하세요' : '차수별 기사 목록을 확인하세요'}
-              </Subtitle>
+              <Title>{isDetailView ? selectedArticle?.title : "기사 정보"}</Title>
+              <Subtitle>{isDetailView ? "기사 내용을 확인하세요" : "차수별 기사 목록을 확인하세요"}</Subtitle>
             </TitleSection>
-            {isDetailView && (
-              <BackButton onClick={handleBackToList}>
-                ← 목록으로
-              </BackButton>
-            )}
+            {isDetailView && <BackButton onClick={handleBackToList}>← 목록으로</BackButton>}
           </Header>
 
           {!isDetailView && (
@@ -134,8 +144,8 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
                 <TabButton
                   isActive={data.isClicked}
                   onClick={() => barClick(index)}
-                  key={index}
-                >
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <임시>
+                  key={index}>
                   <TabNumber>{index + 1}</TabNumber>
                   <TabLabel>차</TabLabel>
                   {data.isClicked && <ActiveIndicator />}
@@ -149,7 +159,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
               // 기사 상세 보기
               <ArticleDetailContainer>
                 <ArticleDetailContent>
-                  {articleDetailData?.description || selectedArticle?.content || '기사 내용을 불러오는 중입니다...'}
+                  {articleDetailData?.description || selectedArticle?.content || "기사 내용을 불러오는 중입니다..."}
                 </ArticleDetailContent>
               </ArticleDetailContainer>
             ) : (
@@ -159,8 +169,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
                   selectedData.articleContent.map((content, idx) => (
                     <ArticleItem
                       key={content.id}
-                      onClick={() => handleArticleClick(content)}
-                    >
+                      onClick={() => handleArticleClick(content)}>
                       <ArticleNumber>{idx + 1}</ArticleNumber>
                       <ArticleTitle>{content.title}</ArticleTitle>
                       <ClickIndicator className="click-indicator">클릭하여 보기 →</ClickIndicator>
@@ -182,8 +191,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
               borderColor={color.zinc[200]}
               color={color.zinc[800]}
               onClick={cancelClick}
-              hoverBackgroundColor={color.zinc[100]}
-            >
+              hoverBackgroundColor={color.zinc[100]}>
               닫기
             </Button>
           </FooterContainer>
@@ -318,17 +326,19 @@ const TabContainer = styled.div`
   gap: 8px;
 `;
 
-const TabButton = styled.button<{ isActive: boolean }>`
+const TabButton = styled.button<{
+  isActive: boolean;
+}>`
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 16px 24px;
-  background: ${({ isActive }) => isActive ? color.orange[50] : 'transparent'};
-  color: ${({ isActive }) => isActive ? color.orange[600] : color.zinc[600]};
+  background: ${({ isActive }) => (isActive ? color.orange[50] : "transparent")};
+  color: ${({ isActive }) => (isActive ? color.orange[600] : color.zinc[600])};
   border: none;
   border-radius: 12px 12px 0 0;
   font: ${font.b2};
-  font-weight: ${({ isActive }) => isActive ? '600' : '500'};
+  font-weight: ${({ isActive }) => (isActive ? "600" : "500")};
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -337,8 +347,8 @@ const TabButton = styled.button<{ isActive: boolean }>`
   justify-content: center;
   
   &:hover {
-    background: ${({ isActive }) => isActive ? color.orange[100] : color.zinc[50]};
-    color: ${({ isActive }) => isActive ? color.orange[700] : color.zinc[700]};
+    background: ${({ isActive }) => (isActive ? color.orange[100] : color.zinc[50])};
+    color: ${({ isActive }) => (isActive ? color.orange[700] : color.zinc[700])};
   }
   
   &:active {

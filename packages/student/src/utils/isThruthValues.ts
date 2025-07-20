@@ -3,7 +3,7 @@ type EnableFalsyType = string | number | boolean;
 export const isTruthValues = (values: EnableFalsyType | EnableFalsyType[]) => {
   if (Array.isArray(values)) {
     const { length } = values;
-    const filteredValues = values.filter((value) => value);
+    const filteredValues = values.filter(value => value);
     if (filteredValues.length === length) {
       return true;
     }

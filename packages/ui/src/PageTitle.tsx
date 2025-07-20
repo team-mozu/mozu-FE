@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { font, color } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 interface ITitleType {
   mainTitle?: string;

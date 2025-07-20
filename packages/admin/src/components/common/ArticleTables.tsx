@@ -1,15 +1,10 @@
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, CheckBox, Select } from "@mozu/ui";
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+import type { Article } from "@/apis/class/type";
 import { AddArticleItemModal } from "@/components/article/AddArticleItemModal";
-import { Article } from "@/apis/class/type";
 import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
 interface ClassArticleItem {
@@ -26,10 +21,7 @@ interface ArticleTablesProps {
   isEdit: boolean;
   degree: string; // 차수 (3, 4, 5)
   onDeleteArticles?: (articleIds: number[], degree: number) => void;
-  onAddArticles?: (newArticleGroup: {
-    invDeg: number;
-    articles: Article[];
-  }) => void;
+  onAddArticles?: (newArticleGroup: { invDeg: number; articles: Article[] }) => void;
   isApiLoading?: boolean;
 }
 
@@ -54,24 +46,29 @@ export const ArticleTables = ({
   // 선택된 차수나 데이터가 변경될 때 현재 표시할 기사 목록 업데이트
   useEffect(() => {
     const round = parseInt(selectedRound);
-    const articleGroup = data.find((group) => group.invDeg === round);
+    const articleGroup = data.find(group => group.invDeg === round);
 
     if (articleGroup) {
       setCurrentArticles(
-        articleGroup.articles.map((article) => ({
+        articleGroup.articles.map(article => ({
           ...article,
           checked: checkedArticleIds.includes(article.id),
-        }))
+        })),
       );
     } else {
       setCurrentArticles([]);
     }
-  }, [data, selectedRound, checkedArticleIds]);
+  }, [
+    data,
+    selectedRound,
+    checkedArticleIds,
+  ]);
 
   //isLoading을 받아 스켈레톤 ui 구현
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   //받아오는 isLoading 값이 변경 될 때(로딩이 다시 될 때)와 selectedRound가 변경될 때 실행
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     setIsLoading(true);
     if (!isApiLoading) {
@@ -79,17 +76,22 @@ export const ArticleTables = ({
         setIsLoading(false);
       }, 500);
     }
-  }, [isApiLoading, selectedRound]);
+  }, [
+    isApiLoading,
+    selectedRound,
+  ]);
 
   // 체크 상태가 변경될 때마다 현재 기사 목록 업데이트
   useEffect(() => {
-    setCurrentArticles((prevArticles) =>
-      prevArticles.map((article) => ({
+    setCurrentArticles(prevArticles =>
+      prevArticles.map(article => ({
         ...article,
         checked: checkedArticleIds.includes(article.id),
-      }))
+      })),
     );
-  }, [checkedArticleIds]);
+  }, [
+    checkedArticleIds,
+  ]);
 
   // 차수 선택 변경 핸들러
   const handleRoundChange = (value: string) => {
@@ -107,17 +109,20 @@ export const ArticleTables = ({
       setCheckedArticleIds([]);
     } else {
       // 일부만 체크되어 있거나 모두 해제되어 있으면 모두 체크
-      setCheckedArticleIds(currentArticles.map((article) => article.id));
+      setCheckedArticleIds(currentArticles.map(article => article.id));
     }
   };
 
   // 개별 기사 체크박스 토글
   const toggleArticle = (id: number) => {
-    setCheckedArticleIds((prev) => {
+    setCheckedArticleIds(prev => {
       if (prev.includes(id)) {
-        return prev.filter((itemId) => itemId !== id);
+        return prev.filter(itemId => itemId !== id);
       } else {
-        return [...prev, id];
+        return [
+          ...prev,
+          id,
+        ];
       }
     });
   };
@@ -155,28 +160,26 @@ export const ArticleTables = ({
   };
 
   // 현재 선택된 차수에 맞는 옵션 배열 생성
-  const roundOptions = Array.from({ length: parseInt(degree) }, (_, i) =>
-    (i + 1).toString()
+  const roundOptions = Array.from(
+    {
+      length: parseInt(degree),
+    },
+    (_, i) => (i + 1).toString(),
   );
 
   // 이미 추가된 모든 기사의 ID를 수집
-  const allAddedArticleIds = data.flatMap((group) =>
-    group.articles.map((article) => article.id)
-  );
+  const allAddedArticleIds = data.flatMap(group => group.articles.map(article => article.id));
 
   // 테이블 컬럼 정의
   const columns: ColumnDef<DisplayArticle>[] = [
     ...(isEdit
       ? [
         {
-          accessorKey: 'checked',
+          accessorKey: "checked",
           header: () => (
             <CheckBox
               onChange={toggleAll}
-              checked={
-                currentArticles.length > 0 &&
-                checkedArticleIds.length === currentArticles.length
-              }
+              checked={currentArticles.length > 0 && checkedArticleIds.length === currentArticles.length}
               id="article-header-checkbox"
             />
           ),
@@ -226,7 +229,12 @@ export const ArticleTables = ({
               height={40}
               value={selectedRound}
               onChange={handleRoundChange}
-              padding={{ top: 10, bottom: 10, right: 10, left: 16 }}
+              padding={{
+                top: 10,
+                bottom: 10,
+                right: 10,
+                left: 16,
+              }}
             />
             차
           </SelectBox>
@@ -238,28 +246,23 @@ export const ArticleTables = ({
                 borderColor={color.zinc[200]}
                 hoverBackgroundColor={color.zinc[100]}
                 onClick={handleDeleteChecked}
-                disabled={!hasCheckedItems}
-              >
+                disabled={!hasCheckedItems}>
                 선택항목 삭제하기
               </Button>
             </RightControls>
           )}
         </div>
-
       </ControlContainer>
 
       <Table>
         <Thead>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <Th key={header.id} width={`${header.column.getSize()}px`}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+              {headerGroup.headers.map(header => (
+                <Th
+                  key={header.id}
+                  width={`${header.column.getSize()}px`}>
+                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                 </Th>
               ))}
             </tr>
@@ -268,10 +271,12 @@ export const ArticleTables = ({
 
         <Tbody>
           {table.getRowModel().rows.length > 0 ? (
-            table.getRowModel().rows.map((row) => (
+            table.getRowModel().rows.map(row => (
               <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <Td key={cell.id} width={`${cell.column.getSize()}px`}>
+                {row.getVisibleCells().map(cell => (
+                  <Td
+                    key={cell.id}
+                    width={`${cell.column.getSize()}px`}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </Td>
                 ))}
@@ -282,9 +287,7 @@ export const ArticleTables = ({
               <EmptyStateTd colSpan={columns.length}>
                 <EmptyStateContainer>
                   <EmptyStateText>
-                    {isEdit
-                      ? `${selectedRound}차에 추가된 기사가 없습니다.`
-                      : "기사가 없습니다."}
+                    {isEdit ? `${selectedRound}차에 추가된 기사가 없습니다.` : "기사가 없습니다."}
                   </EmptyStateText>
                 </EmptyStateContainer>
               </EmptyStateTd>
@@ -292,7 +295,9 @@ export const ArticleTables = ({
           )}
           {isEdit && (
             <tr>
-              <PlusTd colSpan={columns.length} onClick={handleOpenModal}>
+              <PlusTd
+                colSpan={columns.length}
+                onClick={handleOpenModal}>
                 <PlusField>
                   <PlusIcon>+</PlusIcon>
                   추가하기
@@ -308,8 +313,10 @@ export const ArticleTables = ({
           close={handleCloseModal}
           onArticlesSelected={handleArticlesSelected}
           selectedDegree={parseInt(selectedRound)}
-          existingArticles={data.flatMap((group) =>
-            group.articles.map((article) => ({ id: article.id }))
+          existingArticles={data.flatMap(group =>
+            group.articles.map(article => ({
+              id: article.id,
+            })),
           )}
         />
       )}
@@ -377,7 +384,9 @@ const Tbody = styled.tbody`
   background-color: ${color.white};
 `;
 
-const Th = styled.th<{ width: string }>`
+const Th = styled.th<{
+  width: string;
+}>`
   font: ${font.t2};
   height: 48px;
   background: ${color.orange[50]};
@@ -386,7 +395,7 @@ const Th = styled.th<{ width: string }>`
   border: 1px solid ${color.zinc[200]};
   padding: 16px 14px;
   min-width: 80px;
-  width: ${(props) => props.width};
+  width: ${props => props.width};
   text-align: left;
 
   &:first-of-type {
@@ -397,14 +406,16 @@ const Th = styled.th<{ width: string }>`
   }
 `;
 
-const Td = styled.td<{ width?: string }>`
+const Td = styled.td<{
+  width?: string;
+}>`
   height: 48px;
   font: ${font.t4};
   border-bottom: 1px solid ${color.zinc[200]};
   border: 1px solid ${color.zinc[200]};
   padding: 16px 14px;
   text-align: left;
-  width: ${(props) => props.width};
+  width: ${props => props.width};
 
   tbody tr:last-of-type & {
     &:first-of-type {

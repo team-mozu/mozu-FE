@@ -1,11 +1,11 @@
-import { useTeamEnd } from "@/apis";
-import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
+import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check, Toast } from "@mozu/ui";
-import { useRef, useEffect, useCallback, memo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { memo, useCallback, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useTeamEnd } from "@/apis";
 
 interface IInvestCompleteType {
   isOpen?: boolean;
@@ -15,7 +15,10 @@ interface IInvestCompleteType {
 // 메모이제이션된 아이콘 컴포넌트
 const CheckIcon = memo(() => (
   <CheckIconContainer>
-    <Check color={color.orange[500]} size={28} />
+    <Check
+      color={color.orange[500]}
+      size={28}
+    />
   </CheckIconContainer>
 ));
 
@@ -29,43 +32,65 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
 
   const { mutate: teamEnd, isPending: isTeamEndPending } = useTeamEnd({
     onSuccess: () => {
-      Toast("투자 완료에 성공하였습니다", { type: "success" });
+      Toast("투자 완료에 성공하였습니다", {
+        type: "success",
+      });
       setIsOpen?.(false);
       navigate(`/${classId}/result`);
     },
     onError: () => {
-      Toast("투자 완료에 실패하였습니다", { type: "error" });
+      Toast("투자 완료에 실패하였습니다", {
+        type: "error",
+      });
     },
   });
 
   // 메모이제이션된 클릭 핸들러들
   const handleClose = useCallback(() => {
     setIsOpen?.(false);
-  }, [setIsOpen]);
+  }, [
+    setIsOpen,
+  ]);
 
-  const handleOutsideClick = useCallback((e: MouseEvent) => {
-    if (outSideRef.current && outSideRef.current === e.target) {
-      handleClose();
-    }
-  }, [handleClose]);
+  const handleOutsideClick = useCallback(
+    (e: MouseEvent) => {
+      if (outSideRef.current && outSideRef.current === e.target) {
+        handleClose();
+      }
+    },
+    [
+      handleClose,
+    ],
+  );
 
   const handleInvestComplete = useCallback(() => {
     try {
       const tradeData = localStorage.getItem("trade");
       if (!tradeData) {
-        Toast("거래 내역이 없습니다. 최소 한 번 거래한 뒤 시도해주세요.", { type: "error" });
+        Toast("거래 내역이 없습니다. 최소 한 번 거래한 뒤 시도해주세요.", {
+          type: "error",
+        });
         handleClose();
         return;
       }
 
       const parsedHistory = JSON.parse(tradeData);
-      const isValidData = Array.isArray(parsedHistory) && parsedHistory.every(
-        (item) => item.itemId && item.itemName && item.itemMoney &&
-          item.orderCount !== undefined && item.totalMoney && item.orderType
-      );
+      const isValidData =
+        Array.isArray(parsedHistory) &&
+        parsedHistory.every(
+          item =>
+            item.itemId &&
+            item.itemName &&
+            item.itemMoney &&
+            item.orderCount !== undefined &&
+            item.totalMoney &&
+            item.orderType,
+        );
 
       if (!isValidData) {
-        Toast("저장된 거래 데이터가 유효하지 않습니다. 거래를 다시 진행해 주세요.", { type: "error" });
+        Toast("저장된 거래 데이터가 유효하지 않습니다. 거래를 다시 진행해 주세요.", {
+          type: "error",
+        });
         handleClose();
         return;
       }
@@ -73,10 +98,15 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
       teamEnd(parsedHistory);
     } catch (e) {
       console.error("localStorage 파싱 오류:", e);
-      Toast("알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.", { type: "error" });
+      Toast("알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.", {
+        type: "error",
+      });
       handleClose();
     }
-  }, [teamEnd, handleClose]);
+  }, [
+    teamEnd,
+    handleClose,
+  ]);
 
   useEffect(() => {
     if (isOpen) {
@@ -91,20 +121,29 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
       document.removeEventListener("click", handleOutsideClick);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, handleOutsideClick]);
+  }, [
+    isOpen,
+    handleOutsideClick,
+  ]);
 
   // 최적화된 애니메이션 설정
   const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-    exit: { opacity: 0 }
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+    },
+    exit: {
+      opacity: 0,
+    },
   };
 
   const modalVariants = {
     hidden: {
       scale: 0.9,
       opacity: 0,
-      y: 20
+      y: 20,
     },
     visible: {
       scale: 1,
@@ -114,17 +153,17 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
         type: "spring",
         stiffness: 400,
         damping: 30,
-        duration: 0.3
-      }
+        duration: 0.3,
+      },
     },
     exit: {
       scale: 0.9,
       opacity: 0,
       y: 20,
       transition: {
-        duration: 0.2
-      }
-    }
+        duration: 0.2,
+      },
+    },
   };
 
   return (
@@ -136,16 +175,18 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
           initial="hidden"
           animate="visible"
           exit="exit"
-          transition={{ duration: 0.2 }}
-        >
+          transition={{
+            duration: 0.2,
+          }}>
           <MotionModalContainer
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <CloseButton onClick={handleClose} disabled={isTeamEndPending}>
+            onClick={e => e.stopPropagation()}>
+            <CloseButton
+              onClick={handleClose}
+              disabled={isTeamEndPending}>
               <CloseIcon>✕</CloseIcon>
             </CloseButton>
 
@@ -166,7 +207,8 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
                 <InfoCard>
                   <InfoIcon>📊</InfoIcon>
                   <InfoText>
-                    모든 거래 내역이 확정되며<br />
+                    모든 거래 내역이 확정되며
+                    <br />
                     결과 페이지로 이동합니다
                   </InfoText>
                 </InfoCard>
@@ -174,11 +216,15 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
             </ContentContainer>
 
             <ActionSection>
-              <CancelButton onClick={handleClose} disabled={isTeamEndPending}>
+              <CancelButton
+                onClick={handleClose}
+                disabled={isTeamEndPending}>
                 <ButtonIcon>❌</ButtonIcon>
                 취소
               </CancelButton>
-              <ConfirmButton onClick={handleInvestComplete} disabled={isTeamEndPending}>
+              <ConfirmButton
+                onClick={handleInvestComplete}
+                disabled={isTeamEndPending}>
                 {isTeamEndPending ? (
                   <>
                     <LoadingSpinner />

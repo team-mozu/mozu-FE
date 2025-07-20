@@ -1,33 +1,32 @@
-import { useState } from 'react';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Input, LogoWithText, Toast } from '@mozu/ui';
-import { useAdminLogin } from '@/apis';
-import { useForm } from '@/hooks';
-import { isTruthValues } from '@/utils';
-import { useNavigate } from 'react-router';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Input, LogoWithText, Toast } from "@mozu/ui";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { useAdminLogin } from "@/apis";
+import { useForm } from "@/hooks";
+import { isTruthValues } from "@/utils";
 
 export const SignInPage = () => {
   const { state, onChangeInputValue } = useForm({
-    code: '',
-    password: '',
+    code: "",
+    password: "",
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const { mutate: adminLogin, isPending: isAdminLoginLoading } =
-    useAdminLogin();
+  const { mutate: adminLogin, isPending: isAdminLoginLoading } = useAdminLogin();
 
   const handleLogin = () => {
     adminLogin(state, {
       onSuccess: () => {
-        navigate('/class-management');
+        navigate("/class-management");
       },
       onError: () => {
-        setErrorMessage('기관코드 혹은 비밀번호가 잘못되었습니다.');
-        Toast('기관코드 혹은 비밀번호를 다시 확인해주세요.', {
-          type: 'error',
+        setErrorMessage("기관코드 혹은 비밀번호가 잘못되었습니다.");
+        Toast("기관코드 혹은 비밀번호를 다시 확인해주세요.", {
+          type: "error",
         });
       },
     });
@@ -36,30 +35,35 @@ export const SignInPage = () => {
   return (
     <Container>
       <LogoWrapper>
-        <LogoWithText width={74} height={28} />
+        <LogoWithText
+          width={74}
+          height={28}
+        />
         모의주식투자
       </LogoWrapper>
       <SigninContainer>
         <p>관리자 로그인</p>
         <div
-          onKeyDown={(e) => {
+          onKeyDown={e => {
             if (
-              e.key === 'Enter' &&
-              isTruthValues([state.code, state.password]) &&
+              e.key === "Enter" &&
+              isTruthValues([
+                state.code,
+                state.password,
+              ]) &&
               !isAdminLoginLoading
             ) {
               handleLogin();
             }
-          }}
-        >
+          }}>
           <Input
             placeholder="기관 코드를 입력해 주세요.."
             label="기관 코드"
             value={state.code}
             name="code"
-            onChange={(e) => {
+            onChange={e => {
               onChangeInputValue(e);
-              setErrorMessage('');
+              setErrorMessage("");
             }}
           />
 
@@ -69,9 +73,9 @@ export const SignInPage = () => {
             label="비밀번호"
             name="password"
             value={state.password}
-            onChange={(e) => {
+            onChange={e => {
               onChangeInputValue(e);
-              setErrorMessage('');
+              setErrorMessage("");
             }}
             passwordVisible={passwordVisible}
             setPasswordVisible={setPasswordVisible}
@@ -81,9 +85,11 @@ export const SignInPage = () => {
         <LoginButton
           onClick={handleLogin}
           disabled={
-            !isTruthValues([state.code, state.password]) || isAdminLoginLoading
-          }
-        >
+            !isTruthValues([
+              state.code,
+              state.password,
+            ]) || isAdminLoginLoading
+          }>
           로그인
         </LoginButton>
       </SigninContainer>

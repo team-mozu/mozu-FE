@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useRef, useCallback, useEffect } from "react";
-import { HoldStockTable } from "@/components";
+import { useCallback, useEffect, useRef } from "react";
 import { useGetTeamHoldItems } from "@/apis";
+import { HoldStockTable } from "@/components";
 // import { useMyHoldings } from "@/apis";
 
 export const TeamCurrentModal = ({
@@ -18,7 +18,9 @@ export const TeamCurrentModal = ({
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
-  }, [setIsOpen]);
+  }, [
+    setIsOpen,
+  ]);
 
   const handleBackgroundClick = useCallback(
     (e: React.MouseEvent) => {
@@ -26,7 +28,9 @@ export const TeamCurrentModal = ({
         setIsOpen(false);
       }
     },
-    [setIsOpen]
+    [
+      setIsOpen,
+    ],
   );
 
   useEffect(() => {
@@ -34,8 +38,9 @@ export const TeamCurrentModal = ({
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
-
+  }, [
+    isOpen,
+  ]);
 
   const { data: holdItems } = useGetTeamHoldItems(id);
 
@@ -43,7 +48,9 @@ export const TeamCurrentModal = ({
 
   return (
     isOpen && (
-      <BackgroundContainer ref={backgroundRef} onClick={handleBackgroundClick}>
+      <BackgroundContainer
+        ref={backgroundRef}
+        onClick={handleBackgroundClick}>
         <ModalContainer>
           <ContentContainer>
             <TitleContainer>
@@ -52,8 +59,17 @@ export const TeamCurrentModal = ({
                 <Subtitle>현재 보유 중인 주식 내역</Subtitle>
               </TitleSection>
               <CloseButton onClick={handleClose}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none">
+                  <path
+                    d="M18 6L6 18M6 6L18 18"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </CloseButton>
             </TitleContainer>
@@ -76,7 +92,9 @@ export const TeamCurrentModal = ({
               </FooterStats>
 
               <FooterActions>
-                <ActionButton variant="secondary" onClick={handleClose}>
+                <ActionButton
+                  variant="secondary"
+                  onClick={handleClose}>
                   닫기
                 </ActionButton>
               </FooterActions>
@@ -289,7 +307,9 @@ const FooterActions = styled.div`
   gap: 12px;
 `;
 
-const ActionButton = styled.button<{ variant: 'primary' | 'secondary' }>`
+const ActionButton = styled.button<{
+  variant: "primary" | "secondary";
+}>`
   padding: 12px 24px;
   border-radius: 12px;
   font-weight: 500;
@@ -300,7 +320,9 @@ const ActionButton = styled.button<{ variant: 'primary' | 'secondary' }>`
   cursor: pointer;
   position: relative;
   
-  ${({ variant }) => variant === 'secondary' && `
+  ${({ variant }) =>
+    variant === "secondary" &&
+    `
     background: ${color.zinc[50]};
     color: ${color.zinc[700]};
     border: 1px solid ${color.zinc[200]};

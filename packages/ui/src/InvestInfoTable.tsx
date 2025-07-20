@@ -1,5 +1,5 @@
-import { color, font } from '@mozu/design-token';
 import styled from '@emotion/styled';
+import { color, font } from '@mozu/design-token';
 
 interface IThProp {
   width: string;
@@ -21,7 +21,7 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
         <thead>
           <tr>
             {header.map((data, index) => (
-              <Th key={index} width={index === 0 ? '25%' : '12.5%'}>
+              <Th key={data} width={index === 0 ? '25%' : '12.5%'}>
                 {data}
               </Th>
             ))}
@@ -39,7 +39,7 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
                 const isNumber = typeof amount === 'number';
                 return (
                   <Td
-                    key={idx}
+                    key={`${item.itemId}-${idx}`}
                     width="12.5%"
                     alignRight={isNumber}
                   >

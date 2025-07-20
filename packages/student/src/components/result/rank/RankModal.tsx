@@ -1,7 +1,7 @@
-import { useTeamRank, useTeamResult, useGetTeamDetail } from '@/apis';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Button, Trophy, RankingDiv } from '@mozu/ui';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, RankingDiv, Trophy } from "@mozu/ui";
+import { useGetTeamDetail, useTeamRank, useTeamResult } from "@/apis";
 
 interface IRankModal {
   onCancle: () => void;
@@ -17,13 +17,16 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
 
   return (
     <ModalBackdrop onClick={onCancle}>
-      <Container onClick={(e) => e.stopPropagation()}>
+      <Container onClick={e => e.stopPropagation()}>
         <Header>
           <IconDiv>
-            <Trophy size={24} color={color.orange[500]} />
+            <Trophy
+              size={24}
+              color={color.orange[500]}
+            />
           </IconDiv>
           <TitleSection>
-            {teamResult?.invDeg ?? 0 === endRound ? <Title>최종 모둠 랭킹</Title> : <Title>현재 모둠 랭킹</Title>}
+            {(teamResult?.invDeg ?? 0 === endRound) ? <Title>최종 모둠 랭킹</Title> : <Title>현재 모둠 랭킹</Title>}
             <Subtitle>실시간 모둠별 순위를 확인해보세요</Subtitle>
           </TitleSection>
         </Header>
@@ -47,17 +50,12 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
         </RankingContainer>
 
         <ButtonDiv>
-          <Button
-            onClick={onCancle}
-          >
-            닫기
-          </Button>
+          <Button onClick={onCancle}>닫기</Button>
         </ButtonDiv>
       </Container>
     </ModalBackdrop>
   );
 };
-
 
 const ModalBackdrop = styled.div`
   position: fixed;

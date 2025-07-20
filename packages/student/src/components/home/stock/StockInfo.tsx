@@ -1,10 +1,9 @@
-import { font } from "@mozu/design-token";
-import { Accounts, AccountsSkeleton, CompanySkeleton } from "@mozu/ui";
 import styled from "@emotion/styled";
-import { color } from "@mozu/design-token";
-import { useGetStockDetail } from "@/apis";
-import { useParams } from "react-router-dom";
+import { color, font } from "@mozu/design-token";
+import { Accounts, AccountsSkeleton, CompanySkeleton } from "@mozu/ui";
 import { useMemo } from "react";
+import { useParams } from "react-router-dom";
+import { useGetStockDetail } from "@/apis";
 
 interface StockData {
   itemInfo: string;
@@ -17,13 +16,17 @@ interface StockData {
 }
 
 export const StockInfo = () => {
-  const { stockId } = useParams<{ stockId: string }>();
+  const { stockId } = useParams<{
+    stockId: string;
+  }>();
 
   const itemId = useMemo(() => {
     if (!stockId) return null;
     const parsed = parseInt(stockId, 10);
     return isNaN(parsed) ? null : parsed;
-  }, [stockId]);
+  }, [
+    stockId,
+  ]);
 
   const { data, isLoading, error } = useGetStockDetail(itemId);
 
@@ -68,8 +71,14 @@ export const StockInfo = () => {
             </ContentWrapper>
           ) : (
             <ContentWrapper>
-              <Accounts title="부채" content={data?.debt ?? 0} />
-              <Accounts title="자본금" content={data?.capital ?? 0} />
+              <Accounts
+                title="부채"
+                content={data?.debt ?? 0}
+              />
+              <Accounts
+                title="자본금"
+                content={data?.capital ?? 0}
+              />
             </ContentWrapper>
           )}
         </FinancialSection>
@@ -85,10 +94,22 @@ export const StockInfo = () => {
             </ContentWrapper>
           ) : (
             <ContentWrapper>
-              <Accounts title="매출액" content={data?.profit ?? 0} />
-              <Accounts title="매출원가" content={data?.profitOG ?? 0} />
-              <Accounts title="매출이익" content={data?.profitBen ?? 0} />
-              <Accounts title="당기순이익" content={data?.netProfit ?? 0} />
+              <Accounts
+                title="매출액"
+                content={data?.profit ?? 0}
+              />
+              <Accounts
+                title="매출원가"
+                content={data?.profitOG ?? 0}
+              />
+              <Accounts
+                title="매출이익"
+                content={data?.profitBen ?? 0}
+              />
+              <Accounts
+                title="당기순이익"
+                content={data?.netProfit ?? 0}
+              />
             </ContentWrapper>
           )}
         </FinancialSection>

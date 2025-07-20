@@ -1,8 +1,8 @@
-import { useGetClassDetail } from "@/apis";
-import { NewsDetail } from "./NewsDetail";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useNavigate } from "react-router-dom";
+import { useGetClassDetail } from "@/apis";
+import { NewsDetail } from "./NewsDetail";
 
 interface ArticleModalProps {
   article: any;
@@ -20,20 +20,18 @@ export function ArticleModal({ article, total, current, onPrev, onNext, onClose,
   const navigate = useNavigate();
   const description = article.description || "";
   const isTruncated = description.length > MAX_CONTENT_LENGTH;
-  const truncatedDescription = isTruncated
-    ? description.substring(0, MAX_CONTENT_LENGTH) + "..."
-    : description;
+  const truncatedDescription = isTruncated ? description.substring(0, MAX_CONTENT_LENGTH) + "..." : description;
 
   const handleViewFullArticle = () => {
     if (article.articleId) {
       navigate(`news/${article.articleId}`);
     }
   };
-  console.log(article.articleId)
+  console.log(article.articleId);
 
   return (
     <ModalBackdrop onClick={onClose}>
-      <ModalContainer onClick={(e) => e.stopPropagation()}>
+      <ModalContainer onClick={e => e.stopPropagation()}>
         <NewsDetail
           img={article.image || ""}
           title={article.title || ""}
@@ -41,19 +39,24 @@ export function ArticleModal({ article, total, current, onPrev, onNext, onClose,
         />
 
         {isTruncated && (
-          <ViewFullArticleButton onClick={handleViewFullArticle}>
-            해당 기사 보러가기
-          </ViewFullArticleButton>
+          <ViewFullArticleButton onClick={handleViewFullArticle}>해당 기사 보러가기</ViewFullArticleButton>
         )}
 
         <StepperWrapper>
-          {Array.from({ length: total }).map((_, idx) => (
-            <StepCircle key={idx} active={idx === current} />
+          {Array.from({
+            length: total,
+          }).map((_, idx) => (
+            <StepCircle
+              key={idx}
+              active={idx === current}
+            />
           ))}
         </StepperWrapper>
 
         <ModalButtonRow>
-          <ModalButton onClick={onPrev} disabled={isFirst}>
+          <ModalButton
+            onClick={onPrev}
+            disabled={isFirst}>
             이전
           </ModalButton>
           {!isLast ? (
@@ -153,7 +156,9 @@ const StepperWrapper = styled.div`
   margin-top: 24px;
 `;
 
-const StepCircle = styled.div<{ active: boolean }>`
+const StepCircle = styled.div<{
+  active: boolean;
+}>`
   width: 14px;
   height: 14px;
   border-radius: 50%;

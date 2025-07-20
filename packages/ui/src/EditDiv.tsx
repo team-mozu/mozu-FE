@@ -1,32 +1,32 @@
-import styled from '@emotion/styled';
-import { Button } from './Button';
-import { color, font } from '@mozu/design-token';
-import { useNavigate } from 'react-router-dom';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useNavigate } from "react-router-dom";
+import { Button } from "./Button";
 
 interface IEditType {
   title?: string;
   value1?: string;
   value2?: string;
   type1?:
-    | 'startImg'
-    | 'delImg'
-    | 'editImg'
-    | 'plusImg'
-    | 'saveImg'
-    | 'cancelImg'
-    | 'logOutImg'
-    | 'articleImg'
-    | 'classImg';
+  | "startImg"
+  | "delImg"
+  | "editImg"
+  | "plusImg"
+  | "saveImg"
+  | "cancelImg"
+  | "logOutImg"
+  | "articleImg"
+  | "classImg";
   type2?:
-    | 'startImg'
-    | 'delImg'
-    | 'editImg'
-    | 'plusImg'
-    | 'saveImg'
-    | 'cancelImg'
-    | 'logOutImg'
-    | 'articleImg'
-    | 'classImg';
+  | "startImg"
+  | "delImg"
+  | "editImg"
+  | "plusImg"
+  | "saveImg"
+  | "cancelImg"
+  | "logOutImg"
+  | "articleImg"
+  | "classImg";
   iconSize1?: number;
   iconSize2?: number;
   iconColor1?: string;
@@ -64,8 +64,7 @@ export const EditDiv = ({
           iconColor={iconColor1}
           isIcon={isIcon1}
           onClick={() => navigate(-1)}
-          hoverBackgroundColor={color.zinc[100]}
-        >
+          hoverBackgroundColor={color.zinc[100]}>
           {value1}
         </Button>
         <Button
@@ -77,8 +76,7 @@ export const EditDiv = ({
           iconColor={iconColor2}
           isIcon={isIcon2}
           hoverBackgroundColor={color.orange[600]}
-          onClick={onClick}
-        >
+          onClick={onClick}>
           {value2}
         </Button>
       </BtnContainer>

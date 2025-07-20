@@ -1,7 +1,7 @@
 {
-  "name": "@configs/util",
+  "name": "@mozu/util-config",
   "main": "./src",
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.8.1",
   "scripts": {
     "build": "tsc --build"
   },

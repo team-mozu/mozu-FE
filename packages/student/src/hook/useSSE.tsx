@@ -1,10 +1,8 @@
-import { useEffect, useRef } from "react";
+import { getCookies } from "@mozu/util-config";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import { getCookies } from "@configs/util";
+import { useEffect, useRef } from "react";
 
-type EventType =
-  | "CLASS_NEXT_INV_START"
-  | "CANCEL_CLASS";
+type EventType = "CLASS_NEXT_INV_START" | "CANCEL_CLASS";
 
 interface TeamNextInvStart {
   classId: number;
@@ -32,21 +30,24 @@ export const useSSE = (
   url: string,
   onMessage?: (data: any) => void,
   onError?: (error: any) => void,
-  eventHandlers?: EventHandlers
+  eventHandlers?: EventHandlers,
 ) => {
   const token = getCookies<string>("accessToken");
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     if (!url || !token) return;
 
     const eventSource = new EventSourcePolyfill(url, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       heartbeatTimeout: 1000 * 60 * 30,
     });
 
     eventSourceRef.current = eventSource;
-    (Object.keys(eventHandlers || {}) as EventType[]).forEach((eventType) => {
+    (Object.keys(eventHandlers || {}) as EventType[]).forEach(eventType => {
       eventSource.addEventListener(eventType, (e: MessageEvent) => {
         try {
           const eventData = JSON.parse(e.data);
@@ -58,8 +59,8 @@ export const useSSE = (
       });
     });
 
-    eventSource.onmessage = (e) => {
-      console.log('수신된 SSE 데이터:', e.data);
+    eventSource.onmessage = e => {
+      console.log("수신된 SSE 데이터:", e.data);
       try {
         const parsed: SSEEventPayload = JSON.parse(e.data);
         onMessage?.(parsed);
@@ -68,7 +69,7 @@ export const useSSE = (
       }
     };
 
-    eventSource.onerror = (err) => {
+    eventSource.onerror = err => {
       console.error("[SSE] 연결 오류", err);
       onError?.(err);
     };
@@ -86,5 +87,7 @@ export const useSSE = (
     }
   };
 
-  return { disconnect };
+  return {
+    disconnect,
+  };
 };

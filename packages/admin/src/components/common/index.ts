@@ -1,3 +1,3 @@
-export * from './ArticleTables';
-export * from './StockTables';
-export * from './FullPageLoader';
+export * from "./ArticleTables";
+export * from "./FullPageLoader";
+export * from "./StockTables";

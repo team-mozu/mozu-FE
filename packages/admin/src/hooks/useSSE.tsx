@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { EventSourcePolyfill } from 'event-source-polyfill';
-import { getCookies } from '@configs/util';
+import { getCookies } from "@mozu/util-config";
+import { EventSourcePolyfill } from "event-source-polyfill";
+import { useEffect, useRef } from "react";
 
-type EventType = 'TEAM_PART_IN' | 'TEAM_INV_END';
+type EventType = "TEAM_PART_IN" | "TEAM_INV_END";
 
 interface TeamPartInData {
   teamId: number;
@@ -30,20 +30,23 @@ export const useSSE = (
   onError?: (error: any) => void,
   eventHandlers?: EventHandlers,
 ) => {
-  const token = getCookies<string>('accessToken');
+  const token = getCookies<string>("accessToken");
   const eventSourceRef = useRef<EventSource | null>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     if (!url || !token) return;
 
     const eventSource = new EventSourcePolyfill(url, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       heartbeatTimeout: 1000 * 60 * 30,
     });
 
     eventSourceRef.current = eventSource;
 
-    (Object.keys(eventHandlers || {}) as EventType[]).forEach((eventType) => {
+    (Object.keys(eventHandlers || {}) as EventType[]).forEach(eventType => {
       eventSource.addEventListener(eventType, (e: MessageEvent) => {
         try {
           const eventData = JSON.parse(e.data);
@@ -55,18 +58,18 @@ export const useSSE = (
       });
     });
 
-    eventSource.onmessage = (e) => {
-      console.log('수신된 SSE 데이터:', e.data);
+    eventSource.onmessage = e => {
+      console.log("수신된 SSE 데이터:", e.data);
       try {
         const parsedData = JSON.parse(e.data);
         onMessage?.(parsedData);
       } catch (error) {
-        console.error('SSE JSON 파싱 오류', error);
+        console.error("SSE JSON 파싱 오류", error);
       }
     };
 
-    eventSource.onerror = (err) => {
-      console.error('SSE 연결 오류', err);
+    eventSource.onerror = err => {
+      console.error("SSE 연결 오류", err);
       onError?.(err);
     };
 
@@ -83,5 +86,7 @@ export const useSSE = (
     }
   };
 
-  return { disconnect };
+  return {
+    disconnect,
+  };
 };

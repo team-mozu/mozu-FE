@@ -1,18 +1,13 @@
-import { formatPrice } from "@/utils/formatPrice";
 import styled from "@emotion/styled";
-import { font, color } from "@mozu/design-token";
+import { color, font } from "@mozu/design-token";
 import { Button, Input, Select } from "@mozu/ui";
-import { ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router";
-import { useClassCreate, useGetStockList, useGetArticleList } from "@/apis";
-import { StockTables } from "@/components/common/StockTables";
+import { useClassCreate, useGetArticleList, useGetStockList } from "@/apis";
+import type { Article, ClassArticleRequest, ClassCreateRequest, ClassItemRequest } from "@/apis/class/type";
 import { ArticleTables } from "@/components/common/ArticleTables";
-import {
-  ClassItemRequest,
-  ClassArticleRequest,
-  ClassCreateRequest,
-  Article,
-} from "@/apis/class/type";
+import { StockTables } from "@/components/common/StockTables";
+import { formatPrice } from "@/utils/formatPrice";
 
 export const CreateClass = () => {
   const navigate = useNavigate();
@@ -46,11 +41,13 @@ export const CreateClass = () => {
     console.log("New items received in CreateClass:", newItems);
 
     // Add new items to the classItems array
-    setClassItems((prevItems) => [
+    setClassItems(prevItems => [
       ...prevItems,
-      ...newItems.map((item) => {
+      ...newItems.map(item => {
         const requiredLength = parseInt(classDeg, 10) + 2;
-        const money = [...(item.money || [])];
+        const money = [
+          ...(item.money || []),
+        ];
 
         // money 배열 길이 보정
         while (money.length < requiredLength) {
@@ -65,17 +62,17 @@ export const CreateClass = () => {
     ]);
 
     // Convert to display format for the table
-    const newStockData = newItems.map((item) => {
+    const newStockData = newItems.map(item => {
       const requiredLength = parseInt(classDeg, 10) + 2;
-      const money = [...(item.money || [])];
+      const money = [
+        ...(item.money || []),
+      ];
 
       while (money.length < requiredLength) {
         money.push(0);
       }
 
-      const stockItem = stockListData?.items.find(
-        (stockItem) => stockItem.id === item.id
-      );
+      const stockItem = stockListData?.items.find(stockItem => stockItem.id === item.id);
       const itemName = stockItem ? stockItem.name : `Item ${item.id}`;
 
       return {
@@ -87,28 +84,28 @@ export const CreateClass = () => {
       };
     });
 
-    setStockData((prevData) => [...prevData, ...newStockData]);
+    setStockData(prevData => [
+      ...prevData,
+      ...newStockData,
+    ]);
   };
-
 
   const onDeleteItems = (itemIds: number[]) => {
     // Remove items from the classItems array
-    setClassItems(classItems.filter((item) => !itemIds.includes(item.id)));
+    setClassItems(classItems.filter(item => !itemIds.includes(item.id)));
 
     // Remove items from the stockData array
-    setStockData(stockData.filter((item) => !itemIds.includes(item.itemId)));
+    setStockData(stockData.filter(item => !itemIds.includes(item.itemId)));
   };
 
-  const handleUpdateItemPrice = (
-    itemId: number,
-    levelIndex: number,
-    value: number | null
-  ) => {
+  const handleUpdateItemPrice = (itemId: number, levelIndex: number, value: number | null) => {
     // classItems 업데이트
-    setClassItems((items) =>
-      items.map((item) => {
+    setClassItems(items =>
+      items.map(item => {
         if (item.id === itemId) {
-          const updatedMoney = [...item.money];
+          const updatedMoney = [
+            ...item.money,
+          ];
           updatedMoney[levelIndex] = value ?? 0;
 
           // 1번 인덱스(현재가)가 변경된 경우, 0번 인덱스도 같은 값으로 설정
@@ -116,17 +113,22 @@ export const CreateClass = () => {
             updatedMoney[0] = value ?? 0;
           }
 
-          return { ...item, money: updatedMoney };
+          return {
+            ...item,
+            money: updatedMoney,
+          };
         }
         return item;
-      })
+      }),
     );
 
     // stockData 업데이트
-    setStockData((data) =>
-      data.map((item) => {
+    setStockData(data =>
+      data.map(item => {
         if (item.itemId === itemId) {
-          const updatedMoney = [...item.money];
+          const updatedMoney = [
+            ...item.money,
+          ];
           updatedMoney[levelIndex] = value ?? 0;
 
           // 1번 인덱스(현재가)가 변경된 경우, 0번 인덱스도 같은 값으로 설정
@@ -134,38 +136,41 @@ export const CreateClass = () => {
             updatedMoney[0] = value ?? 0;
           }
 
-          return { ...item, money: updatedMoney };
+          return {
+            ...item,
+            money: updatedMoney,
+          };
         }
         return item;
-      })
+      }),
     );
   };
 
   // 기사 관련 핸들러
-  const handleAddArticles = (newArticleGroup: {
-    invDeg: number;
-    articles: Article[];
-  }) => {
+  const handleAddArticles = (newArticleGroup: { invDeg: number; articles: Article[] }) => {
     console.log("New articles received:", newArticleGroup);
 
     const { invDeg, articles } = newArticleGroup;
 
     // 해당 차수의 기사 그룹 찾기
-    const existingGroupIndex = classArticles.findIndex(
-      (group) => group.invDeg === invDeg
-    );
+    const existingGroupIndex = classArticles.findIndex(group => group.invDeg === invDeg);
 
     if (existingGroupIndex >= 0) {
       // 기존 그룹에 새 기사 추가
-      setClassArticles((prevGroups) => {
-        const updatedGroups = [...prevGroups];
+      setClassArticles(prevGroups => {
+        const updatedGroups = [
+          ...prevGroups,
+        ];
         // 현재 기사 ID 배열
         const currentArticleIds = updatedGroups[existingGroupIndex].articles;
 
         // 새 기사 ID 추가
-        const newArticleIds = articles.map((article) => article.id);
+        const newArticleIds = articles.map(article => article.id);
         const combinedIds = [
-          ...new Set([...currentArticleIds, ...newArticleIds]),
+          ...new Set([
+            ...currentArticleIds,
+            ...newArticleIds,
+          ]),
         ];
 
         updatedGroups[existingGroupIndex] = {
@@ -177,11 +182,11 @@ export const CreateClass = () => {
       });
     } else {
       // 새 그룹 추가
-      setClassArticles((prevGroups) => [
+      setClassArticles(prevGroups => [
         ...prevGroups,
         {
           invDeg,
-          articles: articles.map((article) => article.id),
+          articles: articles.map(article => article.id),
         },
       ]);
     }
@@ -189,22 +194,20 @@ export const CreateClass = () => {
 
   const handleDeleteArticles = (articleIds: number[], degree: number) => {
     // 해당 차수의 기사 그룹 찾기
-    const groupIndex = classArticles.findIndex(
-      (group) => group.invDeg === degree
-    );
+    const groupIndex = classArticles.findIndex(group => group.invDeg === degree);
 
     if (groupIndex === -1) return;
 
-    setClassArticles((prevGroups) => {
-      const updatedGroups = [...prevGroups];
+    setClassArticles(prevGroups => {
+      const updatedGroups = [
+        ...prevGroups,
+      ];
       // 삭제할 ID를 제외한 기사만 남기기
-      const filteredArticleIds = updatedGroups[groupIndex].articles.filter(
-        (id) => !articleIds.includes(id)
-      );
+      const filteredArticleIds = updatedGroups[groupIndex].articles.filter(id => !articleIds.includes(id));
 
       // 남은 기사가 없으면 그룹 자체를 제거
       if (filteredArticleIds.length === 0) {
-        return prevGroups.filter((group) => group.invDeg !== degree);
+        return prevGroups.filter(group => group.invDeg !== degree);
       }
 
       // 남은 기사가 있으면 업데이트
@@ -230,8 +233,10 @@ export const CreateClass = () => {
     }
 
     // 요청 전에 classItems의 0번 인덱스를 1번 인덱스(현재가)와 같게 설정
-    const processedClassItems = classItems.map((item) => {
-      const updatedMoney = [...item.money];
+    const processedClassItems = classItems.map(item => {
+      const updatedMoney = [
+        ...item.money,
+      ];
       // 0번 인덱스를 1번 인덱스(현재가)와 같게 설정
       if (updatedMoney.length > 1) {
         updatedMoney[0] = updatedMoney[1];
@@ -254,10 +259,10 @@ export const CreateClass = () => {
   };
 
   // 기사 테이블용 데이터 변환
-  const articleTableData = classArticles.map((group) => {
+  const articleTableData = classArticles.map(group => {
     // API 데이터에서 기사 제목 찾기
-    const articleDetails = group.articles.map((id) => {
-      const article = articleListData?.article.find((a) => a.id === id);
+    const articleDetails = group.articles.map(id => {
+      const article = articleListData?.article.find(a => a.id === id);
       return {
         id: id,
         title: article ? article.title : `기사 ID: ${id}`,
@@ -280,8 +285,7 @@ export const CreateClass = () => {
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
-            onClick={() => navigate(-1)}
-          >
+            onClick={() => navigate(-1)}>
             취소
           </Button>
           <Button
@@ -289,8 +293,7 @@ export const CreateClass = () => {
             borderColor={color.orange[500]}
             color={color.white}
             hoverBackgroundColor={color.orange[600]}
-            onClick={onSubmit}
-          >
+            onClick={onSubmit}>
             생성하기
           </Button>
         </BtnContainer>
@@ -310,10 +313,19 @@ export const CreateClass = () => {
             투자 차수
             <SelectField>
               <Select
-                data={["3", "4", "5"]}
+                data={[
+                  "3",
+                  "4",
+                  "5",
+                ]}
                 width={120}
                 height={48}
-                padding={{ top: 14, bottom: 14, left: 16, right: 10 }}
+                padding={{
+                  top: 14,
+                  bottom: 14,
+                  left: 16,
+                  right: 10,
+                }}
                 value={classDeg}
                 onChange={onDegreeChange}
               />

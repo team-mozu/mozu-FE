@@ -1,36 +1,25 @@
-import { Button, Input, Save, Select } from '@mozu/ui';
+import { color } from "@mozu/design-token";
+import { Button, Input, Save, Select } from "@mozu/ui";
+import { type ChangeEvent, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useEditClass, useGetArticleList, useGetClassDetail, useGetStockList } from "@/apis";
+import type { Article, ClassArticleRequest, ClassData, ClassItemRequest } from "@/apis/class/type";
+import { FullPageLoader } from "@/components";
+import { ArticleTables } from "@/components/common/ArticleTables";
+import { StockTables } from "@/components/common/StockTables";
+import { formatPrice } from "@/utils/formatPrice";
 import {
   AssetField,
   AssetInput,
   BtnContainer,
   Container,
   Contents,
-  Header,
   FlexColumnBox,
+  Header,
   SelectField,
   TableField,
   TextField,
-
-} from './ClassCreate';
-import { color } from '@mozu/design-token';
-import { useState, useEffect, ChangeEvent } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { ArticleTables } from '@/components/common/ArticleTables';
-import { StockTables } from '@/components/common/StockTables';
-import {
-  useEditClass,
-  useGetClassDetail,
-  useGetArticleList,
-  useGetStockList,
-} from '@/apis';
-import { formatPrice } from '@/utils/formatPrice';
-import {
-  ClassArticleRequest,
-  ClassItemRequest,
-  Article,
-  ClassData,
-} from '@/apis/class/type';
-import { FullPageLoader } from '@/components';
+} from "./ClassCreate";
 
 interface StockData {
   itemId: number;
@@ -52,8 +41,8 @@ export const ClassEdit = () => {
   const { mutate: editClass } = useEditClass(classId);
 
   // 상태 관리
-  const [className, setClassName] = useState<string>('');
-  const [classDeg, setClassDeg] = useState<string>('3');
+  const [className, setClassName] = useState<string>("");
+  const [classDeg, setClassDeg] = useState<string>("3");
   const [baseMoney, setBaseMoney] = useState<number>(1000000);
   const [classItems, setClassItems] = useState<ClassItemRequest[]>([]);
   const [classArticles, setClassArticles] = useState<ClassArticleRequest[]>([]);
@@ -68,15 +57,17 @@ export const ClassEdit = () => {
       setBaseMoney(classDetailData.baseMoney);
 
       // 투자 종목 데이터 설정
-      const items = classDetailData.classItems.map((item) => ({
+      const items = classDetailData.classItems.map(item => ({
         id: item.itemId,
         money: item.money,
       }));
       setClassItems(items);
 
       // 스톡 테이블 데이터 설정
-      const stockItems = classDetailData.classItems.map((item) => {
-        const money = [...item.money];
+      const stockItems = classDetailData.classItems.map(item => {
+        const money = [
+          ...item.money,
+        ];
 
         // 투자 차수에 맞춰 길이 맞춤
         const requiredLength = parseInt(classDetailData.maxInvDeg.toString());
@@ -95,13 +86,15 @@ export const ClassEdit = () => {
       setStockData(stockItems);
 
       // 기사 데이터 설정
-      const articles = classDetailData.classArticles.map((group) => ({
+      const articles = classDetailData.classArticles.map(group => ({
         invDeg: group.invDeg,
-        articles: group.articles.map((article) => article.id),
+        articles: group.articles.map(article => article.id),
       }));
       setClassArticles(articles);
     }
-  }, [classDetailData]);
+  }, [
+    classDetailData,
+  ]);
 
   // 기본 정보 변경 핸들러
   const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +112,9 @@ export const ClassEdit = () => {
       // classItems 업데이트
       setClassItems(prevItems =>
         prevItems.map(item => {
-          const updatedMoney = [...item.money];
+          const updatedMoney = [
+            ...item.money,
+          ];
           const endPrice = updatedMoney[prevDegree + 1]; // 기존 종료가 저장
 
           // 차수가 늘어나는 경우
@@ -143,15 +138,17 @@ export const ClassEdit = () => {
 
           return {
             ...item,
-            money: updatedMoney
+            money: updatedMoney,
           };
-        })
+        }),
       );
 
       // stockData 업데이트
       setStockData(prevData =>
         prevData.map(item => {
-          const updatedMoney = [...item.money];
+          const updatedMoney = [
+            ...item.money,
+          ];
           const endPrice = updatedMoney[prevDegree + 1]; // 기존 종료가 저장
 
           // 차수가 늘어나는 경우
@@ -175,29 +172,30 @@ export const ClassEdit = () => {
 
           return {
             ...item,
-            money: updatedMoney
+            money: updatedMoney,
           };
-        })
+        }),
       );
     }
   };
 
   const onBaseMoneyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^\d]/g, '');
-    const numValue = value === '' ? 0 : parseInt(value, 10);
+    const value = e.target.value.replace(/[^\d]/g, "");
+    const numValue = value === "" ? 0 : parseInt(value, 10);
     setBaseMoney(numValue);
   };
 
   // 투자 종목 관련 핸들러
   const handleAddItems = (newItems: any[]) => {
     // 클래스 아이템 배열에 추가
-    setClassItems((prevItems) => [...prevItems, ...newItems]);
+    setClassItems(prevItems => [
+      ...prevItems,
+      ...newItems,
+    ]);
 
     // 테이블 표시용 데이터로 변환
-    const newStockData = newItems.map((item) => {
-      const stockItem = stockListData?.items.find(
-        (stock) => stock.id === item.id,
-      );
+    const newStockData = newItems.map(item => {
+      const stockItem = stockListData?.items.find(stock => stock.id === item.id);
       const itemName = stockItem ? stockItem.name : `Item ${item.id}`;
 
       return {
@@ -209,24 +207,25 @@ export const ClassEdit = () => {
       };
     });
 
-    setStockData((prevData) => [...prevData, ...newStockData]);
+    setStockData(prevData => [
+      ...prevData,
+      ...newStockData,
+    ]);
   };
 
   const onDeleteItems = (itemIds: number[]) => {
     // 삭제할 아이템 필터링
-    setClassItems(classItems.filter((item) => !itemIds.includes(item.id)));
-    setStockData(stockData.filter((item) => !itemIds.includes(item.itemId)));
+    setClassItems(classItems.filter(item => !itemIds.includes(item.id)));
+    setStockData(stockData.filter(item => !itemIds.includes(item.itemId)));
   };
 
-  const handleUpdateItemPrice = (
-    itemId: number,
-    levelIndex: number,
-    value: number | null,
-  ) => {
-    setClassItems((items) =>
-      items.map((item) => {
+  const handleUpdateItemPrice = (itemId: number, levelIndex: number, value: number | null) => {
+    setClassItems(items =>
+      items.map(item => {
         if (item.id === itemId) {
-          const updatedMoney = [...item.money];
+          const updatedMoney = [
+            ...item.money,
+          ];
           updatedMoney[levelIndex] = value ?? 0;
 
           // 만약 현재가(1번 인덱스)를 수정했다면
@@ -234,16 +233,21 @@ export const ClassEdit = () => {
             updatedMoney[0] = value ?? 0;
           }
 
-          return { ...item, money: updatedMoney };
+          return {
+            ...item,
+            money: updatedMoney,
+          };
         }
         return item;
       }),
     );
 
-    setStockData((data) =>
-      data.map((item) => {
+    setStockData(data =>
+      data.map(item => {
         if (item.itemId === itemId) {
-          const updatedMoney = [...item.money];
+          const updatedMoney = [
+            ...item.money,
+          ];
           updatedMoney[levelIndex] = value ?? 0;
 
           // 마찬가지로 stockData에도 반영
@@ -251,7 +255,10 @@ export const ClassEdit = () => {
             updatedMoney[0] = value ?? 0;
           }
 
-          return { ...item, money: updatedMoney };
+          return {
+            ...item,
+            money: updatedMoney,
+          };
         }
         return item;
       }),
@@ -259,27 +266,27 @@ export const ClassEdit = () => {
   };
 
   // 기사 관련 핸들러
-  const handleAddArticles = (newArticleGroup: {
-    invDeg: number;
-    articles: Article[];
-  }) => {
+  const handleAddArticles = (newArticleGroup: { invDeg: number; articles: Article[] }) => {
     const { invDeg, articles } = newArticleGroup;
 
     // 이미 해당 차수의 기사 그룹이 있는지 확인
-    const existingGroupIndex = classArticles.findIndex(
-      (group) => group.invDeg === invDeg,
-    );
+    const existingGroupIndex = classArticles.findIndex(group => group.invDeg === invDeg);
 
     if (existingGroupIndex >= 0) {
       // 기존 그룹에 기사 추가
-      setClassArticles((prevGroups) => {
-        const updatedGroups = [...prevGroups];
+      setClassArticles(prevGroups => {
+        const updatedGroups = [
+          ...prevGroups,
+        ];
         const currentArticleIds = updatedGroups[existingGroupIndex].articles;
 
         // 새 기사 ID 추가
-        const newArticleIds = articles.map((article) => article.id);
+        const newArticleIds = articles.map(article => article.id);
         const combinedIds = [
-          ...new Set([...currentArticleIds, ...newArticleIds]),
+          ...new Set([
+            ...currentArticleIds,
+            ...newArticleIds,
+          ]),
         ];
 
         updatedGroups[existingGroupIndex] = {
@@ -291,11 +298,11 @@ export const ClassEdit = () => {
       });
     } else {
       // 새 그룹 추가
-      setClassArticles((prevGroups) => [
+      setClassArticles(prevGroups => [
         ...prevGroups,
         {
           invDeg,
-          articles: articles.map((article) => article.id),
+          articles: articles.map(article => article.id),
         },
       ]);
     }
@@ -303,22 +310,20 @@ export const ClassEdit = () => {
 
   const handleDeleteArticles = (articleIds: number[], degree: number) => {
     // 해당 차수의 기사 그룹 찾기
-    const groupIndex = classArticles.findIndex(
-      (group) => group.invDeg === degree,
-    );
+    const groupIndex = classArticles.findIndex(group => group.invDeg === degree);
 
     if (groupIndex === -1) return;
 
-    setClassArticles((prevGroups) => {
-      const updatedGroups = [...prevGroups];
+    setClassArticles(prevGroups => {
+      const updatedGroups = [
+        ...prevGroups,
+      ];
       // 삭제할 ID를 제외한 기사만 남기기
-      const filteredArticleIds = updatedGroups[groupIndex].articles.filter(
-        (id) => !articleIds.includes(id),
-      );
+      const filteredArticleIds = updatedGroups[groupIndex].articles.filter(id => !articleIds.includes(id));
 
       // 남은 기사가 없으면 그룹 제거
       if (filteredArticleIds.length === 0) {
-        return prevGroups.filter((group) => group.invDeg !== degree);
+        return prevGroups.filter(group => group.invDeg !== degree);
       }
 
       // 업데이트
@@ -335,24 +340,26 @@ export const ClassEdit = () => {
   const handleSubmit = () => {
     // 유효성 검사
     if (!className.trim()) {
-      alert('수업 이름을 입력해주세요.');
+      alert("수업 이름을 입력해주세요.");
       return;
     }
 
     if (classItems.length === 0) {
-      alert('최소 하나 이상의 투자 종목을 추가해주세요.');
+      alert("최소 하나 이상의 투자 종목을 추가해주세요.");
       return;
     }
 
     // 모든 아이템의 0번 인덱스를 1번 인덱스로 덮어씌움
     const processedClassItems = classItems.map(item => {
-      const updatedMoney = [...item.money];
+      const updatedMoney = [
+        ...item.money,
+      ];
       if (updatedMoney.length > 1) {
         updatedMoney[0] = updatedMoney[1] ?? 0;
       }
       return {
         ...item,
-        money: updatedMoney
+        money: updatedMoney,
       };
     });
 
@@ -360,9 +367,9 @@ export const ClassEdit = () => {
       className: className,
       classDeg: parseInt(classDeg),
       baseMoney: baseMoney,
-      classItems: processedClassItems.map((item) => {
+      classItems: processedClassItems.map(item => {
         const moneyForRequest = [
-          ...item.money.slice(0, parseInt(classDeg) + 2) // +2로 종료가까지 포함
+          ...item.money.slice(0, parseInt(classDeg) + 2), // +2로 종료가까지 포함
         ];
 
         // 배열 길이 부족 시 null 채우기
@@ -376,25 +383,24 @@ export const ClassEdit = () => {
           money: moneyForRequest,
         };
       }),
-      classArticles: classArticles.map((group) => ({
+      classArticles: classArticles.map(group => ({
         invDeg: group.invDeg,
         articles: group.articles,
       })),
     };
 
-    console.log('Submitting class edit data:', classData);
+    console.log("Submitting class edit data:", classData);
 
     editClass(classData, {
       onSuccess: () => navigate(`/class-management/${id}`),
     });
   };
 
-
   // 기사 테이블용 데이터 변환
-  const articleTableData = classArticles.map((group) => {
+  const articleTableData = classArticles.map(group => {
     // API 데이터에서 기사 제목 찾기
-    const articleDetails = group.articles.map((id) => {
-      const article = articleListData?.article.find((a) => a.id === id);
+    const articleDetails = group.articles.map(id => {
+      const article = articleListData?.article.find(a => a.id === id);
       return {
         id: id,
         title: article ? article.title : `기사 ID: ${id}`,
@@ -422,8 +428,7 @@ export const ClassEdit = () => {
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
             hoverBorderColor={color.zinc[100]}
-            onClick={() => navigate(-1)}
-          >
+            onClick={() => navigate(-1)}>
             취소
           </Button>
           <Button
@@ -432,10 +437,12 @@ export const ClassEdit = () => {
             color={color.white}
             hoverBackgroundColor={color.orange[400]}
             hoverBorderColor={color.orange[400]}
-            onClick={handleSubmit}
-          >
+            onClick={handleSubmit}>
             저장하기
-            <Save size={20} color="white" />
+            <Save
+              size={20}
+              color="white"
+            />
           </Button>
         </BtnContainer>
       </Header>
@@ -454,10 +461,19 @@ export const ClassEdit = () => {
             투자 차수
             <SelectField>
               <Select
-                data={['3', '4', '5']}
+                data={[
+                  "3",
+                  "4",
+                  "5",
+                ]}
                 width={120}
                 height={48}
-                padding={{ top: 14, bottom: 14, left: 16, right: 10 }}
+                padding={{
+                  top: 14,
+                  bottom: 14,
+                  left: 16,
+                  right: 10,
+                }}
                 value={classDeg}
                 onChange={onDegreeChange}
               />

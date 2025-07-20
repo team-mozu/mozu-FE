@@ -1,34 +1,37 @@
-import { AddButton, SearchInput } from "@mozu/ui";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
+import { AddButton, SearchInput } from "@mozu/ui";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArticleDiv } from "./ArticleDiv";
-import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useGetArticleList } from "@/apis";
 import { FullPageLoader } from "../common";
+import { ArticleDiv } from "./ArticleDiv";
 
 interface ArticleSearchSideBarProps {
   setSelectedId: Dispatch<SetStateAction<number | null>>;
   selectedId: number | null;
 }
 
-export const ArticleSearchSideBar = ({
-  setSelectedId,
-  selectedId,
-}: ArticleSearchSideBarProps) => {
-  const { id } = useParams<{ id: string }>();
+export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearchSideBarProps) => {
+  const { id } = useParams<{
+    id: string;
+  }>();
   const [datas, setDatas] = useState<
-    { id: number; title: string; date: string }[]
+    {
+      id: number;
+      title: string;
+      date: string;
+    }[]
   >([]);
   const { data: articleData, isLoading } = useGetArticleList();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
   const filteredDatas = datas.filter(
-    (item) =>
+    item =>
       searchText === "" ||
       item.title.toLowerCase().includes(searchText.toLowerCase()) ||
-      String(item.id).includes(searchText)
+      String(item.id).includes(searchText),
   );
 
   useEffect(() => {
@@ -42,10 +45,17 @@ export const ArticleSearchSideBar = ({
 
     setDatas(mappedData);
     if (!id && mappedData.length > 0) {
-      navigate(`/article-management/${mappedData[0].id}`, { replace: true });
+      navigate(`/article-management/${mappedData[0].id}`, {
+        replace: true,
+      });
       setSelectedId(mappedData[0].id);
     }
-  }, [articleData, id, navigate, setSelectedId]);
+  }, [
+    articleData,
+    id,
+    navigate,
+    setSelectedId,
+  ]);
 
   if (isLoading) return <FullPageLoader />;
 
@@ -58,7 +68,7 @@ export const ArticleSearchSideBar = ({
         <SearchInput
           inputText="기사 검색.."
           value={searchText}
-          onChange={(value) => setSearchText(value)}
+          onChange={value => setSearchText(value)}
         />
       </UpperWrapper>
       <ArticleWrapper>
@@ -71,7 +81,9 @@ export const ArticleSearchSideBar = ({
             selected={selectedId === data.id}
             onClick={() => {
               setSelectedId(data.id);
-              navigate(`/article-management/${data.id}`, { replace: true });
+              navigate(`/article-management/${data.id}`, {
+                replace: true,
+              });
             }}
           />
         ))}

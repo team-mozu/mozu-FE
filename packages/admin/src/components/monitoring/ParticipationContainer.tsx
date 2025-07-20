@@ -1,8 +1,8 @@
-import { TeamContainer } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useEffect, useState } from 'react';
-import { Tooltip } from 'react-tooltip';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { TeamContainer } from "@mozu/ui";
+import { useEffect, useState } from "react";
+import { Tooltip } from "react-tooltip";
 
 interface teamData {
   title: string;
@@ -14,27 +14,26 @@ interface IParticipationType {
   teamDatas: teamData[];
 }
 
-export const ParticipationContainer = ({
-  code,
-  teamDatas,
-}: IParticipationType) => {
-  const [tooltipContent, setTooltipContent] = useState('클릭하여 복사하기');
+export const ParticipationContainer = ({ code, teamDatas }: IParticipationType) => {
+  const [tooltipContent, setTooltipContent] = useState("클릭하여 복사하기");
   useEffect(() => {
     console.log(teamDatas);
-  }, [teamDatas]);
+  }, [
+    teamDatas,
+  ]);
   const handleCopyClipBoard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      setTooltipContent('복사 완료!');
+      setTooltipContent("복사 완료!");
 
       setTimeout(() => {
-        setTooltipContent('클릭하여 복사하기');
+        setTooltipContent("클릭하여 복사하기");
       }, 3000);
-    } catch (e) {
-      setTooltipContent('복사 실패');
+    } catch (_e) {
+      setTooltipContent("복사 실패");
 
       setTimeout(() => {
-        setTooltipContent('클릭하여 복사하기');
+        setTooltipContent("클릭하여 복사하기");
       }, 3000);
     }
   };
@@ -49,8 +48,7 @@ export const ParticipationContainer = ({
           <Code
             onClick={() => handleCopyClipBoard(code)}
             data-tooltip-id="code-tooltip"
-            data-tooltip-content={tooltipContent}
-          >
+            data-tooltip-content={tooltipContent}>
             {code}
           </Code>
           <Tooltip
@@ -60,9 +58,9 @@ export const ParticipationContainer = ({
               backgroundColor: color.green[500],
               color: color.white,
               fontWeight: 500,
-              borderRadius: '4px',
-              padding: '8px 12px',
-              fontSize: '14px',
+              borderRadius: "4px",
+              padding: "8px 12px",
+              fontSize: "14px",
             }}
           />
         </CodeSubContent>

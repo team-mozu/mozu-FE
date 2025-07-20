@@ -1,14 +1,10 @@
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-} from "@tanstack/react-table";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useGetHoldItems } from "@/apis";
-import { roundToFixed } from "@/utils";
+import { type ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGetHoldItems } from "@/apis";
+import { roundToFixed } from "@/utils";
 
 interface StockData {
   id: string | number;
@@ -17,7 +13,11 @@ interface StockData {
   quantity: string;
   tradeAmount: string;
   currentPrice: string;
-  profit: { valueMoney: number; profitMoney: number; profitRate: number };
+  profit: {
+    valueMoney: number;
+    profitMoney: number;
+    profitRate: number;
+  };
 }
 
 export const StockTable = () => {
@@ -30,6 +30,7 @@ export const StockTable = () => {
   };
 
   // 컬럼 정의를 useMemo로 메모이제이션
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   const columns: ColumnDef<StockData>[] = useMemo(
     () => [
       {
@@ -42,8 +43,7 @@ export const StockTable = () => {
           return (
             <StockNameButton
               onClick={() => handleStockClick(stockId)}
-              type="button"
-            >
+              type="button">
               {stockName}
             </StockNameButton>
           );
@@ -103,12 +103,9 @@ export const StockTable = () => {
           const { valueMoney, profitMoney, profitRate } = profitData;
 
           // 안전한 숫자 변환
-          const safeValueMoney =
-            typeof valueMoney === "number" ? valueMoney : 0;
-          const safeProfitMoney =
-            typeof profitMoney === "number" ? profitMoney : 0;
-          const safeProfitRate =
-            typeof profitRate === "number" ? profitRate : 0;
+          const safeValueMoney = typeof valueMoney === "number" ? valueMoney : 0;
+          const safeProfitMoney = typeof profitMoney === "number" ? profitMoney : 0;
+          const safeProfitRate = typeof profitRate === "number" ? profitRate : 0;
 
           const isProfit = safeProfitMoney >= 0;
           const sign = isProfit ? "+" : "-";
@@ -118,15 +115,13 @@ export const StockTable = () => {
           return (
             <RateWrapper>
               {safeValueMoney.toLocaleString("ko-KR")}원
-              <ProfitSpan isProfit={isProfit}>
-                {`${sign}${absMoney}원 (${sign}${absRate}%)`}
-              </ProfitSpan>
+              <ProfitSpan isProfit={isProfit}>{`${sign}${absMoney}원 (${sign}${absRate}%)`}</ProfitSpan>
             </RateWrapper>
           );
         },
       },
     ],
-    []
+    [],
   );
 
   // 데이터 변환을 useMemo로 메모이제이션
@@ -135,7 +130,7 @@ export const StockTable = () => {
       return [];
     }
 
-    return data.map((item) => {
+    return data.map(item => {
       // 안전한 데이터 접근
       const safeItem = {
         itemId: item?.itemId || item?.id || "",
@@ -163,7 +158,9 @@ export const StockTable = () => {
         },
       };
     });
-  }, [data]);
+  }, [
+    data,
+  ]);
 
   const table = useReactTable({
     data: stockRows,
@@ -177,7 +174,11 @@ export const StockTable = () => {
       <Table>
         <tbody>
           <tr>
-            <Td colSpan={columns.length} style={{ textAlign: "center" }}>
+            <Td
+              colSpan={columns.length}
+              style={{
+                textAlign: "center",
+              }}>
               데이터를 불러오는 중...
             </Td>
           </tr>
@@ -192,7 +193,11 @@ export const StockTable = () => {
       <Table>
         <tbody>
           <tr>
-            <Td colSpan={columns.length} style={{ textAlign: "center" }}>
+            <Td
+              colSpan={columns.length}
+              style={{
+                textAlign: "center",
+              }}>
               데이터를 불러오는데 실패했습니다.
             </Td>
           </tr>
@@ -204,10 +209,14 @@ export const StockTable = () => {
   return (
     <Table>
       <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
+        {table.getHeaderGroups().map(headerGroup => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <Th key={header.id} style={{ width: header.column.getSize() }}>
+            {headerGroup.headers.map(header => (
+              <Th
+                key={header.id}
+                style={{
+                  width: header.column.getSize(),
+                }}>
                 {header.column.columnDef.header as string}
               </Th>
             ))}
@@ -216,15 +225,14 @@ export const StockTable = () => {
       </thead>
       <tbody>
         {table.getRowModel().rows.length ? (
-          table.getRowModel().rows.map((row) => (
+          table.getRowModel().rows.map(row => (
             <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
+              {row.getVisibleCells().map(cell => (
                 <Td
                   key={cell.id}
                   style={{
                     width: cell.column.getSize(),
-                  }}
-                >
+                  }}>
                   {cell.column.columnDef.cell
                     ? (cell.column.columnDef.cell as any)({
                       row: cell.row,
@@ -239,7 +247,11 @@ export const StockTable = () => {
           ))
         ) : (
           <tr>
-            <Td colSpan={columns.length} style={{ textAlign: "center" }}>
+            <Td
+              colSpan={columns.length}
+              style={{
+                textAlign: "center",
+              }}>
               보유중인 종목이 없습니다.
             </Td>
           </tr>
@@ -305,8 +317,10 @@ const RateWrapper = styled.div`
   text-align: right;
 `;
 
-const ProfitSpan = styled.span<{ isProfit: boolean }>`
-  color: ${(props) => (props.isProfit ? color.red[500] : color.blue[500])};
+const ProfitSpan = styled.span<{
+  isProfit: boolean;
+}>`
+  color: ${props => (props.isProfit ? color.red[500] : color.blue[500])};
   font: ${font.b2};
 `;
 

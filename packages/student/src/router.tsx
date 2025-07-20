@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AppLayout } from "@/layout";
+import * as pages from "@/pages";
 import { StockGraph, StockInfo } from "./components";
-import * as pages from '@/pages';
 
 export const Router = createBrowserRouter([
   {
@@ -29,16 +29,36 @@ export const Router = createBrowserRouter([
         path: "stock/:stockId",
         element: <pages.StockPage />,
         children: [
-          { index: true, element: <Navigate to="stock-info" replace /> },
-          { path: "price-info", element: <StockGraph /> },
-          { path: "stock-info", element: <StockInfo /> },
+          {
+            index: true,
+            element: (
+              <Navigate
+                to="stock-info"
+                replace
+              />
+            ),
+          },
+          {
+            path: "price-info",
+            element: <StockGraph />,
+          },
+          {
+            path: "stock-info",
+            element: <StockInfo />,
+          },
         ],
       },
       {
         path: "news",
         children: [
-          { index: true, element: <pages.NewsPage /> },
-          { path: ":newsId", element: <pages.NewsDetailPage /> },
+          {
+            index: true,
+            element: <pages.NewsPage />,
+          },
+          {
+            path: ":newsId",
+            element: <pages.NewsDetailPage />,
+          },
         ],
       },
       {

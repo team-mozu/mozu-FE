@@ -1,3 +1,3 @@
-export * from './stock';
-export * from './TotalProperty';
-export * from './StockTable';
+export * from "./StockTable";
+export * from "./stock";
+export * from "./TotalProperty";

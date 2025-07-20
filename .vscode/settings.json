@@ -1,17 +1,14 @@
 {
-  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
   "eslint.workingDirectories": [
     {
       "mode": "auto"
     }
   ],
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "javascriptreact",
-    "html",
-    "typescriptreact"
-  ],
+  "eslint.validate": ["javascript", "typescript", "javascriptreact", "html", "typescriptreact"],
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true

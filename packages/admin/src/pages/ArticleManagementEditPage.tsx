@@ -1,10 +1,10 @@
+import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
-import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import { ImgContainer } from "@/components";
-import { useGetArticleDetail, useEditArticle, useGetClassDetail } from "@/apis";
 import { useParams } from "react-router";
+import { useEditArticle, useGetArticleDetail, useGetClassDetail } from "@/apis";
+import { ImgContainer } from "@/components";
 
 export const ArticleManagementEditPage = () => {
   const { classId, id } = useParams();
@@ -30,13 +30,21 @@ export const ArticleManagementEditPage = () => {
         imgUrl: articleData.image || null,
       });
     }
-  }, [articleData]);
+  }, [
+    articleData,
+  ]);
 
   const titleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDatas((prev) => ({ ...prev, title: e.target.value }));
+    setDatas(prev => ({
+      ...prev,
+      title: e.target.value,
+    }));
   };
   const contentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDatas((prev) => ({ ...prev, content: e.target.value }));
+    setDatas(prev => ({
+      ...prev,
+      content: e.target.value,
+    }));
   };
 
   const apiData = useEditArticle();
@@ -88,13 +96,12 @@ export const ArticleManagementEditPage = () => {
             />
             <ImgContainer
               label="기사 이미지"
-              img={
-                datas.imgUrl && datas.imgUrl instanceof File
-                  ? URL.createObjectURL(datas.imgUrl)
-                  : datas.imgUrl
-              }
-              onImageChange={(newImgUrl) =>
-                setDatas((prev) => ({ ...prev, imgUrl: newImgUrl }))
+              img={datas.imgUrl && datas.imgUrl instanceof File ? URL.createObjectURL(datas.imgUrl) : datas.imgUrl}
+              onImageChange={newImgUrl =>
+                setDatas(prev => ({
+                  ...prev,
+                  imgUrl: newImgUrl,
+                }))
               }
             />
           </InputContainer>

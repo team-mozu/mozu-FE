@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 import { noImg, noImgIcon } from "@mozu/ui";
-import { font, color } from "@mozu/design-token";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 interface INewsPostType {
   imgUrl?: string;
@@ -10,12 +10,7 @@ interface INewsPostType {
   onClick?: () => void;
 }
 
-export const NewsPost = ({
-  imgUrl = noImg,
-  title,
-  content,
-  onClick,
-}: INewsPostType) => {
+export const NewsPost = ({ imgUrl = noImg, title, content, onClick }: INewsPostType) => {
   const [imageError, setImageError] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
 
@@ -31,14 +26,21 @@ export const NewsPost = ({
 
   const handleClick = useCallback(() => {
     onClick?.();
-  }, [onClick]);
+  }, [
+    onClick,
+  ]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onClick?.();
-    }
-  }, [onClick]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onClick?.();
+      }
+    },
+    [
+      onClick,
+    ],
+  );
 
   return (
     <PostContainer
@@ -46,8 +48,7 @@ export const NewsPost = ({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`뉴스 기사: ${title}`}
-    >
+      aria-label={`뉴스 기사: ${title}`}>
       <ImageContainer>
         {isImageLoading && <ImageSkeleton />}
         <NewsImg
@@ -141,7 +142,9 @@ const ImageSkeleton = styled.div`
   }
 `;
 
-const NewsImg = styled.img<{ hasImage: boolean }>`
+const NewsImg = styled.img<{
+  hasImage: boolean;
+}>`
   width: 160px;
   height: 90px;
   border-radius: 12px;

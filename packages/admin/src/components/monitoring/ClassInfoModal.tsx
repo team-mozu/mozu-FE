@@ -1,7 +1,7 @@
-import { color, font } from '@mozu/design-token';
-import styled from '@emotion/styled';
-import { useRef, useCallback, useEffect } from 'react';
-import { ClassIcon, InvestInfoTable, Button } from '@mozu/ui';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, ClassIcon, InvestInfoTable } from "@mozu/ui";
+import { useCallback, useEffect, useRef } from "react";
 
 interface classItem {
   itemId: number;
@@ -24,32 +24,43 @@ export const ClassInfoModal = ({ isOpen, setIsOpen, classItems }: IClassInfoType
         setIsOpen?.(false);
       }
     },
-    [setIsOpen],
+    [
+      setIsOpen,
+    ],
   );
 
   const cancelClick = useCallback(() => {
     setIsOpen?.(false);
-  }, [setIsOpen]);
+  }, [
+    setIsOpen,
+  ]);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, [
+    isOpen,
+  ]);
 
   if (!isOpen) return null;
 
   return (
-    <BackgroundContainer onClick={outSideClick as any} ref={outSideRef}>
+    <BackgroundContainer
+      onClick={outSideClick as any}
+      ref={outSideRef}>
       <ModalContainer>
         <Header>
           <IconWrapper>
-            <ClassIcon size={28} color={color.zinc[800]} />
+            <ClassIcon
+              size={28}
+              color={color.zinc[800]}
+            />
           </IconWrapper>
           <TitleSection>
             <Title>투자 정보</Title>
@@ -67,8 +78,7 @@ export const ClassInfoModal = ({ isOpen, setIsOpen, classItems }: IClassInfoType
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             onClick={cancelClick}
-            hoverBackgroundColor={color.zinc[100]}
-          >
+            hoverBackgroundColor={color.zinc[100]}>
             닫기
           </Button>
         </FooterContainer>

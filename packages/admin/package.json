@@ -34,9 +34,9 @@
     "scheduler": "^0.25.0"
   },
   "devDependencies": {
-    "@configs/util": "workspace:^",
     "@mozu/design-token": "workspace:^",
     "@mozu/ui": "workspace:^",
+    "@mozu/util-config": "workspace:^",
     "@tanstack/react-table": "^8.21.2",
     "@types/event-source-polyfill": "^1",
     "@types/hoist-non-react-statics": "^3",
@@ -53,5 +53,5 @@
     "vite": "^6.0.5",
     "zustand": "^5.0.3"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.8.1"
 }

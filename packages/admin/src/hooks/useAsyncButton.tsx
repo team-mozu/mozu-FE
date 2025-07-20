@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 
 type AsyncFn<T extends any[]> = (...args: T) => Promise<void> | void;
 
@@ -12,7 +12,10 @@ type AsyncFn<T extends any[]> = (...args: T) => Promise<void> | void;
  *  - isLoading: 로딩 여부
  *  - disabled: 버튼 비활성화 여부
  */
-export const useAsyncButton = <T extends any[]>(asyncFn: AsyncFn<T>, delay = 1000): {
+export const useAsyncButton = <T extends any[]>(
+  asyncFn: AsyncFn<T>,
+  delay = 1000,
+): {
   onClick: (...args: T) => Promise<void> | void;
   isLoading: boolean;
   disabled: boolean;
@@ -36,7 +39,9 @@ export const useAsyncButton = <T extends any[]>(asyncFn: AsyncFn<T>, delay = 100
     }
   };
 
-  return { onClick, isLoading, disabled: isLoading };
+  return {
+    onClick,
+    isLoading,
+    disabled: isLoading,
+  };
 };
-
-

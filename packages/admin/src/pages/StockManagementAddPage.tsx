@@ -1,9 +1,9 @@
-import { useAddStock } from '@/apis';
-import { LogoUploader } from '@/components';
-import { useForm, usePriceFormatter } from '@/hooks';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { EditDiv, Input, TextArea } from '@mozu/ui';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { EditDiv, Input, TextArea } from "@mozu/ui";
+import { useAddStock } from "@/apis";
+import { LogoUploader } from "@/components";
+import { useForm, usePriceFormatter } from "@/hooks";
 
 type FormState = {
   name: string;
@@ -20,39 +20,41 @@ type FormState = {
 
 export const StockManagementAddPage = () => {
   const { state, onChangeInputValue, setState } = useForm<FormState>({
-    name: '',
-    info: '',
+    name: "",
+    info: "",
     logo: null,
-    money: '',
-    debt: '',
-    capital: '',
-    profit: '',
-    profitOG: '',
-    profitBen: '',
-    netProfit: '',
+    money: "",
+    debt: "",
+    capital: "",
+    profit: "",
+    profitOG: "",
+    profitBen: "",
+    netProfit: "",
   });
 
   const { prices: formattedPrices, priceChangeHandler } = usePriceFormatter(
     [
-      Number(state.money.replace(/,/g, '')),
-      Number(state.debt.replace(/,/g, '')),
-      Number(state.capital.replace(/,/g, '')),
-      Number(state.profit.replace(/,/g, '')),
-      Number(state.profitOG.replace(/,/g, '')),
-      Number(state.profitBen.replace(/,/g, '')),
-      Number(state.netProfit.replace(/,/g, '')),
+      Number(state.money.replace(/,/g, "")),
+      Number(state.debt.replace(/,/g, "")),
+      Number(state.capital.replace(/,/g, "")),
+      Number(state.profit.replace(/,/g, "")),
+      Number(state.profitOG.replace(/,/g, "")),
+      Number(state.profitBen.replace(/,/g, "")),
+      Number(state.netProfit.replace(/,/g, "")),
     ],
     (index, value) => {
-      setState((prev) => {
-        const newState = { ...prev };
+      setState(prev => {
+        const newState = {
+          ...prev,
+        };
         const keys = [
-          'money',
-          'debt',
-          'capital',
-          'profit',
-          'profitOG',
-          'profitBen',
-          'netProfit',
+          "money",
+          "debt",
+          "capital",
+          "profit",
+          "profitOG",
+          "profitBen",
+          "netProfit",
         ];
         newState[keys[index]] = value.toString();
         return newState;
@@ -67,39 +69,42 @@ export const StockManagementAddPage = () => {
       name: state.name,
       info: state.info,
       logo: state.logo,
-      money: Number(state.money.replace(/,/g, '')),
-      debt: Number(state.debt.replace(/,/g, '')),
-      capital: Number(state.capital.replace(/,/g, '')),
-      profit: Number(state.profit.replace(/,/g, '')),
-      profitOG: Number(state.profitOG.replace(/,/g, '')),
-      profitBen: Number(state.profitBen.replace(/,/g, '')),
-      netProfit: Number(state.netProfit.replace(/,/g, '')),
+      money: Number(state.money.replace(/,/g, "")),
+      debt: Number(state.debt.replace(/,/g, "")),
+      capital: Number(state.capital.replace(/,/g, "")),
+      profit: Number(state.profit.replace(/,/g, "")),
+      profitOG: Number(state.profitOG.replace(/,/g, "")),
+      profitBen: Number(state.profitBen.replace(/,/g, "")),
+      netProfit: Number(state.netProfit.replace(/,/g, "")),
     });
   };
 
   return (
     <Container>
       <EditDiv
-        title={'종목 추가'}
-        value1={'취소'}
-        value2={'추가하기'}
+        title={"종목 추가"}
+        value1={"취소"}
+        value2={"추가하기"}
         onClick={addClick}
       />
       <StockSetting>
         <InnerContainer>
           <div>
             <LogoUploader
-              img={state.logo ? URL.createObjectURL(state.logo) : ''}
-              onImageChange={(file) =>
-                setState((prev) => ({ ...prev, logo: file }))
+              img={state.logo ? URL.createObjectURL(state.logo) : ""}
+              onImageChange={file =>
+                setState(prev => ({
+                  ...prev,
+                  logo: file,
+                }))
               }
             />
           </div>
           <div>
             <Input
-              label={'회사 이름'}
-              placeholder={'종목 이름을 입력해 주세요..'}
-              width={'480px'}
+              label={"회사 이름"}
+              placeholder={"종목 이름을 입력해 주세요.."}
+              width={"480px"}
               name="name"
               onChange={onChangeInputValue}
               value={state.name}
@@ -107,54 +112,61 @@ export const StockManagementAddPage = () => {
           </div>
           <div>
             <TextArea
-              placeholder={'회사 정보를 입력해 주세요..'}
-              label={'회사 정보'}
+              placeholder={"회사 정보를 입력해 주세요.."}
+              label={"회사 정보"}
               name="info"
               height={260}
               onChange={onChangeInputValue}
-              value={state.info}
-            ></TextArea>
+              value={state.info}></TextArea>
           </div>
         </InnerContainer>
         <InnerContainer>
           <p>재무상태표 ∙ 손익계산서</p>
           {[
-            { label: '자산', name: 'money', value: formattedPrices[0] || '' },
-            { label: '부채', name: 'debt', value: formattedPrices[1] || '' },
             {
-              label: '자본금',
-              name: 'capital',
-              value: formattedPrices[2] || '',
+              label: "자산",
+              name: "money",
+              value: formattedPrices[0] || "",
             },
             {
-              label: '매출액',
-              name: 'profit',
-              value: formattedPrices[3] || '',
+              label: "부채",
+              name: "debt",
+              value: formattedPrices[1] || "",
             },
             {
-              label: '매출원가',
-              name: 'profitOG',
-              value: formattedPrices[4] || '',
+              label: "자본금",
+              name: "capital",
+              value: formattedPrices[2] || "",
             },
             {
-              label: '매출이익',
-              name: 'profitBen',
-              value: formattedPrices[5] || '',
+              label: "매출액",
+              name: "profit",
+              value: formattedPrices[3] || "",
             },
             {
-              label: '당기순이익',
-              name: 'netProfit',
-              value: formattedPrices[6] || '',
+              label: "매출원가",
+              name: "profitOG",
+              value: formattedPrices[4] || "",
+            },
+            {
+              label: "매출이익",
+              name: "profitBen",
+              value: formattedPrices[5] || "",
+            },
+            {
+              label: "당기순이익",
+              name: "netProfit",
+              value: formattedPrices[6] || "",
             },
           ].map((item, index) => (
             <div key={item.name}>
               <Input
                 label={item.label}
                 placeholder={`${item.label} 정보를 입력해 주세요.`}
-                type={'text'}
+                type={"text"}
                 name={item.name}
-                width={'480px'}
-                text={'원'}
+                width={"480px"}
+                text={"원"}
                 onChange={priceChangeHandler(index)}
                 value={item.value}
               />

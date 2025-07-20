@@ -1,38 +1,24 @@
-import { color, font } from '@mozu/design-token';
-import styled from '@emotion/styled';
-import { Button, noImgIcon } from '@mozu/ui';
-import { useGetStockDetail } from '@/apis';
-import { useParams } from 'react-router-dom';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, noImgIcon } from "@mozu/ui";
+import { useParams } from "react-router-dom";
+import { useGetStockDetail } from "@/apis";
 import { Skeleton } from "../../../../../design-token/src/theme/Skeleton";
 
-export const StockStatusBar = ({
-  openModal,
-}: {
-  openModal: (type: "매수" | "매도") => void;
-}) => {
+export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "매도") => void }) => {
   const { stockId } = useParams();
   const ItemId = stockId ? parseInt(stockId) : null;
   const { data, isLoading } = useGetStockDetail(ItemId);
 
   // 새로 추가한 로직
-  const profitNum = data?.profitNum && !isNaN(parseFloat(data?.profitNum))
-    ? data.profitNum
-    : "0.00%";
+  const profitNum = data?.profitNum && !isNaN(parseFloat(data?.profitNum)) ? data.profitNum : "0.00%";
   const profitMoney = data?.profitMoney ?? 0;
 
-  const isZeroPercent =
-    profitMoney === 0 &&
-    profitNum === "0.00%";
+  const isZeroPercent = profitMoney === 0 && profitNum === "0.00%";
 
-  const isUp = isZeroPercent
-    ? false
-    : !(typeof profitNum === "string" && profitNum.includes("-"));
+  const isUp = isZeroPercent ? false : !(typeof profitNum === "string" && profitNum.includes("-"));
 
-  const priceColor = isZeroPercent
-    ? color.zinc[500]
-    : isUp
-      ? color.red[500]
-      : color.blue[500];
+  const priceColor = isZeroPercent ? color.zinc[500] : isUp ? color.red[500] : color.blue[500];
 
   return (
     <Wrapper>
@@ -41,8 +27,8 @@ export const StockStatusBar = ({
           <LogoImgDiv />
         ) : (
           <Logo
-            src={data?.itemLogo ?? ''}
-            onError={(e) => {
+            src={data?.itemLogo ?? ""}
+            onError={e => {
               e.currentTarget.src = noImgIcon;
             }}
           />
@@ -52,14 +38,12 @@ export const StockStatusBar = ({
         ) : (
           <StockInfo>
             <StockName>
-              {data?.itemName ?? ''}
+              {data?.itemName ?? ""}
               <span>{data?.itemId ?? 0}</span>
             </StockName>
             <StockPrice color={priceColor}>
-              {data?.nowMoney?.toLocaleString()}원{' '}
-              <span>
-                {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""}${profitNum})`}
-              </span>
+              {data?.nowMoney?.toLocaleString()}원{" "}
+              <span>{`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""}${profitNum})`}</span>
             </StockPrice>
           </StockInfo>
         )}
@@ -73,8 +57,7 @@ export const StockStatusBar = ({
           onClick={() => openModal("매수")}
           disabled={isLoading}
           hoverBackgroundColor={color.red[600]}
-          hoverBorderColor={color.red[600]}
-        >
+          hoverBorderColor={color.red[600]}>
           매수
         </Button>
         <Button
@@ -85,15 +68,13 @@ export const StockStatusBar = ({
           onClick={() => openModal("매도")}
           disabled={isLoading}
           hoverBackgroundColor={color.blue[600]}
-          hoverBorderColor={color.blue[600]}
-        >
+          hoverBorderColor={color.blue[600]}>
           매도
         </Button>
       </Btn>
     </Wrapper>
   );
 };
-
 
 const Btn = styled.div`
   display: flex;
@@ -115,7 +96,9 @@ const Stock = styled.div`
   gap: 12px;
 `;
 
-const StockPrice = styled.div<{ color?: string }>`
+const StockPrice = styled.div<{
+  color?: string;
+}>`
   font: ${font.h3};
   display: flex;
   align-items: center;

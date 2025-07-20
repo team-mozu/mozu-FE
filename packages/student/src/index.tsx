@@ -1,14 +1,12 @@
-import App from "./App";
-import CreateDOM from "react-dom/client";
+import { GlobalStyle } from "@mozu/design-token";
+import { CustomToastContainer } from "@mozu/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { CustomToastContainer } from "@mozu/ui";
-import { GlobalStyle } from "@mozu/design-token";
 import { Suspense } from "react";
+import CreateDOM from "react-dom/client";
+import App from "./App";
 
-const root = CreateDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+const root = CreateDOM.createRoot(document.getElementById("root") as HTMLElement);
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,5 +26,5 @@ root.render(
     </Suspense>
     <CustomToastContainer />
     <GlobalStyle />
-  </QueryClientProvider>
+  </QueryClientProvider>,
 );

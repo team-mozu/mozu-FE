@@ -1,11 +1,20 @@
-import { Button } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { useState, useRef } from 'react';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button } from "@mozu/ui";
+import { useRef, useState } from "react";
 
 export const ArticleInfo = () => {
   const [datas, setDatas] =
-    useState<{ isClicked: boolean; articleContent: [{ title: string }] }[]>();
+    useState<
+      {
+        isClicked: boolean;
+        articleContent: [
+          {
+            title: string;
+          },
+        ];
+      }[]
+    >();
   const [isClose, setIsClose] = useState<boolean>(false);
 
   const outSideRef = useRef();
@@ -20,18 +29,26 @@ export const ArticleInfo = () => {
   };
 
   const barClick = (index: number) => {
-    setDatas((prev) =>
+    setDatas(prev =>
       prev.map((data, idx) =>
         idx === index
-          ? { ...data, isClicked: true }
-          : { ...data, isClicked: false },
+          ? {
+            ...data,
+            isClicked: true,
+          }
+          : {
+            ...data,
+            isClicked: false,
+          },
       ),
     );
   };
 
   return (
     !isClose && (
-      <BackgroundContainer onClick={outSideClick} ref={outSideRef}>
+      <BackgroundContainer
+        onClick={outSideClick}
+        ref={outSideRef}>
         <ModalContainer>
           <ContentContainer>
             <TitleContainer>
@@ -40,19 +57,19 @@ export const ArticleInfo = () => {
             <BarContainer>
               {datas.map((data, index) => (
                 <BarContent
+                  key={data.articleContent[0].title}
                   isClicked={data.isClicked}
-                  onClick={() => barClick(index)}
-                >
+                  onClick={() => barClick(index)}>
                   {index + 1}차
                 </BarContent>
               ))}
             </BarContainer>
             <ArticleContainer>
               {datas
-                .filter((data) => data.isClicked)
-                .map((data, index) =>
-                  data.articleContent.map((content, idx) => (
-                    <ArticleContent>{content.title}</ArticleContent>
+                .filter(data => data.isClicked)
+                .map((data) =>
+                  data.articleContent.map((content) => (
+                    <ArticleContent key={content.title}>{content.title}</ArticleContent>
                   )),
                 )}
             </ArticleContainer>
@@ -61,8 +78,7 @@ export const ArticleInfo = () => {
                 backgroundColor={color.zinc[50]}
                 borderColor={color.zinc[200]}
                 color={color.zinc[800]}
-                onClick={cancelClick}
-              >
+                onClick={cancelClick}>
                 닫기
               </Button>
             </FooterContainer>
@@ -116,14 +132,15 @@ const BackgroundContainer = styled.div`
   align-items: center;
 `;
 
-const BarContent = styled.button<{ isClicked: boolean }>`
+const BarContent = styled.button<{
+  isClicked: boolean;
+}>`
   width: 80px;
   height: 40px;
   background-color: transparent;
-  color: ${({ isClicked }) =>
-    isClicked ? color.orange[500] : color.zinc[700]};
+  color: ${({ isClicked }) => (isClicked ? color.orange[500] : color.zinc[700])};
   border-bottom: 1px solid
-    ${({ isClicked }) => (isClicked ? color.orange[500] : 'none')};
+    ${({ isClicked }) => (isClicked ? color.orange[500] : "none")};
   outline: none;
   display: flex;
   justify-content: center;

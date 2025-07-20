@@ -1,32 +1,49 @@
-import { useTeamRank } from "@/apis";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Trophy, Users } from "@mozu/ui";
+import { useTeamRank } from "@/apis";
 
 export const EndingPage = () => {
   const { data: rankings, isLoading } = useTeamRank();
 
-  const sortedRankings = [...(rankings ?? [])].sort((a, b) => b.totalMoney - a.totalMoney);
+  const sortedRankings = [
+    ...(rankings ?? []),
+  ].sort((a, b) => b.totalMoney - a.totalMoney);
 
   const myTeamRank = sortedRankings.findIndex(team => team.isMyTeam) + 1;
   const myTeam = sortedRankings.find(team => team.isMyTeam);
 
-  const formatMoney = (amount) => {
-    return new Intl.NumberFormat('ko-KR', {
-      style: 'currency',
-      currency: 'KRW',
+  const formatMoney = amount => {
+    return new Intl.NumberFormat("ko-KR", {
+      style: "currency",
+      currency: "KRW",
       minimumFractionDigits: 0,
     }).format(amount);
   };
 
-  const getRankIcon = (rank) => {
+  const getRankIcon = rank => {
     switch (rank) {
       case 1:
-        return <Trophy size={32} color={color.yellow[500]} />;
+        return (
+          <Trophy
+            size={32}
+            color={color.yellow[500]}
+          />
+        );
       case 2:
-        return <Users size={32} color={color.zinc[400]} />;
+        return (
+          <Users
+            size={32}
+            color={color.zinc[400]}
+          />
+        );
       case 3:
-        return <Users size={32} color={color.orange[500]} />;
+        return (
+          <Users
+            size={32}
+            color={color.orange[500]}
+          />
+        );
       default:
         return <RankNumber>{rank}</RankNumber>;
     }
@@ -41,7 +58,10 @@ export const EndingPage = () => {
       <InnerContainer>
         <Header>
           <HeaderIcon>
-            <Trophy size={48} color={color.blue[500]} />
+            <Trophy
+              size={48}
+              color={color.blue[500]}
+            />
           </HeaderIcon>
           <Title>투자 결과</Title>
           <Subtitle>최종 순위가 발표되었습니다</Subtitle>
@@ -58,7 +78,10 @@ export const EndingPage = () => {
               <MySchoolName>{myTeam.schoolName}</MySchoolName>
               <MyTotalMoney>{formatMoney(myTeam.totalMoney)}</MyTotalMoney>
               <MyMoneyLabel>
-                <Trophy size={20} color={color.zinc[500]} />
+                <Trophy
+                  size={20}
+                  color={color.zinc[500]}
+                />
                 최종 투자 수익
               </MyMoneyLabel>
             </MyTeamCard>
@@ -67,7 +90,10 @@ export const EndingPage = () => {
 
         <RankingSection>
           <RankingHeader>
-            <Users size={32} color={color.zinc[700]} />
+            <Users
+              size={32}
+              color={color.zinc[700]}
+            />
             <RankingTitle>전체 순위</RankingTitle>
           </RankingHeader>
 
@@ -77,13 +103,13 @@ export const EndingPage = () => {
               const isMyTeam = team.isMyTeam;
 
               return (
-                <RankingItem key={team.id} isMyTeam={isMyTeam}>
+                <RankingItem
+                  key={team.id}
+                  isMyTeam={isMyTeam}>
                   {isMyTeam && <MyTeamBadge>내 팀</MyTeamBadge>}
 
                   <RankingLeft>
-                    <RankIconWrapper>
-                      {getRankIcon(rank)}
-                    </RankIconWrapper>
+                    <RankIconWrapper>{getRankIcon(rank)}</RankIconWrapper>
 
                     <div>
                       <TeamName>{team.name}</TeamName>
@@ -93,9 +119,7 @@ export const EndingPage = () => {
 
                   <RankingRight>
                     <TotalMoney>{formatMoney(team.totalMoney)}</TotalMoney>
-                    <RankText>
-                      {rank === 1 ? '🏆 1등' : `${rank}위`}
-                    </RankText>
+                    <RankText>{rank === 1 ? "🏆 1등" : `${rank}위`}</RankText>
                   </RankingRight>
                 </RankingItem>
               );
@@ -222,9 +246,11 @@ const RankingList = styled.div`
   gap: 12px;
 `;
 
-const RankingItem = styled.div<{ isMyTeam: boolean }>`
-  background-color: ${props => props.isMyTeam ? color.blue[50] : color.zinc[50]};
-  border: 1px solid ${props => props.isMyTeam ? color.blue[200] : color.zinc[200]};
+const RankingItem = styled.div<{
+  isMyTeam: boolean;
+}>`
+  background-color: ${props => (props.isMyTeam ? color.blue[50] : color.zinc[50])};
+  border: 1px solid ${props => (props.isMyTeam ? color.blue[200] : color.zinc[200])};
   border-radius: 12px;
   padding: 24px;
   display: flex;

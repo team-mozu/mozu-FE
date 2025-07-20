@@ -1,18 +1,9 @@
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine,
-} from "recharts";
-import { useState, useMemo, useCallback, useEffect } from "react";
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { useGetStockDetail } from "@/apis";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useGetStockDetail } from "@/apis";
 
 interface DataPoint {
   phase: string;
@@ -40,8 +31,16 @@ const CustomLabel = ({ viewBox, value }: CustomLabelProps) => {
 
   return (
     <g transform={`translate(${width},${y})`}>
-      <CustomLabelRect x={0} y={-12} width={110} height={24} rx={6} />
-      <CustomLabelText x={55} y={0}>
+      <CustomLabelRect
+        x={0}
+        y={-12}
+        width={110}
+        height={24}
+        rx={6}
+      />
+      <CustomLabelText
+        x={55}
+        y={0}>
         {value}
       </CustomLabelText>
     </g>
@@ -56,7 +55,10 @@ const generateSmoothedOffset = (basePrice: number, priceRange: number): number =
 };
 
 const generateDataWithFluctuation = (
-  baseData: Array<{ phase: string; price: number }>
+  baseData: Array<{
+    phase: string;
+    price: number;
+  }>,
 ): DataPoint[] => {
   if (baseData.length < 2) return baseData;
 
@@ -96,7 +98,11 @@ const generateDataWithFluctuation = (
 
 const calculatePriceRange = (prices: number[]) => {
   if (prices.length === 0) {
-    return { MIN_PRICE: 0, MAX_PRICE: 10000, ticks: [] };
+    return {
+      MIN_PRICE: 0,
+      MAX_PRICE: 10000,
+      ticks: [],
+    };
   }
 
   const minPrice = Math.min(...prices);
@@ -107,10 +113,7 @@ const calculatePriceRange = (prices: number[]) => {
   // 패딩을 가격 범위의 15%로 설정 (기존 500 고정값 대신)
   const padding = Math.max(500, priceRange * 0.15);
 
-  const dynamicMinPrice = Math.max(
-    0,
-    Math.floor((minPrice - padding) / 1000) * 1000
-  );
+  const dynamicMinPrice = Math.max(0, Math.floor((minPrice - padding) / 1000) * 1000);
   const dynamicMaxPrice = Math.ceil((maxPrice + padding) / 1000) * 1000;
 
   // 더 적절한 틱 간격 계산
@@ -119,10 +122,8 @@ const calculatePriceRange = (prices: number[]) => {
   const rawStep = totalRange / idealTickCount;
 
   // 깔끔한 단위로 스텝 조정
-  const step = rawStep <= 1000 ? 500 :
-    rawStep <= 2000 ? 1000 :
-      rawStep <= 5000 ? 2000 :
-        Math.ceil(rawStep / 1000) * 1000;
+  const step =
+    rawStep <= 1000 ? 500 : rawStep <= 2000 ? 1000 : rawStep <= 5000 ? 2000 : Math.ceil(rawStep / 1000) * 1000;
 
   // 틱 생성
   const ticks: number[] = [];
@@ -189,12 +190,10 @@ export const StockGraph = () => {
   });
 
   // 데이터 패치
-  const { stockId } = useParams<{ stockId: string }>();
-  const {
-    data: stockDetail,
-    isLoading,
-    error,
-  } = useGetStockDetail(Number(stockId));
+  const { stockId } = useParams<{
+    stockId: string;
+  }>();
+  const { data: stockDetail, isLoading, error } = useGetStockDetail(Number(stockId));
 
   // 초기 애니메이션 제어
   useEffect(() => {
@@ -210,17 +209,23 @@ export const StockGraph = () => {
       price,
     }));
     return generateDataWithFluctuation(baseData);
-  }, [stockDetail]);
+  }, [
+    stockDetail,
+  ]);
 
   // 가격 범위 계산
   const priceConfig = useMemo(() => {
     return calculatePriceRange(stockDetail?.moneyList || []);
-  }, [stockDetail]);
+  }, [
+    stockDetail,
+  ]);
 
   // X축 라벨
   const xAxisTicks = useMemo(() => {
     return stockDetail?.moneyList.map((_, index) => `${index}차`) || [];
-  }, [stockDetail]);
+  }, [
+    stockDetail,
+  ]);
 
   // 마우스 이벤트 핸들러
   const handleMouseMove = useCallback((event: any) => {
@@ -234,7 +239,10 @@ export const StockGraph = () => {
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    setActivePoint({ price: null, phase: null });
+    setActivePoint({
+      price: null,
+      phase: null,
+    });
   }, []);
 
   // 숫자 포맷
@@ -243,8 +251,18 @@ export const StockGraph = () => {
   }, []);
 
   // 로딩 및 에러 처리
-  if (isLoading) return <ChartContainer><LoadingComponent /></ChartContainer>;
-  if (error) return <ChartContainer><ErrorComponent /></ChartContainer>;
+  if (isLoading)
+    return (
+      <ChartContainer>
+        <LoadingComponent />
+      </ChartContainer>
+    );
+  if (error)
+    return (
+      <ChartContainer>
+        <ErrorComponent />
+      </ChartContainer>
+    );
 
   return (
     <ChartContainer>
@@ -253,8 +271,9 @@ export const StockGraph = () => {
           data={chartData}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          margin={{ right: 40 }}
-        >
+          margin={{
+            right: 40,
+          }}>
           <CartesianGrid
             strokeDasharray="3 3"
             stroke={color.zinc[200]}
@@ -266,12 +285,18 @@ export const StockGraph = () => {
             tickLine={false}
             tick={axisTickStyle}
             tickSize={16}
-            padding={{ left: 15, right: 15 }}
+            padding={{
+              left: 15,
+              right: 15,
+            }}
             ticks={xAxisTicks}
           />
           <YAxis
             orientation="right"
-            domain={[priceConfig.MIN_PRICE, priceConfig.MAX_PRICE]}
+            domain={[
+              priceConfig.MIN_PRICE,
+              priceConfig.MAX_PRICE,
+            ]}
             ticks={priceConfig.ticks}
             axisLine={false}
             tickLine={false}
@@ -284,13 +309,14 @@ export const StockGraph = () => {
           {/* 현재 포인트 기준 Reference Line */}
           {activePoint.price && activePoint.phase && (
             <>
-              <ReferenceLine x={activePoint.phase} {...referenceLineStyle} />
+              <ReferenceLine
+                x={activePoint.phase}
+                {...referenceLineStyle}
+              />
               <ReferenceLine
                 y={activePoint.price}
                 {...referenceLineStyle}
-                label={
-                  <CustomLabel value={formatPrice(activePoint.price)} />
-                }
+                label={<CustomLabel value={formatPrice(activePoint.price)} />}
                 offset={10}
               />
             </>

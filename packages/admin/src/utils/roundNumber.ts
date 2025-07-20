@@ -5,6 +5,6 @@
  * @returns 반올림된 숫자
  */
 export const roundToFixed = (value: number, precision: number = 3): number => {
-  const factor = Math.pow(10, precision);
+  const factor = 10 ** precision;
   return Math.round(value * factor) / factor;
 };

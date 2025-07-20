@@ -1,13 +1,13 @@
-import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
+import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { Toast } from "@mozu/ui";
-import { useParams, useNavigate } from "react-router-dom";
-import { useGetHoldItems, useGetStockDetail, useGetTeamDetail } from "@/apis";
-import { useLocalStorage } from "@/hook/useLocalStorage";
-import { TeamEndData, TeamEndProps } from "@/apis/team/type";
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useGetHoldItems, useGetStockDetail, useGetTeamDetail } from "@/apis";
+import type { TeamEndData, TeamEndProps } from "@/apis/team/type";
+import { useLocalStorage } from "@/hook/useLocalStorage";
 
 interface IPropsType {
   modalType: string;
@@ -37,14 +37,14 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       }, 300);
       return () => clearTimeout(timerId);
     }
-  }, [isOpen]);
+  }, [
+    isOpen,
+  ]);
 
   const handleConfirm = async () => {
     const itemIdNum = Number(stockId);
     const existingOppositeOrder = tradeData.find(
-      (tradeItem) =>
-        tradeItem.itemId === itemIdNum &&
-        tradeItem.orderType !== (modalType === "매수" ? "BUY" : "SELL")
+      tradeItem => tradeItem.itemId === itemIdNum && tradeItem.orderType !== (modalType === "매수" ? "BUY" : "SELL"),
     );
 
     if (existingOppositeOrder) {
@@ -54,10 +54,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       return;
     }
 
-    if (
-      modalType === "매수" &&
-      numericQuantity * stockData.nowMoney > cashMoney
-    ) {
+    if (modalType === "매수" && numericQuantity * stockData.nowMoney > cashMoney) {
       Toast("보유하고 있는 현금보다 많이 매수할 수 없습니다", {
         type: "error",
       });
@@ -65,7 +62,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     }
 
     if (modalType === "매도") {
-      const holding = holdItemData.find((item) => item.itemId === itemIdNum);
+      const holding = holdItemData.find(item => item.itemId === itemIdNum);
       const holdingCount = holding?.itemCnt || 0;
 
       if (numericQuantity > holdingCount) {
@@ -87,9 +84,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
 
     try {
       const existingIndex = tradeData.findIndex(
-        (tradeItem) =>
-          tradeItem.itemId === itemIdNum &&
-          tradeItem.orderType === newTradeItem.orderType
+        tradeItem => tradeItem.itemId === itemIdNum && tradeItem.orderType === newTradeItem.orderType,
       );
 
       let updatedTradeData: TeamEndData[];
@@ -97,28 +92,30 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       if (existingIndex !== -1) {
         const mergedItem = {
           ...tradeData[existingIndex],
-          orderCount:
-            tradeData[existingIndex].orderCount + newTradeItem.orderCount,
-          totalMoney:
-            tradeData[existingIndex].totalMoney + newTradeItem.totalMoney,
+          orderCount: tradeData[existingIndex].orderCount + newTradeItem.orderCount,
+          totalMoney: tradeData[existingIndex].totalMoney + newTradeItem.totalMoney,
         };
 
-        updatedTradeData = [...tradeData];
+        updatedTradeData = [
+          ...tradeData,
+        ];
         updatedTradeData[existingIndex] = mergedItem;
       } else {
-        updatedTradeData = [...tradeData, newTradeItem];
+        updatedTradeData = [
+          ...tradeData,
+          newTradeItem,
+        ];
       }
 
       const totalTradeMoney = numericQuantity * stockData.nowMoney;
-      const updatedCashMoney =
-        modalType === "매수"
-          ? cashMoney - totalTradeMoney
-          : cashMoney + totalTradeMoney;
+      const updatedCashMoney = modalType === "매수" ? cashMoney - totalTradeMoney : cashMoney + totalTradeMoney;
 
       setCashMoney(updatedCashMoney);
 
       setTradeData(updatedTradeData);
-      Toast(`거래가 성공적으로 완료되었습니다.`, { type: "success" });
+      Toast(`거래가 성공적으로 완료되었습니다.`, {
+        type: "success",
+      });
 
       onClose();
       navigate(`/${classId}`);
@@ -130,33 +127,41 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     }
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   const maxQuantity = useMemo(() => {
     if (!stockData || !stockData.nowMoney || !holdItemData) return 0;
 
     if (modalType === "매수") {
-      return stockData.nowMoney > 0
-        ? Math.floor(cashMoney / stockData.nowMoney)
-        : 0;
+      return stockData.nowMoney > 0 ? Math.floor(cashMoney / stockData.nowMoney) : 0;
     } else if (modalType === "매도") {
-      const holding = holdItemData.find((item) => item.itemId === stockData.itemId);
+      const holding = holdItemData.find(item => item.itemId === stockData.itemId);
       return holding?.itemCnt || 0;
     }
     return 0;
-  }, [cashMoney, stockData.nowMoney, modalType, holdItemData, stockData.itemId]);
+  }, [
+    cashMoney,
+    stockData.nowMoney,
+    modalType,
+    holdItemData,
+    stockData.itemId,
+  ]);
 
   // 상태 관리
   const [quantity, setQuantity] = useState<string>("0");
   const numericQuantity = Number(quantity.replace(/[^0-9]/g, "")) || 0;
 
   // 총 주문 금액 계산
-  const totalAmount =
-    (numericQuantity * stockData.nowMoney).toLocaleString("ko-KR") + "원";
+  const totalAmount = (numericQuantity * stockData.nowMoney).toLocaleString("ko-KR") + "원";
 
   // 데이터 초기화
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     const newQuantity = maxQuantity > 0 ? "0" : "0";
     setQuantity(newQuantity);
-  }, [stockData.nowMoney, teamData.cashMoney]);
+  }, [
+    stockData.nowMoney,
+    teamData.cashMoney,
+  ]);
 
   // 입력 변경 핸들러
   const priceChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,17 +180,26 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
 
   // UI 데이터
   const footerData = [
-    { text: `${modalType}가능 수량`, value: `${maxQuantity}주` },
-    { text: "주문가격", value: `${stockData.nowMoney.toLocaleString()}원` },
-    { text: "총 주문금액", value: totalAmount },
+    {
+      text: `${modalType}가능 수량`,
+      value: `${maxQuantity}주`,
+    },
+    {
+      text: "주문가격",
+      value: `${stockData.nowMoney.toLocaleString()}원`,
+    },
+    {
+      text: "총 주문금액",
+      value: totalAmount,
+    },
   ];
 
   const isBuyMode = modalType === "매수";
   const themeColor = isBuyMode ? color.red[500] : color.blue[500];
   const themeLightColor = isBuyMode ? color.red[50] : color.blue[50];
   const themeGradient = isBuyMode
-    ? 'linear-gradient(135deg, #ff4757 0%, #ff3742 100%)'
-    : 'linear-gradient(135deg, #3742fa 0%, #2f3542 100%)';
+    ? "linear-gradient(135deg, #ff4757 0%, #ff3742 100%)"
+    : "linear-gradient(135deg, #3742fa 0%, #2f3542 100%)";
 
   if (!isOpen) return null;
 
@@ -193,33 +207,55 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     <AnimatePresence>
       <MotionBackdrop
         ref={outSideRef}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-      >
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
+        onClick={onClose}>
         <MotionModalContainer
-          onClick={(e) => e.stopPropagation()}
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-        >
+          onClick={e => e.stopPropagation()}
+          initial={{
+            scale: 0.9,
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            scale: 1,
+            opacity: 1,
+            y: 0,
+          }}
+          exit={{
+            scale: 0.9,
+            opacity: 0,
+            y: 20,
+          }}
+          transition={{
+            duration: 0.3,
+            ease: [
+              0.25,
+              0.46,
+              0.45,
+              0.94,
+            ],
+          }}>
           <CloseButton onClick={onClose}>
             <CloseIcon>✕</CloseIcon>
           </CloseButton>
 
-          <HeaderSection themeColor={themeColor} themeLightColor={themeLightColor}>
+          <HeaderSection
+            themeColor={themeColor}
+            themeLightColor={themeLightColor}>
             <HeaderGradient themeGradient={themeGradient} />
             <HeaderContent>
               <StockName>{stockData.itemName}</StockName>
               <TradeTypeWrapper>
-                <TradeTypeIcon isBuy={isBuyMode}>
-                  {isBuyMode ? '📈' : '📉'}
-                </TradeTypeIcon>
-                <TradeTypeText themeColor={themeColor}>
-                  {modalType} 주문
-                </TradeTypeText>
+                <TradeTypeIcon isBuy={isBuyMode}>{isBuyMode ? "📈" : "📉"}</TradeTypeIcon>
+                <TradeTypeText themeColor={themeColor}>{modalType} 주문</TradeTypeText>
               </TradeTypeWrapper>
             </HeaderContent>
           </HeaderSection>
@@ -240,8 +276,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
                 <MaxButton
                   onClick={handleMaxQuantity}
                   disabled={maxQuantity === 0}
-                  themeColor={themeColor}
-                >
+                  themeColor={themeColor}>
                   최대
                 </MaxButton>
               </QuantityInputWrapper>
@@ -249,9 +284,13 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
 
             <InfoSection>
               {footerData.map((data, index) => (
-                <InfoRow key={index} isTotal={index === 2}>
+                <InfoRow
+                  key={index}
+                  isTotal={index === 2}>
                   <InfoLabel>{data.text}</InfoLabel>
-                  <InfoValue isTotal={index === 2} themeColor={themeColor}>
+                  <InfoValue
+                    isTotal={index === 2}
+                    themeColor={themeColor}>
                     {index === 2 ? totalAmount : data.value}
                   </InfoValue>
                 </InfoRow>
@@ -262,21 +301,16 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
           <ActionSection>
             <FeeNotice>
               <FeeNoticeIcon>💡</FeeNoticeIcon>
-              <FeeNoticeText>
-                {modalType} 시 수수료는 발생하지 않습니다
-              </FeeNoticeText>
+              <FeeNoticeText>{modalType} 시 수수료는 발생하지 않습니다</FeeNoticeText>
             </FeeNotice>
             <ButtonWrapper>
-              <CancelButton onClick={onClose}>
-                취소
-              </CancelButton>
+              <CancelButton onClick={onClose}>취소</CancelButton>
               <ConfirmButton
                 disabled={numericQuantity === 0}
                 onClick={handleConfirm}
                 themeGradient={themeGradient}
-                isBuy={isBuyMode}
-              >
-                <ButtonIcon>{isBuyMode ? '💰' : '📊'}</ButtonIcon>
+                isBuy={isBuyMode}>
+                <ButtonIcon>{isBuyMode ? "💰" : "📊"}</ButtonIcon>
                 {modalType}하기
               </ConfirmButton>
             </ButtonWrapper>
@@ -363,14 +397,19 @@ const CloseIcon = styled.span`
   font-weight: bold;
 `;
 
-const HeaderSection = styled.div<{ themeColor: string; themeLightColor: string }>`
+const HeaderSection = styled.div<{
+  themeColor: string;
+  themeLightColor: string;
+}>`
   position: relative;
   padding: 40px 40px 30px;
   background: ${props => props.themeLightColor};
   overflow: hidden;
 `;
 
-const HeaderGradient = styled.div<{ themeGradient: string }>`
+const HeaderGradient = styled.div<{
+  themeGradient: string;
+}>`
   position: absolute;
   top: 0;
   left: 0;
@@ -399,12 +438,16 @@ const TradeTypeWrapper = styled.div`
   animation: ${slideUp} 0.6s ease-out 0.1s both;
 `;
 
-const TradeTypeIcon = styled.div<{ isBuy: boolean }>`
+const TradeTypeIcon = styled.div<{
+  isBuy: boolean;
+}>`
   font-size: 20px;
   animation: ${pulse} 2s ease-in-out infinite;
 `;
 
-const TradeTypeText = styled.div<{ themeColor: string }>`
+const TradeTypeText = styled.div<{
+  themeColor: string;
+}>`
   font: ${font.t3};
   color: ${props => props.themeColor};
   font-weight: 600;
@@ -432,7 +475,9 @@ const QuantityInputWrapper = styled.div`
   position: relative;
 `;
 
-const StyledInput = styled.input<{ themeColor: string }>`
+const StyledInput = styled.input<{
+  themeColor: string;
+}>`
   flex: 1;
   padding: 16px 20px;
   border: 2px solid ${color.zinc[200]};
@@ -469,7 +514,9 @@ const QuantityUnit = styled.div`
   border: 2px solid ${color.zinc[200]};
 `;
 
-const MaxButton = styled.button<{ themeColor: string }>`
+const MaxButton = styled.button<{
+  themeColor: string;
+}>`
   padding: 16px 20px;
   border: 2px solid ${props => props.themeColor};
   background: ${color.white};
@@ -499,13 +546,17 @@ const InfoSection = styled.div`
   border: 1px solid ${color.zinc[100]};
 `;
 
-const InfoRow = styled.div<{ isTotal?: boolean }>`
+const InfoRow = styled.div<{
+  isTotal?: boolean;
+}>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${props => props.isTotal ? '16px 0 0' : '8px 0'};
+  padding: ${props => (props.isTotal ? "16px 0 0" : "8px 0")};
   
-  ${props => props.isTotal && `
+  ${props =>
+    props.isTotal &&
+    `
     border-top: 1px solid ${color.zinc[200]};
     margin-top: 16px;
   `}
@@ -520,10 +571,13 @@ const InfoLabel = styled.div`
   color: ${color.zinc[600]};
 `;
 
-const InfoValue = styled.div<{ isTotal?: boolean; themeColor?: string }>`
-  font: ${props => props.isTotal ? font.t3 : font.b1};
-  color: ${props => props.isTotal ? props.themeColor : color.zinc[900]};
-  font-weight: ${props => props.isTotal ? '700' : '600'};
+const InfoValue = styled.div<{
+  isTotal?: boolean;
+  themeColor?: string;
+}>`
+  font: ${props => (props.isTotal ? font.t3 : font.b1)};
+  color: ${props => (props.isTotal ? props.themeColor : color.zinc[900])};
+  font-weight: ${props => (props.isTotal ? "700" : "600")};
 `;
 
 const ActionSection = styled.div`
@@ -579,7 +633,10 @@ const CancelButton = styled.button`
   }
 `;
 
-const ConfirmButton = styled.button<{ themeGradient: string; isBuy: boolean }>`
+const ConfirmButton = styled.button<{
+  themeGradient: string;
+  isBuy: boolean;
+}>`
   flex: 2;
   padding: 16px 24px;
   border: none;

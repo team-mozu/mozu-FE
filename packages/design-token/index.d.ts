@@ -1,4 +1,4 @@
-declare module '@mozu/design-token' {
+declare module "@mozu/design-token" {
   export const color: {
     [key: string]: string;
   };

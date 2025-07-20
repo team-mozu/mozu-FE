@@ -1,9 +1,9 @@
-import { color } from '@mozu/design-token';
-import { EditDiv, Input, TextArea } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { ImgContainer } from '@/components';
-import { useAddArticle } from '@/apis';
-import { useForm } from '@/hooks';
+import styled from "@emotion/styled";
+import { color } from "@mozu/design-token";
+import { EditDiv, Input, TextArea } from "@mozu/ui";
+import { useAddArticle } from "@/apis";
+import { ImgContainer } from "@/components";
+import { useForm } from "@/hooks";
 
 type FormState = {
   title: string;
@@ -13,8 +13,8 @@ type FormState = {
 
 export const ArticleManagementAddPage = () => {
   const { state, onChangeInputValue, setState } = useForm<FormState>({
-    title: '',
-    description: '',
+    title: "",
+    description: "",
     image: null,
   });
 
@@ -55,9 +55,12 @@ export const ArticleManagementAddPage = () => {
             />
             <ImgContainer
               label="기사 이미지"
-              img={state.image ? URL.createObjectURL(state.image) : ''}
-              onImageChange={(file) =>
-                setState((prev) => ({ ...prev, image: file as File | null }))
+              img={state.image ? URL.createObjectURL(state.image) : ""}
+              onImageChange={file =>
+                setState(prev => ({
+                  ...prev,
+                  image: file as File | null,
+                }))
               }
             />
           </InputContainer>

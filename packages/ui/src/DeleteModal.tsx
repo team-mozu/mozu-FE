@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { Del } from './assets';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Del } from "./assets";
 
 interface IDeleteModal {
   titleComment: string;
@@ -28,12 +28,15 @@ export const DeleteModal = ({
   message = "삭제하기",
 }: IDeleteModal) => {
   return (
-    <Backdrop onClick={(e) => e.stopPropagation()}>
-      <ModalContainer onClick={(e) => e.stopPropagation()}>
+    <Backdrop onClick={e => e.stopPropagation()}>
+      <ModalContainer onClick={e => e.stopPropagation()}>
         <UpperContainer>
           <HeaderSection>
             <IconDiv>
-              <Del size={24} color={color.red[400]} />
+              <Del
+                size={24}
+                color={color.red[400]}
+              />
             </IconDiv>
             <TextDiv>
               <TitleText>{titleComment}</TitleText>
@@ -43,10 +46,10 @@ export const DeleteModal = ({
         </UpperContainer>
 
         <UnderContainer>
-          <CancelButton onClick={onCancel}>
-            취소
-          </CancelButton>
-          <DeleteButton onClick={onDelete} disabled={isPending}>
+          <CancelButton onClick={onCancel}>취소</CancelButton>
+          <DeleteButton
+            onClick={onDelete}
+            disabled={isPending}>
             {message}
           </DeleteButton>
         </UnderContainer>

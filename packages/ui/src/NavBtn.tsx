@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { ReactNode } from 'react';
-import { ArticleIcon, ClassIcon, StockIcon } from './assets';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import type { ReactNode } from "react";
+import { ArticleIcon, ClassIcon, StockIcon } from "./assets";
 
 interface INavType {
   children?: ReactNode;
   isColor?: boolean;
-  type?: 'classIcon' | 'stockIcon' | 'articleIcon';
+  type?: "classIcon" | "stockIcon" | "articleIcon";
   onClick?: () => void;
 }
 
@@ -20,18 +20,19 @@ export const NavBtn = ({ children, isColor, type, onClick }: INavType) => {
   };
 
   return (
-    <NavContent isColor={isColor} onClick={onClick}>
+    <NavContent
+      isColor={isColor}
+      onClick={onClick}>
       {type ? buttonIconType[type] : null}
       {children}
     </NavContent>
   );
 };
 
-const NavContent = styled.button<Pick<INavType, 'isColor'>>`
+const NavContent = styled.button<Pick<INavType, "isColor">>`
   width: 100%;
   height: 52px;
-  background-color: ${({ isColor }) =>
-    isColor ? color.orange[50] : 'transparent'};
+  background-color: ${({ isColor }) => (isColor ? color.orange[50] : "transparent")};
   color: ${({ isColor }) => (isColor ? color.orange[600] : color.zinc[500])};
   display: flex;
   border: none;

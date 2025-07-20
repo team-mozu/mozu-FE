@@ -1,9 +1,9 @@
-import { useDeleteStock, useGetStockDetail } from '@/apis';
-import { StockManagementDetail, StockSearchSideBar } from '@/components';
-import styled from '@emotion/styled';
-import { SelectError, DeleteModal } from '@mozu/ui';
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import styled from "@emotion/styled";
+import { DeleteModal, SelectError } from "@mozu/ui";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useDeleteStock, useGetStockDetail } from "@/apis";
+import { StockManagementDetail, StockSearchSideBar } from "@/components";
 
 export const StockManagementPage = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -40,15 +40,11 @@ export const StockManagementPage = () => {
         setSelectedId={setSelectedId}
         selectedId={selectedId}
       />
-      {selectedId ? (
-        <StockManagementDetail onClick={handleDetailClick} />
-      ) : (
-        <SelectError isStock={true} />
-      )}
+      {selectedId ? <StockManagementDetail onClick={handleDetailClick} /> : <SelectError isStock={true} />}
       {isModalOpen && (
         <DeleteModal
           titleComment={`${stockData?.name}를 삭제하실선가요?`}
-          subComment={'삭제하면 복구가 불가능합니다.'}
+          subComment={"삭제하면 복구가 불가능합니다."}
           isPending={isPending}
           onCancel={handleCloseModal}
           onDelete={handleDelete}

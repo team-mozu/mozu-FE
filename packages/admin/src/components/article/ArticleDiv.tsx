@@ -22,7 +22,7 @@ export const ArticleDiv = ({
         <ArticleNumber>{articleNumber}</ArticleNumber>
         <ArticleTitle selected={selected}>{title}</ArticleTitle>
       </div>
-      <Date selected={selected}>{date}</Date>
+      <DateDiv selected={selected}>{date}</DateDiv>
     </ArticleDivContiner>
   );
 };
@@ -59,7 +59,7 @@ const ArticleTitle = styled.p<{ selected: boolean }>`
   color: ${({ selected }) => (selected ? color.orange[600] : color.black)};
 `;
 
-const Date = styled.p<{ selected: boolean }>`
+const DateDiv = styled.p<{ selected: boolean }>`
   font: ${font.l2};
   color: ${({ selected }) => (selected ? color.orange[600] : color.zinc[600])};
 `;

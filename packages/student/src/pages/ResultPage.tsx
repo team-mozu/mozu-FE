@@ -1,9 +1,9 @@
-import { ResultContainer, RankModal } from "@/components";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
-import { useGetTeamDetail } from "@/apis";
-import { useNavigate, useLocation } from "react-router-dom";
 import { font } from "@mozu/design-token";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useGetTeamDetail } from "@/apis";
+import { RankModal, ResultContainer } from "@/components";
 
 // 커스텀 확인 모달 컴포넌트
 const CustomConfirmModal = ({ isOpen, onConfirm, onCancel, message, position }) => {
@@ -36,24 +36,24 @@ export const ResultPage = () => {
   const confirmSteps = [
     {
       message: "정말 나가시겠습니까?\n\n나가시면 재접속 불가합니다",
-      position: "center"
+      position: "center",
     },
     {
       message: "한 번 더 확인합니다.\n\n정말로 나가시겠습니까?",
-      position: "top-left"
+      position: "top-left",
     },
     {
       message: "마지막 확인입니다.\n\n나가시면 결과를 다시 볼 수 없습니다!",
-      position: "top-right"
+      position: "top-right",
     },
     {
       message: "정말 마지막입니다.\n\n진짜로 나가시겠습니까?",
-      position: "bottom-left"
+      position: "bottom-left",
     },
     {
       message: "최종 확인!\n\n이제 정말 나가시겠습니까?",
-      position: "bottom-right"
-    }
+      position: "bottom-right",
+    },
   ];
 
   const handleOpenModal = () => {
@@ -69,10 +69,14 @@ export const ResultPage = () => {
 
       setTimeout(() => {
         window.history.replaceState(null, "", "/signin");
-        navigate("/signin", { replace: true });
+        navigate("/signin", {
+          replace: true,
+        });
       }, 100);
     } else {
-      navigate("/signin", { replace: true });
+      navigate("/signin", {
+        replace: true,
+      });
     }
 
     sessionStorage.setItem("historyCleared", "true");
@@ -95,7 +99,7 @@ export const ResultPage = () => {
   };
 
   useEffect(() => {
-    const handleBeforeRouteLeave = (e) => {
+    const handleBeforeRouteLeave = e => {
       if (!isConfirming) {
         e.preventDefault();
         setIsConfirming(true);
@@ -112,7 +116,11 @@ export const ResultPage = () => {
     return () => {
       window.removeEventListener("popstate", handleBeforeRouteLeave);
     };
-  }, [navigate, location, isConfirming]);
+  }, [
+    navigate,
+    location,
+    isConfirming,
+  ]);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -123,8 +131,16 @@ export const ResultPage = () => {
 
   return (
     <Container>
-      <ResultContainer onRankClick={handleOpenModal} endRound={endRound} />
-      {isModalOpen && <RankModal onCancle={handleCloseModal} endRound={endRound} />}
+      <ResultContainer
+        onRankClick={handleOpenModal}
+        endRound={endRound}
+      />
+      {isModalOpen && (
+        <RankModal
+          onCancle={handleCloseModal}
+          endRound={endRound}
+        />
+      )}
 
       <CustomConfirmModal
         isOpen={isConfirming}
@@ -156,32 +172,34 @@ const ModalOverlay = styled.div`
   z-index: 9999;
 `;
 
-const ModalContainer = styled.div<{ position: string }>`
+const ModalContainer = styled.div<{
+  position: string;
+}>`
   position: absolute;
   
   ${({ position }) => {
     switch (position) {
-      case 'top-left':
+      case "top-left":
         return `
           top: 50px;
           left: 50px;
         `;
-      case 'top-right':
+      case "top-right":
         return `
           top: 50px;
           right: 50px;
         `;
-      case 'bottom-left':
+      case "bottom-left":
         return `
           bottom: 50px;
           left: 50px;
         `;
-      case 'bottom-right':
+      case "bottom-right":
         return `
           bottom: 50px;
           right: 50px;
         `;
-      case 'center':
+      case "center":
       default:
         return `
           top: 50%;

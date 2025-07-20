@@ -1,8 +1,8 @@
-import { useGetStockList } from '@/apis';
-import { Button, Item, SearchInput } from '@mozu/ui';
-import styled from '@emotion/styled';
-import { font, color } from '@mozu/design-token';
-import { useState, useEffect } from 'react';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, Item, SearchInput } from "@mozu/ui";
+import { useEffect, useState } from "react";
+import { useGetStockList } from "@/apis";
 
 // 서버 응답 인터페이스 정의
 interface StockItem {
@@ -14,7 +14,9 @@ interface IInvestModalType {
   close: () => void;
   onItemsSelected: (items: any[]) => void;
   selectedDegree: number;
-  existingItems?: { id: number }[];
+  existingItems?: {
+    id: number;
+  }[];
 }
 
 export const AddInvestItemModal = ({
@@ -25,40 +27,44 @@ export const AddInvestItemModal = ({
 }: IInvestModalType) => {
   // API에서 종목 리스트 가져오기
   const { data: stockData } = useGetStockList();
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const items = stockData?.items || [];
-  const existingItemIds = existingItems.map((item) => item.id);
+  const existingItemIds = existingItems.map(item => item.id);
 
   // 이미 선택된 아이템 필터링 및 검색어 적용
   const filteredItems = items.filter(
-    (item) =>
+    item =>
       !existingItemIds.includes(item.id) &&
-      (searchText === '' ||
+      (searchText === "" ||
         item.name.toLowerCase().includes(searchText.toLowerCase()) ||
         String(item.id).includes(searchText)),
   );
 
-  const [checkedItems, setCheckedItems] = useState<boolean[]>(
-    Array(filteredItems.length).fill(false),
-  );
+  const [checkedItems, setCheckedItems] = useState<boolean[]>(Array(filteredItems.length).fill(false));
 
   const [isHeadCheck, setIsHeadCheck] = useState<boolean>(false);
 
   // 필터링된 아이템이 변경될 때마다 체크 상태 초기화
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     setCheckedItems(Array(filteredItems.length).fill(false));
     setIsHeadCheck(false);
-  }, [filteredItems.length, searchText]);
+  }, [
+    filteredItems.length,
+    searchText,
+  ]);
 
   // 개별 아이템 체크 토글
   const checkClick = (index: number) => {
-    setCheckedItems((prev) => {
-      const updateCheckItems = [...prev];
+    setCheckedItems(prev => {
+      const updateCheckItems = [
+        ...prev,
+      ];
       updateCheckItems[index] = !updateCheckItems[index];
 
       // 헤더 체크박스 상태 업데이트
-      const allChecked = updateCheckItems.every((item) => item);
+      const allChecked = updateCheckItems.every(item => item);
       setIsHeadCheck(allChecked);
 
       return updateCheckItems;
@@ -69,12 +75,12 @@ export const AddInvestItemModal = ({
   const handleSubmit = () => {
     const selectedItems = filteredItems
       .filter((_, index) => checkedItems[index])
-      .map((item) => ({
+      .map(item => ({
         id: item.id,
         money: Array(selectedDegree + 1).fill(0), // +1은 현재가를 위한 것
       }));
 
-    console.log('Selected items in modal:', selectedItems);
+    console.log("Selected items in modal:", selectedItems);
     onItemsSelected(selectedItems);
   };
 
@@ -91,7 +97,7 @@ export const AddInvestItemModal = ({
   };
 
   // 선택된 아이템이 있는지 확인
-  const hasSelectedItems = checkedItems.some((item) => item);
+  const hasSelectedItems = checkedItems.some(item => item);
 
   return (
     <ModalBackground>
@@ -126,11 +132,7 @@ export const AddInvestItemModal = ({
                 />
               ))
             ) : (
-              <EmptyState>
-                {searchText
-                  ? '검색 결과가 없습니다.'
-                  : '추가 가능한 종목이 없습니다.'}
-              </EmptyState>
+              <EmptyState>{searchText ? "검색 결과가 없습니다." : "추가 가능한 종목이 없습니다."}</EmptyState>
             )}
           </ItemContents>
         </TableContainer>
@@ -140,8 +142,7 @@ export const AddInvestItemModal = ({
               backgroundColor={color.zinc[50]}
               borderColor={color.zinc[200]}
               color={color.zinc[800]}
-              onClick={close}
-            >
+              onClick={close}>
               취소
             </Button>
             <Button
@@ -149,8 +150,7 @@ export const AddInvestItemModal = ({
               borderColor={color.orange[500]}
               color={color.white}
               onClick={handleSubmit}
-              disabled={!hasSelectedItems}
-            >
+              disabled={!hasSelectedItems}>
               선택 종목 추가
             </Button>
           </BtnContainer>
@@ -229,7 +229,9 @@ const EmptyState = styled.div`
   color: ${color.zinc[500]};
 `;
 
-const Title = styled.div<{ isHeader: boolean }>`
+const Title = styled.div<{
+  isHeader: boolean;
+}>`
   font: ${font.b1};
   color: ${color.black};
   margin-left: 4px;

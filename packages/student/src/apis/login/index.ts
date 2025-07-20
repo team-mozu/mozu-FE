@@ -1,36 +1,38 @@
-import { instance, setCookies, setTokens } from '@configs/util';
-import { useMutation } from '@tanstack/react-query';
-import { AuthResponse, StudentLoginProps } from './type';
-import { AxiosError } from 'axios';
-import { Toast } from '@mozu/ui';
-import { useNavigate } from 'react-router-dom';
+import { Toast } from "@mozu/ui";
+import { instance, setCookies, setTokens } from "@mozu/util-config";
+import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+import type { AuthResponse, StudentLoginProps } from "./type";
 
 export const useStudentLogin = () => {
   const navigate = useNavigate();
   return useMutation<AuthResponse, AxiosError, StudentLoginProps>({
     mutationFn: async ({ classNum, schoolName, teamName }) => {
-      const response = await instance.post<AuthResponse>('/team/participate', {
+      const response = await instance.post<AuthResponse>("/team/participate", {
         classNum,
         schoolName,
         teamName,
       });
       return response.data;
     },
-    onSuccess: async (res) => {
+    onSuccess: async res => {
       const accessToken = res.accessToken;
 
       if (!accessToken) {
-        console.error('토큰이 없습니다!', res);
-        Toast('로그인 응답에 문제가 있습니다.', { type: 'error' });
+        console.error("토큰이 없습니다!", res);
+        Toast("로그인 응답에 문제가 있습니다.", {
+          type: "error",
+        });
         return;
       }
       let redirectUrl: string;
-      redirectUrl = 'wait';
-      setTokens(accessToken, '', 'student');
-      setCookies('authority', 'student', {
-        path: '/',
+      redirectUrl = "wait";
+      setTokens(accessToken, "", "student");
+      setCookies("authority", "student", {
+        path: "/",
         secure: true,
-        sameSite: 'none',
+        sameSite: "none",
         domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
       });
 
@@ -40,12 +42,14 @@ export const useStudentLogin = () => {
       if (res.response) {
         switch (res.response?.status) {
           case 401:
-            Toast('참가 코드 혹은 학교를 다시 확인해주세요.', {
-              type: 'error',
+            Toast("참가 코드 혹은 학교를 다시 확인해주세요.", {
+              type: "error",
             });
             break;
           default:
-            Toast('로그인에 실패하였습니다.', { type: 'error' });
+            Toast("로그인에 실패하였습니다.", {
+              type: "error",
+            });
             break;
         }
       } else {

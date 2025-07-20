@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import styled from "@emotion/styled";
+
 import { css, keyframes } from "@emotion/react";
+import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 
 export const ItemSidebarSkeleton = ({ count = 10 }: { count?: number }) => {
@@ -8,7 +9,9 @@ export const ItemSidebarSkeleton = ({ count = 10 }: { count?: number }) => {
     <SideBarContainer>
       <Title>전체 종목</Title>
       <ItemContentContainer>
-        {Array.from({ length: count }).map((_, i) => (
+        {Array.from({
+          length: count,
+        }).map((_, i) => (
           <SkeletonItem key={i} />
         ))}
       </ItemContentContainer>
@@ -42,20 +45,35 @@ const SkeletonItem = () => {
       <LogoContainer>
         <SkeletonCircle />
         <ItemTitleContainer>
-          <SkeletonLine width="80px" height="16px" />
-          <SkeletonLine width="40px" height="12px" />
+          <SkeletonLine
+            width="80px"
+            height="16px"
+          />
+          <SkeletonLine
+            width="40px"
+            height="12px"
+          />
         </ItemTitleContainer>
       </LogoContainer>
       <ItemPriceContainer>
-        <SkeletonLine width="80px" height="16px" />
-        <SkeletonLine width="60px" height="12px" />
+        <SkeletonLine
+          width="80px"
+          height="16px"
+        />
+        <SkeletonLine
+          width="60px"
+          height="12px"
+        />
       </ItemPriceContainer>
     </ItemContainer>
   );
 };
 
 // 재사용 가능한 공통 스켈레톤 박스
-const SkeletonLine = styled.div<{ width: string; height: string }>`
+const SkeletonLine = styled.div<{
+  width: string;
+  height: string;
+}>`
   width: ${({ width }) => width};
   height: ${({ height }) => height};
   border-radius: 4px;

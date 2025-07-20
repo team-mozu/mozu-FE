@@ -1,11 +1,11 @@
-import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
+import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Header, Users, Info, Toast } from "@mozu/ui";
-import { useSSE } from "@/hook";
-import { useNavigate } from "react-router-dom";
-import { removeCookiesAsync } from "@configs/util";
+import { Header, Info, Toast, Users } from "@mozu/ui";
+import { removeCookiesAsync } from "@mozu/util-config";
 import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSSE } from "@/hook";
 import { resetShownInvDegs } from "./HomePage";
 
 export const StudentWaitPage = () => {
@@ -14,48 +14,69 @@ export const StudentWaitPage = () => {
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    (data) => {
+    data => {
       console.log(data);
-      Toast('모의투자 시작을 기다리는중..', { type: "info" });
+      Toast("모의투자 시작을 기다리는중..", {
+        type: "info",
+      });
     },
-    (error) => {
+    error => {
       console.log(error);
-      Toast(`네트워크 에러 발생`, { type: "error" });
+      Toast(`네트워크 에러 발생`, {
+        type: "error",
+      });
     },
     {
-      CLASS_NEXT_INV_START: async (data) => {
+      CLASS_NEXT_INV_START: async data => {
         resetShownInvDegs();
         localStorage.removeItem("trade");
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        navigate(`/${data.classId}`, { replace: true });
+        navigate(`/${data.classId}`, {
+          replace: true,
+        });
       },
       CLASS_CANCEL: async () => {
         if (dirtyFix.current === 0) {
           dirtyFix.current++;
           return;
         }
-        Toast("수업이 취소되었습니다.", { type: "error" });
+        Toast("수업이 취소되었습니다.", {
+          type: "error",
+        });
 
         const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
-        await removeCookiesAsync(["accessToken", "authority"], {
-          path: "/",
-          secure: true,
-          sameSite: "none",
-          domain,
-        });
+        await removeCookiesAsync(
+          [
+            "accessToken",
+            "authority",
+          ],
+          {
+            path: "/",
+            secure: true,
+            sameSite: "none",
+            domain,
+          },
+        );
         navigate("/signin");
       },
-    }
+    },
   );
 
   return (
     <AppContainer>
-      <Header isAdmin={false} showNav={false} showRound={false} />
+      <Header
+        isAdmin={false}
+        showNav={false}
+        showRound={false}
+      />
       <Container>
         <MainSection>
           <IconDiv>
-            <Users size={32} color="white" />
+            <Users
+              size={32}
+              color="white"
+            />
           </IconDiv>
 
           <ContentArea>
@@ -73,15 +94,33 @@ export const StudentWaitPage = () => {
           </ContentArea>
 
           <InfoBox>
-            <Info size={18} color={color.orange[600]} />
+            <Info
+              size={18}
+              color={color.orange[600]}
+            />
             모의투자가 시작되면 자동으로 투자 페이지로 넘어가요.
           </InfoBox>
         </MainSection>
 
         <DecorativeElements>
-          <CircleElement top="10%" right="15%" size="120px" opacity="0.05" />
-          <CircleElement top="70%" left="10%" size="80px" opacity="0.08" />
-          <CircleElement bottom="20%" right="25%" size="100px" opacity="0.06" />
+          <CircleElement
+            top="10%"
+            right="15%"
+            size="120px"
+            opacity="0.05"
+          />
+          <CircleElement
+            top="70%"
+            left="10%"
+            size="80px"
+            opacity="0.08"
+          />
+          <CircleElement
+            bottom="20%"
+            right="25%"
+            size="100px"
+            opacity="0.06"
+          />
         </DecorativeElements>
       </Container>
     </AppContainer>
@@ -304,7 +343,14 @@ const DecorativeElements = styled.div`
   overflow: hidden;
 `;
 
-const CircleElement = styled.div<{ size: string; opacity: string; top?: string; bottom?: string; left?: string; right?: string; }>`
+const CircleElement = styled.div<{
+  size: string;
+  opacity: string;
+  top?: string;
+  bottom?: string;
+  left?: string;
+  right?: string;
+}>`
   position: absolute;
   width: ${props => props.size};
   height: ${props => props.size};

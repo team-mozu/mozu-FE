@@ -1,12 +1,8 @@
-import Cookies, { CookieSetOptions } from "universal-cookie";
+import Cookies, { type CookieSetOptions } from "universal-cookie";
 
 const cookies = new Cookies();
 
-export const setCookies = (
-  key: string | string[],
-  value: string | string[],
-  options?: CookieSetOptions
-) => {
+export const setCookies = (key: string | string[], value: string | string[], options?: CookieSetOptions) => {
   if (Array.isArray(key) && Array.isArray(value)) {
     if (key.length !== value.length) {
       console.error("setCookies 오류 key와 value의 길이가 다릅니다");
@@ -23,28 +19,22 @@ export const setCookies = (
 export const getCookies = <T>(key: string | string[]) => {
   let item: T | T[];
 
-  if (Array.isArray(key)) item = key.map((k) => cookies.get<T>(k));
+  if (Array.isArray(key)) item = key.map(k => cookies.get<T>(k));
   else item = cookies.get<T>(key);
 
   return item;
 };
 
-export const removeCookies = (
-  key: string | string[],
-  options?: CookieSetOptions
-) => {
+export const removeCookies = (key: string | string[], options?: CookieSetOptions) => {
   if (Array.isArray(key)) {
-    key.forEach((i) => cookies.remove(i, options));
+    key.forEach(i => cookies.remove(i, options));
   } else {
     cookies.remove(key, options);
   }
 };
 
-export const removeCookiesAsync = (
-  key: string | string[],
-  options?: CookieSetOptions
-): Promise<void> => {
-  return new Promise((resolve) => {
+export const removeCookiesAsync = (key: string | string[], options?: CookieSetOptions): Promise<void> => {
+  return new Promise(resolve => {
     removeCookies(key, options);
     resolve();
   });

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -13,8 +13,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
   const setValue = (value: T | ((val: T) => T)) => {
     try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       localStorage.setItem(key, JSON.stringify(valueToStore));
       window.dispatchEvent(new Event("local-storage"));
@@ -23,6 +22,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     }
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     const handleStorageChange = () => {
       try {
@@ -39,7 +39,12 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("local-storage", handleStorageChange);
     };
-  }, [key]);
+  }, [
+    key,
+  ]);
 
-  return [storedValue, setValue] as const;
+  return [
+    storedValue,
+    setValue,
+  ] as const;
 }

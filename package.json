@@ -7,7 +7,7 @@
     "admin": "yarn workspace @mozu/admin",
     "student": "yarn workspace @mozu/student",
     "ui": "yarn workspace @mozu/ui",
-    "util": "yarn workspace util",
+    "util": "yarn workspace @mozu/util-config",
     "prepare": "husky install",
     "lint": "eslint packages --ext ts,tsx --report-unused-disable-directives --cache",
     "lint-staged": "lint-staged",
@@ -20,10 +20,12 @@
     ]
   },
   "workspaces": {
-    "packages": ["packages/*"]
+    "packages": [
+      "packages/*"
+    ]
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "2.0.6",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@types/node": "^22.10.5",

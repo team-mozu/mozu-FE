@@ -1,6 +1,6 @@
-import { useState } from "react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
+import { useState } from "react";
 import { Eye, EyeOff } from "./assets";
 
 interface IInputType {
@@ -54,9 +54,15 @@ export const Input = ({
         {type === "password" && setPasswordVisible && (
           <PasswordToggle onClick={() => setPasswordVisible(!passwordVisible)}>
             {passwordVisible ? (
-              <Eye size={24} color={color.black} />
+              <Eye
+                size={24}
+                color={color.black}
+              />
             ) : (
-              <EyeOff size={24} color={color.black} />
+              <EyeOff
+                size={24}
+                color={color.black}
+              />
             )}
           </PasswordToggle>
         )}
@@ -86,8 +92,10 @@ const InputWrapper = styled.div`
   position: relative;
 `;
 
-const InputContent = styled.input<{ width?: string }>`
-  width: ${(props) => props.width || "100%"};
+const InputContent = styled.input<{
+  width?: string;
+}>`
+  width: ${props => props.width || "100%"};
   height: 48px;
   background-color: ${color.zinc[50]};
   border: 1px solid ${color.zinc[200]};

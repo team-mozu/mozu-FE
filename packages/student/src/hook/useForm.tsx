@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useState } from "react";
 
 export const useForm = <T extends object>(initState: T) => {
   const [state, setState] = useState<T>(initState);
@@ -6,9 +6,17 @@ export const useForm = <T extends object>(initState: T) => {
   const onChangeInputValue = (
     e:
       | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | { target: { name: string; value: string | number } },
+      | {
+        target: {
+          name: string;
+          value: string | number;
+        };
+      },
   ) => {
-    setState({ ...state, [e.target.name]: e.target.value });
+    setState({
+      ...state,
+      [e.target.name]: e.target.value,
+    });
   };
   return {
     state,

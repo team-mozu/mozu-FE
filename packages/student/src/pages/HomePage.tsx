@@ -1,10 +1,10 @@
-import { useGetArticleList, useGetTeamDetail } from "@/apis";
-import { StockTable, TotalProperty } from "@/components";
-import { ArticleModal } from "@/components/news/ArticleModal";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useGetArticleList, useGetTeamDetail } from "@/apis";
+import { StockTable, TotalProperty } from "@/components";
+import { ArticleModal } from "@/components/news/ArticleModal";
 
 // 컴포넌트 외부에 전역 상태로 관리하여 마운트/언마운트 시에도 유지
 const shownInvDegs = new Set<number>();
@@ -23,14 +23,18 @@ export const HomePage = () => {
   const location = useLocation();
 
   // 라우트 변경 감지하여 상태 초기화
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     // 라우트가 변경될 때마다 모달 상태 초기화
     setIsModalOpen(false);
     setNewArticles([]);
     setCurrentArticleIndex(0);
-  }, [location.pathname]);
+  }, [
+    location.pathname,
+  ]);
 
   // invDeg 변경 감지 및 새 기사 모달 표시
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     if (isLoading || !teamData || !newsData) return;
 
@@ -44,7 +48,11 @@ export const HomePage = () => {
       // 현재 차수에 해당하는 기사들 표시
       showArticlesForCurrentInvDeg();
     }
-  }, [teamData?.invDeg, newsData, isLoading]);
+  }, [
+    teamData?.invDeg,
+    newsData,
+    isLoading,
+  ]);
 
   // 현재 차수에 해당하는 기사들을 표시하는 함수
   const showArticlesForCurrentInvDeg = () => {

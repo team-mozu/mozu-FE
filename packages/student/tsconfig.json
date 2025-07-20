@@ -23,7 +23,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@mozu/ui": ["../ui/dist"],
-      "@mozu/design-token": ["../design-token/dist"]
+      "@mozu/design-token": ["../design-token/dist"],
+      "@util-config/*": ["../util-config/dist"]
     },
     "typeRoots": ["node_modules/@types", "src/@types"]
   },

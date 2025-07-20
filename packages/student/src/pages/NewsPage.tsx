@@ -1,9 +1,9 @@
-import { useGetArticleList } from "@/apis";
-import { NewsPost } from "@/components";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useGetArticleList } from "@/apis";
+import { NewsPost } from "@/components";
 
 // 타입 정의 추가
 interface Article {
@@ -19,19 +19,17 @@ export const NewsPage = () => {
 
   // 데이터 메모이제이션
   const validArticles = useMemo(() => {
-    return articleData?.filter(article =>
-      article && article.articleId && article.title
-    ) || [];
-  }, [articleData]);
+    return articleData?.filter(article => article && article.articleId && article.title) || [];
+  }, [
+    articleData,
+  ]);
 
   // 에러 처리 추가
   if (error) {
     return (
       <ErrorContainer>
         <ErrorMessage>뉴스를 불러오는 중 오류가 발생했습니다.</ErrorMessage>
-        <RetryButton onClick={() => window.location.reload()}>
-          다시 시도
-        </RetryButton>
+        <RetryButton onClick={() => window.location.reload()}>다시 시도</RetryButton>
       </ErrorContainer>
     );
   }

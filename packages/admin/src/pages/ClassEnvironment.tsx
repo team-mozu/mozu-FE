@@ -1,14 +1,14 @@
-import { StockTables } from "@/components/common/StockTables";
-import { ArticleTables } from "@/components/common/ArticleTables";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { useClassStart, useGetClassDetail, useClassDelete } from "@/apis";
+import { useClassDelete, useClassStart, useGetClassDetail } from "@/apis";
+import { FullPageLoader } from "@/components";
+import { ArticleTables } from "@/components/common/ArticleTables";
+import { StockTables } from "@/components/common/StockTables";
 import { formatPrice } from "@/utils/formatPrice";
 import { Skeleton } from "../../../design-token/src/theme/Skeleton";
-import { FullPageLoader } from "@/components";
 
 export const ClassEnvironment = () => {
   const { id } = useParams();
@@ -17,17 +17,16 @@ export const ClassEnvironment = () => {
   const location = useLocation();
 
   // API 호출
-  const {
-    data: classData,
-    isLoading: apiLoading,
-    refetch,
-  } = useGetClassDetail(classId);
+  const { data: classData, isLoading: apiLoading, refetch } = useGetClassDetail(classId);
 
   const [isLoading, setIsLoading] = useState(true);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     setIsLoading(true);
-  }, [classId]);
+  }, [
+    classId,
+  ]);
 
   useEffect(() => {
     if (!apiLoading && classData) {
@@ -35,8 +34,10 @@ export const ClassEnvironment = () => {
         setIsLoading(false);
       }, 500);
     }
-  }, [apiLoading, classData]);
-
+  }, [
+    apiLoading,
+    classData,
+  ]);
 
   const { mutate: startClass } = useClassStart(classId);
   const { mutate: deleteClass, isPending } = useClassDelete();
@@ -51,12 +52,18 @@ export const ClassEnvironment = () => {
     if (classData?.maxInvDeg) {
       setSelectedRound(classData.maxInvDeg);
     }
-  }, [classData?.maxInvDeg]);
+  }, [
+    classData?.maxInvDeg,
+  ]);
 
   // 페이지 이동 시 데이터 갱신
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     refetch();
-  }, [location.pathname, refetch]);
+  }, [
+    location.pathname,
+    refetch,
+  ]);
 
   // 삭제 모달 열기
   const openDeleteModal = () => {
@@ -74,9 +81,9 @@ export const ClassEnvironment = () => {
 
     deleteClass(classId, {
       onSuccess: () => {
-        navigate('/class-management'); // 삭제 후 이전 페이지로 이동
+        navigate("/class-management"); // 삭제 후 이전 페이지로 이동
       },
-      onError: (error) => {
+      onError: error => {
         console.error("클래스 삭제 중 오류 발생:", error);
         alert("클래스 삭제에 실패했습니다.");
       },
@@ -91,26 +98,35 @@ export const ClassEnvironment = () => {
     startClass(undefined, {
       onSettled: () => {
         setIsStarting(false);
-      }
+      },
     });
   };
 
   // 정보 배열 구성
   const infos = classData
     ? [
-      { kind: '수업 이름', value: classData.name || '정보 없음' },
-      { kind: '투자 차수', value: `${classData.maxInvDeg}차` || '정보 없음' },
       {
-        kind: '기초자산',
-        value: `${formatPrice(classData.baseMoney)}원` || '정보 없음',
+        kind: "수업 이름",
+        value: classData.name || "정보 없음",
       },
-      { kind: '생성일자', value: classData.createdAt || '정보 없음' },
+      {
+        kind: "투자 차수",
+        value: `${classData.maxInvDeg}차` || "정보 없음",
+      },
+      {
+        kind: "기초자산",
+        value: `${formatPrice(classData.baseMoney)}원` || "정보 없음",
+      },
+      {
+        kind: "생성일자",
+        value: classData.createdAt || "정보 없음",
+      },
     ]
     : [];
 
   // 투자 종목 데이터 가공
   const stockTableData = classData?.classItems
-    ? classData.classItems.map((item) => ({
+    ? classData.classItems.map(item => ({
       itemId: item.itemId,
       itemCode: String(item.itemId),
       itemName: item.itemName,
@@ -140,20 +156,12 @@ export const ClassEnvironment = () => {
       <Wrapper>
         <Head>
           <Container>
-            <BackBtn onClick={() => navigate('/class-management')}>
+            <BackBtn onClick={() => navigate("/class-management")}>
               <ArrowLeft />
             </BackBtn>
             <TextBox>
-              {isLoading ? (
-                <H2Div>{classData?.name}</H2Div>
-              ) : (
-                <h2>{classData?.name || "정보 없음"}</h2>
-              )}
-              {isLoading ? (
-                <PDiv>{classData?.createdAt}</PDiv>
-              ) : (
-                <p>{classData?.createdAt || "날짜 없음"}</p>
-              )}
+              {isLoading ? <H2Div>{classData?.name}</H2Div> : <h2>{classData?.name || "정보 없음"}</h2>}
+              {isLoading ? <PDiv>{classData?.createdAt}</PDiv> : <p>{classData?.createdAt || "날짜 없음"}</p>}
             </TextBox>
           </Container>
           <div>
@@ -164,8 +172,7 @@ export const ClassEnvironment = () => {
               hoverBackgroundColor={color.orange[400]}
               hoverBorderColor={color.orange[400]}
               onClick={handleStartClass}
-              disabled={isLoading || isStarting}
-            >
+              disabled={isLoading || isStarting}>
               모의주식투자 시작하기
               <Play />
             </Button>
@@ -175,14 +182,14 @@ export const ClassEnvironment = () => {
           <Option>
             <InfoBox>
               {isLoading
-                ? infos.map((data, index) => (
-                  <InfoDiv key={index}>
+                ? infos.map((data) => (
+                  <InfoDiv key={data.kind}>
                     <span>{data.kind}</span>
                     {data.value}
                   </InfoDiv>
                 ))
-                : infos.map((data, index) => (
-                  <Info key={index}>
+                : infos.map((data) => (
+                  <Info key={data.kind}>
                     <span>{data.kind}</span>
                     {data.value}
                   </Info>
@@ -195,10 +202,12 @@ export const ClassEnvironment = () => {
                 hoverBackgroundColor={color.zinc[100]}
                 hoverBorderColor={color.zinc[100]}
                 onClick={openDeleteModal}
-                disabled={isLoading}
-              >
+                disabled={isLoading}>
                 삭제하기
-                <Del color="black" size={20} />
+                <Del
+                  color="black"
+                  size={20}
+                />
               </Button>
               <Button
                 backgroundColor={color.orange[50]}
@@ -207,10 +216,12 @@ export const ClassEnvironment = () => {
                 hoverBackgroundColor={color.orange[100]}
                 hoverBorderColor={color.orange[100]}
                 onClick={() => navigate(`/class-management/${classId}/edit`)}
-                disabled={isLoading}
-              >
+                disabled={isLoading}>
                 수정하기
-                <Edit color={color.orange[500]} size={20} />
+                <Edit
+                  color={color.orange[500]}
+                  size={20}
+                />
               </Button>
             </BtnContainer>
           </Option>
@@ -228,7 +239,7 @@ export const ClassEnvironment = () => {
             />
           </TableBox>
         </Content>
-      </Wrapper >
+      </Wrapper>
     </>
   );
 };

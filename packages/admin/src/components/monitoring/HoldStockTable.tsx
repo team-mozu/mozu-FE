@@ -1,10 +1,6 @@
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-} from "@tanstack/react-table";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
+import { type ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { roundToFixed } from "@/utils";
 
 interface StockData {
@@ -13,7 +9,11 @@ interface StockData {
   quantity: string;
   tradeAmount: string;
   currentPrice: string;
-  profit: { valueMoney: number; profitMoney: number; profitRate: number };
+  profit: {
+    valueMoney: number;
+    profitMoney: number;
+    profitRate: number;
+  };
 }
 
 interface HoldItem {
@@ -27,18 +27,25 @@ interface HoldItem {
   valMoney: number; // 평가 금액
   valProfit: number; // 평가 손익
   profitNum: number; // 수익률 (단위: %, 소수)
-};
-
+}
 
 const columns: ColumnDef<StockData>[] = [
-  { accessorKey: "name", header: "종목 이름", size: 376 },
+  {
+    accessorKey: "name",
+    header: "종목 이름",
+    size: 376,
+  },
   {
     accessorKey: "tradePrice",
     header: "거래 가격",
     size: 140,
     cell: ({ row }) => `${row.getValue("tradePrice")}원`,
   },
-  { accessorKey: "quantity", header: "수량", size: 100 },
+  {
+    accessorKey: "quantity",
+    header: "수량",
+    size: 100,
+  },
   {
     accessorKey: "tradeAmount",
     header: "거래 금액",
@@ -65,28 +72,25 @@ const columns: ColumnDef<StockData>[] = [
       const isProfit = profitMoney >= 0;
       const sign = isProfit ? "+" : "-";
       const absMoney = Math.abs(profitMoney).toLocaleString("ko-KR");
-      const absRate = roundToFixed(Math.abs(profitRate), 2)
+      const absRate = roundToFixed(Math.abs(profitRate), 2);
 
       return (
         <RateWrapper>
           {valueMoney.toLocaleString("ko-KR")}원
-          <ProfitSpan isProfit={isProfit}>
-            {`${sign}${absMoney}원 (${sign}${absRate}%)`}
-          </ProfitSpan>
+          <ProfitSpan isProfit={isProfit}>{`${sign}${absMoney}원 (${sign}${absRate}%)`}</ProfitSpan>
         </RateWrapper>
       );
     },
-  }
+  },
 ];
 
 export const HoldStockTable = ({ holdItems }: { holdItems: HoldItem[] }) => {
-
   const formatProfitRate = (rate: number) => {
     const sign = rate > 0 ? "+" : rate < 0 ? "-" : "";
     return `${sign}${roundToFixed(rate, 2)}%`;
   };
 
-  const stockRows: StockData[] = (holdItems ?? []).map((item) => {
+  const stockRows: StockData[] = (holdItems ?? []).map(item => {
     return {
       name: item.itemName,
       tradePrice: item.buyMoney.toLocaleString("ko-KR"),
@@ -118,10 +122,14 @@ export const HoldStockTable = ({ holdItems }: { holdItems: HoldItem[] }) => {
   return (
     <Table>
       <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
+        {table.getHeaderGroups().map(headerGroup => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <Th key={header.id} style={{ width: header.column.getSize() }}>
+            {headerGroup.headers.map(header => (
+              <Th
+                key={header.id}
+                style={{
+                  width: header.column.getSize(),
+                }}>
                 {header.column.columnDef.header as string}
               </Th>
             ))}
@@ -130,19 +138,20 @@ export const HoldStockTable = ({ holdItems }: { holdItems: HoldItem[] }) => {
       </thead>
       <tbody>
         {table.getRowModel().rows.length ? (
-          table.getRowModel().rows.map((row) => (
+          table.getRowModel().rows.map(row => (
             <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
+              {row.getVisibleCells().map(cell => (
                 <Td
                   key={cell.id}
                   style={{
                     width: cell.column.getSize(),
                   }}
-                  alignRight={rightAlignColumnIds.includes(cell.column.id)}
-                >
+                  alignRight={rightAlignColumnIds.includes(cell.column.id)}>
                   {cell.column.id === "profit"
                     ? cell.column.columnDef.cell
-                      ? (cell.column.columnDef.cell as any)({ row })
+                      ? (cell.column.columnDef.cell as any)({
+                        row,
+                      })
                       : cell.renderValue()
                     : cell.renderValue()}
                 </Td>
@@ -151,7 +160,11 @@ export const HoldStockTable = ({ holdItems }: { holdItems: HoldItem[] }) => {
           ))
         ) : (
           <tr>
-            <Td colSpan={columns.length} style={{ textAlign: "center" }}>
+            <Td
+              colSpan={columns.length}
+              style={{
+                textAlign: "center",
+              }}>
               보유중인 종목이 없습니다.
             </Td>
           </tr>
@@ -188,7 +201,9 @@ const Th = styled.th`
   }
 `;
 
-const Td = styled.td<{ alignRight?: boolean }>`
+const Td = styled.td<{
+  alignRight?: boolean;
+}>`
   height: 64px;
   font: ${font.b2};
   border-bottom: 1px solid ${color.zinc[200]};
@@ -196,7 +211,7 @@ const Td = styled.td<{ alignRight?: boolean }>`
   padding: 16px;
   vertical-align: middle;
   white-space: pre-line;
-  text-align: ${(props) => (props.alignRight ? "right" : "left")};
+  text-align: ${props => (props.alignRight ? "right" : "left")};
 
 
   tbody tr:last-of-type & {
@@ -215,7 +230,9 @@ const RateWrapper = styled.div`
   text-align: right;
 `;
 
-const ProfitSpan = styled.span<{ isProfit: boolean }>`
-  color: ${(props) => (props.isProfit ? color.red[500] : color.blue[500])};
+const ProfitSpan = styled.span<{
+  isProfit: boolean;
+}>`
+  color: ${props => (props.isProfit ? color.red[500] : color.blue[500])};
   font: ${font.b2};
 `;

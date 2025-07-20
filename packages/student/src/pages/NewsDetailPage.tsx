@@ -1,16 +1,16 @@
-import { color } from "@mozu/design-token";
 import styled from "@emotion/styled";
-import { NewsDetail } from "@/components";
+import { color } from "@mozu/design-token";
 import { ExitBtn } from "@mozu/ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetArticleList } from "@/apis";
+import { NewsDetail } from "@/components";
 
 export const NewsDetailPage = () => {
   const navigate = useNavigate();
   const { data: newsData } = useGetArticleList();
   const { newsId } = useParams();
   const targetId = parseInt(newsId);
-  const index = newsData?.find((article) => article.articleId === targetId);
+  const index = newsData?.find(article => article.articleId === targetId);
 
   return (
     <PageContainer>

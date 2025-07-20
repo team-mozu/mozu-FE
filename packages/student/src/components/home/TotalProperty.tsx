@@ -1,7 +1,7 @@
-import { useUnchangedValue } from '@/hook';
-import { roundToFixed } from '@/utils';
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { useUnchangedValue } from "@/hook";
+import { roundToFixed } from "@/utils";
 
 interface IPropsType {
   totalMoney: string;
@@ -25,25 +25,11 @@ export const TotalProperty = ({
     <Wrapper>
       <TitleBox>
         <Title>총 평가 자산</Title>
-        <Money
-          $color={
-            sameValue
-              ? color.green[600]
-              : profitNum.includes('-')
-                ? color.blue[500]
-                : color.red[500]
-          }
-        >
+        <Money $color={sameValue ? color.green[600] : profitNum.includes("-") ? color.blue[500] : color.red[500]}>
           {totalMoney}원
         </Money>
         {!valueProfit ? null : (
-          <MoneyRate
-            $color={
-              profitNum.includes('-')
-                ? color.blue[500]
-                : color.red[500]
-            }
-          >
+          <MoneyRate $color={profitNum.includes("-") ? color.blue[500] : color.red[500]}>
             {valueProfit.toLocaleString().includes("-") ? "" : "+"}
             {valueProfit.toLocaleString()}원 (
             {profitNum.includes("-")
@@ -104,12 +90,16 @@ const DetailBox = styled.div`
   border-radius: 8px;
 `;
 
-const MoneyRate = styled.div<{ $color?: string }>`
+const MoneyRate = styled.div<{
+  $color?: string;
+}>`
   font: ${font.t2};
   color: ${({ $color }) => $color};
 `;
 
-const Money = styled.div<{ $color?: string }>`
+const Money = styled.div<{
+  $color?: string;
+}>`
   font: ${font.h1};
   color: ${({ $color }) => $color};
 `;

@@ -1,1 +1,1 @@
-export * from './headerConfig';
+export * from "./headerConfig";

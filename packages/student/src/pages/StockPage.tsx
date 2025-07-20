@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { NavBar, StockStatusBar, BuySellModal } from "@/components";
-import { Outlet } from "react-router-dom";
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { BuySellModal, NavBar, StockStatusBar } from "@/components";
 
 export const StockPage = () => {
   const [modalState, setModalState] = useState<{
@@ -13,11 +13,17 @@ export const StockPage = () => {
   });
 
   const openModal = (type: "매수" | "매도") => {
-    setModalState({ isOpen: true, type });
+    setModalState({
+      isOpen: true,
+      type,
+    });
   };
 
   const closeModal = () => {
-    setModalState((prev) => ({ ...prev, isOpen: false }));
+    setModalState(prev => ({
+      ...prev,
+      isOpen: false,
+    }));
   };
 
   return (

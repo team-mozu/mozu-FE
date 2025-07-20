@@ -1,8 +1,8 @@
-import { SideBar, Header } from "@mozu/ui";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
+import { Header, SideBar } from "@mozu/ui";
+import { getCookies } from "@mozu/util-config";
 import { useEffect } from "react";
-import { getCookies } from "@configs/util";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export const AppLayout = () => {
   const { pathname } = useLocation();
@@ -10,13 +10,27 @@ export const AppLayout = () => {
   const accessToken = getCookies<string>("accessToken");
 
   useEffect(() => {
-    if (accessToken === undefined) navigate("signin", { replace: true });
-    if (pathname === "/") navigate("/class-management", { replace: true });
-  }, [pathname, navigate, accessToken]);
+    if (accessToken === undefined)
+      navigate("signin", {
+        replace: true,
+      });
+    if (pathname === "/")
+      navigate("/class-management", {
+        replace: true,
+      });
+  }, [
+    pathname,
+    navigate,
+    accessToken,
+  ]);
 
   return (
     <AppContainer>
-      <Header isAdmin={true} showNav={false} showRound={false} />
+      <Header
+        isAdmin={true}
+        showNav={false}
+        showRound={false}
+      />
       <SideBar
         name={"대전시 진로융합원 창업마을"}
         role={"관리자"}
@@ -26,11 +40,9 @@ export const AppLayout = () => {
         isMargin={
           !(
             pathname.split("/")[1] === "class-management" &&
-            (pathname.split("/")[3] === "start" ||
-              pathname.split("/")[3] === "monitoring")
+            (pathname.split("/")[3] === "start" || pathname.split("/")[3] === "monitoring")
           )
-        }
-      >
+        }>
         <Outlet />
       </MainContent>
     </AppContainer>
@@ -45,7 +57,9 @@ const AppContainer = styled.div`
   overflow-x: hidden;
 `;
 
-const MainContent = styled.div<{ isMargin: boolean }>`
+const MainContent = styled.div<{
+  isMargin: boolean;
+}>`
   margin-left: ${({ isMargin }) => (isMargin ? "280px" : "0")};
   margin-top: 64px;
   flex: 1;

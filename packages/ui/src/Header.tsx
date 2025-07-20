@@ -1,8 +1,8 @@
-import { LogoWithText } from "@mozu/ui";
-import { color, font } from "@mozu/design-token";
 import styled from "@emotion/styled";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { color, font } from "@mozu/design-token";
+import { LogoWithText } from "@mozu/ui";
 import { useMemo } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 interface IHeaderProps {
   isAdmin: boolean;
@@ -25,7 +25,10 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
     if (pathname === "/signin/wait") return "wait";
     if (pathname === `/${classId}/ending`) return "ending";
     return "default";
-  }, [pathname, classId]);
+  }, [
+    pathname,
+    classId,
+  ]);
 
   const isNavHome = currentPage === "home";
   const isNavNews = currentPage === "news";
@@ -39,27 +42,27 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
       isMargin={
         !(
           pathname.split("/")[1] === "class-management" &&
-          (pathname.split("/")[3] === "start" ||
-            pathname.split("/")[3] === "monitoring")
+          (pathname.split("/")[3] === "start" || pathname.split("/")[3] === "monitoring")
         )
-      }
-    >
-      <LogoContainer
-        onClick={() => navigate(isAdmin ? "/class-management" : `/${classId}`)}
-      >
-        <LogoWithText width={74} height={28} />
+      }>
+      <LogoContainer onClick={() => navigate(isAdmin ? "/class-management" : `/${classId}`)}>
+        <LogoWithText
+          width={74}
+          height={28}
+        />
         <MozuTitle>모의주식투자</MozuTitle>
       </LogoContainer>
 
       {!isAdmin && !isResultPage && !isWaitPage && !isEndingPage && (
         <NavContainer>
-          <Nav onClick={() => navigate(`/${classId}`)} isActive={isNavHome}>
+          <Nav
+            onClick={() => navigate(`/${classId}`)}
+            isActive={isNavHome}>
             홈
           </Nav>
           <Nav
             onClick={() => navigate(`/${classId}/news`)}
-            isActive={isNavNews}
-          >
+            isActive={isNavNews}>
             뉴스
           </Nav>
         </NavContainer>
@@ -71,14 +74,18 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
             <InvestmentRoundContent>{invDeg}차 투자</InvestmentRoundContent>
             <InvestmentRoundExplain>진행중</InvestmentRoundExplain>
           </div>
-          <SchoolTag href="https://dsmhs.djsch.kr/main.do" target="_blank">
+          <SchoolTag
+            href="https://dsmhs.djsch.kr/main.do"
+            target="_blank">
             © 대덕소프트웨어마이스터고등학교
           </SchoolTag>
         </InvestmentRoundContainer>
       )}
 
       {(isWaitPage || isAdmin || isResultPage || isEndingPage) && (
-        <SchoolTag href="https://dsmhs.djsch.kr/main.do" target="_blank">
+        <SchoolTag
+          href="https://dsmhs.djsch.kr/main.do"
+          target="_blank">
           © 대덕소프트웨어마이스터고등학교
         </SchoolTag>
       )}
@@ -87,14 +94,15 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
 };
 
 /** 스타일 */
-const HeaderContainer = styled.header<{ isAdmin: boolean; isMargin: boolean }>`
+const HeaderContainer = styled.header<{
+  isAdmin: boolean;
+  isMargin: boolean;
+}>`
   position: fixed;
   top: 0;
   z-index: 1;
-  width: ${({ isAdmin, isMargin }) =>
-    isAdmin && isMargin ? "calc(100% - 280px)" : "100%"};
-  margin-left: ${({ isAdmin, isMargin }) =>
-    isAdmin && isMargin ? "280px" : "0"};
+  width: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "calc(100% - 280px)" : "100%")};
+  margin-left: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "280px" : "0")};
   height: 64px;
   padding: 0 40px;
   display: flex;
@@ -126,7 +134,9 @@ const NavContainer = styled.nav`
   align-items: center;
 `;
 
-const Nav = styled.div<{ isActive: boolean }>`
+const Nav = styled.div<{
+  isActive: boolean;
+}>`
   font: ${font.b1};
   color: ${({ isActive }) => (isActive ? color.zinc[800] : color.zinc[500])};
   padding: 10px 16px;

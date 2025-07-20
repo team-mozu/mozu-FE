@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Search } from './assets';
-import { ChangeEvent, useState } from 'react'; // useState import
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { type ChangeEvent, useState } from "react"; // useState import
+import { Search } from "./assets";
 
 interface ISearchInputType {
   inputText: string;
@@ -9,16 +9,15 @@ interface ISearchInputType {
   onChange: (value: string) => void;
 }
 
-export const SearchInput = ({
-  inputText,
-  value,
-  onChange,
-}: ISearchInputType) => {
+export const SearchInput = ({ inputText, value, onChange }: ISearchInputType) => {
   const [isFocused, setIsFocused] = useState(false); // focus 상태 관리
 
   return (
     <SearchInputContaniner isFocused={isFocused}>
-      <Search size={20} color={color.zinc[400]} />
+      <Search
+        size={20}
+        color={color.zinc[400]}
+      />
       <Input
         type="text"
         placeholder={inputText}
@@ -33,7 +32,9 @@ export const SearchInput = ({
   );
 };
 
-const SearchInputContaniner = styled.div<{ isFocused: boolean }>`
+const SearchInputContaniner = styled.div<{
+  isFocused: boolean;
+}>`
   // isFocused prop 타입 정의
   display: flex;
   padding: 10px 12px;

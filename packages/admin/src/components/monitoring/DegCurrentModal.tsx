@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useRef, useCallback, useEffect, useState } from "react";
-import { TeamInvestStatusTable } from "@/components";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetTeamTradeStatus } from "@/apis";
+import { TeamInvestStatusTable } from "@/components";
 import { useTeamStore } from "@/store";
 
 interface DegDealContent {
@@ -12,7 +12,7 @@ interface DegDealContent {
   itemMoney: number;
   orderCount: number;
   totalMoney: number;
-  orderType: 'BUY' | 'SELL';
+  orderType: "BUY" | "SELL";
   invDeg: number;
 }
 
@@ -28,11 +28,7 @@ interface IDegCurrentType {
   id: number;
 }
 
-export const DegCurrentModal = ({
-  isOpen,
-  setIsOpen,
-  id
-}: IDegCurrentType) => {
+export const DegCurrentModal = ({ isOpen, setIsOpen, id }: IDegCurrentType) => {
   const { data: degData } = useGetTeamTradeStatus(id);
   const { teamInfoMap } = useTeamStore();
   const backgroundRef = useRef<HTMLDivElement>(null);
@@ -42,7 +38,7 @@ export const DegCurrentModal = ({
   if (degData && degData.length > 0) {
     const grouped: Record<number, DegDealContent[]> = {};
 
-    degData.forEach((deal) => {
+    degData.forEach(deal => {
       if (!grouped[deal.invDeg]) grouped[deal.invDeg] = [];
       grouped[deal.invDeg].push(deal);
     });
@@ -54,7 +50,7 @@ export const DegCurrentModal = ({
     for (const degNumber of sortedDegNumbers) {
       degDataList.push({
         degNumber,
-        teamName: teamInfoMap[id]?.teamName || '',
+        teamName: teamInfoMap[id]?.teamName || "",
         deals: grouped[degNumber],
       });
     }
@@ -62,7 +58,9 @@ export const DegCurrentModal = ({
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
-  }, [setIsOpen]);
+  }, [
+    setIsOpen,
+  ]);
 
   const handleBackgroundClick = useCallback(
     (e: React.MouseEvent) => {
@@ -70,7 +68,9 @@ export const DegCurrentModal = ({
         setIsOpen(false);
       }
     },
-    [setIsOpen]
+    [
+      setIsOpen,
+    ],
   );
 
   const handleTabClick = useCallback((index: number) => {
@@ -86,33 +86,50 @@ export const DegCurrentModal = ({
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, [
+    isOpen,
+  ]);
 
   useEffect(() => {
     if (isOpen && degData?.length > 0) {
       setActiveTabIndex(0);
     }
-  }, [isOpen, degData?.length]);
+  }, [
+    isOpen,
+    degData?.length,
+  ]);
 
   const currentDegData = degDataList[activeTabIndex];
   const currentDeals = currentDegData?.deals || [];
 
-
   return (
     isOpen && (
-      <BackgroundContainer ref={backgroundRef} onClick={handleBackgroundClick}>
+      <BackgroundContainer
+        ref={backgroundRef}
+        onClick={handleBackgroundClick}>
         <ModalContainer>
           <ContentContainer>
             <TitleContainer>
               <TitleSection>
                 <Title>
-                  {currentDegData ? `${currentDegData.degNumber}차 '${currentDegData.teamName}' 거래 현황` : '거래 현황'}
+                  {currentDegData
+                    ? `${currentDegData.degNumber}차 '${currentDegData.teamName}' 거래 현황`
+                    : "거래 현황"}
                 </Title>
                 <Subtitle>차수별 투자 포트폴리오</Subtitle>
               </TitleSection>
               <CloseButton onClick={handleClose}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none">
+                  <path
+                    d="M18 6L6 18M6 6L18 18"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </CloseButton>
             </TitleContainer>
@@ -123,8 +140,7 @@ export const DegCurrentModal = ({
                   <TabButton
                     key={degData.degNumber}
                     isActive={index === activeTabIndex}
-                    onClick={() => handleTabClick(index)}
-                  >
+                    onClick={() => handleTabClick(index)}>
                     <TabNumber>{degData.degNumber}</TabNumber>
                     <TabLabel>차</TabLabel>
                     {index === activeTabIndex && <ActiveIndicator />}
@@ -132,7 +148,6 @@ export const DegCurrentModal = ({
                 ))}
               </TabContainer>
             )}
-
 
             <TableContainer>
               <TeamInvestStatusTable contents={currentDeals} />
@@ -152,15 +167,19 @@ export const DegCurrentModal = ({
                 <StatDivider />
                 <StatItem>
                   <StatLabel>현재 시각</StatLabel>
-                  <StatValue>{new Date().toLocaleTimeString('ko-KR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}</StatValue>
+                  <StatValue>
+                    {new Date().toLocaleTimeString("ko-KR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </StatValue>
                 </StatItem>
               </FooterStats>
 
               <FooterActions>
-                <ActionButton variant="secondary" onClick={handleClose}>
+                <ActionButton
+                  variant="secondary"
+                  onClick={handleClose}>
                   닫기
                 </ActionButton>
               </FooterActions>
@@ -302,17 +321,19 @@ const TabContainer = styled.div`
   gap: 8px;
 `;
 
-const TabButton = styled.button<{ isActive: boolean }>`
+const TabButton = styled.button<{
+  isActive: boolean;
+}>`
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 16px 24px;
-  background: ${({ isActive }) => isActive ? color.orange[50] : 'transparent'};
-  color: ${({ isActive }) => isActive ? color.orange[600] : color.zinc[600]};
+  background: ${({ isActive }) => (isActive ? color.orange[50] : "transparent")};
+  color: ${({ isActive }) => (isActive ? color.orange[600] : color.zinc[600])};
   border: none;
   border-radius: 12px 12px 0 0;
   font: ${font.b2};
-  font-weight: ${({ isActive }) => isActive ? '600' : '500'};
+  font-weight: ${({ isActive }) => (isActive ? "600" : "500")};
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -321,8 +342,8 @@ const TabButton = styled.button<{ isActive: boolean }>`
   justify-content: center;
   
   &:hover {
-    background: ${({ isActive }) => isActive ? color.orange[100] : color.zinc[50]};
-    color: ${({ isActive }) => isActive ? color.orange[700] : color.zinc[700]};
+    background: ${({ isActive }) => (isActive ? color.orange[100] : color.zinc[50])};
+    color: ${({ isActive }) => (isActive ? color.orange[700] : color.zinc[700])};
   }
   
   &:active {
@@ -430,7 +451,9 @@ const FooterActions = styled.div`
   gap: 12px;
 `;
 
-const ActionButton = styled.button<{ variant: 'primary' | 'secondary' }>`
+const ActionButton = styled.button<{
+  variant: "primary" | "secondary";
+}>`
   padding: 12px 24px;
   border-radius: 12px;
   font-weight: 500;
@@ -441,7 +464,9 @@ const ActionButton = styled.button<{ variant: 'primary' | 'secondary' }>`
   cursor: pointer;
   position: relative;
   
-  ${({ variant }) => variant === 'secondary' && `
+  ${({ variant }) =>
+    variant === "secondary" &&
+    `
     background: ${color.zinc[50]};
     color: ${color.zinc[700]};
     border: 1px solid ${color.zinc[200]};

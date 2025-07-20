@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { useEffect, useRef, useState } from 'react';
-import { color, font } from '@mozu/design-token';
-import { Imglogo, Button } from '@mozu/ui';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Button, Imglogo } from "@mozu/ui";
+import { useEffect, useRef, useState } from "react";
 
 interface ILogoType {
   img?: string;
@@ -36,9 +36,9 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
     let objectUrl: string | undefined;
 
     if (img) {
-      if (typeof img === 'string') {
+      if (typeof img === "string") {
         setLogo(img);
-      } else if (img && 'name' in img && 'size' in img && 'type' in img) {
+      } else if (img && "name" in img && "size" in img && "type" in img) {
         objectUrl = URL.createObjectURL(img as File);
         setLogo(objectUrl);
       }
@@ -49,7 +49,9 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
         URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [img]);
+  }, [
+    img,
+  ]);
 
   return (
     <Container>
@@ -60,13 +62,16 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
             <LogoImage
               src={logo}
               alt="로고 미리보기"
-              onError={(e) => {
-                e.currentTarget.src = 'fallback-image-url';
+              onError={e => {
+                e.currentTarget.src = "fallback-image-url";
                 setLogo(null);
               }}
             />
           ) : (
-            <Imglogo size={24} color={color.black} />
+            <Imglogo
+              size={24}
+              color={color.black}
+            />
           )}
         </LogoContainer>
         <ButtonContaienr>
@@ -74,9 +79,8 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
             backgroundColor={color.zinc[50]}
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
-            onClick={() => document.getElementById('fileInput')?.click()}
-            hoverBackgroundColor={color.zinc[100]}
-          >
+            onClick={() => document.getElementById("fileInput")?.click()}
+            hoverBackgroundColor={color.zinc[100]}>
             로고 업로드
           </Button>
           <Button
@@ -84,8 +88,7 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
             color={color.white}
             onClick={handleDeleteLogo}
             disabled={!logo}
-            hoverBackgroundColor={color.red[600]}
-          >
+            hoverBackgroundColor={color.red[600]}>
             로고 삭제
           </Button>
         </ButtonContaienr>
@@ -93,7 +96,9 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
           type="file"
           id="fileInput"
           accept="image/*"
-          style={{ display: 'none' }}
+          style={{
+            display: "none",
+          }}
           onChange={handleFileChange}
           ref={fileInputRef} // 추가
         />

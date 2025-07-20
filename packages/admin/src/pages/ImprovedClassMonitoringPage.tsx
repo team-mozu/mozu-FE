@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, DeleteModal, Toast } from "@mozu/ui";
-import { useParams } from "react-router";
 import { useState } from "react";
-import { FullPageLoader, ArticleInfoModal, ImprovedTeamInfoTable, ClassInfoModal } from "@/components";
-import { useGetClassDetail, useNextDegree, useClassStop } from "@/apis";
+import { useParams } from "react-router";
+import { Tooltip } from "react-tooltip";
+import { useClassStop, useGetClassDetail, useNextDegree } from "@/apis";
+import { ArticleInfoModal, ClassInfoModal, FullPageLoader, ImprovedTeamInfoTable } from "@/components";
 import { useSSE } from "@/hooks";
 import { useTeamStore } from "@/store";
 import { queryClient } from "@/utils/queryClient";
-import { Tooltip } from 'react-tooltip';
 
 export const ImprovedClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState(false);
@@ -25,16 +25,20 @@ export const ImprovedClassMonitoringPage = () => {
   const { mutate: nextDegree, isPending: isNextDegreePending } = useNextDegree(classId, () => {
     if (!classData) return;
 
-    queryClient.setQueryData(["getClass", classId], {
-      ...classData,
-      curInvDeg: classData.curInvDeg + 1,
-    });
+    queryClient.setQueryData(
+      [
+        "getClass",
+        classId,
+      ],
+      {
+        ...classData,
+        curInvDeg: classData.curInvDeg + 1,
+      },
+    );
   });
   const { mutate: stopClass, isPending: isStopClassPending } = useClassStop(classId);
 
-  const isDegEnd = classData
-    ? teamInfo.every((team) => (team.trade?.length ?? 0) >= classData.curInvDeg)
-    : false;
+  const isDegEnd = classData ? teamInfo.every(team => (team.trade?.length ?? 0) >= classData.curInvDeg) : false;
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
@@ -44,24 +48,19 @@ export const ImprovedClassMonitoringPage = () => {
     setIsOpenClass(true);
   };
 
-  useSSE(
-    `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
-    undefined,
-    undefined,
-    {
-      TEAM_INV_END: (data) => {
-        Toast(`${data.teamName}팀의 투자가 종료되었습니다!`, {
-          type: "success",
-        });
+  useSSE(`${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`, undefined, undefined, {
+    TEAM_INV_END: data => {
+      Toast(`${data.teamName}팀의 투자가 종료되었습니다!`, {
+        type: "success",
+      });
 
-        appendTrade(data.teamId, {
-          totalMoney: data.totalMoney,
-          valMoney: data.valMoney,
-          profitNum: data.profitNum,
-        });
-      },
-    }
-  );
+      appendTrade(data.teamId, {
+        totalMoney: data.totalMoney,
+        valMoney: data.valMoney,
+        profitNum: data.profitNum,
+      });
+    },
+  });
 
   const handleStopClass = () => {
     setIsOpen(true);
@@ -126,8 +125,7 @@ export const ImprovedClassMonitoringPage = () => {
               borderColor={color.zinc[200]}
               color={color.zinc[800]}
               onClick={() => handleStopClass()}
-              hoverBackgroundColor={color.zinc[100]}
-            >
+              hoverBackgroundColor={color.zinc[100]}>
               모의투자 취소
             </Button>
             {classData.curInvDeg === classData.maxInvDeg ? (
@@ -141,8 +139,7 @@ export const ImprovedClassMonitoringPage = () => {
                 color={color.zinc[800]}
                 hoverBackgroundColor={color.zinc[100]}
                 onClick={() => handleEndClass()}
-                disabled={!isDegEnd}
-              >
+                disabled={!isDegEnd}>
                 투자 종료
               </Button>
             ) : (
@@ -153,8 +150,7 @@ export const ImprovedClassMonitoringPage = () => {
                     ? "아직 투자를 모두 완료하지 않았습니다"
                     : "다음 차수로 진행할 수 있습니다!"
                 }
-                data-tooltip-place="top"
-              >
+                data-tooltip-place="top">
                 <Button
                   type={"startImg"}
                   isIcon={true}
@@ -165,8 +161,7 @@ export const ImprovedClassMonitoringPage = () => {
                   color={color.white}
                   hoverBackgroundColor={color.orange[600]}
                   onClick={() => nextDegree()}
-                  disabled={!isDegEnd || isNextDegreePending}
-                >
+                  disabled={!isDegEnd || isNextDegreePending}>
                   다음 투자 진행
                 </Button>
               </div>
@@ -198,8 +193,7 @@ export const ImprovedClassMonitoringPage = () => {
                 iconColor={color.zinc[800]}
                 iconSize={24}
                 onClick={articleInfoClick}
-                hoverBackgroundColor={color.zinc[100]}
-              >
+                hoverBackgroundColor={color.zinc[100]}>
                 기사정보
               </Button>
               <Button
@@ -211,8 +205,7 @@ export const ImprovedClassMonitoringPage = () => {
                 iconColor={color.zinc[800]}
                 iconSize={24}
                 onClick={classInfoClick}
-                hoverBackgroundColor={color.zinc[100]}
-              >
+                hoverBackgroundColor={color.zinc[100]}>
                 투자정보
               </Button>
             </InfoBtn>
@@ -230,11 +223,11 @@ export const ImprovedClassMonitoringPage = () => {
           style={{
             backgroundColor: color.zinc[800],
             color: color.white,
-            borderRadius: '6px',
-            padding: '8px 12px',
-            fontSize: '14px',
-            fontWeight: '500',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            borderRadius: "6px",
+            padding: "8px 12px",
+            fontSize: "14px",
+            fontWeight: "500",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
             zIndex: 1000,
           }}
           opacity={1}

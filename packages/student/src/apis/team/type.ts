@@ -39,7 +39,7 @@ export type TeamEndData = {
   itemMoney: number;
   orderCount: number;
   totalMoney: number;
-  orderType: 'BUY' | 'SELL';
+  orderType: "BUY" | "SELL";
 };
 
 export type TeamOrdersResponse = TeamOrdersData[];
@@ -51,7 +51,7 @@ export type TeamOrdersData = {
   itemMoney: number;
   orderCount: number;
   totalMoney: number;
-  orderType: 'BUY' | 'SELL';
+  orderType: "BUY" | "SELL";
   invDeg: number;
 };
 

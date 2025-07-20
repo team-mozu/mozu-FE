@@ -1,45 +1,60 @@
-import { AddButton, SearchInput } from "@mozu/ui";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { StockDiv } from "./StockDiv";
+import { AddButton, SearchInput } from "@mozu/ui";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useGetStockList } from "@/apis";
 import { FullPageLoader } from "@/components";
+import { StockDiv } from "./StockDiv";
 
 interface StockSearchSideBarProps {
   setSelectedId: Dispatch<SetStateAction<number | null>>;
   selectedId: number | null;
 }
 
-export const StockSearchSideBar = ({
-  setSelectedId,
-  selectedId,
-}: StockSearchSideBarProps) => {
-  const { classId, id } = useParams<{ classId: string; id: string }>();
-  const [datas, setDatas] = useState<{ id: number; name: string }[]>([]);
+export const StockSearchSideBar = ({ setSelectedId, selectedId }: StockSearchSideBarProps) => {
+  const { classId, id } = useParams<{
+    classId: string;
+    id: string;
+  }>();
+  const [datas, setDatas] = useState<
+    {
+      id: number;
+      name: string;
+    }[]
+  >([]);
   const { data: stockData, isLoading } = useGetStockList();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
   const filteredDatas = datas.filter(
-    (item) =>
+    item =>
       searchText === "" ||
       item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      String(item.id).includes(searchText)
+      String(item.id).includes(searchText),
   );
 
   useEffect(() => {
     if (!stockData?.items) return;
 
-    const mappedData = stockData.items.map(({ id, name }) => ({ id, name }));
+    const mappedData = stockData.items.map(({ id, name }) => ({
+      id,
+      name,
+    }));
     setDatas(mappedData);
 
     if (!id && mappedData.length > 0) {
-      navigate(`/stock-management/${mappedData[0].id}`, { replace: true });
+      navigate(`/stock-management/${mappedData[0].id}`, {
+        replace: true,
+      });
       setSelectedId(mappedData[0].id);
     }
-  }, [stockData, id, navigate, setSelectedId]);
+  }, [
+    stockData,
+    id,
+    navigate,
+    setSelectedId,
+  ]);
 
   if (isLoading) return <FullPageLoader />;
 
@@ -52,7 +67,7 @@ export const StockSearchSideBar = ({
         <SearchInput
           inputText="종목 검색.."
           value={searchText}
-          onChange={(value) => setSearchText(value)}
+          onChange={value => setSearchText(value)}
         />
       </UpperWrapper>
       <ArticleWrapper>
@@ -64,7 +79,9 @@ export const StockSearchSideBar = ({
             selected={selectedId === data.id}
             onClick={() => {
               setSelectedId(data.id);
-              navigate(`/stock-management/${data.id}`, { replace: true });
+              navigate(`/stock-management/${data.id}`, {
+                replace: true,
+              });
             }}
           />
         ))}

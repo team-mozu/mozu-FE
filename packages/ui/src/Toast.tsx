@@ -1,9 +1,9 @@
-import { Flip, toast, ToastOptions, TypeOptions } from 'react-toastify';
-import { color } from '@mozu/design-token';
-import { Check, Info, Warning } from './assets';
+import { color } from "@mozu/design-token";
+import { Flip, type ToastOptions, type TypeOptions, toast } from "react-toastify";
+import { Check, Info, Warning } from "./assets";
 
 export interface IToastProps extends ToastOptions {
-  type: Exclude<TypeOptions, 'default'>;
+  type: Exclude<TypeOptions, "default">;
 }
 
 export const Toast = (message: string, { type }: IToastProps) => {
@@ -31,18 +31,34 @@ const ToastType = {
     style: {
       backgroundColor: color.red[500],
     },
-    icon: <Warning width={24} height={24} color={color.white} />,
+    icon: (
+      <Warning
+        width={24}
+        height={24}
+        color={color.white}
+      />
+    ),
   },
   info: {
     style: {
       backgroundColor: color.black,
     },
-    icon: <Info color={color.white} size={24} />,
+    icon: (
+      <Info
+        color={color.white}
+        size={24}
+      />
+    ),
   },
   warning: {
     style: {
       backgroundColor: color.orange[500],
     },
-    icon: <Warning width={24} height={24} />,
+    icon: (
+      <Warning
+        width={24}
+        height={24}
+      />
+    ),
   },
 };

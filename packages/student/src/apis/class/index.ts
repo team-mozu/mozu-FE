@@ -1,12 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
-import { instance } from '@configs/util';
-import { ClassResponse, ClassDetailResponse } from './type';
+import { instance } from "@mozu/util-config";
+import { useQuery } from "@tanstack/react-query";
+import type { ClassDetailResponse, ClassResponse } from "./type";
 
-const router = '/class/team';
+const router = "/class/team";
 
 export const useGetClassItem = () => {
   return useQuery({
-    queryKey: ['getClass'],
+    queryKey: [
+      "getClass",
+    ],
     queryFn: async () => {
       const { data } = await instance.get<ClassResponse>(`${router}/classItem`);
       return data;
@@ -18,11 +20,12 @@ export const useGetClassItem = () => {
 
 export const useGetClassDetail = (id: number) => {
   return useQuery({
-    queryKey: ['getClass', id],
+    queryKey: [
+      "getClass",
+      id,
+    ],
     queryFn: async () => {
-      const { data } = await instance.get<ClassDetailResponse>(
-        `${router}/${id}`,
-      );
+      const { data } = await instance.get<ClassDetailResponse>(`${router}/${id}`);
       return data;
     },
   });

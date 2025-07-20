@@ -11,7 +11,7 @@ interface IStockType {
 export const StockDiv = ({ number, name, onClick, selected }: IStockType) => {
   return (
     <StockDivContainer onClick={onClick} selected={selected}>
-      <Number selected={selected}>{number}</Number>
+      <NumberText selected={selected}>{number}</NumberText>
       <Stock selected={selected}>{name}</Stock>
     </StockDivContainer>
   );
@@ -46,7 +46,7 @@ const Stock = styled.p<{ selected: boolean }>`
   white-space: nowrap;
 `;
 
-const Number = styled.p<{ selected: boolean }>`
+const NumberText = styled.p<{ selected: boolean }>`
   font: ${font.l2};
   color: ${({ selected }) => (selected ? color.orange[600] : color.zinc[600])};
 `;

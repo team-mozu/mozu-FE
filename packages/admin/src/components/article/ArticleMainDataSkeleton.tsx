@@ -21,8 +21,8 @@ export const ArticleMainDataSkeleton = ({
           <p>{title}</p>
         </ArticleTitle>
         <ArticleMain>
-          {lines.map((line, index) =>
-            line.trim() === "" ? <br key={index} /> : <p key={index}>{line}</p>
+          {lines.map((line) =>
+            line.trim() === "" ? <br key={line} /> : <p key={line}>{line}</p>
           )}
         </ArticleMain>
       </ContentWrapper>

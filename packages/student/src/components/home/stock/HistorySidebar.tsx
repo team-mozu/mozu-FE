@@ -1,11 +1,10 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useEffect, useCallback, useState } from "react";
-import { useUnchangedValue } from "@/hook";
+import { useCallback, useEffect, useState } from "react";
 import { useGetTeamDetail } from "@/apis";
+import type { TeamEndProps } from "@/apis/team/type";
 import { InvestCompleteModal } from "@/components";
-import { useLocalStorage } from "@/hook";
-import { TeamEndProps } from "@/apis/team/type";
+import { useLocalStorage, useUnchangedValue } from "@/hook";
 import { roundToFixed } from "@/utils";
 
 interface ITransactionContentType {
@@ -18,14 +17,7 @@ interface ITransactionContentType {
   isBuy?: boolean;
 }
 
-const TransactionContent = ({
-  keyword,
-  name,
-  totalPrice,
-  stockPrice,
-  id,
-  onDelete,
-}: ITransactionContentType) => {
+const TransactionContent = ({ keyword, name, totalPrice, stockPrice, id, onDelete }: ITransactionContentType) => {
   const isBuy = keyword === "BUY";
 
   const handleDelete = async () => {
@@ -40,8 +32,7 @@ const TransactionContent = ({
       <TransactionContentContainer>
         <TransactionPriceContainer>
           <UpDownDiv isBuy={isBuy}>
-            {totalPrice.toLocaleString()}원 (
-            {(totalPrice / stockPrice).toLocaleString()}주)
+            {totalPrice.toLocaleString()}원 ({(totalPrice / stockPrice).toLocaleString()}주)
           </UpDownDiv>
           <StockPrice>{stockPrice.toLocaleString()}원</StockPrice>
         </TransactionPriceContainer>
@@ -57,15 +48,16 @@ export const HistorySidebar = () => {
   const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
   const [cashMoney, setCashMoney] = useLocalStorage<number>("cashMoney", 0);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   const setCashMoneyStable = useCallback((value: number) => {
     setCashMoney(value);
   }, []);
 
   const totalBuy = tradeData
-    .filter((tradeItem) => tradeItem.orderType === "BUY")
+    .filter(tradeItem => tradeItem.orderType === "BUY")
     .reduce((acc, item) => acc + item.totalMoney, 0);
   const totalSell = tradeData
-    .filter((tradeItem) => tradeItem.orderType === "SELL")
+    .filter(tradeItem => tradeItem.orderType === "SELL")
     .reduce((acc, item) => acc + item.totalMoney, 0);
   const buyableAmount = cashMoney;
 
@@ -73,7 +65,10 @@ export const HistorySidebar = () => {
     if (data?.cashMoney !== undefined) {
       setCashMoneyStable(data.cashMoney);
     }
-  }, [data, setCashMoneyStable]);
+  }, [
+    data,
+    setCashMoneyStable,
+  ]);
 
   if (isLoading) return null;
 
@@ -90,21 +85,17 @@ export const HistorySidebar = () => {
   };
 
   const fixedProfitNum = Number(data.profitNum.replace("%", "")).toFixed(3);
-  const formattedProfitNum = fixedProfitNum.includes("-")
-    ? `${fixedProfitNum}%`
-    : `+${fixedProfitNum}%`;
+  const formattedProfitNum = fixedProfitNum.includes("-") ? `${fixedProfitNum}%` : `+${fixedProfitNum}%`;
 
-  const sameValue: boolean = useUnchangedValue(
-    data.totalMoney.toLocaleString(),
-    data.baseMoney.toLocaleString()
-  );
+  // biome-ignore lint/correctness/useHookAtTopLevel: <임시>
+  const sameValue: boolean = useUnchangedValue(data.totalMoney.toLocaleString(), data.baseMoney.toLocaleString());
 
   const IsOpen = () => {
     setIsOpen(true);
   };
 
   const handleDeleteTransaction = (deletedId: number) => {
-    const deletedTrade = tradeData.find((tradeItem) => {
+    const deletedTrade = tradeData.find(tradeItem => {
       return tradeItem.itemId === deletedId;
     });
 
@@ -115,36 +106,31 @@ export const HistorySidebar = () => {
     }
 
     setTradeData(
-      tradeData.filter((tradeItem) => {
+      tradeData.filter(tradeItem => {
         return tradeItem.itemId !== deletedId;
-      })
+      }),
     );
   };
 
   return (
     <>
-      <InvestCompleteModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <InvestCompleteModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
       <SidebarContainer>
         <UpperContainer>
           <TotalAssetContainer>
             <TotalAssetLeft>
               <Title>총 평가 자산</Title>
               <TotalAssetPrice
-                color={
-                  sameValue
-                    ? color.green[600]
-                    : data.valueProfit > 0
-                      ? color.red[500]
-                      : color.blue[500]
-                }
-              >
+                color={sameValue ? color.green[600] : data.valueProfit > 0 ? color.red[500] : color.blue[500]}>
                 {formattedData.totalMoney}원
               </TotalAssetPrice>
               {formattedData.valueProfit !== 0 ? (
                 <ProfitContainer profit={formattedData.valueProfit}>
                   {formattedData.valueProfit.toLocaleString().includes("-") ? "" : "+"}
-                  {formattedData.valueProfit.toLocaleString()}원 (
-                  {roundToFixed(parseFloat(formattedProfitNum), 2)}%)
+                  {formattedData.valueProfit.toLocaleString()}원 ({roundToFixed(parseFloat(formattedProfitNum), 2)}%)
                 </ProfitContainer>
               ) : null}
             </TotalAssetLeft>
@@ -166,17 +152,21 @@ export const HistorySidebar = () => {
           <SectionTitle>거래내역</SectionTitle>
         </UpperContainer>
         <TransactionHistoryContents>
-          {[...tradeData].reverse().map((data) => (
-            <TransactionContent
-              key={data.itemId}
-              id={data.itemId}
-              onDelete={handleDeleteTransaction}
-              keyword={data.orderType}
-              name={data.itemName}
-              totalPrice={data.totalMoney}
-              stockPrice={data.itemMoney}
-            />
-          ))}
+          {[
+            ...tradeData,
+          ]
+            .reverse()
+            .map(data => (
+              <TransactionContent
+                key={data.itemId}
+                id={data.itemId}
+                onDelete={handleDeleteTransaction}
+                keyword={data.orderType}
+                name={data.itemName}
+                totalPrice={data.totalMoney}
+                stockPrice={data.itemMoney}
+              />
+            ))}
         </TransactionHistoryContents>
         <TotalPriceContainer>
           <PriceTitleContainer>
@@ -337,14 +327,18 @@ const UpDownDiv = styled.div<Pick<ITransactionContentType, "isBuy">>`
   white-space: nowrap;
 `;
 
-const TotalAssetPrice = styled.div<{ color?: string }>`
+const TotalAssetPrice = styled.div<{
+  color?: string;
+}>`
   font: ${font.h3};
   font-size: clamp(1.5rem, 2.8vw, 1.75rem);
   color: ${({ color }) => color};
   word-break: break-all;
 `;
 
-const ProfitContainer = styled.div<{ profit: number }>`
+const ProfitContainer = styled.div<{
+  profit: number;
+}>`
   color: ${({ profit }) => (profit > 0 ? color.red[500] : color.blue[500])};
   font-weight: 500;
   font-size: clamp(1rem, 1.6vw, 1.125rem);

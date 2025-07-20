@@ -1,13 +1,13 @@
-import { Header, Toast } from "@mozu/ui";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { useGetClassItem, useGetTeamDetail } from "@/apis";
-import { ItemSidebar, HistorySidebar, ItemSidebarSkeleton } from "@/components";
-import { useSSE } from "@/hook";
-import { removeCookiesAsync } from "@configs/util";
-import { queryClient } from "..";
-import { headerConfigMap } from "@/routes";
+import { Header, Toast } from "@mozu/ui";
+import { removeCookiesAsync } from "@mozu/util-config";
 import { useRef } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useGetClassItem, useGetTeamDetail } from "@/apis";
+import { HistorySidebar, ItemSidebar, ItemSidebarSkeleton } from "@/components";
+import { useSSE } from "@/hook";
+import { headerConfigMap } from "@/routes";
+import { queryClient } from "..";
 
 export const AppLayout = () => {
   const { data: teamData } = useGetTeamDetail();
@@ -24,28 +24,38 @@ export const AppLayout = () => {
 
   useSSE(`${import.meta.env.VITE_SERVER_URL}/team/sse`, undefined, undefined, {
     CLASS_NEXT_INV_START: () => {
-      console.log("asnansn")
+      console.log("asnansn");
       localStorage.removeItem("trade");
       if (invStartFix.current === 0) {
         invStartFix.current++;
         return;
       }
-      Toast("다음 투자가 시작되었습니다", { type: "info" });
+      Toast("다음 투자가 시작되었습니다", {
+        type: "info",
+      });
     },
     CLASS_CANCEL: async () => {
       if (dirtyFix.current === 0) {
         dirtyFix.current++;
         return;
       }
-      Toast("수업이 취소되었습니다.", { type: "error" });
+      Toast("수업이 취소되었습니다.", {
+        type: "error",
+      });
       queryClient.clear();
       const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
-      await removeCookiesAsync(["accessToken", "authority"], {
-        path: "/",
-        secure: true,
-        sameSite: "none",
-        domain,
-      });
+      await removeCookiesAsync(
+        [
+          "accessToken",
+          "authority",
+        ],
+        {
+          path: "/",
+          secure: true,
+          sameSite: "none",
+          domain,
+        },
+      );
       navigate("/signin");
     },
   });
@@ -74,7 +84,9 @@ export const AppLayout = () => {
             <HistorySidebar />
           </>
         )}
-        <MainContent isResultPage={isResultPage} isEndingPage={isEndingPage}>
+        <MainContent
+          isResultPage={isResultPage}
+          isEndingPage={isEndingPage}>
           <Outlet />
         </MainContent>
       </Layout>
@@ -95,7 +107,10 @@ const Layout = styled.div`
   display: flex;
 `;
 
-const MainContent = styled.div<{ isResultPage: boolean; isEndingPage: boolean }>`
+const MainContent = styled.div<{
+  isResultPage: boolean;
+  isEndingPage: boolean;
+}>`
   padding-right: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "463px")};
   margin-left: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "320px")};
   flex: 1;

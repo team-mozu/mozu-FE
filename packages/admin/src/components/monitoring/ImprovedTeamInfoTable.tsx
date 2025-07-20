@@ -1,10 +1,10 @@
-import { Check } from "@mozu/ui";
-import { roundToFixed } from "@/utils";
-import { color, font } from "@mozu/design-token";
 import styled from "@emotion/styled";
-import { TeamInfo } from "@/store";
+import { color, font } from "@mozu/design-token";
+import { Check } from "@mozu/ui";
 import { useState } from "react";
-import { TeamCurrentModal, DegCurrentModal } from "@/components";
+import { DegCurrentModal, TeamCurrentModal } from "@/components";
+import type { TeamInfo } from "@/store";
+import { roundToFixed } from "@/utils";
 
 interface Props {
   teamInfo: TeamInfo[];
@@ -12,21 +12,18 @@ interface Props {
   maxInvDeg: number;
 }
 
-export const ImprovedTeamInfoTable = ({
-  teamInfo,
-  invDeg,
-  maxInvDeg,
-}: Props) => {
+export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) => {
   const [isOpenTeam, setIsOpenTeam] = useState(false);
   const [isOpenDeg, setIsOpenDeg] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [selectedDegId, setSelectedDegId] = useState<number | null>(null);
   const [selectedTeamName, setSelectedTeamName] = useState("");
 
-
   // 헤더 리스트를 동적으로 생성
   const getTableHeaders = () => {
-    const headers = ["팀명"];
+    const headers = [
+      "팀명",
+    ];
     for (let i = 1; i <= maxInvDeg; i++) {
       headers.push(`${i}차 투자`);
     }
@@ -57,7 +54,9 @@ export const ImprovedTeamInfoTable = ({
       <Table>
         <Tr isHeader>
           {tableHeaders.map((tableHead, index) => (
-            <Th key={index} isLeft={index === 0}>
+            <Th
+              key={index}
+              isLeft={index === 0}>
               {tableHead}
             </Th>
           ))}
@@ -66,26 +65,34 @@ export const ImprovedTeamInfoTable = ({
           const isNegative = team.trade.at(-1)?.profitNum.includes("-");
 
           return (
-            <Tr isNotBorded={index + 1 === teamInfo.length} key={index}>
+            <Tr
+              isNotBorded={index + 1 === teamInfo.length}
+              key={index}>
               <Td isLeft>
-                <TeamName isTeamName onClick={() => handleOpenModal(team.teamId, team.teamName)}>
+                <TeamName
+                  isTeamName
+                  onClick={() => handleOpenModal(team.teamId, team.teamName)}>
                   {team.teamName}
                 </TeamName>
                 {team.trade.length === invDeg && (
                   <CompletedBadge>
-                    투자완료 <Check size={18} color={color.green[500]} />
+                    투자완료{" "}
+                    <Check
+                      size={18}
+                      color={color.green[500]}
+                    />
                   </CompletedBadge>
                 )}
               </Td>
-              {Array.from({ length: maxInvDeg }).map((_, degIndex) => {
+              {Array.from({
+                length: maxInvDeg,
+              }).map((_, degIndex) => {
                 if (degIndex + 1 > invDeg) {
                   return <Td key={degIndex} />;
                 }
 
                 const isNegative =
-                  team.trade[degIndex] === undefined
-                    ? null
-                    : team.trade[degIndex].profitNum.includes("-");
+                  team.trade[degIndex] === undefined ? null : team.trade[degIndex].profitNum.includes("-");
 
                 return (
                   <Td key={degIndex}>
@@ -94,21 +101,12 @@ export const ImprovedTeamInfoTable = ({
                     ) : (
                       <Rate
                         isNegative={isNegative}
-                        onClick={() =>
-                          handleOpenDegModal(team.teamId, degIndex + 1)
-                        }
-                      >
-                        <span>
-                          {team.trade[degIndex].totalMoney.toLocaleString()}원
-                        </span>
+                        onClick={() => handleOpenDegModal(team.teamId, degIndex + 1)}>
+                        <span>{team.trade[degIndex].totalMoney.toLocaleString()}원</span>
                         <span>
                           {!isNegative && "+"}
-                          {team.trade[degIndex].valMoney.toLocaleString()}원 (
-                          {!isNegative && "+"}
-                          {roundToFixed(
-                            parseFloat(team.trade[degIndex].profitNum),
-                            2
-                          )}
+                          {team.trade[degIndex].valMoney.toLocaleString()}원 ({!isNegative && "+"}
+                          {roundToFixed(parseFloat(team.trade[degIndex].profitNum), 2)}
                           %)
                         </span>
                       </Rate>
@@ -121,15 +119,11 @@ export const ImprovedTeamInfoTable = ({
                 {team.trade.length > 0 ? (
                   <Rate
                     isNegative={isNegative}
-                    onClick={() => handleOpenModal(team.teamId, team.teamName)}
-                  >
-                    <span>
-                      {team.trade.at(-1).totalMoney.toLocaleString()}원
-                    </span>
+                    onClick={() => handleOpenModal(team.teamId, team.teamName)}>
+                    <span>{team.trade.at(-1).totalMoney.toLocaleString()}원</span>
                     <span>
                       {!isNegative && "+"}
-                      {team.trade.at(-1).valMoney.toLocaleString()}원 (
-                      {!isNegative && "+"}
+                      {team.trade.at(-1).valMoney.toLocaleString()}원 ({!isNegative && "+"}
                       {roundToFixed(parseFloat(team.trade.at(-1).profitNum), 2)}
                       %)
                     </span>
@@ -178,8 +172,7 @@ const Tr = styled.tr<{
   width: 100%;
   height: 72px;
   display: flex;
-  border-bottom: ${({ isNotBorded }) =>
-    isNotBorded ? "none" : `1px solid ${color.zinc[200]}`};
+  border-bottom: ${({ isNotBorded }) => (isNotBorded ? "none" : `1px solid ${color.zinc[200]}`)};
   background-color: ${({ isHeader }) => isHeader && `${color.orange[50]}`};
 `;
 
@@ -232,7 +225,9 @@ const CompletedBadge = styled.span`
   gap: 2px;
 `;
 
-const Rate = styled.div<{ isNegative: boolean }>`
+const Rate = styled.div<{
+  isNegative: boolean;
+}>`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -244,8 +239,7 @@ const Rate = styled.div<{ isNegative: boolean }>`
   }
   & > span:nth-of-type(2) {
     ${font.l1};
-    color: ${({ isNegative }) =>
-    isNegative ? color.blue[500] : color.red[500]};
+    color: ${({ isNegative }) => (isNegative ? color.blue[500] : color.red[500])};
   }
 
   &:hover {
@@ -253,7 +247,9 @@ const Rate = styled.div<{ isNegative: boolean }>`
   }
 `;
 
-const TeamName = styled.span<{ isTeamName?: boolean }>`
+const TeamName = styled.span<{
+  isTeamName?: boolean;
+}>`
   cursor: pointer;
   font: ${font.t2};
   &:hover {

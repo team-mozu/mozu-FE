@@ -1,10 +1,10 @@
-import { useState, KeyboardEvent, useEffect } from "react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Input, LogoWithText } from "@mozu/ui";
-import { useForm } from "@/hook";
+import { KeyboardEvent, useEffect, useState } from "react";
 import { useStudentLogin } from "@/apis";
-import { StudentLoginProps } from "@/apis/login/type";
+import type { StudentLoginProps } from "@/apis/login/type";
+import { useForm } from "@/hook";
 
 export const SignInPage = () => {
   const { state, onChangeInputValue } = useForm<StudentLoginProps>({
@@ -29,7 +29,7 @@ export const SignInPage = () => {
     }
 
     // 뒤로가기 방지 함수
-    const preventBackNavigation = (e) => {
+    const preventBackNavigation = e => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -57,10 +57,7 @@ export const SignInPage = () => {
    * @return {boolean}
    */
   const isValidForm = () =>
-    state.classNum !== null &&
-    state.schoolName.trim() !== "" &&
-    state.teamName.trim() !== "" &&
-    !isPending;
+    state.classNum !== null && state.schoolName.trim() !== "" && state.teamName.trim() !== "" && !isPending;
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,23 +67,29 @@ export const SignInPage = () => {
     });
   };
 
-  const handleChange =
-    (field: "classNum" | "schoolName" | "teamName") =>
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value: string | number = e.target.value;
-        if (field === "classNum") {
-          value = value.replace(/\D/g, "").slice(0, 7);
-        }
-        onChangeInputValue({ target: { name: field, value } });
-        setErrorMessage("");
-      };
+  const handleChange = (field: "classNum" | "schoolName" | "teamName") => (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value: string | number = e.target.value;
+    if (field === "classNum") {
+      value = value.replace(/\D/g, "").slice(0, 7);
+    }
+    onChangeInputValue({
+      target: {
+        name: field,
+        value,
+      },
+    });
+    setErrorMessage("");
+  };
 
   if (isPending) return;
 
   return (
     <Container>
       <LogoWrapper>
-        <LogoWithText width={74} height={28} />
+        <LogoWithText
+          width={74}
+          height={28}
+        />
         모의주식투자
       </LogoWrapper>
       <SigninContainer onSubmit={handleLogin}>
@@ -115,7 +118,9 @@ export const SignInPage = () => {
           />
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </FormGroup>
-        <LoginButton type="submit" disabled={!isValidForm() || isPending}>
+        <LoginButton
+          type="submit"
+          disabled={!isValidForm() || isPending}>
           로그인
         </LoginButton>
       </SigninContainer>

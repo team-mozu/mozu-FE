@@ -5,7 +5,7 @@ export type TeamTradeStatus = {
   itemMoney: number;
   orderCount: number;
   totalMoney: number;
-  orderType: 'BUY' | 'SELL';
+  orderType: "BUY" | "SELL";
   invDeg: number;
 };
 

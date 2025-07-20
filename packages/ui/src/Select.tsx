@@ -1,12 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import {
-  useEffect,
-  useRef,
-  useState,
-  forwardRef,
-  useImperativeHandle,
-} from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { ChevronDown } from ".";
 
 interface ISelectProps {
@@ -45,10 +39,7 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (
-          selectRef.current &&
-          !selectRef.current.contains(event.target as Node)
-        ) {
+        if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
           setShowOptions(false);
         }
       };
@@ -66,12 +57,14 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
         height={height}
         padding={padding}
         show={showOptions}
-        onClick={handleSelectClick}
-      >
+        onClick={handleSelectClick}>
         <SelectHeader>
           <SelectedValue>{value}</SelectedValue>
           <ChevronWrapper show={showOptions}>
-            <ChevronDown size={20} color={color.black} />
+            <ChevronDown
+              size={20}
+              color={color.black}
+            />
           </ChevronWrapper>
         </SelectHeader>
 
@@ -80,25 +73,26 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
             <Option
               key={index}
               onClick={() => handleOptionClick(item)}
-              selected={item === value}
-            >
+              selected={item === value}>
               {item}
             </Option>
           ))}
         </SelectOptions>
       </SelectContainer>
     );
-  }
+  },
 );
 
 // 스타일 컴포넌트
 const SelectContainer = styled.div<
-  Pick<ISelectProps, "width" | "height" | "padding"> & { show: boolean }
+  Pick<ISelectProps, "width" | "height" | "padding"> & {
+    show: boolean;
+  }
 >`
   position: relative;
-  width: ${(props) => props.width}px;
-  height: ${(props) => props.height}px;
-  padding: ${(props) =>
+  width: ${props => props.width}px;
+  height: ${props => props.height}px;
+  padding: ${props =>
     `${props.padding?.top}px ${props.padding?.right}px ${props.padding?.bottom}px ${props.padding?.left}px`};
   border-radius: 8px;
   background-color: ${color.zinc[50]};
@@ -119,33 +113,37 @@ const SelectedValue = styled.span`
   color: ${color.zinc[800]};
 `;
 
-const ChevronWrapper = styled.div<{ show: boolean }>`
-  transform: rotate(${(props) => (props.show ? "180deg" : "0deg")});
+const ChevronWrapper = styled.div<{
+  show: boolean;
+}>`
+  transform: rotate(${props => (props.show ? "180deg" : "0deg")});
   transition: transform 0.2s ease-in-out;
 `;
 
-const SelectOptions = styled.ul<{ show: boolean }>`
+const SelectOptions = styled.ul<{
+  show: boolean;
+}>`
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  max-height: ${(props) => (props.show ? "200px" : "0")};
+  max-height: ${props => (props.show ? "200px" : "0")};
   overflow-y: auto;
   background-color: ${color.white};
-  border: ${(props) => (props.show ? `1px solid ${color.zinc[200]}` : "none")};
+  border: ${props => (props.show ? `1px solid ${color.zinc[200]}` : "none")};
   border-radius: 8px;
-  box-shadow: ${(props) =>
-    props.show ? `0 4px 6px ${color.zinc[200]}` : "none"};
+  box-shadow: ${props => (props.show ? `0 4px 6px ${color.zinc[200]}` : "none")};
   transition: all 0.2s ease-in-out;
   z-index: 10;
 `;
 
-const Option = styled.li<{ selected?: boolean }>`
+const Option = styled.li<{
+  selected?: boolean;
+}>`
   padding: 12px 16px;
   font: ${font.b2};
-  color: ${(props) => (props.selected ? color.orange[600] : color.zinc[800])};
-  background-color: ${(props) =>
-    props.selected ? color.orange[50] : "transparent"};
+  color: ${props => (props.selected ? color.orange[600] : color.zinc[800])};
+  background-color: ${props => (props.selected ? color.orange[50] : "transparent")};
   cursor: pointer;
   transition: all 0.1s ease;
   text-align: start;

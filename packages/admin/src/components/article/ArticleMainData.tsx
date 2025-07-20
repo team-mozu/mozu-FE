@@ -1,6 +1,6 @@
-import { NoNewsImg } from "@mozu/ui";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
+import { NoNewsImg } from "@mozu/ui";
 
 interface IArticleMainDataType {
   img?: string;
@@ -14,16 +14,21 @@ export const ArticleMainData = ({ img, title, main }: IArticleMainDataType) => {
   return (
     <Container>
       <ArticleImgContainer>
-        {img ? <ArticleImg src={img} alt="기사 이미지" /> : <NoNewsImg />}
+        {img ? (
+          <ArticleImg
+            src={img}
+            alt="기사 이미지"
+          />
+        ) : (
+          <NoNewsImg />
+        )}
       </ArticleImgContainer>
       <ContentWrapper>
         <ArticleTitle>
           <p>{title}</p>
         </ArticleTitle>
         <ArticleMain>
-          {lines.map((line, index) =>
-            line.trim() === "" ? <br key={index} /> : <p key={index}>{line}</p>
-          )}
+          {lines.map((line) => (line.trim() === "" ? <br key={line} /> : <p key={line}>{line}</p>))}
         </ArticleMain>
       </ContentWrapper>
     </Container>

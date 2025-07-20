@@ -1,5 +1,5 @@
-import { Global, css } from '@emotion/react';
-import { color } from './color';
+import { css, Global } from "@emotion/react";
+import { color } from "./color";
 
 const baseStyle = css`
   html,

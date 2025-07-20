@@ -1,20 +1,16 @@
-import { instance } from '@configs/util';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  ClassCreateRequest,
-  ClassData,
-  ClassDetailResponse,
-  ClassResponse,
-  TeamDealsResponse,
-} from '@/apis';
-import { Toast } from '@mozu/ui';
-import { useLocation, useNavigate } from 'react-router';
+import { Toast } from "@mozu/ui";
+import { instance } from "@mozu/util-config";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router";
+import type { ClassCreateRequest, ClassData, ClassDetailResponse, ClassResponse, TeamDealsResponse } from "@/apis";
 
-const router = '/class';
+const router = "/class";
 
 export const useGetClassList = () => {
   return useQuery({
-    queryKey: ['getClass'],
+    queryKey: [
+      "getClass",
+    ],
     queryFn: async () => {
       const { data } = await instance.get<ClassResponse>(`${router}`);
       return data;
@@ -24,11 +20,12 @@ export const useGetClassList = () => {
 
 export const useGetClassDetail = (id: number) => {
   return useQuery({
-    queryKey: ['getClass', id],
+    queryKey: [
+      "getClass",
+      id,
+    ],
     queryFn: async () => {
-      const { data } = await instance.get<ClassDetailResponse>(
-        `${router}/${id}`,
-      );
+      const { data } = await instance.get<ClassDetailResponse>(`${router}/${id}`);
       return data;
     },
   });
@@ -37,12 +34,20 @@ export const useGetClassDetail = (id: number) => {
 export const useClassCreate = () => {
   const navigate = useNavigate();
   return useMutation({
-    mutationFn: async (data: ClassCreateRequest): Promise<{ id: number }> => {
-      const response = await instance.post<{ id: number }>(`${router}`, data);
+    mutationFn: async (
+      data: ClassCreateRequest,
+    ): Promise<{
+      id: number;
+    }> => {
+      const response = await instance.post<{
+        id: number;
+      }>(`${router}`, data);
       return response.data;
     },
-    onSuccess: (data) => {
-      Toast('성공적으로 생성되었습니다.', { type: 'success' });
+    onSuccess: data => {
+      Toast("성공적으로 생성되었습니다.", {
+        type: "success",
+      });
       navigate(`/class-management/${data.id}`);
     },
   });
@@ -52,12 +57,16 @@ export const useClassUpdate = (id: string) => {
   return useMutation({
     mutationFn: async () => {
       const { data } = await instance.post(`${router}/update/${id}`, FormData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       return data;
     },
-    onSuccess: (data) => {
-      Toast('성공적으로 수정되었습니다.', { type: 'success' });
+    onSuccess: data => {
+      Toast("성공적으로 수정되었습니다.", {
+        type: "success",
+      });
     },
   });
 };
@@ -65,23 +74,31 @@ export const useClassUpdate = (id: string) => {
 export const useClassStar = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: number) =>
-      await instance.post(`${router}/star/${id}`),
+    mutationFn: async (id: number) => await instance.post(`${router}/star/${id}`),
     onSuccess: (_, id) => {
       queryClient.setQueryData(
-        ['getClass'],
+        [
+          "getClass",
+        ],
         (oldData: ClassResponse | undefined) => {
           if (!oldData) return oldData;
           return {
-            classes: oldData.classes.map((item) =>
-              item.id === id ? { ...item, starYN: !item.starYN } : item,
+            classes: oldData.classes.map(item =>
+              item.id === id
+                ? {
+                    ...item,
+                    starYN: !item.starYN,
+                  }
+                : item,
             ),
           };
         },
       );
     },
-    onError: (error) => {
-      Toast('즐겨찾기 변경에 실패 했습니다.', { type: 'error' });
+    onError: error => {
+      Toast("즐겨찾기 변경에 실패 했습니다.", {
+        type: "error",
+      });
       console.log(error);
     },
   });
@@ -94,10 +111,16 @@ export const useClassDelete = () => {
       return await instance.delete(`${router}/${id}`);
     },
     onSuccess: () => {
-      Toast('삭제에 성공했습니다.', { type: 'success' });
-      queryClient.invalidateQueries({ queryKey: ['getClass'] });
+      Toast("삭제에 성공했습니다.", {
+        type: "success",
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "getClass",
+        ],
+      });
     },
-    onError: (error) => console.log('error', error),
+    onError: error => console.log("error", error),
   });
 };
 
@@ -106,18 +129,21 @@ export const useClassStart = (id: number) => {
 
   return useMutation({
     mutationFn: async () => {
-      const { data } = await instance.post<{ classCode: string }>(
-        `${router}/start/${id}`,
-      );
+      const { data } = await instance.post<{
+        classCode: string;
+      }>(`${router}/start/${id}`);
       return data;
     },
-    onSuccess: (data) => {
-      localStorage.setItem('inviteCode', data.classCode);
-      Toast('수업을 성공적으로 시작했습니다.', { type: 'success' });
+    onSuccess: data => {
+      localStorage.setItem("inviteCode", data.classCode);
+      Toast("수업을 성공적으로 시작했습니다.", {
+        type: "success",
+      });
       navigate(`start`);
+      // biome-ignore lint/correctness/noSelfAssign: <임시>
       window.location.href = window.location.href;
     },
-    onError: (error) => {
+    onError: error => {
       console.log(error);
     },
   });
@@ -129,20 +155,26 @@ export const useNextDegree = (id: number, onSuccessCallback?: () => void) => {
 
   return useMutation({
     mutationFn: async () => {
-      await instance.post<{ id: number }>(`${router}/next/${id}`);
+      await instance.post<{
+        id: number;
+      }>(`${router}/next/${id}`);
     },
     onSuccess: () => {
-      Toast(`수업이 진행되었습니다.`, { type: 'success' });
+      Toast(`수업이 진행되었습니다.`, {
+        type: "success",
+      });
 
       if (onSuccessCallback) {
         onSuccessCallback();
       } else {
-        const newPath = pathname.replace(/\/start$/, '/monitoring');
+        const newPath = pathname.replace(/\/start$/, "/monitoring");
         navigate(newPath);
       }
     },
-    onError: (err) => {
-      Toast(`수업 진행에 실패했습니다. ${err}`, { type: 'error' });
+    onError: err => {
+      Toast(`수업 진행에 실패했습니다. ${err}`, {
+        type: "error",
+      });
     },
   });
 };
@@ -153,21 +185,26 @@ export const useEditClass = (classId: number) => {
       await instance.post(`${router}/${classId}`, payload);
     },
     onSuccess: () => {
-      Toast(`수업이 수정되었습니다.`, { type: 'success' });
+      Toast(`수업이 수정되었습니다.`, {
+        type: "success",
+      });
     },
-    onError: (err) => {
-      Toast(`수업 수정에 실패했습니다. ${err}`, { type: 'error' });
+    onError: err => {
+      Toast(`수업 수정에 실패했습니다. ${err}`, {
+        type: "error",
+      });
     },
   });
 };
 
 export const useTeamDeals = (teamId: number) => {
   return useQuery({
-    queryKey: ['teamDeals', teamId],
+    queryKey: [
+      "teamDeals",
+      teamId,
+    ],
     queryFn: async () => {
-      const { data } = await instance.get<TeamDealsResponse[]>(
-        `/team/${teamId}`,
-      );
+      const { data } = await instance.get<TeamDealsResponse[]>(`/team/${teamId}`);
       return data;
     },
     enabled: !!teamId,

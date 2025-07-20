@@ -1,24 +1,24 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { ArticleMainData } from "./ArticleMainData";
 import { Button, Del, Edit } from "@mozu/ui";
-import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { useGetArticleDetail } from "@/apis";
-import { ArticleMainDataSkeleton } from "./ArticleMainDataSkeleton";
-import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 import { FullPageLoader } from "@/components";
+import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
+import { ArticleMainData } from "./ArticleMainData";
+import { ArticleMainDataSkeleton } from "./ArticleMainDataSkeleton";
 
 interface IArticleManagementDetailProps {
   onClick?: () => void;
 }
 
-export const ArticleManagementDetail = ({
-  onClick,
-}: IArticleManagementDetailProps) => {
+export const ArticleManagementDetail = ({ onClick }: IArticleManagementDetailProps) => {
   const navigate = useNavigate();
 
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{
+    id: string;
+  }>();
   const articleId = id ? parseInt(id, 10) : null;
 
   const [datas, setDatas] = useState<{
@@ -26,10 +26,14 @@ export const ArticleManagementDetail = ({
     description: string;
     image: string;
     createDate: string;
-  }>({ title: "", description: "", image: "", createDate: "" });
+  }>({
+    title: "",
+    description: "",
+    image: "",
+    createDate: "",
+  });
 
-  const { data: articleData, isLoading: apiLoading } =
-    useGetArticleDetail(articleId);
+  const { data: articleData, isLoading: apiLoading } = useGetArticleDetail(articleId);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,12 +43,17 @@ export const ArticleManagementDetail = ({
         setIsLoading(false);
       }, 500);
     }
-  }, [apiLoading, articleData]);
+  }, [
+    apiLoading,
+    articleData,
+  ]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     setIsLoading(true);
-  }, [articleId]);
-
+  }, [
+    articleId,
+  ]);
 
   useEffect(() => {
     if (articleData) {
@@ -52,14 +61,15 @@ export const ArticleManagementDetail = ({
         title: articleData.title || "",
         description: articleData.description || "",
         image:
-          articleData.image ===
-            "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg"
+          articleData.image === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg"
             ? null
             : articleData.image,
         createDate: articleData.createDate || "",
       });
     }
-  }, [articleData]);
+  }, [
+    articleData,
+  ]);
 
   if (apiLoading) {
     return <FullPageLoader />;
@@ -67,11 +77,7 @@ export const ArticleManagementDetail = ({
   return (
     <Container>
       <UpperContainer>
-        {isLoading ? (
-          <DateDiv>등록일자 | {datas.createDate}</DateDiv>
-        ) : (
-          <p>등록일자 | {datas.createDate}</p>
-        )}
+        {isLoading ? <DateDiv>등록일자 | {datas.createDate}</DateDiv> : <p>등록일자 | {datas.createDate}</p>}
         <div>
           <div onClick={onClick}>
             <Button
@@ -79,10 +85,12 @@ export const ArticleManagementDetail = ({
               color={color.zinc[800]}
               borderColor={color.zinc[200]}
               hoverBackgroundColor={color.zinc[100]}
-              onClick={onClick}
-            >
+              onClick={onClick}>
               <p>삭제하기</p>
-              <Del size={20} color={color.zinc[800]} />
+              <Del
+                size={20}
+                color={color.zinc[800]}
+              />
             </Button>
           </div>
           <Button
@@ -90,10 +98,12 @@ export const ArticleManagementDetail = ({
             color={color.orange[500]}
             borderColor={color.orange[200]}
             hoverBackgroundColor={color.orange[100]}
-            onClick={() => navigate(`/article-management/${articleId}/edit`)}
-          >
+            onClick={() => navigate(`/article-management/${articleId}/edit`)}>
             수정하기
-            <Edit size={20} color={color.orange[500]} />
+            <Edit
+              size={20}
+              color={color.orange[500]}
+            />
           </Button>
         </div>
       </UpperContainer>
