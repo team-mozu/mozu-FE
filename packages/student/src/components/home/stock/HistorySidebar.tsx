@@ -70,25 +70,23 @@ export const HistorySidebar = () => {
     setCashMoneyStable,
   ]);
 
-  if (isLoading) return null;
-
   const formattedData = {
-    teamName: data.name,
-    totalMoney: data.totalMoney.toLocaleString(),
+    teamName: data?.name,
+    totalMoney: data?.totalMoney.toLocaleString(),
     cashMoney: cashMoney.toLocaleString(),
-    valueMoney: (data.valueMoney + totalBuy - totalSell).toLocaleString(),
-    valueProfit: data.valueProfit,
-    profitNum: data.profitNum,
+    valueMoney: ((data?.valueMoney ?? 0) + totalBuy - totalSell).toLocaleString(),
+    valueProfit: data?.valueProfit,
+    profitNum: data?.profitNum,
     totalBuy: totalBuy.toLocaleString(),
     totalSell: totalSell.toLocaleString(),
     buyableAmount: buyableAmount.toLocaleString(),
   };
-
-  const fixedProfitNum = Number(data.profitNum.replace("%", "")).toFixed(3);
+  const fixedProfitNum = Number(data?.profitNum.replace("%", "")).toFixed(3);
   const formattedProfitNum = fixedProfitNum.includes("-") ? `${fixedProfitNum}%` : `+${fixedProfitNum}%`;
+  if (isLoading || !data) return null;
 
   // biome-ignore lint/correctness/useHookAtTopLevel: <임시>
-  const sameValue: boolean = useUnchangedValue(data.totalMoney.toLocaleString(), data.baseMoney.toLocaleString());
+  const sameValue: boolean = useUnchangedValue(data?.totalMoney.toLocaleString(), data?.baseMoney.toLocaleString());
 
   const IsOpen = () => {
     setIsOpen(true);
@@ -99,10 +97,12 @@ export const HistorySidebar = () => {
       return tradeItem.itemId === deletedId;
     });
 
-    if (deletedTrade.orderType === "BUY") {
-      setCashMoney(cashMoney + deletedTrade.totalMoney);
+    if (!deletedTrade) return;
+
+    if (deletedTrade?.orderType === "BUY") {
+      setCashMoney(cashMoney + deletedTrade?.totalMoney);
     } else {
-      setCashMoney(cashMoney - deletedTrade.totalMoney);
+      setCashMoney(cashMoney - deletedTrade?.totalMoney);
     }
 
     setTradeData(
@@ -128,9 +128,9 @@ export const HistorySidebar = () => {
                 {formattedData.totalMoney}원
               </TotalAssetPrice>
               {formattedData.valueProfit !== 0 ? (
-                <ProfitContainer profit={formattedData.valueProfit}>
-                  {formattedData.valueProfit.toLocaleString().includes("-") ? "" : "+"}
-                  {formattedData.valueProfit.toLocaleString()}원 ({roundToFixed(parseFloat(formattedProfitNum), 2)}%)
+                <ProfitContainer profit={formattedData.valueProfit ?? 0}>
+                  {(formattedData?.valueProfit ?? 0).toLocaleString().includes("-") ? "" : "+"}
+                  {(formattedData?.valueProfit ?? 0).toLocaleString()}원 ({roundToFixed(parseFloat(formattedProfitNum), 2)}%)
                 </ProfitContainer>
               ) : null}
             </TotalAssetLeft>

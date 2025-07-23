@@ -1,24 +1,18 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "./dist",
-    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
-    "strict": true,
-    "skipLibCheck": true,
     "baseUrl": ".",
-    "jsxImportSource": "@emotion/react",
+    "outDir": "dist",
     "rootDir": ".",
     "emitDeclarationOnly": false,
-
+    "declaration": true,
+    "composite": true,
+    "declarationDir": "dist/types",
+    "sourceMap": true,
+    "declarationMap": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["src/*"],
       "@mozu/design-token": ["../design-token"]
     }
   },

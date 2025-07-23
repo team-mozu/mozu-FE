@@ -177,8 +177,8 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
             <Result>
               {teamResult?.invDeg === endRound ? <label>총 결과 요약</label> : <label>결과 요약</label>}
               <AssetChange
-                baseMoney={teamResult?.baseMoney}
-                totalMoney={teamResult?.totalMoney}
+                baseMoney={teamResult?.baseMoney ?? 0}
+                totalMoney={teamResult?.totalMoney ?? 0}
               />
               <Sub>
                 <Proceeds isPositive={isValueProfitPositive}>

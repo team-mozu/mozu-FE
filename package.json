@@ -9,21 +9,18 @@
     "ui": "yarn workspace @mozu/ui",
     "util": "yarn workspace @mozu/util-config",
     "prepare": "husky install",
-    "lint": "eslint packages --ext ts,tsx --report-unused-disable-directives --cache",
-    "lint-staged": "lint-staged",
     "commit": "cz",
     "new-branch": "sh ./scripts/new-branch.sh"
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint --cache --fix",
-      "prettier --cache --write"
-    ]
   },
   "workspaces": {
     "packages": [
       "packages/*"
     ]
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "inquirer": "^12.3.0",
+    "react-spinners": "^0.17.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
@@ -34,18 +31,12 @@
     "corepack": "^0.33.0",
     "cz-customizable": "^7.4.0",
     "husky": "^8.0.0",
-    "lint-staged": "^15.3.0",
     "typescript": "^5.7.3"
   },
   "resolutions": {
     "@types/react": "18.3.18",
     "@types/react-dom": "18.3.1",
     "@types/hoist-non-react-statics": "^3.3.6"
-  },
-  "dependencies": {
-    "dotenv": "^16.4.7",
-    "inquirer": "^12.3.0",
-    "react-spinners": "^0.17.0"
   },
   "config": {
     "commitizen": {

@@ -5,8 +5,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useGetTeamDetail } from "@/apis";
 import { RankModal, ResultContainer } from "@/components";
 
+interface ModalProps {
+  isOpen: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+  message: string;
+  position: string;
+}
+
 // 커스텀 확인 모달 컴포넌트
-const CustomConfirmModal = ({ isOpen, onConfirm, onCancel, message, position }) => {
+const CustomConfirmModal = ({ isOpen, onConfirm, onCancel, message, position }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -99,7 +107,7 @@ export const ResultPage = () => {
   };
 
   useEffect(() => {
-    const handleBeforeRouteLeave = e => {
+    const handleBeforeRouteLeave = (e: BeforeUnloadEvent) => {
       if (!isConfirming) {
         e.preventDefault();
         setIsConfirming(true);

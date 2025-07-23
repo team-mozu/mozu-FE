@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Input, LogoWithText } from "@mozu/ui";
-import { KeyboardEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useStudentLogin } from "@/apis";
 import type { StudentLoginProps } from "@/apis/login/type";
 import { useForm } from "@/hook";
@@ -29,7 +29,7 @@ export const SignInPage = () => {
     }
 
     // 뒤로가기 방지 함수
-    const preventBackNavigation = e => {
+    const preventBackNavigation = (e: PopStateEvent) => {
       e.preventDefault();
       e.stopPropagation();
 

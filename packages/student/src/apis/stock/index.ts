@@ -4,7 +4,7 @@ import type { StockDetailResponse } from "./type";
 
 const router = "/class/team/classItem";
 
-export const useGetStockDetail = (stockId: number) => {
+export const useGetStockDetail = (stockId: number | null) => {
   return useQuery({
     queryKey: [
       "getStock",

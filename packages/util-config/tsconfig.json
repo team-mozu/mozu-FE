@@ -2,19 +2,19 @@
   "extends": "../../tsconfig.base.json",
 
   "compilerOptions": {
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx",
-    "composite": true,
     "baseUrl": ".",
-    "outDir": "./dist",
-    "moduleResolution": "bundler",
-    "declaration": true,
+    "outDir": "dist",
+    "rootDir": ".",
     "emitDeclarationOnly": false,
-    "types": ["vite/client", "node"],
+    "declaration": true,
+    "composite": true,
+    "declarationDir": "dist/types",
     "sourceMap": true,
+    "declarationMap": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "types": ["node"],
     "paths": {
-      "@/*": ["src/*"],
-      "@mozu/ui": ["../../ui/src/index.ts"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src/**/*"],

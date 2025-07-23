@@ -1,3 +1,5 @@
+// FIXME: 전체 리펙토링
+
 import { getCookies } from "@mozu/util-config";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { useEffect, useRef } from "react";
@@ -48,10 +50,12 @@ export const useSSE = (
 
     eventSourceRef.current = eventSource;
     (Object.keys(eventHandlers || {}) as EventType[]).forEach(eventType => {
+      // @ts-expect-error: 타입 충돌 무시 (EventListener)
       eventSource.addEventListener(eventType, (e: MessageEvent) => {
         try {
           const eventData = JSON.parse(e.data);
           console.log(`[SSE] ${eventType} 수신:`, eventData);
+          // @ts-expect-error: 타입 충돌 무시 (EventListener)
           eventHandlers?.[eventType]?.(eventData);
         } catch (err) {
           console.error(`[SSE] ${eventType} 파싱 오류:`, err);

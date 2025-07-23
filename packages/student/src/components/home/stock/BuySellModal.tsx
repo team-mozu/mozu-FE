@@ -28,6 +28,8 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { classId } = useParams();
+  const [quantity, setQuantity] = useState<string>("0");
+  const numericQuantity = Number(quantity.replace(/[^0-9]/g, "")) || 0;
 
   useEffect(() => {
     if (isOpen) {
@@ -40,6 +42,41 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   }, [
     isOpen,
   ]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
+  useEffect(() => {
+    const newQuantity = maxQuantity > 0 ? "0" : "0";
+    setQuantity(newQuantity);
+  }, [
+    stockData?.nowMoney,
+    teamData?.cashMoney,
+  ]);
+
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
+  const maxQuantity = useMemo(() => {
+    if (!stockData || !stockData.nowMoney || !holdItemData) return 0;
+
+    if (modalType === "매수") {
+      return stockData.nowMoney > 0 ? Math.floor(cashMoney / stockData.nowMoney) : 0;
+    } else if (modalType === "매도") {
+      const holding = holdItemData.find(item => item.itemId === stockData.itemId);
+      return holding?.itemCnt || 0;
+    }
+    return 0;
+  }, [
+    cashMoney,
+    stockData?.nowMoney,
+    modalType,
+    holdItemData,
+    stockData?.itemId,
+  ]);
+
+  if (!stockData || !holdItemData || stockData.nowMoney === undefined) {
+    return null;
+  }
+  const nowMoney = stockData!.nowMoney;
+  const totalAmount = (numericQuantity * nowMoney).toLocaleString("ko-KR") + "원";
 
   const handleConfirm = async () => {
     const itemIdNum = Number(stockId);
@@ -54,7 +91,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       return;
     }
 
-    if (modalType === "매수" && numericQuantity * stockData.nowMoney > cashMoney) {
+    if (modalType === "매수" && numericQuantity * stockData?.nowMoney > cashMoney) {
       Toast("보유하고 있는 현금보다 많이 매수할 수 없습니다", {
         type: "error",
       });
@@ -127,42 +164,6 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     }
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
-  const maxQuantity = useMemo(() => {
-    if (!stockData || !stockData.nowMoney || !holdItemData) return 0;
-
-    if (modalType === "매수") {
-      return stockData.nowMoney > 0 ? Math.floor(cashMoney / stockData.nowMoney) : 0;
-    } else if (modalType === "매도") {
-      const holding = holdItemData.find(item => item.itemId === stockData.itemId);
-      return holding?.itemCnt || 0;
-    }
-    return 0;
-  }, [
-    cashMoney,
-    stockData.nowMoney,
-    modalType,
-    holdItemData,
-    stockData.itemId,
-  ]);
-
-  // 상태 관리
-  const [quantity, setQuantity] = useState<string>("0");
-  const numericQuantity = Number(quantity.replace(/[^0-9]/g, "")) || 0;
-
-  // 총 주문 금액 계산
-  const totalAmount = (numericQuantity * stockData.nowMoney).toLocaleString("ko-KR") + "원";
-
-  // 데이터 초기화
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
-  useEffect(() => {
-    const newQuantity = maxQuantity > 0 ? "0" : "0";
-    setQuantity(newQuantity);
-  }, [
-    stockData.nowMoney,
-    teamData.cashMoney,
-  ]);
-
   // 입력 변경 핸들러
   const priceChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -202,6 +203,9 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     : "linear-gradient(135deg, #3742fa 0%, #2f3542 100%)";
 
   if (!isOpen) return null;
+  if (!stockData || !holdItemData) {
+    return <div>로딩 중...</div>;
+  }
 
   return (
     <AnimatePresence>

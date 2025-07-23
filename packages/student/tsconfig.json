@@ -1,34 +1,25 @@
 {
+  "extends": "../../tsconfig.base.json",
+
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "ESNext",
-    "resolveJsonModule": true,
-    "moduleResolution": "bundler",
-    "isolatedModules": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "rootDir": ".",
+    "composite": true,
+    "declarationDir": "dist/types",
+    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "emitDeclarationOnly": false,
-
-    "outDir": "./build",
-    "jsx": "react-jsx",
-    "baseUrl": ".",
+    "emitDeclarationOnly": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
+    "typeRoots": ["node_modules/@types", "src/@types"],
     "paths": {
-      "@/*": ["./src/*"],
-      "@mozu/ui": ["../ui/dist"],
-      "@mozu/design-token": ["../design-token/dist"],
-      "@util-config/*": ["../util-config/dist"]
-    },
-    "typeRoots": ["node_modules/@types", "src/@types"]
+      "@/*": ["src/*"]
+    }
   },
-  "references": [{ "path": "../ui" }],
+  "references": [{ "path": "../ui" }, { "path": "../design-token" }, { "path": "../util-config" }],
   "include": ["src/**/*", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

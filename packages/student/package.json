@@ -8,11 +8,15 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/types/src/index.d.ts"
+    }
+  },
   "dependencies": {
-    "@babel/runtime": "^7.26.0",
     "@emotion/babel-plugin": "^11.13.5",
     "@emotion/cache": "^11.14.0",
     "@emotion/css": "^11.13.5",
@@ -34,8 +38,6 @@
     "recharts": "^2.15.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/plugin-transform-runtime": "^7.25.9",
     "@mozu/design-token": "workspace:^",
     "@mozu/ui": "workspace:^",
     "@mozu/util-config": "workspace:^",
@@ -50,6 +52,7 @@
     "@vitejs/plugin-react-refresh": "^1.3.6",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "@yarnpkg/sdks": "^3.2.0",
+    "corepack": "^0.34.0",
     "event-source-polyfill": "^1.0.31",
     "globals": "^15.14.0",
     "react-tooltip": "^5.29.1",

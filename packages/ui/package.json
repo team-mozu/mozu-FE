@@ -3,19 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/types/src/index.d.ts",
   "author": "",
   "license": "ISC",
   "scripts": {
     "build": "tsc --build"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/types/src/index.d.ts"
+    }
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mozu/admin": "workspace:^",
     "@mozu/design-token": "workspace:^",
     "framer-motion": "^12.15.0",
     "react": "18.3.1",

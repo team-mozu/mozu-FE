@@ -13,7 +13,7 @@ export const EndingPage = () => {
   const myTeamRank = sortedRankings.findIndex(team => team.isMyTeam) + 1;
   const myTeam = sortedRankings.find(team => team.isMyTeam);
 
-  const formatMoney = amount => {
+  const formatMoney = (amount: number) => {
     return new Intl.NumberFormat("ko-KR", {
       style: "currency",
       currency: "KRW",
@@ -21,7 +21,7 @@ export const EndingPage = () => {
     }).format(amount);
   };
 
-  const getRankIcon = rank => {
+  const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
         return (

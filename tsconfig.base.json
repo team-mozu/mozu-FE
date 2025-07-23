@@ -2,11 +2,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
-    "declaration": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "strict": true,
     "moduleResolution": "bundler",
-    "declarationDir": "dist",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "allowJs": false
   }
 }

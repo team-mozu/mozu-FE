@@ -1,4 +1,5 @@
-import { removeCookies, setCookies } from "../../cookies";
+import { ADMIN_COOKIE_DOMAIN, COOKIE_DOMAIN, STUDENT_COOKIE_DOMAIN } from "@/env";
+import { removeCookies, setCookies } from "@/utils";
 import { instance } from "../axios";
 import type { IRefreshResponse } from "./types";
 
@@ -33,10 +34,9 @@ export const setTokens = (accessToken: string | null, refreshToken: string | nul
     userType,
   });
 
-  const secureOption = import.meta.env.VITE_COOKIE_DOMAIN === "localhost" ? false : true;
+  const secureOption = COOKIE_DOMAIN === "localhost" ? false : true;
 
-  const domain =
-    userType === "student" ? import.meta.env.VITE_STUDENT_COOKIE_DOMAIN : import.meta.env.VITE_ADMIN_COOKIE_DOMAIN;
+  const domain = userType === "student" ? STUDENT_COOKIE_DOMAIN : ADMIN_COOKIE_DOMAIN;
 
   console.log("쿠키 도메인:", domain);
 
@@ -65,8 +65,7 @@ export const setTokens = (accessToken: string | null, refreshToken: string | nul
 };
 
 export const removeTokens = (userType: "student" | "admin") => {
-  const domain =
-    userType === "student" ? import.meta.env.VITE_STUDENT_COOKIE_DOMAIN : import.meta.env.VITE_ADMIN_COOKIE_DOMAIN;
+  const domain = userType === "student" ? STUDENT_COOKIE_DOMAIN : ADMIN_COOKIE_DOMAIN;
 
   if (userType === "student") {
     removeCookies("accessToken", {
