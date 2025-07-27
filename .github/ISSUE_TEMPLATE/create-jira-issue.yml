@@ -1,10 +1,8 @@
 name: Create Jira Issue and Feature Branch
-
 on:
   issues:
     types:
       - opened
-
 jobs:
   create-jira-issue:
     name: Create Jira Issue + Branch
