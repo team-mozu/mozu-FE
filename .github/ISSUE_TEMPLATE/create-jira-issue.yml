@@ -1,36 +1,35 @@
-name: Create Jira issue
-on:
+name: Create Jira Issue and Feature Branch
+
+'on':
   issues:
     types:
       - opened
+
 jobs:
-  create-issue:
-    name: Create Jira issue
+  create-jira-issue:
+    name: Create Jira Issue + Branch
     runs-on: ubuntu-latest
+
     steps:
-      - name: Login
+      - name: Login to Jira
         uses: atlassian/gajira-login@v3
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
 
-      - name: Checkout main code
+      - name: Checkout develop branch
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: develop
 
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
+      - name: Parse GitHub Issue
+        uses: stefanbuck/github-issue-parser@v3
         id: issue-parser
         with:
           template-path: .github/ISSUE_TEMPLATE/issue_form.yml
 
-      - name: Log Issue Parser
-        run: |
-          echo '${{ steps.issue-parser.outputs.jsonString }}'
-
-      - name: Convert markdown to Jira Syntax
+      - name: Convert Markdown to Jira Format
         uses: peter-evans/jira2md@v1
         id: md2jira
         with:
@@ -41,11 +40,11 @@ jobs:
             ${{ github.event.issue.body }}
           mode: md2jira
 
-      - name: Create Issue
+      - name: Create Jira Issue
         id: create
         uses: atlassian/gajira-create@v3
         with:
-          project: DIAR
+          project: MZFE
           issuetype: Subtask
           summary: "${{ github.event.issue.title }}"
           description: "${{ steps.md2jira.outputs.output-text }}"
@@ -56,20 +55,18 @@ jobs:
               }
             }
 
-      - name: Log created issue
-        run: echo "Jira Issue ${{ steps.issue-parser.outputs.parentKey }}/${{ steps.create.outputs.issue }} was created"
+      - name: Log created Jira issue
+        run: echo "Jira Issue Created: ${{ steps.create.outputs.issue }} (Parent: ${{ steps.issue-parser.outputs.issueparser_parentKey }})"
 
-      - name: Checkout develop code
-        uses: actions/checkout@v4
-        with:
-          ref: develop
-
-      - name: Create branch with Ticket number
+      - name: Create feature branch from develop
         run: |
-          git checkout -b ${{ steps.create.outputs.issue }}
-          git push origin ${{ steps.create.outputs.issue }}
+          BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branchPrefix }}/${{ steps.issue-parser.outputs.issueparser_parentKey }}-${{ steps.issue-parser.outputs.issueparser_branchName }}"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git checkout -b "$BRANCH_NAME"
+          git push origin "$BRANCH_NAME"
 
-      - name: Update issue title
+      - name: Update GitHub Issue Title with Jira Key
         uses: actions-cool/issues-helper@v3
         with:
           actions: "update-issue"
