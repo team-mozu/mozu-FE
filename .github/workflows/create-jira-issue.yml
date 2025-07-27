@@ -1,6 +1,6 @@
 name: Create Jira Issue and Feature Branch
 
-'on':
+on:
   issues:
     types:
       - opened
