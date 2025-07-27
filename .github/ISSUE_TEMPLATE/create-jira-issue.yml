@@ -56,7 +56,7 @@ jobs:
             }
 
       - name: Log created Jira issue
-        run: echo "Jira Issue Created: ${{ steps.create.outputs.issue }} (Parent: ${{ steps.issue-parser.outputs.issueparser_parentKey }})"
+        run: echo "Jira Issue ${{ steps.issue-parser.outputs.parentKey }}/${{ steps.create.outputs.issue }} was created"
 
       - name: Create feature branch from develop
         run: |
