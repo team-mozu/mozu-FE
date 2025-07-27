@@ -1,0 +1,60 @@
+name: 'Team-mozu 이슈 생성'
+description: 'mozu 프론트 Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
+labels: [order]
+title: '이슈 이름을 작성해주세요.'
+body:
+  - type: input
+    id: parentKey
+    attributes:
+      label: '상위 작업 Ticket Number'
+      description: '상위 작업의 Ticket Number를 기입해주세요.'
+      placeholder: 'MZFE-00'
+    validations:
+      required: true
+
+  - type: input
+    id: branchName
+    attributes:
+      label: '브랜치 이름 (이슈 요약)'
+      description: '영어 소문자로 이슈를 요약하여 브랜치 이름을 지어주세요. (ex: set-jira-issue)'
+    validations:
+      required: true
+
+  - type: input
+    id: branchPrefix
+    attributes:
+      label: '브랜치 전략(GitFlow)'
+      description: 'feature/refactor/fix/hotfix/release/docs/test 중 해당 이슈와 걸맞게 작성해주세요.'
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: '상세 내용(Details)'
+      description: '이슈 내용을 자세히 설명해주세요.'
+      value: |
+        - 상세 내용에 대해 작성해주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: '체크리스트(Tasks)'
+      description: '해당 이슈에 대해 필요한 작업 목록을 작성해주세요.'
+      value: |
+        - [ ] Task1
+        - [ ] Task2
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: '참조(References)'
+      description: '해당 이슈와 관련된 레퍼런스를 참조해주세요.'
+      value: | 
+        - Reference1
+    validations:
+      required: false
