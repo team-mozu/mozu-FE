@@ -13,7 +13,7 @@ export const ArticleManagementEditPage = () => {
   const [datas, setDatas] = useState<{
     title: string;
     content: string;
-    imgUrl: File | string;
+    imgUrl: File | string | null;
   }>({
     title: "",
     content: "",
@@ -61,8 +61,8 @@ export const ArticleManagementEditPage = () => {
     apiData.mutate({
       title: datas.title,
       description: datas.content,
-      image: imageFile,
-      articleId: articleId,
+      image: imageFile ?? undefined,
+      articleId: articleId ?? 0,
     });
   };
 

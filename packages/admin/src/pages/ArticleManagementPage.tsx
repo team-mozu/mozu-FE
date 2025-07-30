@@ -49,7 +49,7 @@ export const ArticleManagementPage = () => {
           subComment={"삭제하면 복구가 불가능합니다."}
           onCancel={handleCloseModal}
           isPending={isDeleting}
-          onDelete={() => handleDelete(articleId)}
+          onDelete={() => handleDelete(articleId ?? 0)}
         />
       )}
     </Container>

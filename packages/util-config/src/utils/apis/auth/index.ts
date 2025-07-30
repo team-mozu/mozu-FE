@@ -1,5 +1,5 @@
 import { ADMIN_COOKIE_DOMAIN, COOKIE_DOMAIN, STUDENT_COOKIE_DOMAIN } from "@/env";
-import { removeCookies, setCookies } from "@/utils";
+import { removeCookies, setCookies } from "@/utils/cookies";
 import { instance } from "../axios";
 import type { IRefreshResponse } from "./types";
 

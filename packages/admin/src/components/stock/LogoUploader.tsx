@@ -27,8 +27,8 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
   const handleDeleteLogo = () => {
     setLogo(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = null;
-      onImageChange(null);
+      fileInputRef.current.value = "";
+      onImageChange?.(null);
     }
   };
 

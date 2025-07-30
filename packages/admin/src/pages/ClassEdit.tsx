@@ -35,10 +35,10 @@ export const ClassEdit = () => {
   const classId = id ? parseInt(id) : null;
 
   // API 호출
-  const { data: classDetailData, isLoading } = useGetClassDetail(classId);
+  const { data: classDetailData, isLoading } = useGetClassDetail(classId ?? 0);
   const { data: articleListData } = useGetArticleList();
   const { data: stockListData } = useGetStockList();
-  const { mutate: editClass } = useEditClass(classId);
+  const { mutate: editClass } = useEditClass(classId ?? 0);
 
   // 상태 관리
   const [className, setClassName] = useState<string>("");
@@ -72,7 +72,7 @@ export const ClassEdit = () => {
         // 투자 차수에 맞춰 길이 맞춤
         const requiredLength = parseInt(classDetailData.maxInvDeg.toString());
         while (money.length <= requiredLength + 1) {
-          money.push(null);
+          money.push(0);
         }
 
         return {
@@ -375,7 +375,7 @@ export const ClassEdit = () => {
         // 배열 길이 부족 시 null 채우기
         const requiredLength = parseInt(classDeg) + 2;
         while (moneyForRequest.length < requiredLength) {
-          moneyForRequest.push(null);
+          moneyForRequest.push(0);
         }
 
         return {

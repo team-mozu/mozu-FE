@@ -47,6 +47,7 @@ export const useSSE = (
     eventSourceRef.current = eventSource;
 
     (Object.keys(eventHandlers || {}) as EventType[]).forEach(eventType => {
+      // @ts-expect-error: 타입 충돌 무시 (EventListener)
       eventSource.addEventListener(eventType, (e: MessageEvent) => {
         try {
           const eventData = JSON.parse(e.data);

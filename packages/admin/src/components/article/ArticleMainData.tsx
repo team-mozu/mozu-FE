@@ -3,7 +3,7 @@ import { color, font } from "@mozu/design-token";
 import { NoNewsImg } from "@mozu/ui";
 
 interface IArticleMainDataType {
-  img?: string;
+  img?: string | null | undefined;
   title?: string;
   main?: string;
 }

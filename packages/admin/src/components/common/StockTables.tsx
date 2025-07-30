@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, CheckBox } from "@mozu/ui";
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { type ColumnDef, flexRender, getCoreRowModel, type Row, useReactTable } from "@tanstack/react-table";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { AddInvestItemModal } from "@/components/stock/AddInvestItemModal";
 import { formatPrice } from "@/utils/formatPrice";
@@ -72,7 +72,7 @@ const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>(({ value, onCha
       onChange={handleChange}
       onFocus={handleFocus}
       onBlur={handleBlur}
-      placeholder={placeholder.toString()}
+      placeholder={(placeholder ?? "").toString()}
     />
   );
 });
@@ -216,7 +216,7 @@ export const StockTables = ({
               id="stock-header-checkbox"
             />
           ),
-          cell: ({ row }) => (
+          cell: ({ row }: { row: Row<StockData> }) => (
             <CheckBox
               checked={row.original.stockChecked}
               onChange={() => toggleStockRow(row.original.itemId)}
@@ -274,7 +274,7 @@ export const StockTables = ({
         meta: {
           align: "right",
         },
-        cell: ({ row }) => {
+        cell: ({ row }: { row: Row<StockData> }) => {
           // money 배열에서 실제 인덱스로 접근
           const money = row.original.money || [];
           const value = money[actualIndex] ?? 0;
@@ -423,9 +423,7 @@ export const StockTables = ({
           close={handleCloseAddModal}
           onItemsSelected={handleAddItems}
           selectedDegree={parseInt(degree, 10)}
-          existingItems={stockData.map(item => ({
-            id: item.itemId,
-          }))}
+          existingItems={stockData.map(item => ({ id: item.itemId }))}
         />
       )}
     </TableContainer>

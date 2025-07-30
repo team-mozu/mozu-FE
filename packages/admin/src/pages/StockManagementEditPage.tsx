@@ -90,7 +90,7 @@ export const StockManagementEditPage = () => {
       profitOG: Number(state.profitOG),
       profitBen: Number(state.profitBen),
       netProfit: Number(state.netProfit),
-      stockId: stockId,
+      stockId: stockId ?? 0,
     });
   };
 

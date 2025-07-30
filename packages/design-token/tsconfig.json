@@ -1,21 +1,21 @@
 {
+  "extends": "../../tsconfig.base.json",
+
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM"],
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "jsx": "react-jsx",
-    "strict": true,
-    "declaration": true,
-    "declarationMap": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "rootDir": ".",
-    "outDir": "./dist",
     "baseUrl": ".",
+    "outDir": "dist",
+    "rootDir": ".",
+    "emitDeclarationOnly": false,
+    "declaration": true,
     "composite": true,
-    "skipLibCheck": true
+    "declarationDir": "dist/types",
+    "sourceMap": true,
+    "declarationMap": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*", "index.ts"],
+  "include": ["src/**/*", "./index.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -21,8 +21,8 @@ export const ImprovedClassMonitoringPage = () => {
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
 
-  const { data: classData, isLoading, isFetching } = useGetClassDetail(classId);
-  const { mutate: nextDegree, isPending: isNextDegreePending } = useNextDegree(classId, () => {
+  const { data: classData, isLoading, isFetching } = useGetClassDetail(classId ?? 0);
+  const { mutate: nextDegree, isPending: isNextDegreePending } = useNextDegree(classId ?? 0, () => {
     if (!classData) return;
 
     queryClient.setQueryData(
@@ -32,13 +32,13 @@ export const ImprovedClassMonitoringPage = () => {
       ],
       {
         ...classData,
-        curInvDeg: classData.curInvDeg + 1,
+        curInvDeg: (classData?.curInvDeg ?? 0) + 1,
       },
     );
   });
-  const { mutate: stopClass, isPending: isStopClassPending } = useClassStop(classId);
+  const { mutate: stopClass, isPending: isStopClassPending } = useClassStop(classId ?? 0);
 
-  const isDegEnd = classData ? teamInfo.every(team => (team.trade?.length ?? 0) >= classData.curInvDeg) : false;
+  const isDegEnd = classData ? teamInfo.every(team => (team.trade?.length ?? 0) >= (classData.curInvDeg ?? 0)) : false;
 
   const articleInfoClick = () => {
     setIsOpenArticle(true);
@@ -212,7 +212,7 @@ export const ImprovedClassMonitoringPage = () => {
           </InfoContainer>
           <ImprovedTeamInfoTable
             teamInfo={teamInfo}
-            invDeg={classData.curInvDeg}
+            invDeg={classData?.curInvDeg ?? 0}
             maxInvDeg={classData.maxInvDeg}
           />
         </MainContainer>

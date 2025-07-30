@@ -91,7 +91,7 @@ export const DegCurrentModal = ({ isOpen, setIsOpen, id }: IDegCurrentType) => {
   ]);
 
   useEffect(() => {
-    if (isOpen && degData?.length > 0) {
+    if (isOpen && (degData?.length ?? 0) > 0) {
       setActiveTabIndex(0);
     }
   }, [

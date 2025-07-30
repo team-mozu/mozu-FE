@@ -49,7 +49,7 @@ export const useDeleteArticle = () => {
   });
 };
 
-export const useGetArticleDetail = (articleId: number) => {
+export const useGetArticleDetail = (articleId: number | null | undefined) => {
   return useQuery({
     queryKey: [
       "getArticle",

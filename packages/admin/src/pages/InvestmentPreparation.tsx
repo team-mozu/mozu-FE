@@ -11,15 +11,15 @@ import { useTeamStore } from "@/store";
 export const InvestmentPreparation = () => {
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
-  const { data: classNameData } = useGetClassDetail(classId);
+  const { data: classNameData } = useGetClassDetail(classId ?? 0);
   const [inviteCode] = useState(() => localStorage.getItem("inviteCode") || "로딩중...");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [datas, setDatas] = useState({
+  const [datas, setDatas] = useState<{ teams: { title: string; school: string }[] }>({
     teams: [],
   });
 
-  const { mutate: nextDegree } = useNextDegree(classId);
-  const { mutate: stopClass } = useClassStop(classId);
+  const { mutate: nextDegree } = useNextDegree(classId ?? 0);
+  const { mutate: stopClass } = useClassStop(classId ?? 0);
   const { setTeamInfo, clearTeamInfo } = useTeamStore();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>

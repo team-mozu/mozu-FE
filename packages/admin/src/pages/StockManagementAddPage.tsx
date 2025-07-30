@@ -47,7 +47,7 @@ export const StockManagementAddPage = () => {
         const newState = {
           ...prev,
         };
-        const keys = [
+        const keys: (keyof Omit<FormState, "logo">)[] = [
           "money",
           "debt",
           "capital",
@@ -68,7 +68,7 @@ export const StockManagementAddPage = () => {
     apiData({
       name: state.name,
       info: state.info,
-      logo: state.logo,
+      logo: state.logo || "",
       money: Number(state.money.replace(/,/g, "")),
       debt: Number(state.debt.replace(/,/g, "")),
       capital: Number(state.capital.replace(/,/g, "")),

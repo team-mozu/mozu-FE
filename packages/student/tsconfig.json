@@ -19,7 +19,11 @@
       "@/*": ["src/*"]
     }
   },
-  "references": [{ "path": "../ui" }, { "path": "../design-token" }, { "path": "../util-config" }],
+  "references": [
+    { "path": "../ui", "prebuild": true },
+    { "path": "../design-token", "prebuild": true },
+    { "path": "../util-config", "prebuild": true }
+  ],
   "include": ["src/**/*", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

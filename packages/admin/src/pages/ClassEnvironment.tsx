@@ -17,7 +17,7 @@ export const ClassEnvironment = () => {
   const location = useLocation();
 
   // API 호출
-  const { data: classData, isLoading: apiLoading, refetch } = useGetClassDetail(classId);
+  const { data: classData, isLoading: apiLoading, refetch } = useGetClassDetail(classId ?? 0);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,7 +39,7 @@ export const ClassEnvironment = () => {
     classData,
   ]);
 
-  const { mutate: startClass } = useClassStart(classId);
+  const { mutate: startClass } = useClassStart(classId ?? 0);
   const { mutate: deleteClass, isPending } = useClassDelete();
 
   // 상태 관리

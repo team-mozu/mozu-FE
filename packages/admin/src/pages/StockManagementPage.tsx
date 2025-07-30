@@ -12,7 +12,7 @@ export const StockManagementPage = () => {
   const { id } = useParams();
   const stockId = id ? parseInt(id) : null;
 
-  const { mutate: stockDelete, isPending } = useDeleteStock(selectedId);
+  const { mutate: stockDelete, isPending } = useDeleteStock(selectedId ?? 0);
   const { data: stockData, isLoading: apiLoading } = useGetStockDetail(stockId);
 
   const handleDetailClick = () => {

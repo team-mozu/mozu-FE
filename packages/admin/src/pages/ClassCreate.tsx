@@ -327,7 +327,7 @@ export const CreateClass = () => {
                   right: 10,
                 }}
                 value={classDeg}
-                onChange={onDegreeChange}
+                onChange={onDegreeChange as (value: string) => void}
               />
               차
             </SelectField>

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface IImgType {
   label?: string;
-  img?: string | File;
+  img?: string | File | null;
   onImageChange?: (file: File | string | null) => void;
 }
 

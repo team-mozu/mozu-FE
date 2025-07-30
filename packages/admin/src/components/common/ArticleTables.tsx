@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, CheckBox, Select } from "@mozu/ui";
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { type ColumnDef, flexRender, getCoreRowModel, type Row, useReactTable } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import type { Article } from "@/apis/class/type";
 import { AddArticleItemModal } from "@/components/article/AddArticleItemModal";
@@ -183,7 +183,7 @@ export const ArticleTables = ({
               id="article-header-checkbox"
             />
           ),
-          cell: ({ row }) => (
+          cell: ({ row }: { row: Row<DisplayArticle> }) => (
             <CheckBox
               checked={row.original.checked}
               onChange={() => toggleArticle(row.original.id)}
@@ -313,11 +313,7 @@ export const ArticleTables = ({
           close={handleCloseModal}
           onArticlesSelected={handleArticlesSelected}
           selectedDegree={parseInt(selectedRound)}
-          existingArticles={data.flatMap(group =>
-            group.articles.map(article => ({
-              id: article.id,
-            })),
-          )}
+          existingArticles={data.flatMap(group => group.articles)}
         />
       )}
     </TableContainer>

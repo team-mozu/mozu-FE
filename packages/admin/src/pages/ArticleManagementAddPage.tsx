@@ -23,7 +23,7 @@ export const ArticleManagementAddPage = () => {
     apiData.mutate({
       title: state.title,
       description: state.description,
-      image: state.image,
+      image: state?.image ?? undefined,
     });
   };
 

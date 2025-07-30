@@ -24,12 +24,12 @@ export const ArticleManagementDetail = ({ onClick }: IArticleManagementDetailPro
   const [datas, setDatas] = useState<{
     title: string;
     description: string;
-    image: string;
+    image: string | null | undefined;
     createDate: string;
   }>({
     title: "",
     description: "",
-    image: "",
+    image: null,
     createDate: "",
   });
 
@@ -86,7 +86,7 @@ export const ArticleManagementDetail = ({ onClick }: IArticleManagementDetailPro
               borderColor={color.zinc[200]}
               hoverBackgroundColor={color.zinc[100]}
               onClick={onClick}>
-              <p>삭제하기</p>
+              삭제하기
               <Del
                 size={20}
                 color={color.zinc[800]}

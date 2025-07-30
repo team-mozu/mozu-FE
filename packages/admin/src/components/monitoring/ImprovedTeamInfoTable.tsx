@@ -120,11 +120,11 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                   <Rate
                     isNegative={isNegative}
                     onClick={() => handleOpenModal(team.teamId, team.teamName)}>
-                    <span>{team.trade.at(-1).totalMoney.toLocaleString()}원</span>
+                    <span>{team.trade.at(-1)?.totalMoney.toLocaleString()}원</span>
                     <span>
                       {!isNegative && "+"}
-                      {team.trade.at(-1).valMoney.toLocaleString()}원 ({!isNegative && "+"}
-                      {roundToFixed(parseFloat(team.trade.at(-1).profitNum), 2)}
+                      {team.trade.at(-1)?.valMoney.toLocaleString()}원 ({!isNegative && "+"}
+                      {roundToFixed(parseFloat(team.trade.at(-1)?.profitNum ?? "0"), 2)}
                       %)
                     </span>
                   </Rate>
@@ -147,7 +147,7 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
         <DegCurrentModal
           isOpen={isOpenDeg}
           setIsOpen={setIsOpenDeg}
-          id={selectedTeamId}
+          id={selectedTeamId ?? 0}
         />
       )}
     </>
@@ -226,7 +226,7 @@ const CompletedBadge = styled.span`
 `;
 
 const Rate = styled.div<{
-  isNegative: boolean;
+  isNegative: boolean | null | undefined;
 }>`
   display: flex;
   flex-direction: column;

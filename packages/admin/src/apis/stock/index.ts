@@ -44,7 +44,7 @@ export const useDeleteStock = (stockId: number) => {
   });
 };
 
-export const useGetStockDetail = (stockId: number) => {
+export const useGetStockDetail = (stockId: number | null) => {
   return useQuery({
     queryKey: [
       "getStock",

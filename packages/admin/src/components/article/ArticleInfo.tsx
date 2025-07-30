@@ -14,12 +14,12 @@ export const ArticleInfo = () => {
           },
         ];
       }[]
-    >();
+    >([]);
   const [isClose, setIsClose] = useState<boolean>(false);
 
-  const outSideRef = useRef();
+  const outSideRef = useRef<HTMLDivElement>(null);
   const outSideClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (outSideRef.current === e.target) {
+    if (e.target === e.currentTarget) {
       setIsClose(true);
     }
   };

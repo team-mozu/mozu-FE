@@ -21,14 +21,14 @@ export const StockManagementDetail = ({ onClick }: IStockManagementDetailProps) 
   const [datas, setDatas] = useState<{
     name: string;
     info: string;
-    logo: string;
-    money: number;
-    debt: number;
-    capital: number;
-    profit: number;
-    profitOG: number;
-    profitBen: number;
-    netProfit: number;
+    logo: string | null;
+    money: number | null;
+    debt: number | null;
+    capital: number | null;
+    profit: number | null;
+    profitOG: number | null;
+    profitBen: number | null;
+    netProfit: number | null;
   }>({
     name: "",
     info: "",
@@ -156,11 +156,11 @@ export const StockManagementDetail = ({ onClick }: IStockManagementDetailProps) 
                 <ContentWrapper>
                   <Accounts
                     title={"부채"}
-                    content={datas.debt}
+                    content={datas?.debt ?? 0}
                   />
                   <Accounts
                     title={"자본금"}
-                    content={datas.capital}
+                    content={datas?.capital ?? 0}
                   />
                 </ContentWrapper>
               )}
@@ -178,19 +178,19 @@ export const StockManagementDetail = ({ onClick }: IStockManagementDetailProps) 
                 <ContentWrapper>
                   <Accounts
                     title={"매출액"}
-                    content={datas.profit}
+                    content={datas?.profit ?? 0}
                   />
                   <Accounts
                     title={"매출원가"}
-                    content={datas.profitOG}
+                    content={datas?.profitOG ?? 0}
                   />
                   <Accounts
                     title={"매출이익"}
-                    content={datas.profitBen}
+                    content={datas?.profitBen ?? 0}
                   />
                   <Accounts
                     title={"당기순이익"}
-                    content={datas.netProfit}
+                    content={datas?.netProfit ?? 0}
                   />
                 </ContentWrapper>
               )}
