@@ -1,7 +1,7 @@
 import { Toast } from "@mozu/ui";
 import axios, { type AxiosError } from "axios";
-import { SERVER_URL } from "@/env";
-import { getCookies, removeCookies } from "@/utils/cookies";
+import { SERVER_URL } from "../../env";
+import { getCookies, removeCookies } from "../../utils/cookies";
 import { reIssueToken, removeTokens, setTokens } from "./auth";
 
 export const instance = axios.create({
