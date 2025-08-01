@@ -54,8 +54,9 @@ const ItemContent = ({
         <ItemPriceContainer>
           <Price>{nowMoney.toLocaleString()}원</Price>
           <Percent isUp={isUp} isZero={isZeroPercent}>
-            {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""
-              }${profitNum})`}
+            {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${
+              isUp ? "+" : ""
+            }${profitNum})`}
           </Percent>
         </ItemPriceContainer>
       )}
@@ -73,12 +74,15 @@ export const ItemSidebar = () => {
       <ItemContentContainer>
         {Array.isArray(data) && data.length > 0 ? (
           data.map((data, id) => {
-            const profitNum = data.profitNum && !isNaN(parseFloat(data.profitNum))
-              ? data.profitNum
-              : "0%";
+            const profitNum =
+              data.profitNum && !isNaN(parseFloat(data.profitNum))
+                ? data.profitNum
+                : "0%";
 
             // 0%인지 확인
-            const isZeroPercent = (data.profitMoney ?? 0) === 0 && (profitNum === "0%" || profitNum === "0");
+            const isZeroPercent =
+              (data.profitMoney ?? 0) === 0 &&
+              (profitNum === "0%" || profitNum === "0");
 
             // isUp 계산 - 0%인 경우는 중립, 그 외엔 기존 로직
             const isUp = isZeroPercent

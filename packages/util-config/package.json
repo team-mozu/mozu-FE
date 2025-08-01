@@ -5,7 +5,10 @@
   "main": "dist/src/index.js",
   "types": "dist/types/src/index.d.ts",
   "scripts": {
-    "build": "tsc -b"
+    "start": "vite",
+    "build": "tsc -b && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
   },
   "exports": {
     ".": {
@@ -25,8 +28,10 @@
   "devDependencies": {
     "@mozu/ui": "workspace:^",
     "@types/node": "^22.13.1",
+    "@vitejs/plugin-react": "^4.7.0",
     "rollup": "^4.45.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2",
+    "vite": "^7.0.6"
   },
   "packageManager": "yarn@4.8.1"
 }

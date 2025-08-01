@@ -1,7 +1,6 @@
 export * from "./Accounts";
 export * from "./AccountsSkeleton";
 export * from "./AddButton";
-export * from "./assets";
 export * from "./Button";
 export * from "./CheckBox";
 export * from "./CompanySkeleton";
@@ -27,3 +26,4 @@ export * from "./TextArea";
 export * from "./Toast";
 export * from "./ToastContainer";
 export * from "./WarningMsg";
+export * from "./assets";
