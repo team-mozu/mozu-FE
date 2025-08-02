@@ -10,15 +10,23 @@ interface INewsPostType {
   onClick?: () => void;
 }
 
-export const NewsPost = ({ imgUrl = noImg, title, content, onClick }: INewsPostType) => {
+export const NewsPost = ({
+  imgUrl = noImg,
+  title,
+  content,
+  onClick,
+}: INewsPostType) => {
   const [imageError, setImageError] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
 
-  const handleImageError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
-    setImageError(true);
-    setIsImageLoading(false);
-    e.currentTarget.src = noImgIcon;
-  }, []);
+  const handleImageError = useCallback(
+    (e: React.SyntheticEvent<HTMLImageElement>) => {
+      setImageError(true);
+      setIsImageLoading(false);
+      e.currentTarget.src = noImgIcon;
+    },
+    []
+  );
 
   const handleImageLoad = useCallback(() => {
     setIsImageLoading(false);
@@ -26,9 +34,7 @@ export const NewsPost = ({ imgUrl = noImg, title, content, onClick }: INewsPostT
 
   const handleClick = useCallback(() => {
     onClick?.();
-  }, [
-    onClick,
-  ]);
+  }, [onClick]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -37,9 +43,7 @@ export const NewsPost = ({ imgUrl = noImg, title, content, onClick }: INewsPostT
         onClick?.();
       }
     },
-    [
-      onClick,
-    ],
+    [onClick]
   );
 
   return (
@@ -48,7 +52,8 @@ export const NewsPost = ({ imgUrl = noImg, title, content, onClick }: INewsPostT
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`뉴스 기사: ${title}`}>
+      aria-label={`뉴스 기사: ${title}`}
+    >
       <ImageContainer>
         {isImageLoading && <ImageSkeleton />}
         <NewsImg
@@ -80,23 +85,23 @@ const PostContainer = styled.div`
   cursor: pointer;
   border: 1px solid transparent;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: ${color.zinc[50]};
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-  
+
   &:focus {
     outline: none;
     border-color: ${color.blue[500]};
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 16px;
@@ -107,7 +112,7 @@ const PostContainer = styled.div`
 const ImageContainer = styled.div`
   position: relative;
   flex-shrink: 0;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     display: flex;
@@ -121,20 +126,25 @@ const ImageSkeleton = styled.div`
   left: 0;
   width: 160px;
   height: 90px;
-  background: linear-gradient(90deg, 
-    ${color.zinc[200]} 25%, 
-    ${color.zinc[100]} 50%, 
+  background: linear-gradient(
+    90deg,
+    ${color.zinc[200]} 25%,
+    ${color.zinc[100]} 50%,
     ${color.zinc[200]} 75%
   );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
   border-radius: 12px;
-  
+
   @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
-  
+
   @media (max-width: 768px) {
     width: 100%;
     max-width: 300px;
@@ -148,11 +158,12 @@ const NewsImg = styled.img<{
   width: 160px;
   height: 90px;
   border-radius: 12px;
-  border: 1px solid ${({ hasImage }) => (hasImage ? "transparent" : color.zinc[200])};
+  border: 1px solid
+    ${({ hasImage }) => (hasImage ? "transparent" : color.zinc[200])};
   background-color: ${color.zinc[50]};
   object-fit: cover;
   transition: opacity 0.3s ease;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     max-width: 300px;
@@ -178,7 +189,7 @@ const Title = styled.h3`
   overflow: hidden;
   line-height: 1.4;
   word-break: break-word;
-  
+
   @media (max-width: 768px) {
     -webkit-line-clamp: 3;
   }
@@ -194,7 +205,7 @@ const Content = styled.p`
   overflow: hidden;
   line-height: 1.5;
   word-break: break-word;
-  
+
   @media (max-width: 768px) {
     -webkit-line-clamp: 3;
   }
