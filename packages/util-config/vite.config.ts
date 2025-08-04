@@ -6,10 +6,13 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "utilConfig",
-      fileName: (format) => `util-config.${format}.js`,
+      fileName: format => `util-config.${format}.js`,
     },
     rollupOptions: {
-      external: ["react", "@mozu/ui"],
+      external: [
+        "react",
+        "@mozu/ui",
+      ],
       output: {
         globals: {
           react: "React",

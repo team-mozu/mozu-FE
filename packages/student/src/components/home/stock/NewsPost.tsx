@@ -10,23 +10,15 @@ interface INewsPostType {
   onClick?: () => void;
 }
 
-export const NewsPost = ({
-  imgUrl = noImg,
-  title,
-  content,
-  onClick,
-}: INewsPostType) => {
+export const NewsPost = ({ imgUrl = noImg, title, content, onClick }: INewsPostType) => {
   const [imageError, setImageError] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
 
-  const handleImageError = useCallback(
-    (e: React.SyntheticEvent<HTMLImageElement>) => {
-      setImageError(true);
-      setIsImageLoading(false);
-      e.currentTarget.src = noImgIcon;
-    },
-    []
-  );
+  const handleImageError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    setImageError(true);
+    setIsImageLoading(false);
+    e.currentTarget.src = noImgIcon;
+  }, []);
 
   const handleImageLoad = useCallback(() => {
     setIsImageLoading(false);
@@ -34,7 +26,9 @@ export const NewsPost = ({
 
   const handleClick = useCallback(() => {
     onClick?.();
-  }, [onClick]);
+  }, [
+    onClick,
+  ]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -43,7 +37,9 @@ export const NewsPost = ({
         onClick?.();
       }
     },
-    [onClick]
+    [
+      onClick,
+    ],
   );
 
   return (
@@ -52,8 +48,7 @@ export const NewsPost = ({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`뉴스 기사: ${title}`}
-    >
+      aria-label={`뉴스 기사: ${title}`}>
       <ImageContainer>
         {isImageLoading && <ImageSkeleton />}
         <NewsImg
