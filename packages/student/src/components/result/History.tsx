@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 interface IHistoryProps {
-  type: 'BUY' | 'SELL';
+  type: "BUY" | "SELL";
   totalMoney: string;
   itemMoney: string;
   itemCount: number;
@@ -10,16 +10,10 @@ interface IHistoryProps {
 }
 
 // 사용하실땐 값을 다 prop으로 받아오셔서 사용하세용
-export const History = ({
-  type,
-  totalMoney,
-  itemMoney,
-  itemCount,
-  itemName,
-}: IHistoryProps) => {
+export const History = ({ type, totalMoney, itemMoney, itemCount, itemName }: IHistoryProps) => {
   return (
     <Container>
-      <BS type={type}>{type === 'BUY' ? '매수' : '매도'}</BS>
+      <BS type={type}>{type === "BUY" ? "매수" : "매도"}</BS>
       <Stock>{itemName}</Stock>
       <Price>
         <Amount type={type}>{totalMoney}원</Amount>
@@ -38,8 +32,10 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const BS = styled.p<{ type: 'BUY' | 'SELL' }>`
-  color: ${({ type }) => (type === 'BUY' ? color.red[500] : color.blue[500])};
+const BS = styled.p<{
+  type: "BUY" | "SELL";
+}>`
+  color: ${({ type }) => (type === "BUY" ? color.red[500] : color.blue[500])};
   font: ${font.b1};
 `;
 
@@ -54,9 +50,11 @@ const Price = styled.div`
   flex-direction: column;
 `;
 
-const Amount = styled.p<{ type: 'BUY' | 'SELL' }>`
+const Amount = styled.p<{
+  type: "BUY" | "SELL";
+}>`
   font: ${font.b1};
-  color: ${({ type }) => (type === 'BUY' ? color.red[500] : color.blue[500])};
+  color: ${({ type }) => (type === "BUY" ? color.red[500] : color.blue[500])};
   text-align: end;
 `;
 

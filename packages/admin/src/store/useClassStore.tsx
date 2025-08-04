@@ -56,9 +56,9 @@ export const useClassStore = create<ClassStore>()(
           state => ({
             classData: state.classData
               ? {
-                ...state.classData,
-                classArticles: articles,
-              }
+                  ...state.classData,
+                  classArticles: articles,
+                }
               : null,
           }),
           false,
@@ -69,9 +69,9 @@ export const useClassStore = create<ClassStore>()(
           state => ({
             classData: state.classData
               ? {
-                ...state.classData,
-                ...data,
-              }
+                  ...state.classData,
+                  ...data,
+                }
               : (data as ClassData),
           }),
           false,

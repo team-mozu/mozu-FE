@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 interface IRankingDivProp {
   rank: number;
@@ -9,15 +9,11 @@ interface IRankingDivProp {
   isOurTeam?: boolean;
 }
 
-export const RankingDiv = ({
-  rank,
-  teamName,
-  schoolName,
-  price,
-  isOurTeam = false,
-}: IRankingDivProp) => {
+export const RankingDiv = ({ rank, teamName, schoolName, price, isOurTeam = false }: IRankingDivProp) => {
   return (
-    <Wrapper rank={rank} isOurTeam={isOurTeam}>
+    <Wrapper
+      rank={rank}
+      isOurTeam={isOurTeam}>
       <Rank>
         <span>{rank}</span>등
       </Rank>
@@ -36,15 +32,18 @@ export const RankingDiv = ({
 };
 
 // RankingDiv 컴포넌트 스타일
-const Wrapper = styled.div<{ rank: number; isOurTeam: boolean }>`
+const Wrapper = styled.div<{
+  rank: number;
+  isOurTeam: boolean;
+}>`
   width: 100%;
   padding: 16px 20px;
   display: flex;
   gap: 16px;
   align-items: center;
   border-radius: 8px;
-  background-color: ${({ isOurTeam }) => isOurTeam ? color.orange[50] : color.white};
-  border: 2px solid ${({ isOurTeam }) => isOurTeam ? color.orange[300] : color.zinc[100]};
+  background-color: ${({ isOurTeam }) => (isOurTeam ? color.orange[50] : color.white)};
+  border: 2px solid ${({ isOurTeam }) => (isOurTeam ? color.orange[300] : color.zinc[100])};
   box-sizing: border-box;
   flex-wrap: wrap;
 `;

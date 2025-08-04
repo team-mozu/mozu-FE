@@ -174,25 +174,25 @@ export const ArticleTables = ({
   const columns: ColumnDef<DisplayArticle>[] = [
     ...(isEdit
       ? [
-        {
-          accessorKey: "checked",
-          header: () => (
-            <CheckBox
-              onChange={toggleAll}
-              checked={currentArticles.length > 0 && checkedArticleIds.length === currentArticles.length}
-              id="article-header-checkbox"
-            />
-          ),
-          cell: ({ row }: { row: Row<DisplayArticle> }) => (
-            <CheckBox
-              checked={row.original.checked}
-              onChange={() => toggleArticle(row.original.id)}
-              id={`article-row-${row.original.id}`}
-            />
-          ),
-          size: 52,
-        },
-      ]
+          {
+            accessorKey: "checked",
+            header: () => (
+              <CheckBox
+                onChange={toggleAll}
+                checked={currentArticles.length > 0 && checkedArticleIds.length === currentArticles.length}
+                id="article-header-checkbox"
+              />
+            ),
+            cell: ({ row }: { row: Row<DisplayArticle> }) => (
+              <CheckBox
+                checked={row.original.checked}
+                onChange={() => toggleArticle(row.original.id)}
+                id={`article-row-${row.original.id}`}
+              />
+            ),
+            size: 52,
+          },
+        ]
       : []),
     {
       accessorKey: "title",

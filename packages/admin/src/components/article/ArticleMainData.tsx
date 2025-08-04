@@ -28,7 +28,7 @@ export const ArticleMainData = ({ img, title, main }: IArticleMainDataType) => {
           <p>{title}</p>
         </ArticleTitle>
         <ArticleMain>
-          {lines.map((line) => (line.trim() === "" ? <br key={line} /> : <p key={line}>{line}</p>))}
+          {lines.map(line => (line.trim() === "" ? <br key={line} /> : <p key={line}>{line}</p>))}
         </ArticleMain>
       </ContentWrapper>
     </Container>

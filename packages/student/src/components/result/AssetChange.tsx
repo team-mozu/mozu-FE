@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { ArrowRight } from '@mozu/ui';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { ArrowRight } from "@mozu/ui";
 
 interface IProp {
   baseMoney: number;
@@ -12,12 +12,15 @@ export const AssetChange = ({ baseMoney = 0, totalMoney = 0 }: IProp) => {
     <Container>
       <Beginning>
         <label>초기 자산</label>
-        <p>{baseMoney.toLocaleString() ?? '0'}</p>
+        <p>{baseMoney.toLocaleString() ?? "0"}</p>
       </Beginning>
-      <ArrowRight size={24} color={color.black} />
-      <Final status={totalMoney > baseMoney ? 'profit' : totalMoney < baseMoney ? 'loss' : 'same'}>
+      <ArrowRight
+        size={24}
+        color={color.black}
+      />
+      <Final status={totalMoney > baseMoney ? "profit" : totalMoney < baseMoney ? "loss" : "same"}>
         <label>최종 자산</label>
-        <p>{totalMoney.toLocaleString() ?? '0'}원</p>
+        <p>{totalMoney.toLocaleString() ?? "0"}원</p>
       </Final>
     </Container>
   );
@@ -48,7 +51,9 @@ const Beginning = styled.div`
   }
 `;
 
-const Final = styled.div<{ status: 'profit' | 'loss' | 'same' }>`
+const Final = styled.div<{
+  status: "profit" | "loss" | "same";
+}>`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -59,11 +64,7 @@ const Final = styled.div<{ status: 'profit' | 'loss' | 'same' }>`
   }
   > p {
     font: ${font.t1};
-    color: ${(props) =>
-    props.status === "profit"
-      ? color.red[500]
-      : props.status === "loss"
-        ? color.blue[500]
-        : color.green[500]};
+    color: ${props =>
+      props.status === "profit" ? color.red[500] : props.status === "loss" ? color.blue[500] : color.green[500]};
   }
 `;

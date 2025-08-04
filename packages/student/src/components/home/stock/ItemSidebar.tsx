@@ -41,7 +41,7 @@ const ItemContent = ({
         <Logo
           src={itemLogo}
           alt={itemName}
-          onError={(e) => {
+          onError={e => {
             e.currentTarget.src = noImgIcon;
           }}
         />

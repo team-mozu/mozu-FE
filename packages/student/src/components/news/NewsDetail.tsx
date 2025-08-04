@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { noImgIcon } from '@mozu/ui';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { noImgIcon } from "@mozu/ui";
 
 interface IArticleMainDataType {
   img?: string;
@@ -14,7 +14,7 @@ export const NewsDetail = ({ img, title, main }: IArticleMainDataType) => {
       <ArticleImg
         src={img}
         alt="기사 이미지"
-        onError={(e) => {
+        onError={e => {
           e.currentTarget.src = noImgIcon;
         }}
       />

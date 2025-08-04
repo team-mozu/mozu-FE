@@ -7,10 +7,7 @@ interface IArticleMainDataType {
   main?: string;
 }
 
-export const ArticleMainDataSkeleton = ({
-  title,
-  main,
-}: IArticleMainDataType) => {
+export const ArticleMainDataSkeleton = ({ title, main }: IArticleMainDataType) => {
   const lines = main ? main.split("\n") : [];
 
   return (
@@ -21,9 +18,7 @@ export const ArticleMainDataSkeleton = ({
           <p>{title}</p>
         </ArticleTitle>
         <ArticleMain>
-          {lines.map((line) =>
-            line.trim() === "" ? <br key={line} /> : <p key={line}>{line}</p>
-          )}
+          {lines.map(line => (line.trim() === "" ? <br key={line} /> : <p key={line}>{line}</p>))}
         </ArticleMain>
       </ContentWrapper>
     </Container>

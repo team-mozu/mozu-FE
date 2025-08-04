@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 interface IInputType {
   placeholder: string;
@@ -30,7 +30,7 @@ export const MoneyInput = ({
   passwordVisible,
   setPasswordVisible,
 }: IInputType) => {
-  const inputType = type === 'password' && passwordVisible ? 'text' : type;
+  const inputType = type === "password" && passwordVisible ? "text" : type;
 
   return (
     <InputContainer>
@@ -42,8 +42,8 @@ export const MoneyInput = ({
           width={width}
           name={name}
           value={value}
-          maxLength={type !== 'number' ? maxLength : undefined}
-          max={type === 'number' ? max : undefined}
+          maxLength={type !== "number" ? maxLength : undefined}
+          max={type === "number" ? max : undefined}
           onChange={onChange}
         />
         {text && <Text>{text}</Text>}
@@ -71,8 +71,10 @@ const InputWrapper = styled.div`
   position: relative;
 `;
 
-const InputContent = styled.input<{ width?: string }>`
-  width: ${(props) => props.width || '100%'};
+const InputContent = styled.input<{
+  width?: string;
+}>`
+  width: ${props => props.width || "100%"};
   height: 48px;
   text-align: right;
   background-color: ${color.zinc[50]};

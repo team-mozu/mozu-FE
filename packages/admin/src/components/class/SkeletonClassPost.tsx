@@ -8,11 +8,7 @@ interface IPostType {
   onClick?: () => void;
 }
 
-export const SkeletonClassPost = ({
-  onClick,
-  title,
-  creationDate,
-}: IPostType) => {
+export const SkeletonClassPost = ({ onClick, title, creationDate }: IPostType) => {
   return (
     <PostContainer onClick={onClick}>
       <ContentContainer>

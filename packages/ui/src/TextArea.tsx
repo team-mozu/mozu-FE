@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 interface ITextAreaType {
   placeholder: string;
@@ -10,14 +10,7 @@ interface ITextAreaType {
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-export const TextArea = ({
-  placeholder,
-  label,
-  height,
-  value,
-  onChange,
-  name,
-}: ITextAreaType) => {
+export const TextArea = ({ placeholder, label, height, value, onChange, name }: ITextAreaType) => {
   return (
     <TextAreaContainer>
       <Label>{label}</Label>
@@ -26,8 +19,7 @@ export const TextArea = ({
         placeholder={placeholder}
         height={height}
         name={name}
-        onChange={onChange}
-      ></TextAreaContent>
+        onChange={onChange}></TextAreaContent>
     </TextAreaContainer>
   );
 };
@@ -44,7 +36,7 @@ const Label = styled.label`
   color: ${color.zinc[800]};
 `;
 
-const TextAreaContent = styled.textarea<Pick<ITextAreaType, 'height'>>`
+const TextAreaContent = styled.textarea<Pick<ITextAreaType, "height">>`
   width: 100%;
   height: ${({ height }) => height}px;
   padding: 14px 16px;

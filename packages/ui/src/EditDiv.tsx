@@ -8,25 +8,25 @@ interface IEditType {
   value1?: string;
   value2?: string;
   type1?:
-  | "startImg"
-  | "delImg"
-  | "editImg"
-  | "plusImg"
-  | "saveImg"
-  | "cancelImg"
-  | "logOutImg"
-  | "articleImg"
-  | "classImg";
+    | "startImg"
+    | "delImg"
+    | "editImg"
+    | "plusImg"
+    | "saveImg"
+    | "cancelImg"
+    | "logOutImg"
+    | "articleImg"
+    | "classImg";
   type2?:
-  | "startImg"
-  | "delImg"
-  | "editImg"
-  | "plusImg"
-  | "saveImg"
-  | "cancelImg"
-  | "logOutImg"
-  | "articleImg"
-  | "classImg";
+    | "startImg"
+    | "delImg"
+    | "editImg"
+    | "plusImg"
+    | "saveImg"
+    | "cancelImg"
+    | "logOutImg"
+    | "articleImg"
+    | "classImg";
   iconSize1?: number;
   iconSize2?: number;
   iconColor1?: string;

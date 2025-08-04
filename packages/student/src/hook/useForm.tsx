@@ -7,11 +7,11 @@ export const useForm = <T extends object>(initState: T) => {
     e:
       | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
       | {
-        target: {
-          name: string;
-          value: string | number;
-        };
-      },
+          target: {
+            name: string;
+            value: string | number;
+          };
+        },
   ) => {
     setState({
       ...state,

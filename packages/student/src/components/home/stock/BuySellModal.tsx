@@ -52,7 +52,6 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     teamData?.cashMoney,
   ]);
 
-
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   const maxQuantity = useMemo(() => {
     if (!stockData || !stockData.nowMoney || !holdItemData) return 0;

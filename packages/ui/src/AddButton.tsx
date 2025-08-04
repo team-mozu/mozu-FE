@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Plus } from './assets';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Plus } from "./assets";
 
 interface IAddButtonType {
   text: string;
@@ -12,7 +12,10 @@ export const AddButton = ({ text, onClick }: IAddButtonType) => {
     <AddButtonContainer onClick={onClick}>
       <Text>{text}</Text>
       <LogoContainer>
-        <Plus size={20} color={color.white} />
+        <Plus
+          size={20}
+          color={color.white}
+        />
       </LogoContainer>
     </AddButtonContainer>
   );

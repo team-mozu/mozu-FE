@@ -52,16 +52,16 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
     setDatas(prev =>
       prev
         ? prev.map((data, idx) =>
-          idx === index
-            ? {
-              ...data,
-              isClicked: true,
-            }
-            : {
-              ...data,
-              isClicked: false,
-            },
-        )
+            idx === index
+              ? {
+                  ...data,
+                  isClicked: true,
+                }
+              : {
+                  ...data,
+                  isClicked: false,
+                },
+          )
         : [],
     );
     // 탭 변경시 상세 보기 해제

@@ -14,11 +14,7 @@ interface IArticleModalType {
   }[];
 }
 
-export const AddArticleItemModal = ({
-  close,
-  onArticlesSelected,
-  existingArticles = [],
-}: IArticleModalType) => {
+export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticles = [] }: IArticleModalType) => {
   // API에서 기사 리스트 가져오기
   const { data: articleData } = useGetArticleList();
   const [searchText, setSearchText] = useState("");

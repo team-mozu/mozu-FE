@@ -42,11 +42,11 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
               isOurTeam={data.name === teamDetail?.name}
             />
           )) || (
-              <LoadingWrapper>
-                <LoadingSpinner />
-                <LoadingText>랭킹 데이터를 불러오는 중...</LoadingText>
-              </LoadingWrapper>
-            )}
+            <LoadingWrapper>
+              <LoadingSpinner />
+              <LoadingText>랭킹 데이터를 불러오는 중...</LoadingText>
+            </LoadingWrapper>
+          )}
         </RankingContainer>
 
         <ButtonDiv>

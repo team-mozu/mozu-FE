@@ -1,7 +1,6 @@
-import { createBrowserRouter } from 'react-router-dom';
-import { AppLayout } from '@/layout';
-import * as pages from '@/pages';
-
+import { createBrowserRouter } from "react-router-dom";
+import { AppLayout } from "@/layout";
+import * as pages from "@/pages";
 
 export const Router = createBrowserRouter([
   {
@@ -23,13 +22,13 @@ export const Router = createBrowserRouter([
                 element: <pages.StockManagementPage />,
               },
               {
-                path: 'edit',
+                path: "edit",
                 element: <pages.StockManagementEditPage />,
               },
             ],
           },
           {
-            path: 'add',
+            path: "add",
             element: <pages.StockManagementAddPage />,
           },
         ],
@@ -49,13 +48,13 @@ export const Router = createBrowserRouter([
                 element: <pages.ArticleManagementPage />,
               },
               {
-                path: 'edit',
+                path: "edit",
                 element: <pages.ArticleManagementEditPage />,
               },
             ],
           },
           {
-            path: 'add',
+            path: "add",
             element: <pages.ArticleManagementAddPage />,
           },
         ],
@@ -75,21 +74,21 @@ export const Router = createBrowserRouter([
                 element: <pages.ClassEnvironment />,
               },
               {
-                path: 'edit',
+                path: "edit",
                 element: <pages.ClassEdit />,
               },
               {
-                path: 'start',
+                path: "start",
                 element: <pages.InvestmentPreparation />,
               },
               {
-                path: 'monitoring',
+                path: "monitoring",
                 element: <pages.ImprovedClassMonitoringPage />,
               },
             ],
           },
           {
-            path: 'create',
+            path: "create",
             element: <pages.CreateClass />,
           },
         ],
@@ -97,7 +96,7 @@ export const Router = createBrowserRouter([
     ],
   },
   {
-    path: '/signin',
+    path: "/signin",
     element: <pages.SignInPage />,
   },
   {

@@ -11,14 +11,7 @@ interface IClassPostType {
   onClick?: () => void;
 }
 
-export const ClassPost = ({
-  title,
-  creationDate,
-  starOnClick,
-  isClick,
-  delClick,
-  onClick,
-}: IClassPostType) => {
+export const ClassPost = ({ title, creationDate, starOnClick, isClick, delClick, onClick }: IClassPostType) => {
   return (
     <PostContainer onClick={onClick}>
       <ContentContainer>
@@ -29,7 +22,7 @@ export const ClassPost = ({
           </TilteContainer>
           <Star
             size={20}
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               starOnClick && starOnClick(e);
             }}
@@ -40,14 +33,12 @@ export const ClassPost = ({
         <Button
           backgroundColor={color.zinc[50]}
           color={color.zinc[800]}
-
           borderColor={color.zinc[200]}
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             delClick && delClick(e);
           }}
-          hoverBackgroundColor={color.zinc[100]}
-        >
+          hoverBackgroundColor={color.zinc[100]}>
           삭제하기
         </Button>
       </ContentContainer>

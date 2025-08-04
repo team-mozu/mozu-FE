@@ -17,15 +17,15 @@ interface IButtonType {
   iconSize?: number;
   iconColor?: string;
   type?:
-  | "startImg"
-  | "delImg"
-  | "editImg"
-  | "plusImg"
-  | "saveImg"
-  | "cancelImg"
-  | "logOutImg"
-  | "articleImg"
-  | "classImg";
+    | "startImg"
+    | "delImg"
+    | "editImg"
+    | "plusImg"
+    | "saveImg"
+    | "cancelImg"
+    | "logOutImg"
+    | "articleImg"
+    | "classImg";
   isIcon?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   event?: MouseEventHandler<HTMLButtonElement>;

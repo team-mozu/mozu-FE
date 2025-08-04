@@ -26,15 +26,15 @@ export const useTeamStore = create<TeamStore>()(
   persist(
     (set, get) => ({
       teamInfoMap: {},
-      setTeamInfo: (team) =>
-        set((state) => ({
+      setTeamInfo: team =>
+        set(state => ({
           teamInfoMap: {
             ...state.teamInfoMap,
             [team.teamId]: team,
           },
         })),
       appendTrade: (teamId, trade) =>
-        set((state) => {
+        set(state => {
           const prev = state.teamInfoMap[teamId];
           if (!prev) return state;
 
@@ -43,24 +43,33 @@ export const useTeamStore = create<TeamStore>()(
               ...state.teamInfoMap,
               [teamId]: {
                 ...prev,
-                trade: [...(prev.trade ?? []), trade],
+                trade: [
+                  ...(prev.trade ?? []),
+                  trade,
+                ],
               },
             },
           };
         }),
-      getTeamInfo: (teamId) => get().teamInfoMap[teamId] ?? null,
-      clearTeamInfo: (teamId) => {
+      getTeamInfo: teamId => get().teamInfoMap[teamId] ?? null,
+      clearTeamInfo: teamId => {
         if (teamId === undefined) {
-          set({ teamInfoMap: {} });
+          set({
+            teamInfoMap: {},
+          });
         } else {
-          const newMap = { ...get().teamInfoMap };
+          const newMap = {
+            ...get().teamInfoMap,
+          };
           delete newMap[teamId];
-          set({ teamInfoMap: newMap });
+          set({
+            teamInfoMap: newMap,
+          });
         }
       },
     }),
     {
       name: "team-info-storage-multi",
-    }
-  )
+    },
+  ),
 );

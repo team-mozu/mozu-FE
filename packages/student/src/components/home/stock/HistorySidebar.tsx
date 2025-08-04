@@ -130,7 +130,8 @@ export const HistorySidebar = () => {
               {formattedData.valueProfit !== 0 ? (
                 <ProfitContainer profit={formattedData.valueProfit ?? 0}>
                   {(formattedData?.valueProfit ?? 0).toLocaleString().includes("-") ? "" : "+"}
-                  {(formattedData?.valueProfit ?? 0).toLocaleString()}원 ({roundToFixed(parseFloat(formattedProfitNum), 2)}%)
+                  {(formattedData?.valueProfit ?? 0).toLocaleString()}원 (
+                  {roundToFixed(parseFloat(formattedProfitNum), 2)}%)
                 </ProfitContainer>
               ) : null}
             </TotalAssetLeft>

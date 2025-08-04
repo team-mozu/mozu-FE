@@ -150,8 +150,8 @@ export const HoldStockTable = ({ holdItems }: { holdItems: HoldItem[] }) => {
                   {cell.column.id === "profit"
                     ? cell.column.columnDef.cell
                       ? (cell.column.columnDef.cell as any)({
-                        row,
-                      })
+                          row,
+                        })
                       : cell.renderValue()
                     : cell.renderValue()}
                 </Td>

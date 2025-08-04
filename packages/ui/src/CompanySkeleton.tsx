@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { css, keyframes } from '@emotion/react';
-import { color } from '@mozu/design-token';
+import { css, keyframes } from "@emotion/react";
+import { color } from "@mozu/design-token";
 
 export const CompanySkeleton = () => {
   return (

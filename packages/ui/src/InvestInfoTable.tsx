@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 interface IThProp {
   width: string;
@@ -12,8 +12,17 @@ interface classItem {
 }
 
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
-  const maxRound = Math.max(...classItems.map((item) => item.money.length - 2));
-  const header = ['종목 이름', '현재가', ...Array.from({ length: maxRound }, (_, i) => `${i + 1}차`)];
+  const maxRound = Math.max(...classItems.map(item => item.money.length - 2));
+  const header = [
+    "종목 이름",
+    "현재가",
+    ...Array.from(
+      {
+        length: maxRound,
+      },
+      (_, i) => `${i + 1}차`,
+    ),
+  ];
 
   return (
     <TableWrapper>
@@ -21,32 +30,40 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
         <thead>
           <tr>
             {header.map((data, index) => (
-              <Th key={data} width={index === 0 ? '25%' : '12.5%'}>
+              <Th
+                key={data}
+                width={index === 0 ? "25%" : "12.5%"}>
                 {data}
               </Th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {classItems.map((item) => (
+          {classItems.map(item => (
             <tr key={item.itemId}>
               <Td width="25%">{item.itemName}</Td>
-              <Td width="12.5%" alignRight>
+              <Td
+                width="12.5%"
+                alignRight>
                 {item.money[1].toLocaleString()}
               </Td>
-              {Array.from({ length: maxRound }, (_, idx) => {
-                const amount = item.money[idx + 2];
-                const isNumber = typeof amount === 'number';
-                return (
-                  <Td
-                    key={`${item.itemId}-${idx}`}
-                    width="12.5%"
-                    alignRight={isNumber}
-                  >
-                    {isNumber ? amount.toLocaleString() : '진행중..'}
-                  </Td>
-                );
-              })}
+              {Array.from(
+                {
+                  length: maxRound,
+                },
+                (_, idx) => {
+                  const amount = item.money[idx + 2];
+                  const isNumber = typeof amount === "number";
+                  return (
+                    <Td
+                      key={`${item.itemId}-${idx}`}
+                      width="12.5%"
+                      alignRight={isNumber}>
+                      {isNumber ? amount.toLocaleString() : "진행중.."}
+                    </Td>
+                  );
+                },
+              )}
             </tr>
           ))}
         </tbody>
@@ -92,11 +109,15 @@ const Th = styled.th<IThProp>`
   border: 1px solid ${color.zinc[200]};
 `;
 
-const Td = styled.td<IThProp & { alignRight?: boolean }>`
+const Td = styled.td<
+  IThProp & {
+    alignRight?: boolean;
+  }
+>`
   width: ${({ width }) => width};
   font: ${font.b2};
   padding: 12px 16px;
-  text-align: ${(props) => (props.alignRight ? "right" : "left")};
+  text-align: ${props => (props.alignRight ? "right" : "left")};
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.white};
 `;

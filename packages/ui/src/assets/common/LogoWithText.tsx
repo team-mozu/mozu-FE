@@ -10,14 +10,16 @@ export const LogoWithText = ({ width, height }: ILogoType) => {
       height={height}
       viewBox="0 0 74 28"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_1400_1262)">
         <path
           d="M4.66602 4.6665H11.666L19.8327 23.3332H12.8327L4.66602 4.6665Z"
           fill="#EA580C"
         />
-        <path d="M17.5 0H24.5L28 8.16667H21L17.5 0Z" fill="#EA580C" />
+        <path
+          d="M17.5 0H24.5L28 8.16667H21L17.5 0Z"
+          fill="#EA580C"
+        />
         <path
           d="M4.66667 4.6665H11.6667L7 27.9998H0L4.66667 4.6665Z"
           fill="#FDBA74"
@@ -33,7 +35,11 @@ export const LogoWithText = ({ width, height }: ILogoType) => {
       />
       <defs>
         <clipPath id="clip0_1400_1262">
-          <rect width="28" height="28" fill="white" />
+          <rect
+            width="28"
+            height="28"
+            fill="white"
+          />
         </clipPath>
       </defs>
     </svg>

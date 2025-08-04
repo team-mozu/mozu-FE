@@ -94,7 +94,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    data => { },
+    data => {},
     error => {
       console.log(error);
       Toast(`네트워크 에러 발생`, {

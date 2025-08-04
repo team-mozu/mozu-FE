@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 interface IArticleType {
   title: string;
@@ -9,15 +9,11 @@ interface IArticleType {
   articleNumber: number;
 }
 
-export const ArticleDiv = ({
-  title,
-  date,
-  onClick,
-  selected,
-  articleNumber,
-}: IArticleType) => {
+export const ArticleDiv = ({ title, date, onClick, selected, articleNumber }: IArticleType) => {
   return (
-    <ArticleDivContiner onClick={onClick} selected={selected}>
+    <ArticleDivContiner
+      onClick={onClick}
+      selected={selected}>
       <div>
         <ArticleNumber>{articleNumber}</ArticleNumber>
         <ArticleTitle selected={selected}>{title}</ArticleTitle>
@@ -27,7 +23,9 @@ export const ArticleDiv = ({
   );
 };
 
-const ArticleDivContiner = styled.div<{ selected: boolean }>`
+const ArticleDivContiner = styled.div<{
+  selected: boolean;
+}>`
   width: 100%;
   padding: 11px 16px;
   display: flex;
@@ -39,8 +37,7 @@ const ArticleDivContiner = styled.div<{ selected: boolean }>`
     display: flex;
     gap: 20px;
   }
-  background-color: ${({ selected }) =>
-    selected ? color.orange[50] : 'transparent'};
+  background-color: ${({ selected }) => (selected ? color.orange[50] : "transparent")};
   ${({ selected }) =>
     !selected &&
     `
@@ -50,7 +47,9 @@ const ArticleDivContiner = styled.div<{ selected: boolean }>`
   `}
 `;
 
-const ArticleTitle = styled.p<{ selected: boolean }>`
+const ArticleTitle = styled.p<{
+  selected: boolean;
+}>`
   max-width: 340px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -59,7 +58,9 @@ const ArticleTitle = styled.p<{ selected: boolean }>`
   color: ${({ selected }) => (selected ? color.orange[600] : color.black)};
 `;
 
-const DateDiv = styled.p<{ selected: boolean }>`
+const DateDiv = styled.p<{
+  selected: boolean;
+}>`
   font: ${font.l2};
   color: ${({ selected }) => (selected ? color.orange[600] : color.zinc[600])};
 `;

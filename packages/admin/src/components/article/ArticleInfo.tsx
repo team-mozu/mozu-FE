@@ -4,17 +4,16 @@ import { Button } from "@mozu/ui";
 import { useRef, useState } from "react";
 
 export const ArticleInfo = () => {
-  const [datas, setDatas] =
-    useState<
-      {
-        isClicked: boolean;
-        articleContent: [
-          {
-            title: string;
-          },
-        ];
-      }[]
-    >([]);
+  const [datas, setDatas] = useState<
+    {
+      isClicked: boolean;
+      articleContent: [
+        {
+          title: string;
+        },
+      ];
+    }[]
+  >([]);
   const [isClose, setIsClose] = useState<boolean>(false);
 
   const outSideRef = useRef<HTMLDivElement>(null);
@@ -33,13 +32,13 @@ export const ArticleInfo = () => {
       prev.map((data, idx) =>
         idx === index
           ? {
-            ...data,
-            isClicked: true,
-          }
+              ...data,
+              isClicked: true,
+            }
           : {
-            ...data,
-            isClicked: false,
-          },
+              ...data,
+              isClicked: false,
+            },
       ),
     );
   };
@@ -67,8 +66,8 @@ export const ArticleInfo = () => {
             <ArticleContainer>
               {datas
                 .filter(data => data.isClicked)
-                .map((data) =>
-                  data.articleContent.map((content) => (
+                .map(data =>
+                  data.articleContent.map(content => (
                     <ArticleContent key={content.title}>{content.title}</ArticleContent>
                   )),
                 )}

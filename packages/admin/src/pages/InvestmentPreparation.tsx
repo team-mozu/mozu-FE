@@ -14,7 +14,12 @@ export const InvestmentPreparation = () => {
   const { data: classNameData } = useGetClassDetail(classId ?? 0);
   const [inviteCode] = useState(() => localStorage.getItem("inviteCode") || "로딩중...");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [datas, setDatas] = useState<{ teams: { title: string; school: string }[] }>({
+  const [datas, setDatas] = useState<{
+    teams: {
+      title: string;
+      school: string;
+    }[];
+  }>({
     teams: [],
   });
 

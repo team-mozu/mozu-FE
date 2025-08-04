@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
 
 interface IAccountsType {
   title?: string;
@@ -7,9 +7,7 @@ interface IAccountsType {
 }
 
 export const Accounts = ({ title, content }: IAccountsType) => {
-  const formattedContent = typeof content === 'number'
-    ? content.toLocaleString('ko-KR')
-    : content;
+  const formattedContent = typeof content === "number" ? content.toLocaleString("ko-KR") : content;
 
   return (
     <AccountsContainer>

@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { color, font } from '@mozu/design-token';
-import { Dot } from './assets';
+import styled from "@emotion/styled";
+import { color, font } from "@mozu/design-token";
+import { Dot } from "./assets";
 
 interface ITeamType {
   title: string;

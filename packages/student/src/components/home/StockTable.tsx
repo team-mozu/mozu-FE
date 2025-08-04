@@ -235,11 +235,11 @@ export const StockTable = () => {
                   }}>
                   {cell.column.columnDef.cell
                     ? (cell.column.columnDef.cell as any)({
-                      row: cell.row,
-                      getValue: () => cell.getValue(),
-                      renderValue: () => cell.getValue(),
-                      cell: cell,
-                    })
+                        row: cell.row,
+                        getValue: () => cell.getValue(),
+                        renderValue: () => cell.getValue(),
+                        cell: cell,
+                      })
                     : String(cell.getValue() || "")}
                 </Td>
               ))}

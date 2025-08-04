@@ -21,7 +21,7 @@ interface DealContent {
   itemMoney: number;
   orderCount: number;
   totalMoney: number;
-  orderType: 'BUY' | 'SELL';
+  orderType: "BUY" | "SELL";
   invDeg: number;
 }
 
@@ -29,15 +29,28 @@ interface TeamInvestStatusTableProps {
   contents: DealContent[];
 }
 
-export const TeamInvestStatusTable = ({
-  contents,
-}: TeamInvestStatusTableProps) => {
+export const TeamInvestStatusTable = ({ contents }: TeamInvestStatusTableProps) => {
   const header = [
-    { text: "구분", width: "140px" },
-    { text: "종목 이름", width: "320px" },
-    { text: "거래 가격", width: "160px" },
-    { text: "수량", width: "120px" },
-    { text: "수익률", width: "260px" },
+    {
+      text: "구분",
+      width: "140px",
+    },
+    {
+      text: "종목 이름",
+      width: "320px",
+    },
+    {
+      text: "거래 가격",
+      width: "160px",
+    },
+    {
+      text: "수량",
+      width: "120px",
+    },
+    {
+      text: "수익률",
+      width: "260px",
+    },
   ];
 
   const renderRate = (item: DealContent) => {
@@ -45,9 +58,7 @@ export const TeamInvestStatusTable = ({
     const rateAmount = item.totalMoney - buyAmount;
     const ratePercent = ((rateAmount / buyAmount) * 100).toFixed(2);
     const sign = rateAmount >= 0 ? "+" : "-";
-    return `${sign}${Math.abs(rateAmount).toLocaleString()} (${sign}${Math.abs(
-      +ratePercent
-    )}%)`;
+    return `${sign}${Math.abs(rateAmount).toLocaleString()} (${sign}${Math.abs(+ratePercent)}%)`;
   };
 
   return (
@@ -59,8 +70,7 @@ export const TeamInvestStatusTable = ({
               key={index}
               width={data.width}
               textAlign={index !== 1 ? "center" : "left"}
-              padding={index !== 1 ? "0px" : "16px"}
-            >
+              padding={index !== 1 ? "0px" : "16px"}>
               {data.text}
             </Th>
           ))}
@@ -68,20 +78,15 @@ export const TeamInvestStatusTable = ({
       </Thead>
       <Tbody>
         {contents && contents.length > 0 ? (
-          contents.map((item) => (
+          contents.map(item => (
             <tr key={item.id}>
               <Td
                 width="140px"
                 textAlign="center"
                 padding="0px"
                 color={
-                  item.orderType === "BUY"
-                    ? color.red[500]
-                    : item.orderType === "SELL"
-                      ? color.blue[500]
-                      : color.black
-                }
-              >
+                  item.orderType === "BUY" ? color.red[500] : item.orderType === "SELL" ? color.blue[500] : color.black
+                }>
                 {item.orderType === "BUY" ? "매수" : "매도"}
               </Td>
 
@@ -89,8 +94,7 @@ export const TeamInvestStatusTable = ({
                 width="320px"
                 textAlign="left"
                 padding="0 0 0 16px"
-                color={color.black}
-              >
+                color={color.black}>
                 {item.itemName}
               </Td>
 
@@ -98,8 +102,7 @@ export const TeamInvestStatusTable = ({
                 width="160px"
                 textAlign="right"
                 padding="0 16px 0 0"
-                color={color.black}
-              >
+                color={color.black}>
                 {item.itemMoney.toLocaleString()}
               </Td>
 
@@ -107,8 +110,7 @@ export const TeamInvestStatusTable = ({
                 width="120px"
                 textAlign="center"
                 padding="0"
-                color={color.black}
-              >
+                color={color.black}>
                 {item.orderCount}
               </Td>
 
@@ -116,8 +118,7 @@ export const TeamInvestStatusTable = ({
                 width="260px"
                 textAlign="right"
                 padding="0px 16px 0px 0px"
-                color={color.black}
-              >
+                color={color.black}>
                 {item.totalMoney.toLocaleString()}
                 <RateDiv
                   color={
@@ -126,8 +127,7 @@ export const TeamInvestStatusTable = ({
                       : item.totalMoney - item.itemMoney * item.orderCount < 0
                         ? color.blue[500]
                         : color.green[600]
-                  }
-                >
+                  }>
                   {renderRate(item)}
                 </RateDiv>
               </Td>
@@ -135,7 +135,10 @@ export const TeamInvestStatusTable = ({
           ))
         ) : (
           <tr>
-            <Td width="100%" padding="20px" colSpan={5}>
+            <Td
+              width="100%"
+              padding="20px"
+              colSpan={5}>
               데이터가 없습니다.
             </Td>
           </tr>
@@ -145,9 +148,11 @@ export const TeamInvestStatusTable = ({
   );
 };
 
-const RateDiv = styled.div<{ color: string }>`
+const RateDiv = styled.div<{
+  color: string;
+}>`
   font: ${font.l1};
-  color: ${(props) => props.color};
+  color: ${props => props.color};
 `;
 
 const Table = styled.table`
@@ -163,20 +168,20 @@ const Th = styled.th<IThProps>`
   display: flex;
   border: 1px solid ${color.zinc[200]};
   align-items: center;
-  width: ${(props) => props.width};
-  justify-content: ${(props) => props.textAlign};
-  padding-left: ${(props) => props.padding};
+  width: ${props => props.width};
+  justify-content: ${props => props.textAlign};
+  padding-left: ${props => props.padding};
 `;
 
 const Td = styled.td<ITdProps>`
   font: ${font.b2};
   border: 1px solid ${color.zinc[200]};
   height: 64px;
-  color: ${(props) => props.color};
-  padding: ${(props) => props.padding};
+  color: ${props => props.color};
+  padding: ${props => props.padding};
   display: flex;
   flex-direction: column;
-  text-align: ${(props) => props.textAlign};
+  text-align: ${props => props.textAlign};
   justify-content: center;
 `;
 
