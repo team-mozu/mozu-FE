@@ -45,7 +45,10 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
           (pathname.split("/")[3] === "start" || pathname.split("/")[3] === "monitoring")
         )
       }>
-      <LogoContainer onClick={() => navigate(isAdmin ? "/class-management" : `/${classId}`)}>
+      <LogoContainer onClick={() => {
+        if (isResultPage || isWaitPage) return;
+        navigate(isAdmin ? "/class-management" : `/${classId}`);
+      }}>
         <LogoWithText
           width={74}
           height={28}

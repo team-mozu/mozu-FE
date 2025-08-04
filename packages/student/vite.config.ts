@@ -18,9 +18,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(process.cwd(), "./src"),
-      "@mozu/design-token": path.resolve(__dirname, "../design-token"),
-      "@mozu/ui": path.resolve(__dirname, "../ui"),
-      "@mozu/util-config": path.resolve(__dirname, "../util-config"),
+      "@mozu/design-token": path.resolve(__dirname, "../design-token/src"),
+      "@mozu/ui": path.resolve(__dirname, "../ui/src"),
+      "@mozu/util-config": path.resolve(__dirname, "../util-config/src"),
     },
   },
   optimizeDeps: {
@@ -33,6 +33,8 @@ export default defineConfig({
       "@emotion/use-insertion-effect-with-fallbacks",
       "hoist-non-react-statics",
       "scheduler",
+    ],
+    exclude: [
       "@mozu/ui",
       "@mozu/design-token",
       "@mozu/util-config",

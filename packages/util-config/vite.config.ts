@@ -1,5 +1,7 @@
-import { defineConfig } from "vite";
 import path from "path";
+import { defineConfig } from "vite";
+
+const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   build: {
@@ -23,8 +25,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
-      "@mozu/ui": path.resolve(__dirname, "../ui"),
+      "@": path.resolve(__dirname, "./src"),
+      "@mozu/ui": path.resolve(__dirname, "../ui/src"),
     },
   },
 });
