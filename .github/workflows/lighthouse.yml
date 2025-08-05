@@ -1,0 +1,143 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/**
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  lighthouse:
+    name: Run Lighthouse CI for ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [admin, student]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Setup environment variables
+        run: |
+          echo "TEST_ID=${{ secrets.TEST_ID }}" >> $GITHUB_ENV
+          echo "TEST_PW=${{ secrets.TEST_PW }}" >> $GITHUB_ENV
+
+      - name: Build application (${{ matrix.app }})
+        run: yarn build
+
+      - name: Run Lighthouse CI for ${{ matrix.app }}
+        run: npx lhci autorun --config=./.lighthouserc.json
+        working-directory: ./packages/${{ matrix.app }}
+
+      - name: Comment PR with Lighthouse results (${{ matrix.app }})
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            const appName = process.env.APP_NAME; // 매트릭스 앱 이름 가져오기
+            const reportsDir = `./packages/${appName}/lhci_reports`; // 동적 경로 설정
+            
+            try {
+              if (!fs.existsSync(reportsDir)) {
+                console.log(`No Lighthouse reports found for ${appName}`);
+                return;
+              }
+              
+              const files = fs.readdirSync(reportsDir);
+              const reportFiles = files.filter(f => f.endsWith('.json'));
+              
+              if (reportFiles.length === 0) {
+                console.log(`No JSON reports found for ${appName}`);
+                return;
+              }
+              
+              // 첫 번째 리포트 파일 읽기 (가장 최근 파일일 가능성 높음)
+              const reportPath = path.join(reportsDir, reportFiles[0]);
+              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+              
+              // 성능 점수 추출
+              const scores = {
+                performance: Math.round(report.categories.performance.score * 100),
+                accessibility: Math.round(report.categories.accessibility.score * 100),
+                'best-practices': Math.round(report.categories['best-practices'].score * 100),
+                seo: Math.round(report.categories.seo.score * 100)
+              };
+              
+              // 점수별 이모지
+              const getEmoji = (score) => {
+                if (score >= 90) return '🟢';
+                if (score >= 50) return '🟡';
+                return '🔴';
+              };
+              
+              // PR 코멘트 생성
+              const comment = `## 🚨 Lighthouse CI Results for `${appName}`
+              
+              | Category | Score | Status |
+              |----------|-------|--------|
+              | Performance | ${scores.performance} | ${getEmoji(scores.performance)} |
+              | Accessibility | ${scores.accessibility} | ${getEmoji(scores.accessibility)} |
+              | Best Practices | ${scores['best-practices']} | ${getEmoji(scores['best-practices'])} |
+              | SEO | ${scores.seo} | ${getEmoji(scores.seo)} |
+              
+              📊 **Detailed Report**: Check the [Lighthouse CI artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+              
+              ${scores.performance < 50 ? '⚠️ **Performance Warning**: Score is below 50. Consider optimizing.' : ''}
+              ${scores.accessibility < 70 ? '⚠️ **Accessibility Warning**: Score is below 70. Please review accessibility issues.' : ''}
+              `;
+              
+              // PR에 코멘트 추가
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+              
+            } catch (error) {
+              console.error('Error posting comment:', error);
+            }
+        env:
+          APP_NAME: ${{ matrix.app }} # 매트릭스 앱 이름을 환경 변수로 전달
+
+      - name: Upload Lighthouse reports for ${{ matrix.app }}
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports-${{ matrix.app }}-${{ github.sha }}
+          path: |
+            ./packages/${{ matrix.app }}/lhci_reports/
+            ./packages/${{ matrix.app }}/lighthouse-debug.log
+            ./packages/${{ matrix.app }}/url-collection.json
+          retention-days: 30
