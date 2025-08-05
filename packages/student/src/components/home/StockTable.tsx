@@ -20,8 +20,8 @@ interface StockData {
   };
 }
 
-export const StockTable = () => {
-  const { data, isLoading, error } = useGetHoldItems();
+export const StockTable = ({ isMock = false }: { isMock?: boolean }) => {
+  const { data, isLoading, error } = useGetHoldItems({ queryKey: ["getHoldItem"], enabled: !isMock });
   const navigate = useNavigate();
 
   // 종목 이름 클릭 핸들러

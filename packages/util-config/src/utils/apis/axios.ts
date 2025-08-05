@@ -65,7 +65,9 @@ instance.interceptors.response.use(
             });
         } else {
           removeTokens("admin");
-          window.location.replace("/signin");
+          if (!window.location.pathname.includes("__test__")) {
+            window.location.replace("/signin");
+          }
         }
       } else return Promise.reject(error);
     }
