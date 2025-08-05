@@ -111,7 +111,7 @@ jobs:
               | Best Practices | ${scores['best-practices']} | ${getEmoji(scores['best-practices'])} |
               | SEO | ${scores.seo} | ${getEmoji(scores.seo)} |
               
-              📊 **Detailed Report**: Check the [Lighthouse CI artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+              📊 **Detailed Report**: Check the [Lighthouse CI artifacts](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
               
               ${scores.performance < 50 ? '⚠️ **Performance Warning**: Score is below 50. Consider optimizing.' : ''}
               ${scores.accessibility < 70 ? '⚠️ **Accessibility Warning**: Score is below 70. Please review accessibility issues.' : ''}
