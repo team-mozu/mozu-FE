@@ -32,6 +32,7 @@
     "cz-customizable": "^7.4.0",
     "husky": "^8.0.0",
     "jira-prepare-commit-msg": "^1.7.2",
+    "react-cosmos": "^7.0.0",
     "typescript": "^5.7.3"
   },
   "resolutions": {
