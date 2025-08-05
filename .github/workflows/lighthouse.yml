@@ -75,22 +75,85 @@ jobs:
               }
               
               const files = fs.readdirSync(reportsDir);
-              const reportFiles = files.filter(f => f.endsWith('.json'));
+              console.log(`발견된 파일들: ${files.join(', ')}`);
               
-              if (reportFiles.length === 0) {
-                console.log(`${appName}에 대한 JSON 리포트를 찾을 수 없습니다.`);
-                return;
+              // manifest.json 파일 찾기 (LHCI 요약 파일)
+              const manifestFile = files.find(f => f === 'manifest.json');
+              
+              if (manifestFile) {
+                // manifest.json 사용 (LHCI 요약 데이터)
+                const manifestPath = path.join(reportsDir, manifestFile);
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+                console.log(`매니페스트 파일에서 ${manifest.length}개의 리포트 발견`);
+                
+                // representative run (대표 실행) 데이터만 필터링하거나, 없으면 첫 번째 데이터 사용
+                const representativeReports = manifest.filter(report => report.isRepresentativeRun);
+                const reportsToUse = representativeReports.length > 0 ? representativeReports : manifest.slice(0, 6);
+                
+                // 각 카테고리별 평균 점수 계산
+                const avgScores = {
+                  performance: 0,
+                  accessibility: 0,
+                  'best-practices': 0,
+                  seo: 0
+                };
+                
+                reportsToUse.forEach(report => {
+                  if (report.summary) {
+                    avgScores.performance += report.summary.performance || 0;
+                    avgScores.accessibility += report.summary.accessibility || 0;
+                    avgScores['best-practices'] += report.summary['best-practices'] || 0;
+                    avgScores.seo += report.summary.seo || 0;
+                  }
+                });
+                
+                const reportCount = reportsToUse.length;
+                const scores = {
+                  performance: Math.round((avgScores.performance / reportCount) * 100),
+                  accessibility: Math.round((avgScores.accessibility / reportCount) * 100),
+                  'best-practices': Math.round((avgScores['best-practices'] / reportCount) * 100),
+                  seo: Math.round((avgScores.seo / reportCount) * 100)
+                };
+                
+                console.log(`${reportCount}개 리포트의 평균 점수:`, scores);
+                
+              } else {
+                // 개별 JSON 리포트 파일들 찾기 (fallback)
+                const reportFiles = files.filter(f => f.endsWith('.json') && f !== 'manifest.json');
+                
+                if (reportFiles.length === 0) {
+                  console.log(`${appName}에 대한 JSON 리포트를 찾을 수 없습니다.`);
+                  return;
+                }
+                
+                console.log(`개별 리포트 파일들: ${reportFiles.join(', ')}`);
+                
+                const reportPath = path.join(reportsDir, reportFiles[0]);
+                const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+                
+                if (!report.categories) {
+                  console.log('리포트에 categories가 없습니다. 전체 구조:', Object.keys(report));
+                  return;
+                }
+                
+                const getScore = (category) => {
+                  const cat = report.categories[category];
+                  if (!cat || typeof cat.score !== 'number') {
+                    console.log(`${category} 카테고리가 없거나 점수가 유효하지 않습니다.`);
+                    return 0;
+                  }
+                  return Math.round(cat.score * 100);
+                };
+                
+                const scores = {
+                  performance: getScore('performance'),
+                  accessibility: getScore('accessibility'),
+                  'best-practices': getScore('best-practices'),
+                  seo: getScore('seo')
+                };
+                
+                console.log('개별 리포트에서 추출된 점수들:', scores);
               }
-              
-              const reportPath = path.join(reportsDir, reportFiles[0]);
-              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-              
-              const scores = {
-                performance: Math.round(report.categories.performance.score * 100),
-                accessibility: Math.round(report.categories.accessibility.score * 100),
-                'best-practices': Math.round(report.categories['best-practices'].score * 100),
-                seo: Math.round(report.categories.seo.score * 100)
-              };
               
               const getEmoji = (score) => {
                 if (score >= 90) return '🟢';
