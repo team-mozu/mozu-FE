@@ -51,7 +51,7 @@ jobs:
           echo "TEST_PW=${{ secrets.TEST_PW }}" >> $GITHUB_ENV
 
       - name: Build application (${{ matrix.app }})
-        run: yarn build
+        run: yarn workspace @mozu/${{ matrix.app }} build
 
       - name: Run Lighthouse CI for ${{ matrix.app }}
         run: npx lhci autorun --config=./.lighthouserc.json
