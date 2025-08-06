@@ -83,6 +83,7 @@ export const SignInPage = () => {
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </div>
         <LoginButton
+          type="submit"
           onClick={handleLogin}
           disabled={
             !isTruthValues([

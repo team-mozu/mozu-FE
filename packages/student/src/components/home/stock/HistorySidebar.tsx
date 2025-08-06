@@ -17,6 +17,14 @@ interface ITransactionContentType {
   isBuy?: boolean;
 }
 
+interface ITeamEndProps {
+  itemId: number;
+  itemName: string;
+  orderType: "BUY" | "SELL";
+  totalMoney: number;
+  itemMoney: number;
+}
+
 const TransactionContent = ({ keyword, name, totalPrice, stockPrice, id, onDelete }: ITransactionContentType) => {
   const isBuy = keyword === "BUY";
 
@@ -42,15 +50,58 @@ const TransactionContent = ({ keyword, name, totalPrice, stockPrice, id, onDelet
   );
 };
 
-export const HistorySidebar = () => {
-  const { data, isLoading } = useGetTeamDetail();
+// Mock Data
+const mockTeamData = {
+  name: "모의팀",
+  totalMoney: 12345678,
+  profitNum: "+12.34%",
+  valueProfit: 1234567,
+  baseMoney: 10000000,
+  cashMoney: 5000000,
+  valueMoney: 7345678,
+};
+
+const mockTradeData: ITeamEndProps[] = [
+  {
+    itemId: 101,
+    itemName: "모의주식A",
+    orderType: "BUY",
+    totalMoney: 500000,
+    itemMoney: 70000,
+  },
+  {
+    itemId: 102,
+    itemName: "모의주식B",
+    orderType: "SELL",
+    totalMoney: 200000,
+    itemMoney: 50000,
+  },
+  {
+    itemId: 103,
+    itemName: "모의주식C",
+    orderType: "BUY",
+    totalMoney: 300000,
+    itemMoney: 80000,
+  },
+];
+
+export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
+  const { data: realTeamData, isLoading } = useGetTeamDetail({ queryKey: ["getTeam"], enabled: !isMock });
+
+  // isMock 값에 따라 실제 데이터 또는 목 데이터를 사용
+  const teamData = isMock ? mockTeamData : realTeamData;
+
   const [isOpen, setIsOpen] = useState(false);
-  const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
-  const [cashMoney, setCashMoney] = useLocalStorage<number>("cashMoney", 0);
+  const [realTradeData, setRealTradeData] = useLocalStorage<TeamEndProps>("trade", []);
+  const [realCashMoney, setRealCashMoney] = useLocalStorage<number>("cashMoney", 0);
+
+  // isMock 값에 따라 실제 데이터 또는 목 데이터를 사용
+  const tradeData = isMock ? mockTradeData : realTradeData;
+  const cashMoney = isMock ? mockTeamData.cashMoney : realCashMoney;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   const setCashMoneyStable = useCallback((value: number) => {
-    setCashMoney(value);
+    setRealCashMoney(value);
   }, []);
 
   const totalBuy = tradeData
@@ -62,51 +113,67 @@ export const HistorySidebar = () => {
   const buyableAmount = cashMoney;
 
   useEffect(() => {
-    if (data?.cashMoney !== undefined) {
-      setCashMoneyStable(data.cashMoney);
+    if (!isMock && realTeamData?.cashMoney !== undefined) {
+      setCashMoneyStable(realTeamData.cashMoney);
     }
   }, [
-    data,
+    realTeamData,
     setCashMoneyStable,
+    isMock,
   ]);
 
   const formattedData = {
-    teamName: data?.name,
-    totalMoney: data?.totalMoney.toLocaleString(),
+    teamName: teamData?.name,
+    totalMoney: teamData?.totalMoney.toLocaleString(),
     cashMoney: cashMoney.toLocaleString(),
-    valueMoney: ((data?.valueMoney ?? 0) + totalBuy - totalSell).toLocaleString(),
-    valueProfit: data?.valueProfit,
-    profitNum: data?.profitNum,
+    valueMoney: ((teamData?.valueMoney ?? 0) + totalBuy - totalSell).toLocaleString(),
+    valueProfit: teamData?.valueProfit,
+    profitNum: teamData?.profitNum,
     totalBuy: totalBuy.toLocaleString(),
     totalSell: totalSell.toLocaleString(),
     buyableAmount: buyableAmount.toLocaleString(),
   };
-  const fixedProfitNum = Number(data?.profitNum.replace("%", "")).toFixed(3);
+  const fixedProfitNum = Number(teamData?.profitNum.replace("%", "")).toFixed(3);
   const formattedProfitNum = fixedProfitNum.includes("-") ? `${fixedProfitNum}%` : `+${fixedProfitNum}%`;
-  if (isLoading || !data) return null;
+
+  // Mock 페이지에서는 로딩 상태를 표시하지 않음
+  if (!isMock && (isLoading || !teamData)) return null;
 
   // biome-ignore lint/correctness/useHookAtTopLevel: <임시>
-  const sameValue: boolean = useUnchangedValue(data?.totalMoney.toLocaleString(), data?.baseMoney.toLocaleString());
+  const sameValue: boolean = useUnchangedValue(
+    (teamData?.totalMoney ?? 0).toLocaleString(),
+    (teamData?.baseMoney ?? 0).toLocaleString()
+  );
 
   const IsOpen = () => {
     setIsOpen(true);
   };
 
   const handleDeleteTransaction = (deletedId: number) => {
-    const deletedTrade = tradeData.find(tradeItem => {
+    // Mock 모드에서는 실제 로컬 스토리지 업데이트 대신 목 데이터만 변경
+    if (isMock) {
+      // 목 데이터는 불변성을 유지하기 위해 복사 후 필터링
+      const updatedMockTradeData = (tradeData as ITeamEndProps[]).filter(item => item.itemId !== deletedId);
+      // 실제 목 데이터 상태를 업데이트하는 로직이 필요하다면 여기에 추가
+      // (현재는 목 데이터가 상수이므로 직접 업데이트하지 않음)
+      console.log("Mock transaction deleted:", updatedMockTradeData);
+      return;
+    }
+
+    const deletedTrade = realTradeData.find(tradeItem => {
       return tradeItem.itemId === deletedId;
     });
 
     if (!deletedTrade) return;
 
     if (deletedTrade?.orderType === "BUY") {
-      setCashMoney(cashMoney + deletedTrade?.totalMoney);
+      setRealCashMoney(realCashMoney + deletedTrade?.totalMoney);
     } else {
-      setCashMoney(cashMoney - deletedTrade?.totalMoney);
+      setRealCashMoney(realCashMoney - deletedTrade?.totalMoney);
     }
 
-    setTradeData(
-      tradeData.filter(tradeItem => {
+    setRealTradeData(
+      realTradeData.filter(tradeItem => {
         return tradeItem.itemId !== deletedId;
       }),
     );
@@ -124,11 +191,11 @@ export const HistorySidebar = () => {
             <TotalAssetLeft>
               <Title>총 평가 자산</Title>
               <TotalAssetPrice
-                color={sameValue ? color.green[600] : data.valueProfit > 0 ? color.red[500] : color.blue[500]}>
+                color={sameValue ? color.green[600] : (teamData?.valueProfit ?? 0) > 0 ? color.red[500] : color.blue[500]}>
                 {formattedData.totalMoney}원
               </TotalAssetPrice>
-              {formattedData.valueProfit !== 0 ? (
-                <ProfitContainer profit={formattedData.valueProfit ?? 0}>
+              {(teamData?.valueProfit ?? 0) !== 0 ? (
+                <ProfitContainer profit={teamData?.valueProfit ?? 0}>
                   {(formattedData?.valueProfit ?? 0).toLocaleString().includes("-") ? "" : "+"}
                   {(formattedData?.valueProfit ?? 0).toLocaleString()}원 (
                   {roundToFixed(parseFloat(formattedProfitNum), 2)}%)
@@ -137,7 +204,7 @@ export const HistorySidebar = () => {
             </TotalAssetLeft>
 
             <TeamContainer>
-              <TeamContent>{data.name}</TeamContent>
+              <TeamContent>{teamData?.name}</TeamContent>
             </TeamContainer>
           </TotalAssetContainer>
           <HoldContainer>
@@ -153,9 +220,7 @@ export const HistorySidebar = () => {
           <SectionTitle>거래내역</SectionTitle>
         </UpperContainer>
         <TransactionHistoryContents>
-          {[
-            ...tradeData,
-          ]
+          {[...(tradeData as ITeamEndProps[])]
             .reverse()
             .map(data => (
               <TransactionContent
@@ -209,7 +274,6 @@ const CancleBtn = styled.button`
   line-height: 1.2;
   color: ${color.zinc[800]};
   cursor: pointer;
-  white-space: nowrap;
   
   :hover {
     background-color: ${color.zinc[100]};
@@ -316,7 +380,7 @@ const TransactionContainer = styled.div`
 
 const TransactionContentContainer = styled.div`
   display: flex;
-  gap: clamp(0.75rem, 1.5vw, 1.125rem);
+  gap: clamp(0.75rem, 1.5vw, 1.125rem);;
   align-items: center;
   flex-wrap: wrap;
 `;

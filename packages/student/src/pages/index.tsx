@@ -99,6 +99,19 @@ export const NotFoundPage = lazy(() =>
     }),
 );
 
+export const MockStudentClassPage = lazy(() =>
+  import("@/pages/mocks/MockStudentClassPage")
+    .then(module => ({
+      default: module.MockStudentClassPage,
+    }))
+    .catch(error => {
+      console.error("MockStudentClassPage 로드 실패:", error);
+      return {
+        default: () => <div>페이지를 불러올 수 없습니다.</div>,
+      };
+    }),
+);
+
 export const EndingPage = lazy(() =>
   import("@/pages/EndingPage")
     .then(module => ({
@@ -111,3 +124,5 @@ export const EndingPage = lazy(() =>
       };
     }),
 );
+
+export * from "./mocks";

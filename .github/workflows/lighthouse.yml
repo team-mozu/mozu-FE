@@ -1,0 +1,213 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/**
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  lighthouse:
+    name: ${{ matrix.app }} 라이트하우스 CI 실행
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [admin, student]
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: 의존성 설치
+        run: yarn install --frozen-lockfile
+
+      - name: 환경 변수 설정
+        run: |
+          echo "TEST_ID=${{ secrets.TEST_ID }}" >> $GITHUB_ENV
+          echo "TEST_PW=${{ secrets.TEST_PW }}" >> $GITHUB_ENV
+
+      - name: ${{ matrix.app }} 애플리케이션 빌드
+        run: yarn workspace @mozu/${{ matrix.app }} build
+
+      - name: ${{ matrix.app }} 라이트하우스 CI 실행
+        run: npx lhci autorun --config=./.lighthouserc.json
+        working-directory: ./packages/${{ matrix.app }}
+
+      - name: ${{ matrix.app }} 라이트하우스 결과 PR 댓글 추가
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            const appName = process.env.APP_NAME;
+            const reportsDir = `./packages/${appName}/lhci_reports`;
+            
+            try {
+              if (!fs.existsSync(reportsDir)) {
+                console.log(`${appName}에 대한 라이트하우스 리포트를 찾을 수 없습니다.`);
+                return;
+              }
+              
+              const files = fs.readdirSync(reportsDir);
+              console.log(`발견된 파일들: ${files.join(', ')}`);
+              
+              let scores = {
+                performance: 0,
+                accessibility: 0,
+                'best-practices': 0,
+                seo: 0
+              };
+              let reportCount = 0;
+              let manifestFile = null;
+              
+              // manifest.json 파일 찾기 (LHCI 요약 파일)
+              manifestFile = files.find(f => f === 'manifest.json');
+              
+              if (manifestFile) {
+                // manifest.json 사용 (LHCI 요약 데이터)
+                const manifestPath = path.join(reportsDir, manifestFile);
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+                console.log(`매니페스트 파일에서 ${manifest.length}개의 리포트 발견`);
+                
+                // representative run (대표 실행) 데이터만 필터링하거나, 없으면 첫 번째 데이터 사용
+                const representativeReports = manifest.filter(report => report.isRepresentativeRun);
+                const reportsToUse = representativeReports.length > 0 ? representativeReports : manifest.slice(0, 6);
+                
+                // 각 카테고리별 평균 점수 계산
+                const avgScores = {
+                  performance: 0,
+                  accessibility: 0,
+                  'best-practices': 0,
+                  seo: 0
+                };
+                
+                reportsToUse.forEach(report => {
+                  if (report.summary) {
+                    avgScores.performance += report.summary.performance || 0;
+                    avgScores.accessibility += report.summary.accessibility || 0;
+                    avgScores['best-practices'] += report.summary['best-practices'] || 0;
+                    avgScores.seo += report.summary.seo || 0;
+                  }
+                });
+                
+                reportCount = reportsToUse.length;
+                scores = {
+                  performance: Math.round((avgScores.performance / reportCount) * 100),
+                  accessibility: Math.round((avgScores.accessibility / reportCount) * 100),
+                  'best-practices': Math.round((avgScores['best-practices'] / reportCount) * 100),
+                  seo: Math.round((avgScores.seo / reportCount) * 100)
+                };
+                
+                console.log(`${reportCount}개 리포트의 평균 점수:`, scores);
+                
+              } else {
+                // 개별 JSON 리포트 파일들 찾기 (fallback)
+                const reportFiles = files.filter(f => f.endsWith('.json') && f !== 'manifest.json');
+                
+                if (reportFiles.length === 0) {
+                  console.log(`${appName}에 대한 JSON 리포트를 찾을 수 없습니다.`);
+                  return;
+                }
+                
+                console.log(`개별 리포트 파일들: ${reportFiles.join(', ')}`);
+                
+                const reportPath = path.join(reportsDir, reportFiles[0]);
+                const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+                
+                if (!report.categories) {
+                  console.log('리포트에 categories가 없습니다. 전체 구조:', Object.keys(report));
+                  return;
+                }
+                
+                const getScore = (category) => {
+                  const cat = report.categories[category];
+                  if (!cat || typeof cat.score !== 'number') {
+                    console.log(`${category} 카테고리가 없거나 점수가 유효하지 않습니다.`);
+                    return 0;
+                  }
+                  return Math.round(cat.score * 100);
+                };
+                
+                scores = {
+                  performance: getScore('performance'),
+                  accessibility: getScore('accessibility'),
+                  'best-practices': getScore('best-practices'),
+                  seo: getScore('seo')
+                };
+                
+                reportCount = 1;
+                console.log('개별 리포트에서 추출된 점수들:', scores);
+              }
+              
+              const getEmoji = (score) => {
+                if (score >= 90) return '🟢';
+                if (score >= 50) return '🟡';
+                return '🔴';
+              };
+              
+              const comment = `## 🚨 \`${appName}\` 라이트하우스 CI 결과 (Lighthouse CI Results)
+              
+              | 항목 (Category) | 점수 (Score) | 상태 (Status) |
+              |-----------------|--------------|---------------|
+              | 성능 (Performance) | ${scores.performance} | ${getEmoji(scores.performance)} |
+              | 접근성 (Accessibility) | ${scores.accessibility} | ${getEmoji(scores.accessibility)} |
+              | 모범 사례 (Best Practices) | ${scores['best-practices']} | ${getEmoji(scores['best-practices'])} |
+              | SEO | ${scores.seo} | ${getEmoji(scores.seo)} |
+              
+              📊 **상세 리포트 (Detailed Report)**: [라이트하우스 CI 결과 보기 (View Lighthouse CI Results)](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+              
+              ${manifestFile ? `📈 **분석 범위**: ${reportCount}개 페이지의 평균 점수 (Average scores from ${reportCount} pages)` : '📈 **분석 범위**: 단일 페이지 분석 (Single page analysis)'}
+              
+              ${scores.performance < 50 ? '⚠️ **성능 경고 (Performance Warning)**: 점수가 50점 미만입니다. 성능 최적화를 고려해주세요. (Score is below 50. Consider optimizing.)' : ''}
+              ${scores.accessibility < 70 ? '⚠️ **접근성 경고 (Accessibility Warning)**: 점수가 70점 미만입니다. 접근성 문제를 검토해주세요. (Score is below 70. Please review accessibility issues.)' : ''}
+              `;
+              
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+              
+            } catch (error) {
+              console.error('댓글 작성 중 오류 발생:', error);
+            }
+        env:
+          APP_NAME: ${{ matrix.app }}
+
+      - name: ${{ matrix.app }} 라이트하우스 리포트 업로드
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports-${{ matrix.app }}-${{ github.sha }}
+          path: |
+            ./packages/${{ matrix.app }}/lhci_reports/
+            ./packages/${{ matrix.app }}/lighthouse-debug.log
+            ./packages/${{ matrix.app }}/url-collection.json
+          retention-days: 30
