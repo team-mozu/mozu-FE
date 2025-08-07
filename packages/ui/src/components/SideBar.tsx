@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ManagerLogo } from "./assets";
+import { ManagerLogo } from "../assets";
 import { NavBtn } from "./NavBtn";
 
 interface ISideBarType {
@@ -32,13 +32,12 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
       setIsStockColor(false);
       setIsArticleColor(true);
     }
-  }, [
-    pathname,
-  ]);
+  }, [pathname]);
 
   if (
     pathname.split("/")[1] === "class-management" &&
-    (pathname.split("/")[3] === "start" || pathname.split("/")[3] === "monitoring")
+    (pathname.split("/")[3] === "start" ||
+      pathname.split("/")[3] === "monitoring")
   )
     return null;
 
@@ -60,19 +59,22 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
           <NavBtn
             type={"classIcon"}
             isColor={isClassColor}
-            onClick={() => navigate("/class-management")}>
+            onClick={() => navigate("/class-management")}
+          >
             수업 관리
           </NavBtn>
           <NavBtn
             type={"stockIcon"}
             isColor={isStockColor}
-            onClick={() => navigate("/stock-management")}>
+            onClick={() => navigate("/stock-management")}
+          >
             종목 관리
           </NavBtn>
           <NavBtn
             type={"articleIcon"}
             isColor={isArticleColor}
-            onClick={() => navigate("/article-management")}>
+            onClick={() => navigate("/article-management")}
+          >
             기사 관리
           </NavBtn>
         </BtnContainer>

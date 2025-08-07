@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Info } from "./assets";
+import { Info } from "../assets";
 
 interface IProp {
   isStock: boolean;
@@ -10,14 +10,12 @@ export const SelectError = ({ isStock }: IProp) => {
   return (
     <Container>
       <IconContainer>
-        <Info
-          size={32}
-          color={color.orange[500]}
-        />
+        <Info size={32} color={color.orange[500]} />
       </IconContainer>
       <TitleText>선택 필요</TitleText>
       <SubText>
-        관리하고자 하는 {isStock ? "종목을" : "기사를"} 선택하거나, {isStock ? "종목을" : "기사를"} 추가해 주세요.
+        관리하고자 하는 {isStock ? "종목을" : "기사를"} 선택하거나,{" "}
+        {isStock ? "종목을" : "기사를"} 추가해 주세요.
       </SubText>
     </Container>
   );

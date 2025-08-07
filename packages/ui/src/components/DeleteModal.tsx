@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Del } from "./assets";
+import { Del } from "../assets";
 
 interface IDeleteModal {
   titleComment: string;
@@ -28,15 +28,12 @@ export const DeleteModal = ({
   message = "삭제하기",
 }: IDeleteModal) => {
   return (
-    <Backdrop onClick={e => e.stopPropagation()}>
-      <ModalContainer onClick={e => e.stopPropagation()}>
+    <Backdrop onClick={(e) => e.stopPropagation()}>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
         <UpperContainer>
           <HeaderSection>
             <IconDiv>
-              <Del
-                size={24}
-                color={color.red[400]}
-              />
+              <Del size={24} color={color.red[400]} />
             </IconDiv>
             <TextDiv>
               <TitleText>{titleComment}</TitleText>
@@ -47,9 +44,7 @@ export const DeleteModal = ({
 
         <UnderContainer>
           <CancelButton onClick={onCancel}>취소</CancelButton>
-          <DeleteButton
-            onClick={onDelete}
-            disabled={isPending}>
+          <DeleteButton onClick={onDelete} disabled={isPending}>
             {message}
           </DeleteButton>
         </UnderContainer>
@@ -72,10 +67,14 @@ const Backdrop = styled.div`
   z-index: 1000;
   padding: 20px;
   animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
@@ -87,28 +86,32 @@ const ModalContainer = styled.div`
   background: ${color.white};
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   position: relative;
   animation: modalSlideIn 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, ${color.white}, transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      ${color.white},
+      transparent
+    );
   }
-  
+
   @keyframes modalSlideIn {
-    from { 
+    from {
       opacity: 0;
       transform: scale(0.9) translateY(20px);
     }
-    to { 
+    to {
       opacity: 1;
       transform: scale(1) translateY(0);
     }
@@ -121,7 +124,11 @@ const UpperContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
   border-bottom: 1px solid ${color.zinc[100]};
-  background: linear-gradient(135deg, ${color.white} 0%, ${color.zinc[25]} 100%);
+  background: linear-gradient(
+    135deg,
+    ${color.white} 0%,
+    ${color.zinc[25]} 100%
+  );
 `;
 
 const HeaderSection = styled.div`
@@ -143,16 +150,20 @@ const IconDiv = styled.div`
   width: 48px;
   height: 48px;
   border: 2px solid ${color.red[200]};
-  background: linear-gradient(135deg, ${color.red[50]} 0%, ${color.red[50]} 100%);
+  background: linear-gradient(
+    135deg,
+    ${color.red[50]} 0%,
+    ${color.red[50]} 100%
+  );
   border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
   position: relative;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: -1px;
     background: linear-gradient(135deg, ${color.red[200]}, ${color.red[100]});
@@ -196,11 +207,11 @@ const BaseButton = styled.button`
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  
+
   &:active {
     transform: translateY(1px);
   }
-  
+
   &:hover {
     transform: scale(1.02);
   }
@@ -210,7 +221,7 @@ const CancelButton = styled(BaseButton)`
   background: ${color.white};
   color: ${color.zinc[700]};
   border: 1px solid ${color.zinc[200]};
-  
+
   &:hover {
     background: ${color.zinc[50]};
     border-color: ${color.zinc[300]};
@@ -219,19 +230,31 @@ const CancelButton = styled(BaseButton)`
 `;
 
 const DeleteButton = styled(BaseButton)`
-  background: linear-gradient(135deg, ${color.red[500]} 0%, ${color.red[600]} 100%);
+  background: linear-gradient(
+    135deg,
+    ${color.red[500]} 0%,
+    ${color.red[600]} 100%
+  );
   color: ${color.white};
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 100%
+    );
   }
-  
+
   &:hover {
-    background: linear-gradient(135deg, ${color.red[600]} 0%, ${color.red[700]} 100%);
+    background: linear-gradient(
+      135deg,
+      ${color.red[600]} 0%,
+      ${color.red[700]} 100%
+    );
     box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
   }
 

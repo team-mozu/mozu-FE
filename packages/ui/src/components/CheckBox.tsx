@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { Check } from "./assets";
+import { Check } from "../assets";
 
 interface IProps {
   onChange?: () => void;
@@ -25,7 +25,8 @@ export const CheckBox = ({ onChange, checked, id }: IProps) => {
       <label htmlFor={id}>
         <CheckBoxLabel
           borderColor={checked ? color.orange[500] : color.zinc[500]}
-          backgroundColor={checked ? color.orange[500] : color.white}>
+          backgroundColor={checked ? color.orange[500] : color.white}
+        >
           {checked ? <Check /> : <div></div>}
         </CheckBoxLabel>
       </label>
@@ -40,10 +41,10 @@ const Container = styled.div`
 `;
 
 const CheckBoxLabel = styled.div<ICheckType>`
-  background-color: ${props => props.backgroundColor};
+  background-color: ${(props) => props.backgroundColor};
   width: 20px;
   height: 20px;
-  border: 1px solid ${props => props.borderColor};
+  border: 1px solid ${(props) => props.borderColor};
   border-radius: 4px;
   display: flex;
   justify-content: center;
