@@ -1,4 +1,4 @@
-import { Button } from "./Button";
+import { Button } from "../components/Button";
 import { color } from "@mozu/design-token";
 
 export default {
