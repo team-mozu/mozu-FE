@@ -64,8 +64,8 @@ const ItemContent = ({
   );
 };
 
-export const ItemSidebar = () => {
-  const { data } = useGetClassItem();
+export const ItemSidebar = ({ isMock = false }: { isMock?: boolean }) => {
+  const { data } = useGetClassItem({ queryKey: ["getClass"], enabled: !isMock });
   const navigate = useNavigate();
 
   return (

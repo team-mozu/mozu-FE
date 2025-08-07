@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "lhci": "rm -rf ./lhci_reports && yarn build && lhci autorun && rm -rf ./.lighthouseci"
   },
   "exports": {
     ".": {
@@ -38,6 +38,7 @@
     "recharts": "^2.15.1"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@mozu/design-token": "workspace:^",
     "@mozu/ui": "workspace:^",
     "@mozu/util-config": "workspace:^",

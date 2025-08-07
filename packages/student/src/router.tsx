@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { AppLayout } from "@/layout";
+import { AppLayout, MockAppLayout } from "@/layout";
 import * as pages from "@/pages";
 import { StockGraph, StockInfo } from "./components";
 
@@ -68,6 +68,40 @@ export const Router = createBrowserRouter([
       {
         path: "ending",
         element: <pages.EndingPage />,
+      },
+    ],
+  },
+  {
+    element: <MockAppLayout />,
+    children: [
+      {
+        path: "/__test__/mock-classroom",
+        element: <pages.MockStudentClassPage />,
+      },
+      {
+        path: "/__test__/mock-news",
+        children: [
+          {
+            index: true,
+            element: <pages.MockNewsPage />,
+          },
+          {
+            path: ":newsId",
+            element: <pages.MockNewsDetailPage />,
+          },
+        ],
+      },
+      {
+        path: "/__test__/mock-result",
+        element: <pages.MockResultPage />,
+      },
+      {
+        path: "/__test__/mock-stock",
+        element: <pages.MockStockPage />,
+      },
+      {
+        path: "/__test__/mock-wait",
+        element: <pages.MockStudentWaitPage />,
       },
     ],
   },

@@ -1,10 +1,11 @@
 import { instance } from "@mozu/util-config";
-import { useQuery } from "@tanstack/react-query";
+import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import type { ClassDetailResponse, ClassResponse } from "./type";
 
 const router = "/class/team";
 
-export const useGetClassItem = () => {
+export const useGetClassItem = (options?: UseQueryOptions<ClassResponse, AxiosError>) => {
   return useQuery({
     queryKey: [
       "getClass",
@@ -15,6 +16,7 @@ export const useGetClassItem = () => {
     },
     staleTime: Infinity,
     gcTime: Infinity,
+    ...options,
   });
 };
 
