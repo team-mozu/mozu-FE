@@ -3979,6 +3979,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"entities@npm:^6.0.0":
+  version: 6.0.1
+  resolution: "entities@npm:6.0.1"
+  checksum: 10c0/ed836ddac5acb34341094eb495185d527bd70e8632b6c0d59548cbfa23defdbae70b96f9a405c82904efa421230b5b3fd2283752447d737beffd3f3e6ee74414
+  languageName: node
+  linkType: hard
+
 "env-paths@npm:^2.2.0, env-paths@npm:^2.2.1":
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
@@ -5858,6 +5865,7 @@ __metadata:
     inquirer: "npm:^12.3.0"
     jira-prepare-commit-msg: "npm:^1.7.2"
     react-cosmos: "npm:^7.0.0"
+    react-cosmos-plugin-vite: "npm:^7.0.0"
     react-spinners: "npm:^0.17.0"
     typescript: "npm:^5.7.3"
   languageName: unknown
@@ -6149,6 +6157,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parse5@npm:7.3.0":
+  version: 7.3.0
+  resolution: "parse5@npm:7.3.0"
+  dependencies:
+    entities: "npm:^6.0.0"
+  checksum: 10c0/7fd2e4e247e85241d6f2a464d0085eed599a26d7b0a5233790c49f53473232eb85350e8133344d9b3fd58b89339e7ad7270fe1f89d28abe50674ec97b87f80b5
+  languageName: node
+  linkType: hard
+
 "parseurl@npm:~1.3.3":
   version: 1.3.3
   resolution: "parseurl@npm:1.3.3"
@@ -6374,6 +6391,30 @@ __metadata:
     js-base64: "npm:3.7.7"
     lodash-es: "npm:4.17.21"
   checksum: 10c0/87ec31cd0b9cfb4cdbf1c154812d762e015013145079688ac9e560ddbb261574e6bf49465b096599ada550a10f598ae9118b9c235714404b48791ad4add2db27
+  languageName: node
+  linkType: hard
+
+"react-cosmos-dom@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "react-cosmos-dom@npm:7.0.0"
+  dependencies:
+    lodash-es: "npm:4.17.21"
+    react-cosmos-core: "npm:^7.0.0"
+    react-cosmos-renderer: "npm:^7.0.0"
+  checksum: 10c0/663a6a0aaf527c006d121ec83c62dc0e2c484abce8ebe3dd1a9975ab7aaf9230c250876ba62b9e137014b8dfc4a7052f5e9d12e13d674e1c61ecc8bbd3b17680
+  languageName: node
+  linkType: hard
+
+"react-cosmos-plugin-vite@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "react-cosmos-plugin-vite@npm:7.0.0"
+  dependencies:
+    parse5: "npm:7.3.0"
+    react-cosmos-core: "npm:^7.0.0"
+    react-cosmos-dom: "npm:^7.0.0"
+  peerDependencies:
+    vite: "*"
+  checksum: 10c0/7a3bbc44e0fdd613aa34445d28a7534079a42839eb2ab941a7efd289ad279d0e3b6d4d5c5c58861998b6f664c9a4cf13a3b5e5fd3f645be566bb08bbdfac84d5
   languageName: node
   linkType: hard
 

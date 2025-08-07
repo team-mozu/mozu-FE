@@ -10,7 +10,8 @@
     "util": "yarn workspace @mozu/util-config",
     "prepare": "husky install",
     "commit": "cz",
-    "new-branch": "sh ./scripts/new-branch.sh"
+    "new-branch": "sh ./scripts/new-branch.sh",
+    "cosmos": "cosmos"
   },
   "workspaces": {
     "packages": [
@@ -33,6 +34,7 @@
     "husky": "^8.0.0",
     "jira-prepare-commit-msg": "^1.7.2",
     "react-cosmos": "^7.0.0",
+    "react-cosmos-plugin-vite": "^7.0.0",
     "typescript": "^5.7.3"
   },
   "resolutions": {
