@@ -39,11 +39,26 @@ export const MockResultPage = () => {
   const mockEndRound = 5; // 예시 종료 회차
 
   const confirmSteps = [
-    { message: "[MOCK] 정말 나가시겠습니까?\n\n나가시면 재접속 불가합니다", position: "center" },
-    { message: "[MOCK] 한 번 더 확인합니다.\n\n정말로 나가시겠습니까?", position: "top-left" },
-    { message: "[MOCK] 마지막 확인입니다.\n\n나가시면 결과를 다시 볼 수 없습니다!", position: "top-right" },
-    { message: "[MOCK] 정말 마지막입니다.\n\n진짜로 나가시겠습니까?", position: "bottom-left" },
-    { message: "[MOCK] 최종 확인!\n\n이제 정말 나가시겠습니까?", position: "bottom-right" },
+    {
+      message: "[MOCK] 정말 나가시겠습니까?\n\n나가시면 재접속 불가합니다",
+      position: "center",
+    },
+    {
+      message: "[MOCK] 한 번 더 확인합니다.\n\n정말로 나가시겠습니까?",
+      position: "top-left",
+    },
+    {
+      message: "[MOCK] 마지막 확인입니다.\n\n나가시면 결과를 다시 볼 수 없습니다!",
+      position: "top-right",
+    },
+    {
+      message: "[MOCK] 정말 마지막입니다.\n\n진짜로 나가시겠습니까?",
+      position: "bottom-left",
+    },
+    {
+      message: "[MOCK] 최종 확인!\n\n이제 정말 나가시겠습니까?",
+      position: "bottom-right",
+    },
   ];
 
   const handleOpenModal = () => {

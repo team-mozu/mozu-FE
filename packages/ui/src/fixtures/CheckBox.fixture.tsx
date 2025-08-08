@@ -4,10 +4,22 @@ import { useState } from "react";
 export default {
   "Unchecked CheckBox": () => {
     const [checked, setChecked] = useState(false);
-    return <CheckBox checked={checked} onChange={() => setChecked(!checked)} id="checkbox-unchecked" />;
+    return (
+      <CheckBox
+        checked={checked}
+        onChange={() => setChecked(!checked)}
+        id="checkbox-unchecked"
+      />
+    );
   },
   "Checked CheckBox": () => {
     const [checked, setChecked] = useState(true);
-    return <CheckBox checked={checked} onChange={() => setChecked(!checked)} id="checkbox-checked" />;
+    return (
+      <CheckBox
+        checked={checked}
+        onChange={() => setChecked(!checked)}
+        id="checkbox-checked"
+      />
+    );
   },
 };

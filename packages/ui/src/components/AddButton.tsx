@@ -12,7 +12,10 @@ export const AddButton = ({ text, onClick }: IAddButtonType) => {
     <AddButtonContainer onClick={onClick}>
       <Text>{text}</Text>
       <LogoContainer>
-        <Plus size={20} color={color.white} />
+        <Plus
+          size={20}
+          color={color.white}
+        />
       </LogoContainer>
     </AddButtonContainer>
   );

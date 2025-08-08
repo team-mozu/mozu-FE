@@ -86,7 +86,12 @@ const mockTradeData: ITeamEndProps[] = [
 ];
 
 export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
-  const { data: realTeamData, isLoading } = useGetTeamDetail({ queryKey: ["getTeam"], enabled: !isMock });
+  const { data: realTeamData, isLoading } = useGetTeamDetail({
+    queryKey: [
+      "getTeam",
+    ],
+    enabled: !isMock,
+  });
 
   // isMock 값에 따라 실제 데이터 또는 목 데이터를 사용
   const teamData = isMock ? mockTeamData : realTeamData;
@@ -142,7 +147,7 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
   // biome-ignore lint/correctness/useHookAtTopLevel: <임시>
   const sameValue: boolean = useUnchangedValue(
     (teamData?.totalMoney ?? 0).toLocaleString(),
-    (teamData?.baseMoney ?? 0).toLocaleString()
+    (teamData?.baseMoney ?? 0).toLocaleString(),
   );
 
   const IsOpen = () => {
@@ -191,7 +196,9 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
             <TotalAssetLeft>
               <Title>총 평가 자산</Title>
               <TotalAssetPrice
-                color={sameValue ? color.green[600] : (teamData?.valueProfit ?? 0) > 0 ? color.red[500] : color.blue[500]}>
+                color={
+                  sameValue ? color.green[600] : (teamData?.valueProfit ?? 0) > 0 ? color.red[500] : color.blue[500]
+                }>
                 {formattedData.totalMoney}원
               </TotalAssetPrice>
               {(teamData?.valueProfit ?? 0) !== 0 ? (
@@ -220,7 +227,9 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
           <SectionTitle>거래내역</SectionTitle>
         </UpperContainer>
         <TransactionHistoryContents>
-          {[...(tradeData as ITeamEndProps[])]
+          {[
+            ...(tradeData as ITeamEndProps[]),
+          ]
             .reverse()
             .map(data => (
               <TransactionContent

@@ -15,7 +15,11 @@ export default {
     );
   },
   "Header Item": (
-    <Item isHeader={true} title1="제목 1" title2="제목 2" />
+    <Item
+      isHeader={true}
+      title1="제목 1"
+      title2="제목 2"
+    />
   ),
   "Checked Item": () => {
     const [checked, setChecked] = useState(true);

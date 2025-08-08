@@ -65,7 +65,12 @@ const ItemContent = ({
 };
 
 export const ItemSidebar = ({ isMock = false }: { isMock?: boolean }) => {
-  const { data } = useGetClassItem({ queryKey: ["getClass"], enabled: !isMock });
+  const { data } = useGetClassItem({
+    queryKey: [
+      "getClass",
+    ],
+    enabled: !isMock,
+  });
   const navigate = useNavigate();
 
   return (

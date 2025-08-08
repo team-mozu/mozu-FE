@@ -28,12 +28,15 @@ export const DeleteModal = ({
   message = "삭제하기",
 }: IDeleteModal) => {
   return (
-    <Backdrop onClick={(e) => e.stopPropagation()}>
-      <ModalContainer onClick={(e) => e.stopPropagation()}>
+    <Backdrop onClick={e => e.stopPropagation()}>
+      <ModalContainer onClick={e => e.stopPropagation()}>
         <UpperContainer>
           <HeaderSection>
             <IconDiv>
-              <Del size={24} color={color.red[400]} />
+              <Del
+                size={24}
+                color={color.red[400]}
+              />
             </IconDiv>
             <TextDiv>
               <TitleText>{titleComment}</TitleText>
@@ -44,7 +47,9 @@ export const DeleteModal = ({
 
         <UnderContainer>
           <CancelButton onClick={onCancel}>취소</CancelButton>
-          <DeleteButton onClick={onDelete} disabled={isPending}>
+          <DeleteButton
+            onClick={onDelete}
+            disabled={isPending}>
             {message}
           </DeleteButton>
         </UnderContainer>

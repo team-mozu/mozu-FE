@@ -8,7 +8,7 @@ export default {
       <TextArea
         placeholder="내용을 입력하세요"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={e => setValue(e.target.value)}
       />
     );
   },
@@ -20,7 +20,7 @@ export default {
         placeholder="자세한 설명을 입력하세요"
         height={150}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={e => setValue(e.target.value)}
       />
     );
   },
@@ -30,7 +30,7 @@ export default {
       <TextArea
         placeholder="내용을 입력하세요"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={e => setValue(e.target.value)}
       />
     );
   },

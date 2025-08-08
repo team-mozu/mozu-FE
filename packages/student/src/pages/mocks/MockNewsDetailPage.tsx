@@ -7,7 +7,8 @@ import { NewsDetail } from "@/components";
 const mockArticle = {
   articleId: 1,
   title: "[MOCK] 모의 뉴스 상세 페이지",
-  description: "이것은 모의 뉴스 상세 페이지입니다. 실제 데이터 없이 UI만 보여주기 위한 목적으로 사용됩니다. 여기에 더 많은 내용이 들어갈 수 있습니다.",
+  description:
+    "이것은 모의 뉴스 상세 페이지입니다. 실제 데이터 없이 UI만 보여주기 위한 목적으로 사용됩니다. 여기에 더 많은 내용이 들어갈 수 있습니다.",
   image: "https://via.placeholder.com/600x400?text=Mock+News+Image",
 };
 

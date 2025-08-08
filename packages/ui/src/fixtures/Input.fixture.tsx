@@ -8,7 +8,7 @@ export default {
       <Input
         placeholder="텍스트를 입력하세요"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={e => setValue(e.target.value)}
       />
     );
   },
@@ -19,7 +19,7 @@ export default {
         label="이름"
         placeholder="이름을 입력하세요"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={e => setValue(e.target.value)}
       />
     );
   },
@@ -32,7 +32,7 @@ export default {
         type="password"
         placeholder="비밀번호를 입력하세요"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={e => setPassword(e.target.value)}
         passwordVisible={passwordVisible}
         setPasswordVisible={setPasswordVisible}
       />
@@ -46,7 +46,7 @@ export default {
         type="number"
         placeholder="수량을 입력하세요"
         value={num}
-        onChange={(e) => setNum(e.target.value)}
+        onChange={e => setNum(e.target.value)}
         max={100}
       />
     );
@@ -57,7 +57,7 @@ export default {
       <Input
         placeholder="비활성화된 입력창"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={e => setValue(e.target.value)}
         disabled
       />
     );

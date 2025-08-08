@@ -8,8 +8,7 @@ export default {
       backgroundColor={color.orange[500]}
       color={color.white}
       borderColor={color.orange[500]}
-      hoverBackgroundColor={color.orange[600]}
-    >
+      hoverBackgroundColor={color.orange[600]}>
       주황색 버튼
     </Button>
   ),
@@ -21,8 +20,7 @@ export default {
       iconColor={color.white}
       backgroundColor={color.orange[500]}
       borderColor={color.orange[500]}
-      hoverBackgroundColor={color.orange[600]}
-    >
+      hoverBackgroundColor={color.orange[600]}>
       아이콘 버튼
     </Button>
   ),

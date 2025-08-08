@@ -54,9 +54,15 @@ export const Input = ({
         {type === "password" && setPasswordVisible && (
           <PasswordToggle onClick={() => setPasswordVisible(!passwordVisible)}>
             {passwordVisible ? (
-              <Eye size={24} color={color.black} />
+              <Eye
+                size={24}
+                color={color.black}
+              />
             ) : (
-              <EyeOff size={24} color={color.black} />
+              <EyeOff
+                size={24}
+                color={color.black}
+              />
             )}
           </PasswordToggle>
         )}
@@ -89,7 +95,7 @@ const InputWrapper = styled.div`
 const InputContent = styled.input<{
   width?: string;
 }>`
-  width: ${(props) => props.width || "100%"};
+  width: ${props => props.width || "100%"};
   height: 48px;
   background-color: ${color.zinc[50]};
   border: 1px solid ${color.zinc[200]};
