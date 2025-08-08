@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { font } from "@mozu/design-token";
 import type { MouseEventHandler, ReactNode } from "react";
-import { ArticleIcon, Cancel, ClassIcon, Del, Edit, LogOut, Plus, Save, Start } from "./assets";
+import { ArticleIcon, Cancel, ClassIcon, Del, Edit, LogOut, Plus, Save, Start } from "../assets";
 
 interface IButtonType {
   children?: ReactNode;

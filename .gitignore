@@ -9,6 +9,7 @@
 
 .pnp.*
 
+
 .dist
 .build
 
@@ -17,3 +18,4 @@ dist
 .DS_Store
 
 .eslintcache
+node_modules

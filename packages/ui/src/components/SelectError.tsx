@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Info } from "./assets";
+import { Info } from "../assets";
 
 interface IProp {
   isStock: boolean;

@@ -4,11 +4,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "src",
     "emitDeclarationOnly": false,
     "declaration": true,
     "composite": true,
-    "declarationDir": "dist/types",
+    "declarationDir": "dist",
     "sourceMap": true,
     "declarationMap": true,
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",

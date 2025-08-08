@@ -1,6 +1,6 @@
 import { color } from "@mozu/design-token";
 import { Flip, type ToastOptions, type TypeOptions, toast } from "react-toastify";
-import { Check, Info, Warning } from "./assets";
+import { Check, Info, Warning } from "../assets";
 
 export interface IToastProps extends ToastOptions {
   type: Exclude<TypeOptions, "default">;

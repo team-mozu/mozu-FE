@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ManagerLogo } from "./assets";
+import { ManagerLogo } from "../assets";
 import { NavBtn } from "./NavBtn";
 
 interface ISideBarType {

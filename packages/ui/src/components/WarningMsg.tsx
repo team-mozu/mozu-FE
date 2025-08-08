@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Warning } from "./assets";
+import { Warning } from "../assets";
 
 interface IWarningMsgType {
   message: string;

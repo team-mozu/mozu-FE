@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { Check } from "./assets";
+import { Check } from "../assets";
 
 interface IProps {
   onChange?: () => void;

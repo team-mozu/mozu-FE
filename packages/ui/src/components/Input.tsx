@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useState } from "react";
-import { Eye, EyeOff } from "./assets";
+import { Eye, EyeOff } from "../assets";
 
 interface IInputType {
   placeholder: string;

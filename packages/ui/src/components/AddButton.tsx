@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Plus } from "./assets";
+import { Plus } from "../assets";
 
 interface IAddButtonType {
   text: string;

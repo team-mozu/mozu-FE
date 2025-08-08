@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import type { ReactNode } from "react";
-import { ArticleIcon, ClassIcon, StockIcon } from "./assets";
+import { ArticleIcon, ClassIcon, StockIcon } from "../assets";
 
 interface INavType {
   children?: ReactNode;

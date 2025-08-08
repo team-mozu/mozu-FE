@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { type ChangeEvent, useState } from "react"; // useState import
-import { Search } from "./assets";
+import { Search } from "../assets";
 
 interface ISearchInputType {
   inputText: string;

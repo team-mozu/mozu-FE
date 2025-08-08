@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { ArrowLeft } from "./assets";
+import { ArrowLeft } from "../assets";
 
 export const ExitBtn = () => {
   return (
