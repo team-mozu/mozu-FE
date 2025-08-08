@@ -1,5 +1,5 @@
-import { CheckBox } from "../components/CheckBox";
 import { useState } from "react";
+import { CheckBox } from "../components/CheckBox";
 
 export default {
   "Unchecked CheckBox": () => {

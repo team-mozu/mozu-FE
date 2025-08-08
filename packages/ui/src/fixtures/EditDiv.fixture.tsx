@@ -1,5 +1,5 @@
-import { EditDiv } from "../components/EditDiv";
 import { BrowserRouter } from "react-router-dom";
+import { EditDiv } from "../components/EditDiv";
 
 export default {
   "Default EditDiv": (

@@ -1,6 +1,6 @@
+import { color } from "@mozu/design-token";
 import { Toast } from "../components/Toast";
 import { CustomToastContainer } from "../components/ToastContainer";
-import { color } from "@mozu/design-token";
 
 export default {
   "Toast Examples": () => (

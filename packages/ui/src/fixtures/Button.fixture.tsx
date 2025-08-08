@@ -1,5 +1,5 @@
-import { Button } from "../components/Button";
 import { color } from "@mozu/design-token";
+import { Button } from "../components/Button";
 
 export default {
   "Default Button": <Button>기본 버튼</Button>,

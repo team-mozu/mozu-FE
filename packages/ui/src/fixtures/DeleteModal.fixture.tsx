@@ -1,5 +1,5 @@
-import { DeleteModal } from "../components/DeleteModal";
 import { useState } from "react";
+import { DeleteModal } from "../components/DeleteModal";
 
 export default {
   "Default Delete Modal": () => {
