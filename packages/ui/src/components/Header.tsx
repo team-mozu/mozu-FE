@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { LogoWithText } from "@mozu/ui";
 import { useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { LogoWithText } from "../assets";
 
 interface IHeaderProps {
   isAdmin: boolean;

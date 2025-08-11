@@ -3,9 +3,7 @@
   "staticPath": "public",
   "plugins": ["react-cosmos-plugin-vite"],
   "ignore": ["**/node_modules/**", "**/dist/**"],
-  "fixturesDir": "src/fixtures",
   "fixtureFileSuffix": "fixture",
   "port": 5001,
-  "rendererUrl": "http://localhost:5001",
   "vite": { "configPath": "./vite.config.ts" }
 }
