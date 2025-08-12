@@ -8,7 +8,10 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:build": "vitest run && yarn build"
   },
   "exports": {
     ".": {
@@ -16,6 +19,13 @@
       "types": "./index.d.ts",
       "require": "./dist/index.js"
     }
+  },
+  "peerDependencies": {
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -30,8 +40,10 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "18.3.5",
-    "typescript": "5.7.3"
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "18.3.1",
+    "typescript": "5.7.3",
+    "vitest": "^3.2.4"
   }
 }

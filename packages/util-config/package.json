@@ -8,7 +8,10 @@
     "start": "vite",
     "build": "tsc -b && vite build",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:build": "vitest run && yarn build"
   },
   "exports": {
     ".": {
@@ -23,15 +26,19 @@
     "universal-cookie": "^7.2.2"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "^5.66.0"
+    "@tanstack/react-query": "^5.66.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "vite": "^5.4.0",
+    "vitest": "^3.2.4"
   },
   "devDependencies": {
     "@mozu/ui": "workspace:^",
     "@types/node": "^22.13.1",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^4.3.0",
     "rollup": "^4.45.1",
     "typescript": "^5.9.2",
-    "vite": "^7.0.6"
+    "vite": "^5.4.0",
+    "vitest": "^3.2.4"
   },
   "packageManager": "yarn@4.8.1"
 }

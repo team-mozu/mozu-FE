@@ -10,7 +10,17 @@
     "util": "yarn workspace @mozu/util-config",
     "prepare": "husky install",
     "commit": "cz",
-    "new-branch": "sh ./scripts/new-branch.sh"
+    "new-branch": "sh ./scripts/new-branch.sh",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest run --coverage --reporter=verbose",
+    "test:watch:ui": "vitest --project ui",
+    "test:watch:student": "vitest --project student",
+    "test:watch:admin": "vitest --project admin",
+    "test:update-snapshots": "vitest run --update-snapshots",
+    "test:update-snapshots:ui": "vitest run --project ui --update-snapshots"
   },
   "workspaces": {
     "packages": [
@@ -26,23 +36,33 @@
     "@biomejs/biome": "2.0.6",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "^22.10.5",
     "commitizen": "^4.3.1",
     "corepack": "^0.34.0",
     "cz-customizable": "^7.4.0",
     "husky": "^8.0.0",
     "jira-prepare-commit-msg": "^1.7.2",
+    "jsdom": "^26.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-router-dom": "^7.8.0",
     "supports-color": "^10.1.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.4"
   },
   "resolutions": {
     "@types/react": "18.3.18",
     "@types/react-dom": "18.3.1",
     "@types/hoist-non-react-statics": "^3.3.6",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "vite": "^5.4.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "vitest": "^3.2.4",
+    "@testing-library/jest-dom": "^6.6.4",
+    "jsdom": "^26.1.0"
   },
   "jira-prepare-commit-msg": {
     "messagePattern": "[$J] $M",

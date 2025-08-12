@@ -1,0 +1,53 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ArticleDiv > matches snapshot 1`] = `
+<div
+  class="css-13lfn1v"
+  role="button"
+  tabindex="0"
+>
+  <div>
+    <p
+      class="css-1509n5v"
+    >
+      1
+    </p>
+    <p
+      class="css-1gn182m"
+    >
+      Test Article
+    </p>
+  </div>
+  <p
+    class="css-xa9rnn"
+  >
+    2025-08-08
+  </p>
+</div>
+`;
+
+exports[`ArticleDiv > matches snapshot when selected 1`] = `
+<div
+  class="css-1itllec"
+  role="button"
+  tabindex="0"
+>
+  <div>
+    <p
+      class="css-1509n5v"
+    >
+      1
+    </p>
+    <p
+      class="css-bmk7cl"
+    >
+      Test Article
+    </p>
+  </div>
+  <p
+    class="css-1h9e9lw"
+  >
+    2025-08-08
+  </p>
+</div>
+`;

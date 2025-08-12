@@ -12,6 +12,8 @@ interface IArticleType {
 export const ArticleDiv = ({ title, date, onClick, selected, articleNumber }: IArticleType) => {
   return (
     <ArticleDivContiner
+      role="button"
+      tabIndex={0}
       onClick={onClick}
       selected={selected}>
       <div>
