@@ -12,7 +12,6 @@ export const SignInPage = () => {
     code: "",
     password: "",
   });
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
@@ -43,6 +42,7 @@ export const SignInPage = () => {
       </LogoWrapper>
       <SigninContainer>
         <p>관리자 로그인</p>
+        {/** biome-ignore lint/a11y/noStaticElementInteractions: <임시> */}
         <div
           onKeyDown={e => {
             if (
@@ -58,13 +58,15 @@ export const SignInPage = () => {
           }}>
           <Input
             placeholder="기관 코드를 입력해 주세요.."
+            type="text"
             label="기관 코드"
-            value={state.code}
+            value={state.code ?? ""}
             name="code"
             onChange={e => {
               onChangeInputValue(e);
               setErrorMessage("");
             }}
+            required={true}
           />
 
           <Input
@@ -72,13 +74,13 @@ export const SignInPage = () => {
             placeholder="비밀번호를 입력해 주세요.."
             label="비밀번호"
             name="password"
-            value={state.password}
+            value={state.password ?? ""}
             onChange={e => {
               onChangeInputValue(e);
               setErrorMessage("");
             }}
-            passwordVisible={passwordVisible}
-            setPasswordVisible={setPasswordVisible}
+            required={true}
+
           />
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </div>

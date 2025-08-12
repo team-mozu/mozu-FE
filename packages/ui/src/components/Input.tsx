@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import { forwardRef, useState } from "react";
-import type { InputProps } from "@/components";
 import { Eye, EyeOff } from "../assets";
 import {
   baseInputStyles,
@@ -17,6 +16,7 @@ import {
   stateStyles,
   variantStyles,
 } from "./styles";
+import type { InputProps } from "./types";
 
 /**
  * `Input` 컴포넌트는 다양한 상태, 스타일, 아이콘, 라벨, 헬퍼 텍스트 등을 지원하는

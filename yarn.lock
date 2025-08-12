@@ -1630,8 +1630,10 @@ __metadata:
     vite: "npm:6.0.5"
     vite-plugin-dts: "npm:^4.5.4"
   peerDependencies:
-    react: ^18.3.1
-    react-dom: ^18.3.1
+    "@types/react": 18.3.18
+    "@types/react-dom": 18.3.5
+    react: 18.3.1
+    react-dom: 18.3.1
   languageName: unknown
   linkType: soft
 
@@ -6819,6 +6821,8 @@ __metadata:
     "@biomejs/biome": "npm:2.0.6"
     "@commitlint/cli": "npm:^19.8.1"
     "@commitlint/config-conventional": "npm:^19.8.1"
+    "@emotion/css": "npm:^11.13.5"
+    "@emotion/react": "npm:^11.14.0"
     "@types/node": "npm:^22.10.5"
     commitizen: "npm:^4.3.1"
     corepack: "npm:^0.34.0"
