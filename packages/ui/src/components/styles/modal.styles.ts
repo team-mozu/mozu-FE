@@ -50,28 +50,27 @@ export const modalSubTitleStyles = css`
   color: ${color.zinc[600]};
 `;
 
-export const iconDelWrapperStyles = css`
+const baseIconWrapperStyles = css`
   width: 40px;
   height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  border: 1px solid ${color.red[200]};
-  background-color: ${color.red[50]};
-`
+`;
 
-
-export const iconCompleteWrapperStyles = css`
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  border: 1px solid ${color.orange[200]};
-  background-color: ${color.orange[50]};
-`
+export const iconWrapperStyles = {
+  delete: css`
+    ${baseIconWrapperStyles};
+    border: 1px solid ${color.red[200]};
+    background-color: ${color.red[50]};
+  `,
+  complete: css`
+    ${baseIconWrapperStyles}
+    border: 1px solid ${color.orange[200]};
+    background-color: ${color.orange[50]};
+  `
+}
 
 export const buttonWrapperStyles = css`
   display: flex;
