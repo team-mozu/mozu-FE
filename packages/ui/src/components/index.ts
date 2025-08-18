@@ -13,6 +13,7 @@ export * from "./Input";
 export * from "./InvestInfoTable";
 export * from "./InvestmentMetrics";
 export * from "./Item";
+export * from "./Modal";
 export * from "./NavBtn";
 export * from "./PageTitle";
 export * from "./PostTitle";
