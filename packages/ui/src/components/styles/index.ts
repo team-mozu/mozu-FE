@@ -1,2 +1,3 @@
 export * from "./Input.styles";
-export * from './modal.styles';
+export * from "./Button.styles";
+export * from './modal.styles'
