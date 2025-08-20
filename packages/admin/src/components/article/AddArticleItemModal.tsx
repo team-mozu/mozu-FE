@@ -70,7 +70,6 @@ export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticle
         title: article.title,
       }));
 
-    console.log("Selected articles in modal:", selectedArticles);
     onArticlesSelected(selectedArticles);
   };
 

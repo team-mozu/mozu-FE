@@ -22,11 +22,10 @@ export const useAddArticle = () => {
       });
     },
     onSuccess: response => {
-      console.log("성공");
       const id = response.data.id;
       navigate(`/article-management/${id}`);
     },
-    onError: error => console.log("error", error),
+    onError: () => {},
   });
 };
 
@@ -38,14 +37,13 @@ export const useDeleteArticle = () => {
       return await instance.delete(`${router}/${articleId}`);
     },
     onSuccess: () => {
-      console.log("성공");
       queryClient.invalidateQueries({
         queryKey: [
           "getArticle",
         ],
       });
     },
-    onError: error => console.log("error", error),
+    onError: () => {},
   });
 };
 
@@ -96,12 +94,11 @@ export const useEditArticle = () => {
       });
     },
     onSuccess: () => {
-      console.log("성공");
       navigate(-1);
       setTimeout(() => {
         window.location.reload();
       }, 100);
     },
-    onError: error => console.log("error", error),
+    onError: () => {},
   });
 };

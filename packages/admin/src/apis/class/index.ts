@@ -95,11 +95,10 @@ export const useClassStar = () => {
         },
       );
     },
-    onError: error => {
+    onError: () => {
       Toast("즐겨찾기 변경에 실패 했습니다.", {
         type: "error",
       });
-      console.log(error);
     },
   });
 };
@@ -120,7 +119,7 @@ export const useClassDelete = () => {
         ],
       });
     },
-    onError: error => console.log("error", error),
+    onError: () => {},
   });
 };
 
@@ -143,9 +142,7 @@ export const useClassStart = (id: number) => {
       // biome-ignore lint/correctness/noSelfAssign: <임시>
       window.location.href = window.location.href;
     },
-    onError: error => {
-      console.log(error);
-    },
+    onError: () => {},
   });
 };
 

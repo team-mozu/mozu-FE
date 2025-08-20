@@ -17,11 +17,10 @@ export const useAddStock = () => {
       });
     },
     onSuccess: response => {
-      console.log("성공");
       const id = response.data.id;
       navigate(`/stock-management/${id}`);
     },
-    onError: error => console.log("error", error),
+    onError: () => {},
   });
 };
 
@@ -32,15 +31,14 @@ export const useDeleteStock = (stockId: number) => {
     mutationFn: async () => {
       return await instance.delete(`${router}/${stockId}`);
     },
-    onSuccess: stockId => {
-      console.log("삭제 성공:", stockId);
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [
           "getStock",
         ],
       });
     },
-    onError: error => console.log("삭제 실패:", error),
+    onError: () => {},
   });
 };
 
@@ -85,12 +83,11 @@ export const useEditStock = () => {
       });
     },
     onSuccess: () => {
-      console.log("성공");
       navigate(-1);
       setTimeout(() => {
         window.location.reload();
       }, 100);
     },
-    onError: error => console.log("error", error),
+    onError: () => {},
   });
 };

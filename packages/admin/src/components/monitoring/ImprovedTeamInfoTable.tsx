@@ -33,8 +33,6 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
 
   const tableHeaders = getTableHeaders();
 
-  console.log(teamInfo);
-
   const handleOpenModal = (teamId: number, teamName: string) => {
     setSelectedTeamId(teamId);
     setSelectedTeamName(teamName);

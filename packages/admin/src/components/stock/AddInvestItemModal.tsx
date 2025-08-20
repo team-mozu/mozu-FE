@@ -80,7 +80,6 @@ export const AddInvestItemModal = ({
         money: Array(selectedDegree + 1).fill(0), // +1은 현재가를 위한 것
       }));
 
-    console.log("Selected items in modal:", selectedItems);
     onItemsSelected(selectedItems);
   };
 

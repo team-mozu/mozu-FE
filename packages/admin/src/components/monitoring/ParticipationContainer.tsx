@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { TeamContainer } from "@mozu/ui";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tooltip } from "react-tooltip";
 
 interface teamData {
@@ -16,11 +16,7 @@ interface IParticipationType {
 
 export const ParticipationContainer = ({ code, teamDatas }: IParticipationType) => {
   const [tooltipContent, setTooltipContent] = useState("클릭하여 복사하기");
-  useEffect(() => {
-    console.log(teamDatas);
-  }, [
-    teamDatas,
-  ]);
+
   const handleCopyClipBoard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);

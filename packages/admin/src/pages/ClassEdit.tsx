@@ -389,8 +389,6 @@ export const ClassEdit = () => {
       })),
     };
 
-    console.log("Submitting class edit data:", classData);
-
     editClass(classData, {
       onSuccess: () => navigate(`/class-management/${id}`),
     });

@@ -48,10 +48,8 @@ export const InvestmentPreparation = () => {
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
     data => {
-      console.log(data.message);
     },
     error => {
-      console.log(error);
       Toast(`네트워크 에러가 발생했습니다. 페이지를 새로고침 해주세요`, {
         type: "error",
       });
@@ -69,7 +67,6 @@ export const InvestmentPreparation = () => {
               },
             ],
           };
-          console.log("업데이트된 데이터:", updatedData);
           return updatedData;
         });
         setTeamInfo({

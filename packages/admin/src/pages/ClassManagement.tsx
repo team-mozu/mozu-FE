@@ -62,7 +62,6 @@ export const ClassManagement = () => {
   const handleDelete = () => {
     if (selectedClassId !== null) {
       delClassApi(selectedClassId);
-      console.log(`수업 ID ${selectedClassId} 삭제`);
     }
     setIsModal(false);
   };
@@ -141,23 +140,23 @@ export const ClassManagement = () => {
                 <PostContents>
                   {isLoading
                     ? favorites.map((_, index) => (
-                        <SkeletonClassPost
-                          key={index}
-                          title={""}
-                          creationDate={""}
-                        />
-                      ))
+                      <SkeletonClassPost
+                        key={index}
+                        title={""}
+                        creationDate={""}
+                      />
+                    ))
                     : favorites.map((item, index) => (
-                        <ClassPost
-                          key={item.id}
-                          title={item.name}
-                          creationDate={item.date}
-                          isClick={item.starYN}
-                          starOnClick={() => toggleFavorite(index, "favorites", item.id)}
-                          delClick={() => openDeleteModal(item.id)}
-                          onClick={() => navigate(`${item.id}`)}
-                        />
-                      ))}
+                      <ClassPost
+                        key={item.id}
+                        title={item.name}
+                        creationDate={item.date}
+                        isClick={item.starYN}
+                        starOnClick={() => toggleFavorite(index, "favorites", item.id)}
+                        delClick={() => openDeleteModal(item.id)}
+                        onClick={() => navigate(`${item.id}`)}
+                      />
+                    ))}
                 </PostContents>
               </PostContainer>
             )}
@@ -169,23 +168,23 @@ export const ClassManagement = () => {
               <PostContents>
                 {isLoading
                   ? common.map((_, index) => (
-                      <SkeletonClassPost
-                        key={index}
-                        title={""}
-                        creationDate={""}
-                      />
-                    ))
+                    <SkeletonClassPost
+                      key={index}
+                      title={""}
+                      creationDate={""}
+                    />
+                  ))
                   : common.map((item, index) => (
-                      <ClassPost
-                        key={item.id}
-                        title={item.name}
-                        creationDate={item.date}
-                        isClick={isClickCommon[index]}
-                        starOnClick={() => toggleFavorite(index, "common", item.id)}
-                        delClick={() => openDeleteModal(item.id)}
-                        onClick={() => navigate(`${item.id}`)}
-                      />
-                    ))}
+                    <ClassPost
+                      key={item.id}
+                      title={item.name}
+                      creationDate={item.date}
+                      isClick={isClickCommon[index]}
+                      starOnClick={() => toggleFavorite(index, "common", item.id)}
+                      delClick={() => openDeleteModal(item.id)}
+                      onClick={() => navigate(`${item.id}`)}
+                    />
+                  ))}
               </PostContents>
             </PostContainer>
           </PostAllContainer>

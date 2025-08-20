@@ -51,7 +51,6 @@ export const useSSE = (
       eventSource.addEventListener(eventType, (e: MessageEvent) => {
         try {
           const eventData = JSON.parse(e.data);
-          console.log(`[SSE] ${eventType} 수신:`, eventData);
           eventHandlers?.[eventType]?.(eventData);
         } catch (err) {
           console.error(`[SSE] ${eventType} 파싱 오류:`, err);
@@ -60,7 +59,6 @@ export const useSSE = (
     });
 
     eventSource.onmessage = e => {
-      console.log("수신된 SSE 데이터:", e.data);
       try {
         const parsedData = JSON.parse(e.data);
         onMessage?.(parsedData);

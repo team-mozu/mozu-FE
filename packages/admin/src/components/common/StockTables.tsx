@@ -89,8 +89,6 @@ export const StockTables = ({
   const selectedRound = parseInt(degree, 10);
   const [stockData, setStockData] = useState<StockData[]>(data);
 
-  console.log(stockData);
-
   // Update local state when external data changes
   useEffect(() => {
     setStockData(data);
@@ -120,9 +118,9 @@ export const StockTables = ({
       stockData.map(item =>
         item.itemId === itemId
           ? {
-              ...item,
-              stockChecked: !item.stockChecked,
-            }
+            ...item,
+            stockChecked: !item.stockChecked,
+          }
           : item,
       ),
     );
@@ -207,25 +205,25 @@ export const StockTables = ({
   const columns: ColumnDef<StockData>[] = [
     ...(isEdit
       ? [
-          {
-            accessorKey: "stockChecked",
-            header: () => (
-              <CheckBox
-                onChange={toggleAll}
-                checked={stockData.length > 0 && stockData.every(row => row.stockChecked)}
-                id="stock-header-checkbox"
-              />
-            ),
-            cell: ({ row }: { row: Row<StockData> }) => (
-              <CheckBox
-                checked={row.original.stockChecked}
-                onChange={() => toggleStockRow(row.original.itemId)}
-                id={`stock-row-${row.original.itemId}`}
-              />
-            ),
-            size: 52,
-          },
-        ]
+        {
+          accessorKey: "stockChecked",
+          header: () => (
+            <CheckBox
+              onChange={toggleAll}
+              checked={stockData.length > 0 && stockData.every(row => row.stockChecked)}
+              id="stock-header-checkbox"
+            />
+          ),
+          cell: ({ row }: { row: Row<StockData> }) => (
+            <CheckBox
+              checked={row.original.stockChecked}
+              onChange={() => toggleStockRow(row.original.itemId)}
+              id={`stock-row-${row.original.itemId}`}
+            />
+          ),
+          size: 52,
+        },
+      ]
       : []),
     {
       accessorKey: "itemCode",
@@ -300,11 +298,11 @@ export const StockTables = ({
               return value === null ? (
                 <EmptyValueText>{placeholder}</EmptyValueText>
               ) : // value가 숫자인지 확인 후 formatPrice 사용
-              typeof value === "number" ? (
-                formatPrice(value)
-              ) : (
-                value
-              );
+                typeof value === "number" ? (
+                  formatPrice(value)
+                ) : (
+                  value
+                );
             }
           }
         },

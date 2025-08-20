@@ -83,8 +83,7 @@ export const ClassEnvironment = () => {
       onSuccess: () => {
         navigate("/class-management"); // 삭제 후 이전 페이지로 이동
       },
-      onError: error => {
-        console.error("클래스 삭제 중 오류 발생:", error);
+      onError: () => {
         alert("클래스 삭제에 실패했습니다.");
       },
     });
@@ -105,37 +104,35 @@ export const ClassEnvironment = () => {
   // 정보 배열 구성
   const infos = classData
     ? [
-        {
-          kind: "수업 이름",
-          value: classData.name || "정보 없음",
-        },
-        {
-          kind: "투자 차수",
-          value: `${classData.maxInvDeg}차` || "정보 없음",
-        },
-        {
-          kind: "기초자산",
-          value: `${formatPrice(classData.baseMoney)}원` || "정보 없음",
-        },
-        {
-          kind: "생성일자",
-          value: classData.createdAt || "정보 없음",
-        },
-      ]
+      {
+        kind: "수업 이름",
+        value: classData.name || "정보 없음",
+      },
+      {
+        kind: "투자 차수",
+        value: `${classData.maxInvDeg}차` || "정보 없음",
+      },
+      {
+        kind: "기초자산",
+        value: `${formatPrice(classData.baseMoney)}원` || "정보 없음",
+      },
+      {
+        kind: "생성일자",
+        value: classData.createdAt || "정보 없음",
+      },
+    ]
     : [];
 
   // 투자 종목 데이터 가공
   const stockTableData = classData?.classItems
     ? classData.classItems.map(item => ({
-        itemId: item.itemId,
-        itemCode: String(item.itemId),
-        itemName: item.itemName,
-        money: item.money,
-        stockChecked: false,
-      }))
+      itemId: item.itemId,
+      itemCode: String(item.itemId),
+      itemName: item.itemName,
+      money: item.money,
+      stockChecked: false,
+    }))
     : [];
-
-  console.log(stockTableData);
 
   // 기사 데이터 가공
   const articleTableData = classData?.classArticles || [];
@@ -183,17 +180,17 @@ export const ClassEnvironment = () => {
             <InfoBox>
               {isLoading
                 ? infos.map(data => (
-                    <InfoDiv key={data.kind}>
-                      <span>{data.kind}</span>
-                      {data.value}
-                    </InfoDiv>
-                  ))
+                  <InfoDiv key={data.kind}>
+                    <span>{data.kind}</span>
+                    {data.value}
+                  </InfoDiv>
+                ))
                 : infos.map(data => (
-                    <Info key={data.kind}>
-                      <span>{data.kind}</span>
-                      {data.value}
-                    </Info>
-                  ))}
+                  <Info key={data.kind}>
+                    <span>{data.kind}</span>
+                    {data.value}
+                  </Info>
+                ))}
             </InfoBox>
             <BtnContainer>
               <Button

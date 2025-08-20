@@ -38,7 +38,6 @@ export const CreateClass = () => {
 
   // 투자 종목 관련 핸들러
   const handleAddItems = (newItems: any[]) => {
-    console.log("New items received in CreateClass:", newItems);
 
     // Add new items to the classItems array
     setClassItems(prevItems => [
@@ -148,7 +147,6 @@ export const CreateClass = () => {
 
   // 기사 관련 핸들러
   const handleAddArticles = (newArticleGroup: { invDeg: number; articles: Article[] }) => {
-    console.log("New articles received:", newArticleGroup);
 
     const { invDeg, articles } = newArticleGroup;
 
