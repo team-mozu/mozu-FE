@@ -18,6 +18,8 @@
     ]
   },
   "dependencies": {
+    "@emotion/css": "^11.13.5",
+    "@emotion/react": "^11.14.0",
     "dotenv": "^16.4.7",
     "inquirer": "^12.3.0",
     "react-spinners": "^0.17.0"
