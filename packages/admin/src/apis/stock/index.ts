@@ -1,3 +1,4 @@
+import { Toast } from "@mozu/ui";
 import { instance } from "@mozu/util-config";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
@@ -24,19 +25,25 @@ export const useAddStock = () => {
   });
 };
 
-export const useDeleteStock = (stockId: number) => {
+export const useDeleteStock = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (stockId: number) => {
       return await instance.delete(`${router}/${stockId}`);
     },
     onSuccess: () => {
+      Toast("삭제에 성공했습니다.", {
+        type: "success",
+      });
       queryClient.invalidateQueries({
         queryKey: [
           "getStock",
         ],
       });
+      if (onSuccessCallback) {
+        onSuccessCallback(); // 모달 닫기 실행
+      }
     },
     onError: () => {},
   });

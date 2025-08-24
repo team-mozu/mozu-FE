@@ -1,14 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Item, SearchInput } from "@mozu/ui";
+import { Button, Input, Item, Search } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useGetStockList } from "@/apis";
-
-// 서버 응답 인터페이스 정의
-interface StockItem {
-  id: number;
-  name: string;
-}
 
 interface IInvestModalType {
   close: () => void;
@@ -103,10 +97,12 @@ export const AddInvestItemModal = ({
       <InvestItemContainer>
         <SearchContainer>
           <Title isHeader>투자종목 추가</Title>
-          <SearchInput
-            inputText="종목 검색.."
+          <Input
+            placeholder="종목 검색.."
+            fullWidth={true}
             value={searchText}
-            onChange={handleSearchChange}
+            startIcon={<Search color={color.zinc[400]} size={20} />}
+            onChange={e => handleSearchChange(e.target.value)}
           />
         </SearchContainer>
         <TableContainer>
@@ -155,7 +151,7 @@ export const AddInvestItemModal = ({
           </BtnContainer>
         </FooterContainer>
       </InvestItemContainer>
-    </ModalBackground>
+    </ModalBackground >
   );
 };
 

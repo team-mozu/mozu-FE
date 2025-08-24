@@ -88,7 +88,7 @@ export const StockManagementAddPage = () => {
         onClick={addClick}
       />
       <StockSetting>
-        <InnerContainer>
+        <LeftContainer>
           <div>
             <LogoUploader
               img={state.logo ? URL.createObjectURL(state.logo) : ""}
@@ -104,7 +104,6 @@ export const StockManagementAddPage = () => {
             <Input
               label={"회사 이름"}
               placeholder={"종목 이름을 입력해 주세요.."}
-              width={"480px"}
               name="name"
               onChange={onChangeInputValue}
               value={state.name}
@@ -119,60 +118,59 @@ export const StockManagementAddPage = () => {
               onChange={onChangeInputValue}
               value={state.info}></TextArea>
           </div>
-        </InnerContainer>
-        <InnerContainer>
+        </LeftContainer>
+        <RightContainer>
           <p>재무상태표 ∙ 손익계산서</p>
           {[
             {
               label: "자산",
               name: "money",
-              value: formattedPrices[0] || "",
+              value: formattedPrices[0] === "0" ? "" : formattedPrices[0],
             },
             {
               label: "부채",
               name: "debt",
-              value: formattedPrices[1] || "",
+              value: formattedPrices[1] === "0" ? "" : formattedPrices[1],
             },
             {
               label: "자본금",
               name: "capital",
-              value: formattedPrices[2] || "",
+              value: formattedPrices[2] === "0" ? "" : formattedPrices[2],
             },
             {
               label: "매출액",
               name: "profit",
-              value: formattedPrices[3] || "",
+              value: formattedPrices[3] === "0" ? "" : formattedPrices[3],
             },
             {
               label: "매출원가",
               name: "profitOG",
-              value: formattedPrices[4] || "",
+              value: formattedPrices[4] === "0" ? "" : formattedPrices[4],
             },
             {
               label: "매출이익",
               name: "profitBen",
-              value: formattedPrices[5] || "",
+              value: formattedPrices[5] === "0" ? "" : formattedPrices[5],
             },
             {
               label: "당기순이익",
               name: "netProfit",
-              value: formattedPrices[6] || "",
+              value: formattedPrices[6] === "0" ? "" : formattedPrices[6],
             },
           ].map((item, index) => (
             <div key={item.name}>
               <Input
                 label={item.label}
-                placeholder={`${item.label} 정보를 입력해 주세요.`}
-                type={"text"}
+                placeholder={`${item.label} 정보를 입력해 주세요..`}
+                type="money"
                 name={item.name}
-                width={"480px"}
-                text={"원"}
+                rightText="원"
                 onChange={priceChangeHandler(index)}
                 value={item.value}
               />
             </div>
           ))}
-        </InnerContainer>
+        </RightContainer>
       </StockSetting>
     </Container>
   );
@@ -193,9 +191,26 @@ const StockSetting = styled.div`
   gap: 8px;
 `;
 
-const InnerContainer = styled.div`
+const LeftContainer = styled.div`
   overflow: scroll;
-  width: 50%;
+  width: 95%;
+  height: 100%;
+  padding: 24px;
+  background-color: ${color.white};
+  border-radius: 1rem;
+  border: 1px solid ${color.zinc[200]};
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  > p {
+    color: ${color.black};
+    font: ${font.t1};
+  }
+`;
+
+const RightContainer = styled.div`
+  overflow: scroll;
+  width: 40%;
   height: 100%;
   padding: 24px;
   background-color: ${color.white};

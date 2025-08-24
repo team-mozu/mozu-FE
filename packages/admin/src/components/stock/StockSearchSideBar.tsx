@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { AddButton, SearchInput } from "@mozu/ui";
+import { AddButton, Input, Search } from "@mozu/ui";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetStockList } from "@/apis";
@@ -64,27 +64,32 @@ export const StockSearchSideBar = ({ setSelectedId, selectedId }: StockSearchSid
         <p>
           전체 <span>{datas.length}</span>
         </p>
-        <SearchInput
-          inputText="종목 검색.."
+        <Input
+          placeholder="기사 검색.."
+          fullWidth={true}
+          startIcon={<Search color={color.zinc[400]} size={20} />}
           value={searchText}
-          onChange={value => setSearchText(value)}
+          onChange={e => setSearchText(e.target.value)}
         />
       </UpperWrapper>
       <ArticleWrapper>
-        {filteredDatas.map((data, index) => (
-          <StockDiv
-            key={data.id}
-            name={data.name}
-            number={index + 1}
-            selected={selectedId === data.id}
-            onClick={() => {
-              setSelectedId(data.id);
-              navigate(`/stock-management/${data.id}`, {
-                replace: true,
-              });
-            }}
-          />
-        ))}
+        {filteredDatas.length > 0 ?
+          filteredDatas.map((data, index) => (
+            <StockDiv
+              key={data.id}
+              name={data.name}
+              number={index + 1}
+              selected={selectedId === data.id}
+              onClick={() => {
+                setSelectedId(data.id);
+                navigate(`/stock-management/${data.id}`, {
+                  replace: true,
+                });
+              }}
+            />
+          )) :
+          <EmptyState>{searchText ? "검색 결과가 없습니다." : "종목이 없습니다."}</EmptyState>
+        }
       </ArticleWrapper>
 
       <AddButton
@@ -122,4 +127,13 @@ const ArticleWrapper = styled.div`
   flex: 1;
   width: 100%;
   overflow-y: auto;
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font: ${font.b2};
+  color: ${color.zinc[500]};
 `;

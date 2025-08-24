@@ -4,7 +4,7 @@ import { EditDiv, Input, TextArea } from "@mozu/ui";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEditStock, useGetStockDetail } from "@/apis";
-import { LogoUploader, MoneyInput } from "@/components";
+import { LogoUploader } from "@/components";
 import { useForm, usePriceFormatter } from "@/hooks";
 
 type FormState = {
@@ -124,7 +124,6 @@ export const StockManagementEditPage = () => {
               label={"회사 이름"}
               placeholder={"종목 이름을 입력해 주세요.."}
               name="name"
-              width={"480px"}
               onChange={onChangeInputValue}
               value={state.name}
             />
@@ -179,15 +178,14 @@ export const StockManagementEditPage = () => {
             },
           ].map((item, index) => (
             <div key={item.name}>
-              <MoneyInput
+              <Input
                 label={item.label}
                 placeholder={`${item.label} 정보를 입력해 주세요.`}
-                type={"text"}
+                type={"money"}
                 name={item.name}
                 value={item.value ? Number(item.value).toLocaleString("ko-KR") : ""}
                 onChange={priceChangeHandler(index)}
-                width={"480px"}
-                text={"원"}
+                rightText="원"
               />
             </div>
           ))}

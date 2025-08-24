@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Toast, WarningMsg } from "@mozu/ui";
+import { Button, Del, Modal, Toast, WarningMsg } from "@mozu/ui";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useClassStop, useGetClassDetail, useNextDegree } from "@/apis";
 import { ParticipationContainer } from "@/components";
 import { useSSE } from "@/hooks";
@@ -24,8 +24,10 @@ export const InvestmentPreparation = () => {
   });
 
   const { mutate: nextDegree } = useNextDegree(classId ?? 0);
-  const { mutate: stopClass } = useClassStop(classId ?? 0);
+  const { mutate: stopClass, isPending } = useClassStop(() => setIsModalOpen(false));
   const { setTeamInfo, clearTeamInfo } = useTeamStore();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
@@ -47,8 +49,7 @@ export const InvestmentPreparation = () => {
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
-    data => {
-    },
+    data => { },
     error => {
       Toast(`네트워크 에러가 발생했습니다. 페이지를 새로고침 해주세요`, {
         type: "error",
@@ -87,47 +88,76 @@ export const InvestmentPreparation = () => {
     },
   );
 
+  const handleCancel = () => {
+    stopClass(classId ?? 0, {
+      onSuccess: () => {
+        Toast("수업을 성공적으로 취소했습니다.", { type: "success" });
+        navigate(`/class-management/${classId}`);
+      },
+    });
+  };
+
+  const handleOpenCancelModal = () => {
+    setIsModalOpen(true);
+  };
+
   return (
-    <InvestmentPreparationContainer>
-      <ContentContainer>
-        <TitleContainer>
-          <Title>모의투자 준비</Title>
-          <UsedDate>{classNameData?.name ?? "로딩중..."}</UsedDate>
-        </TitleContainer>
-        <ParticipationContainer
-          code={inviteCode ?? "로딩중..."}
-          teamDatas={datas.teams}
+    <>
+      {isModalOpen && (
+        <Modal
+          mainTitle={"수업을 취소하실 건가요?"}
+          subTitle="취소하면 복구가 불가능합니다."
+          onSuccessClick={handleCancel}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          isPending={isPending}
         />
-        <WarningMsg message="모의투자를 시작하면 중도참여가 불가능해요." />
-        <BtnContainer>
-          <Button
-            width={240}
-            isIcon={true}
-            backgroundColor={color.zinc[50]}
-            borderColor={color.zinc[200]}
-            color={color.zinc[800]}
-            type="cancelImg"
-            onClick={() => {
-              stopClass();
-            }}
-            iconSize={24}
-            iconColor={color.zinc[800]}
-            hoverBackgroundColor={color.zinc[100]}>
-            취소하기
-          </Button>
-          <Button
-            width={240}
-            backgroundColor={color.orange[500]}
-            borderColor={color.orange[500]}
-            color={color.white}
-            hoverBackgroundColor={color.orange[600]}
-            onClick={handleNext}
-            disabled={datas.teams.length === 0 || isSubmitting}>
-            진행하기 ({datas.teams.length ?? 0})
-          </Button>
-        </BtnContainer>
-      </ContentContainer>
-    </InvestmentPreparationContainer>
+      )}
+      <InvestmentPreparationContainer>
+        <ContentContainer>
+          <TitleContainer>
+            <Title>모의투자 준비</Title>
+            <UsedDate>{classNameData?.name ?? "로딩중..."}</UsedDate>
+          </TitleContainer>
+          <ParticipationContainer
+            code={inviteCode ?? "로딩중..."}
+            teamDatas={datas.teams}
+          />
+          <WarningMsg message="모의투자를 시작하면 중도참여가 불가능해요." />
+          <BtnContainer>
+            <Button
+              width={240}
+              isIcon={true}
+              backgroundColor={color.zinc[50]}
+              borderColor={color.zinc[200]}
+              color={color.zinc[800]}
+              type="cancelImg"
+              onClick={handleOpenCancelModal}
+              iconSize={24}
+              iconColor={color.zinc[800]}
+              hoverBackgroundColor={color.zinc[100]}>
+              취소하기
+            </Button>
+            <Button
+              width={240}
+              backgroundColor={color.orange[500]}
+              borderColor={color.orange[500]}
+              color={color.white}
+              hoverBackgroundColor={color.orange[600]}
+              onClick={handleNext}
+              disabled={datas.teams.length === 0 || isSubmitting}>
+              진행하기 ({datas.teams.length ?? 0})
+            </Button>
+          </BtnContainer>
+        </ContentContainer>
+      </InvestmentPreparationContainer>
+    </>
   );
 };
 
