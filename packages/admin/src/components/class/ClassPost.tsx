@@ -22,9 +22,9 @@ export const ClassPost = ({ title, creationDate, starOnClick, isClick, delClick,
           </TilteContainer>
           <Star
             size={20}
-            onClick={e => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
-              starOnClick && starOnClick(e);
+              starOnClick?.(e);
             }}
             strokeColor={isClick ? color.yellow[400] : color.zinc[600]}
             fillColor={isClick ? color.yellow[400] : "none"}
@@ -34,9 +34,9 @@ export const ClassPost = ({ title, creationDate, starOnClick, isClick, delClick,
           backgroundColor={color.zinc[50]}
           color={color.zinc[800]}
           borderColor={color.zinc[200]}
-          onClick={e => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
-            delClick && delClick(e);
+            delClick?.(e);
           }}
           hoverBackgroundColor={color.zinc[100]}>
           삭제하기

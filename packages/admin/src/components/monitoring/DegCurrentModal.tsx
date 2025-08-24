@@ -259,7 +259,7 @@ const ContentContainer = styled.div`
 const TitleContainer = styled.div`
   padding: 32px 32px 24px;
   border-bottom: 1px solid ${color.zinc[100]};
-  background: linear-gradient(135deg, ${color.white} 0%, ${color.zinc[25]} 100%);
+  background: linear-gradient(135deg, ${color.white} 0%, ${color.zinc[50]} 100%);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -377,7 +377,7 @@ const TableContainer = styled.div`
   display: flex;
   justify-content: center;
   padding: 24px 28px;
-  background: ${color.zinc[25]};
+  background: ${color.zinc[50]};
   position: relative;
   
   > div {

@@ -1,15 +1,14 @@
-import { Toast } from "@mozu/ui";
 import { instance } from "@mozu/util-config";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
 import type { HoldItem, TeamTradeStatus } from "./type";
 
 const router = "/class";
 
-export const useClassStop = (id: number) => {
-  const navigate = useNavigate();
+export const useClassStop = (onSuccessCallback?: () => void) => {
   return useMutation({
-    mutationFn: async (): Promise<{
+    mutationFn: async (
+      id: number,
+    ): Promise<{
       id: number;
     }> => {
       const response = await instance.post<{
@@ -18,10 +17,9 @@ export const useClassStop = (id: number) => {
       return response.data;
     },
     onSuccess: () => {
-      Toast("수업을 성공적으로 종료했습니다.", {
-        type: "success",
-      });
-      navigate(`/class-management/${id}`);
+      if (onSuccessCallback) {
+        onSuccessCallback();
+      }
     },
   });
 };

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { ArrowLeft, Button, Del, DeleteModal, Edit, Play } from "@mozu/ui";
+import { ArrowLeft, Button, Del, Edit, Modal, Play } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useClassDelete, useClassStart, useGetClassDetail } from "@/apis";
@@ -40,7 +40,7 @@ export const ClassEnvironment = () => {
   ]);
 
   const { mutate: startClass } = useClassStart(classId ?? 0);
-  const { mutate: deleteClass, isPending } = useClassDelete();
+  const { mutate: deleteClass, isPending } = useClassDelete(() => setIsModal(false));
 
   // 상태 관리
   const [isModal, setIsModal] = useState<boolean>(false);
@@ -70,24 +70,15 @@ export const ClassEnvironment = () => {
     setIsModal(true);
   };
 
-  // 삭제 모달 닫기
-  const closeDeleteModal = () => {
-    setIsModal(false);
-  };
-
   // 클래스 삭제
   const handleDelete = () => {
-    if (!classId) return;
-
-    deleteClass(classId, {
-      onSuccess: () => {
-        navigate("/class-management"); // 삭제 후 이전 페이지로 이동
-      },
-      onError: () => {
-        alert("클래스 삭제에 실패했습니다.");
-      },
-    });
-    setIsModal(false);
+    if (classId !== null) {
+      deleteClass(classId, {
+        onSuccess: () => {
+          navigate("/class-management");
+        }
+      });
+    };
   };
 
   // 수업 시작
@@ -142,11 +133,13 @@ export const ClassEnvironment = () => {
   return (
     <>
       {isModal && (
-        <DeleteModal
-          titleComment={`'${classData?.name || ""}' 삭제하실 건가요?`}
-          subComment="삭제하면 복구가 불가능합니다."
-          onCancel={closeDeleteModal}
-          onDelete={handleDelete}
+        <Modal
+          mainTitle={`'${classData?.name || ""}'을 삭제하실 건가요?`}
+          subTitle="삭제하면 복구가 불가능합니다."
+          onSuccessClick={handleDelete}
+          icon={<Del size={24} color={color.red[400]} />}
+          isOpen={isModal}
+          setIsOpen={setIsModal}
           isPending={isPending}
         />
       )}
@@ -248,15 +241,6 @@ const PDiv = styled(Skeleton)`
 
 const H2Div = styled(Skeleton)`
   color: transparent;
-`;
-
-const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 500px;
-  font: ${font.t1};
-  color: ${color.zinc[500]};
 `;
 
 const TableBox = styled.div`

@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, DeleteModal, Toast } from "@mozu/ui";
+import { Button, Del, Modal, Toast } from "@mozu/ui";
 import { useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Tooltip } from "react-tooltip";
 import { useClassStop, useGetClassDetail, useNextDegree } from "@/apis";
 import { ArticleInfoModal, ClassInfoModal, FullPageLoader, ImprovedTeamInfoTable } from "@/components";
@@ -13,10 +13,10 @@ import { queryClient } from "@/utils/queryClient";
 export const ImprovedClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState(false);
   const [isOpenClass, setIsOpenClass] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpenEnd, setIsOpenEnd] = useState(false);
   const { teamInfoMap, appendTrade } = useTeamStore();
   const teamInfo = Object.values(teamInfoMap);
+  const [isCancleModalOpen, setIsCancleModalOpen] = useState(false);
+  const [isEndModalOpen, setIsEndModalOpen] = useState(false);
 
   const { id } = useParams();
   const classId = id ? parseInt(id) : null;
@@ -36,8 +36,11 @@ export const ImprovedClassMonitoringPage = () => {
       },
     );
   });
-  const { mutate: stopClass, isPending: isStopClassPending } = useClassStop(classId ?? 0);
-
+  const { mutate: stopClass, isPending: isStopClassPending } = useClassStop(() => {
+    setIsCancleModalOpen(false);
+    setIsEndModalOpen(false);
+  });
+  const navigate = useNavigate();
   const isDegEnd = classData ? teamInfo.every(team => (team.trade?.length ?? 0) >= (classData.curInvDeg ?? 0)) : false;
 
   const articleInfoClick = () => {
@@ -63,35 +66,78 @@ export const ImprovedClassMonitoringPage = () => {
   });
 
   const handleStopClass = () => {
-    setIsOpen(true);
+    if (classId !== null) {
+      stopClass(classId, {
+        onSuccess: () => {
+          Toast("수업을 성공적으로 취소했습니다.", {
+            type: "success",
+          });
+          navigate(`/class-management/${classId}`);
+        },
+      });
+    }
   };
 
   const handleEndClass = () => {
-    setIsOpenEnd(true);
+    if (classId !== null) {
+      stopClass(classId, {
+        onSuccess: () => {
+          Toast("수업을 성공적으로 종료했습니다.", {
+            type: "success",
+          });
+          navigate(`/class-management/${classId}`);
+        },
+      });
+    }
   };
+
+  const openModal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { id } = e.currentTarget;
+    if (id === "cancel") {
+      setIsCancleModalOpen(true);
+    } else if (id === "end") {
+      setIsEndModalOpen(true);
+    } else {
+      return;
+    }
+  }
 
   if (isLoading || !classData || isFetching) return <FullPageLoader />;
 
   return (
     <>
-      {isOpen && (
-        <DeleteModal
-          titleComment="모의투자 취소"
-          subComment="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
-          onCancel={() => setIsOpen(false)}
-          onDelete={() => stopClass()}
+      {isCancleModalOpen && (
+        <Modal
+          mainTitle="모의투자 취소"
+          subTitle="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
+          onSuccessClick={handleStopClass}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
+          isOpen={isCancleModalOpen}
+          setIsOpen={setIsCancleModalOpen}
           isPending={isStopClassPending}
-          message={"취소하기"}
+          successBtnChildren={"확인"}
         />
       )}
-      {isOpenEnd && (
-        <DeleteModal
-          titleComment="모의투자 종료"
-          subComment="모의투자를 종료하시겠습니까? 종료 후 투자 데이터는 삭제됩니다."
-          onCancel={() => setIsOpenEnd(false)}
-          onDelete={() => stopClass()}
+      {isEndModalOpen && (
+        <Modal
+          mainTitle="모의투자 종료"
+          subTitle="모의투자를 종료하시겠습니까? 종료 후 투자 데이터는 삭제됩니다."
+          onSuccessClick={handleEndClass}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
+          isOpen={isEndModalOpen}
+          setIsOpen={setIsEndModalOpen}
           isPending={isStopClassPending}
-          message={"종료하기"}
+          successBtnChildren={"확인"}
         />
       )}
       <Container>
@@ -118,19 +164,21 @@ export const ImprovedClassMonitoringPage = () => {
           <ButtonContainer>
             <Button
               type={"logOutImg"}
+              id={"cancel"}
               isIcon={true}
               iconColor={color.zinc[800]}
               iconSize={24}
               backgroundColor={color.zinc[50]}
               borderColor={color.zinc[200]}
               color={color.zinc[800]}
-              onClick={() => handleStopClass()}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => openModal(e)}
               hoverBackgroundColor={color.zinc[100]}>
               모의투자 취소
             </Button>
             {classData.curInvDeg === classData.maxInvDeg ? (
               <Button
                 type={"startImg"}
+                id={"end"}
                 isIcon={true}
                 iconColor={color.zinc[800]}
                 iconSize={24}
@@ -138,7 +186,7 @@ export const ImprovedClassMonitoringPage = () => {
                 borderColor={color.zinc[200]}
                 color={color.zinc[800]}
                 hoverBackgroundColor={color.zinc[100]}
-                onClick={() => handleEndClass()}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => openModal(e)}
                 disabled={!isDegEnd}>
                 투자 종료
               </Button>
@@ -326,4 +374,3 @@ const InfoBtn = styled.div`
   gap: 12px;
 `;
 
-const TableContainer = styled.div``;

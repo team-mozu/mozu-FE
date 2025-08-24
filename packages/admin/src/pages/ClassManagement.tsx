@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { Button, DeleteModal, PageTitle, PostTitle } from "@mozu/ui";
+import { Button, Del, Modal, PageTitle, PostTitle } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { type ClassItem, useClassDelete, useClassStar, useGetClassList } from "@/apis";
@@ -32,9 +32,9 @@ export const ClassManagement = () => {
   const common = classData.filter(item => !item.starYN);
 
   // 즐겨찾기 여부를 저장할 state
-  const [isClickFavorites, setIsClickFavorites] = useState<boolean[]>([]);
+  const [, setIsClickFavorites] = useState<boolean[]>([]);
   const [isClickCommon, setIsClickCommon] = useState<boolean[]>([]);
-  const [isStarLoading, setIsStarLoading] = useState(false);
+  const [, setIsStarLoading] = useState(false);
 
   // 데이터가 변경될 때 상태 초기화
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
@@ -50,20 +50,14 @@ export const ClassManagement = () => {
     setIsModal(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModal(false);
-    setSelectedClassId(null);
-  };
-
   //삭제 api 불러옴
-  const { mutate: delClassApi, isPending } = useClassDelete();
+  const { mutate: delClassApi, isPending } = useClassDelete(() => setIsModal(false));
 
   //삭제하기
   const handleDelete = () => {
     if (selectedClassId !== null) {
       delClassApi(selectedClassId);
     }
-    setIsModal(false);
   };
 
   const { mutate: apiClassStar } = useClassStar();
@@ -103,12 +97,14 @@ export const ClassManagement = () => {
   return (
     <>
       {isModal && (
-        <DeleteModal
-          titleComment={"이 수업을 삭제하시겠습니까?"}
-          subComment={"삭제하면 복구가 불가능합니다."}
+        <Modal
+          mainTitle={"이 수업을 삭제하시겠습니까?"}
+          subTitle={"삭제하면 복구가 불가능합니다."}
+          onSuccessClick={handleDelete}
+          icon={<Del size={24} color={color.red[400]} />}
+          isOpen={isModal}
+          setIsOpen={setIsModal}
           isPending={isPending}
-          onCancel={handleCloseModal}
-          onDelete={handleDelete}
         />
       )}
       <ClassManagementContent>

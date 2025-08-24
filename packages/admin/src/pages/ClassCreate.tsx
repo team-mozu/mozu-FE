@@ -298,11 +298,11 @@ export const CreateClass = () => {
       </Header>
       <Contents>
         <TextField>
-          <FlexInputBox>
+          <FlexInputBox style={{ flex: 5 }}>
             수업 이름
             <Input
               placeholder="수업 이름을 입력해 주세요.."
-              width="100%"
+              fullWidth={true}
               value={className}
               onChange={onTitleChange}
             />
@@ -330,16 +330,17 @@ export const CreateClass = () => {
               차
             </SelectField>
           </FlexColumnBox>
-          <FlexColumnBox>
+          <FlexColumnBox style={{ flex: 1 }}>
             기초자산
             <AssetField>
-              <AssetInput
-                type="text"
+              <Input
+                fullWidth={true}
+                type="money"
+                placeholder="기초자산을 입력하세요.."
                 onChange={onBaseMoneyChange}
-                value={formatPrice(baseMoney)}
-                width={"10rem"}
+                value={baseMoney === 0 ? "" : formatPrice(baseMoney)}
+                rightText="원"
               />
-              원
             </AssetField>
           </FlexColumnBox>
         </TextField>
@@ -395,19 +396,6 @@ export const AssetField = styled.div`
   gap: 8px;
 `;
 
-export const AssetInput = styled.input`
-  background-color: ${color.zinc[50]};
-  border: 1px solid ${color.zinc[200]};
-  border-radius: 8px;
-  padding: 14px 16px;
-  height: 48px;
-  width: 210px;
-  font: ${font.b2};
-  :focus {
-    border: 1px solid ${color.orange[300]};
-  }
-`;
-
 export const FlexColumnBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -420,7 +408,6 @@ export const FlexInputBox = styled.div`
   flex-direction: column;
   font: ${font.b1};
   gap: 8px;
-  width: 62rem;
 `;
 
 export const SelectField = styled.div`

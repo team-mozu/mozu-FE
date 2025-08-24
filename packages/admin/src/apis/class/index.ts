@@ -103,7 +103,7 @@ export const useClassStar = () => {
   });
 };
 
-export const useClassDelete = () => {
+export const useClassDelete = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
@@ -113,13 +113,20 @@ export const useClassDelete = () => {
       Toast("삭제에 성공했습니다.", {
         type: "success",
       });
+      if (onSuccessCallback) {
+        onSuccessCallback(); // 모달 닫기 실행
+      }
       queryClient.invalidateQueries({
         queryKey: [
           "getClass",
         ],
       });
     },
-    onError: () => {},
+    onError: () => {
+      Toast("수업 삭제에 실패했습니다.", {
+        type: "error",
+      });
+    },
   });
 };
 

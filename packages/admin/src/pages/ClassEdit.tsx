@@ -10,11 +10,11 @@ import { StockTables } from "@/components/common/StockTables";
 import { formatPrice } from "@/utils/formatPrice";
 import {
   AssetField,
-  AssetInput,
   BtnContainer,
   Container,
   Contents,
   FlexColumnBox,
+  FlexInputBox,
   Header,
   SelectField,
   TableField,
@@ -446,15 +446,15 @@ export const ClassEdit = () => {
       </Header>
       <Contents>
         <TextField>
-          <FlexColumnBox>
+          <FlexInputBox style={{ flex: 5 }}>
             수업 이름
             <Input
               placeholder="수업 이름을 입력해 주세요.."
-              width="1080px"
+              fullWidth={true}
               value={className}
               onChange={onTitleChange}
             />
-          </FlexColumnBox>
+          </FlexInputBox>
           <FlexColumnBox>
             투자 차수
             <SelectField>
@@ -478,15 +478,17 @@ export const ClassEdit = () => {
               차
             </SelectField>
           </FlexColumnBox>
-          <FlexColumnBox>
+          <FlexColumnBox style={{ flex: 1 }}>
             기초자산
             <AssetField>
-              <AssetInput
-                type="text"
+              <Input
+                type="money"
+                fullWidth={true}
+                placeholder="기초자산을 입력하세요.."
                 onChange={onBaseMoneyChange}
-                value={formatPrice(baseMoney)}
+                value={baseMoney === 0 ? "" : formatPrice(baseMoney)}
+                rightText="원"
               />
-              원
             </AssetField>
           </FlexColumnBox>
         </TextField>
@@ -514,6 +516,6 @@ export const ClassEdit = () => {
           />
         </TableField>
       </Contents>
-    </Container>
+    </Container >
   );
 };
