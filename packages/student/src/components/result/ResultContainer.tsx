@@ -1,7 +1,7 @@
 // TODO: state 변동 시에 리렌더링 됨에 따라 useSSE가 재실행 됨
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, DeleteModal, HandCoins, Toast, Trophy } from "@mozu/ui";
+import { Button, Del, HandCoins, Modal, Toast, Trophy } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,7 +22,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
   const { data: teamOrders } = useTeamOrders();
   const { data: teamResult } = useTeamResult();
   const [isWait, setIsWait] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const navigate = useNavigate();
   const { classId } = useParams<{
     classId: string;
@@ -94,7 +94,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    data => {},
+    data => { },
     error => {
       console.log(error);
       Toast(`네트워크 에러 발생`, {
@@ -110,16 +110,17 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
 
   return (
     <>
-      {isOpen ? (
-        <DeleteModal
-          titleComment="투자 마치기"
-          subComment="투자 마치면 총 결과 결산 페이지로 이동합니다."
-          message="마치기"
+      {isOpenModal &&
+        <Modal
+          mainTitle="투자 마치기"
+          subTitle="투자 마치면 총 결과 결산 페이지로 이동합니다."
+          onSuccessClick={handleEndClass}
+          icon={<Del size={24} color={color.red[400]} />}
+          isOpen={isOpenModal}
+          setIsOpen={setIsOpenModal}
           isPending={false}
-          onDelete={handleEndClass}
-          onCancel={() => setIsOpen(false)}
         />
-      ) : null}
+      }
       <Container>
         <Title>
           <Logo>
@@ -229,7 +230,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                   borderColor={color.zinc[200]}
                   hoverBackgroundColor={color.zinc[100]}
                   type="logOutImg"
-                  onClick={() => setIsOpen(true)}>
+                  onClick={() => setIsOpenModal(true)}>
                   투자 마치기
                 </Button>
               ) : (

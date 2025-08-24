@@ -139,33 +139,6 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
     },
   };
 
-  const modalVariants = {
-    hidden: {
-      scale: 0.9,
-      opacity: 0,
-      y: 20,
-    },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 30,
-        duration: 0.3,
-      },
-    },
-    exit: {
-      scale: 0.9,
-      opacity: 0,
-      y: 20,
-      transition: {
-        duration: 0.2,
-      },
-    },
-  };
-
   return (
     <AnimatePresence mode="wait">
       {isOpen && (
@@ -179,7 +152,6 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
             duration: 0.2,
           }}>
           <MotionModalContainer
-            variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -418,7 +390,7 @@ const ActionSection = styled.div`
   padding: 20px 32px 32px;
   display: flex;
   gap: 12px;
-  background: ${color.zinc[25]};
+  background: ${color.zinc[50]};
 `;
 
 const CancelButton = styled.button`

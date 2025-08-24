@@ -96,11 +96,12 @@ export const SignInPage = () => {
         <Title>학생 로그인</Title>
         <FormGroup>
           <Input
-            label="참가 코드"
             placeholder="참가 코드를 입력해 주세요.."
+            label="참가 코드"
             value={state.classNum ?? ""}
             name="classNum"
             onChange={handleChange("classNum")}
+            required={true}
           />
           <Input
             label="학교"
@@ -108,6 +109,7 @@ export const SignInPage = () => {
             value={state.schoolName}
             name="schoolName"
             onChange={handleChange("schoolName")}
+            required={true}
           />
           <Input
             label="팀명"
@@ -115,6 +117,7 @@ export const SignInPage = () => {
             value={state.teamName}
             name="teamName"
             onChange={handleChange("teamName")}
+            required={true}
           />
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </FormGroup>

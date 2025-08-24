@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, noImgIcon } from "@mozu/ui";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetStockDetail } from "@/apis";
 import { Skeleton } from "../../../../../design-token/src/theme/Skeleton";
@@ -10,8 +11,11 @@ export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "�
   const ItemId = stockId ? parseInt(stockId) : null;
   const { data, isLoading } = useGetStockDetail(ItemId);
 
+  const [imgSrc, setImgSrc] = useState(data?.itemLogo ?? "");
+  const [hasErrored, setHasErrored] = useState(false);
+
   // 새로 추가한 로직
-  const profitNum = data?.profitNum && !isNaN(parseFloat(data?.profitNum)) ? data.profitNum : "0.00%";
+  const profitNum = data?.profitNum && !Number.isNaN(parseFloat(data?.profitNum)) ? data.profitNum : "0.00%";
   const profitMoney = data?.profitMoney ?? 0;
 
   const isZeroPercent = profitMoney === 0 && profitNum === "0.00%";
@@ -20,6 +24,20 @@ export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "�
 
   const priceColor = isZeroPercent ? color.zinc[500] : isUp ? color.red[500] : color.blue[500];
 
+  const handleImageError = () => {
+    if (!hasErrored) {
+      setHasErrored(true);
+      setImgSrc(noImgIcon);
+    }
+  };
+
+  // 데이터가 변경될 때 이미지 소스 업데이트
+  useEffect(() => {
+    if (data?.itemLogo && data.itemLogo !== imgSrc && !hasErrored) {
+      setImgSrc(data.itemLogo);
+    }
+  }, [data?.itemLogo, imgSrc, hasErrored]);
+
   return (
     <Wrapper>
       <Stock>
@@ -27,10 +45,8 @@ export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "�
           <LogoImgDiv />
         ) : (
           <Logo
-            src={data?.itemLogo ?? ""}
-            onError={e => {
-              e.currentTarget.src = noImgIcon;
-            }}
+            src={imgSrc}
+            onError={handleImageError}
           />
         )}
         {isLoading ? (
