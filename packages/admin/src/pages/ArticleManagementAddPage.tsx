@@ -98,7 +98,7 @@ const ContentContainer = styled.div`
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.white};
   border-radius: 16px;
-  padding: 24px;
+  padding: 530px 24px;
   display: flex;
   justify-content: center;
   align-items: center;

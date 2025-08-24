@@ -29,7 +29,7 @@ export const useAddArticle = () => {
   });
 };
 
-export const useDeleteArticle = () => {
+export const useDeleteArticle = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -42,6 +42,9 @@ export const useDeleteArticle = () => {
           "getArticle",
         ],
       });
+      if (onSuccessCallback) {
+        onSuccessCallback(); // 모달 닫기 실행
+      }
     },
     onError: () => {},
   });

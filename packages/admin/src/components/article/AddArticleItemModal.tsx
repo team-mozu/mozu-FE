@@ -1,13 +1,18 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, SearchInput } from "@mozu/ui";
-import { useEffect, useState } from "react";
+import { Button, Input, Search } from "@mozu/ui";
+import { useEffect, useMemo, useState } from "react";
 import { useGetArticleList } from "@/apis";
 import { ArticleItem } from "./ArticleItem";
 
+interface SelectedArticle {
+  id: number;
+  title: string;
+}
+
 interface IArticleModalType {
   close: () => void;
-  onArticlesSelected: (articles: any[]) => void;
+  onArticlesSelected: (articles: SelectedArticle[]) => void;
   selectedDegree: number;
   existingArticles?: {
     id: number;
@@ -15,88 +20,87 @@ interface IArticleModalType {
 }
 
 export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticles = [] }: IArticleModalType) => {
-  // API에서 기사 리스트 가져오기
   const { data: articleData } = useGetArticleList();
   const [searchText, setSearchText] = useState("");
+  const [selectedArticleIds, setSelectedArticleIds] = useState<number[]>([]);
 
-  const articles = articleData?.article || [];
-  const existingArticleIds = existingArticles.map(article => article.id);
-
-  // 이미 선택된 아이템 필터링 및 검색어 적용
-  const filteredArticles = articles.filter(
-    article =>
-      !existingArticleIds.includes(article.id) &&
-      (searchText === "" ||
-        article.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        String(article.id).includes(searchText)),
+  const articles = useMemo(
+    () => articleData?.article || [],
+    [
+      articleData,
+    ],
+  );
+  const existingArticleIds = useMemo(
+    () => existingArticles.map(article => article.id),
+    [
+      existingArticles,
+    ],
   );
 
-  const [checkedArticles, setCheckedArticles] = useState<boolean[]>(Array(filteredArticles.length).fill(false));
+  const filteredArticles = useMemo(
+    () =>
+      articles.filter(
+        article =>
+          !existingArticleIds.includes(article.id) &&
+          (searchText === "" ||
+            article.title.toLowerCase().includes(searchText.toLowerCase()) ||
+            String(article.id).includes(searchText)),
+      ),
+    [
+      articles,
+      existingArticleIds,
+      searchText,
+    ],
+  );
 
-  const [isHeadCheck, setIsHeadCheck] = useState<boolean>(false);
-
-  // 필터링된 아이템이 변경될 때마다 체크 상태 초기화
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
-    setCheckedArticles(Array(filteredArticles.length).fill(false));
-    setIsHeadCheck(false);
-  }, [
-    filteredArticles.length,
-    searchText,
-  ]);
+    setSelectedArticleIds([]);
+  }, [filteredArticles]);
 
-  // 개별 아이템 체크 토글
-  const checkClick = (index: number) => {
-    setCheckedArticles(prev => {
-      const updateCheckItems = [
-        ...prev,
-      ];
-      updateCheckItems[index] = !updateCheckItems[index];
-
-      // 헤더 체크박스 상태 업데이트
-      const allChecked = updateCheckItems.every(item => item);
-      setIsHeadCheck(allChecked);
-
-      return updateCheckItems;
-    });
+  const handleToggleArticle = (articleId: number) => {
+    setSelectedArticleIds(prev =>
+      prev.includes(articleId)
+        ? prev.filter(id => id !== articleId)
+        : [
+          ...prev,
+          articleId,
+        ],
+    );
   };
 
-  // 선택 완료 후 제출
+  const handleToggleAllArticles = () => {
+    if (selectedArticleIds.length === filteredArticles.length) {
+      setSelectedArticleIds([]);
+    } else {
+      setSelectedArticleIds(filteredArticles.map(article => article.id));
+    }
+  };
+
   const handleSubmit = () => {
     const selectedArticles = filteredArticles
-      .filter((_, index) => checkedArticles[index])
+      .filter(article => selectedArticleIds.includes(article.id))
       .map(article => ({
         id: article.id,
         title: article.title,
       }));
-
     onArticlesSelected(selectedArticles);
+    close();
   };
 
-  // 전체 선택 토글
-  const headClick = () => {
-    const newState = !isHeadCheck;
-    setIsHeadCheck(newState);
-    setCheckedArticles(Array(filteredArticles.length).fill(newState));
-  };
-
-  // 검색어 변경 처리
-  const handleSearchChange = (value: string) => {
-    setSearchText(value);
-  };
-
-  // 선택된 아이템이 있는지 확인
-  const hasSelectedItems = checkedArticles.some(item => item);
+  const isAllSelected = selectedArticleIds.length === filteredArticles.length && filteredArticles.length > 0;
 
   return (
     <ModalBackground>
       <ArticleContainer>
         <SearchContainer>
-          <Title isHeader>기사 추가</Title>
-          <SearchInput
-            inputText="기사 검색.."
+          <Input
+            label="기사 추가"
+            placeholder="기사 검색.."
+            fullWidth={true}
+            startIcon={<Search color={color.zinc[400]} size={20} />}
             value={searchText}
-            onChange={handleSearchChange}
+            onChange={e => setSearchText(e.target.value)}
           />
         </SearchContainer>
         <TableContainer>
@@ -105,19 +109,19 @@ export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticle
             title1="기사 제목"
             title2="등록일자"
             id="title"
-            checked={isHeadCheck}
-            onChange={headClick}
+            checked={isAllSelected}
+            onChange={handleToggleAllArticles}
           />
           <ItemContents>
             {filteredArticles.length > 0 ? (
-              filteredArticles.map((article, index) => (
+              filteredArticles.map(article => (
                 <ArticleItem
+                  key={article.id}
                   title1={article.title}
                   title2={article.date}
-                  onChange={() => checkClick(index)}
-                  checked={checkedArticles[index]}
+                  onChange={() => handleToggleArticle(article.id)}
+                  checked={selectedArticleIds.includes(article.id)}
                   id={String(article.id)}
-                  key={article.id}
                 />
               ))
             ) : (
@@ -139,7 +143,7 @@ export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticle
               borderColor={color.orange[500]}
               color={color.white}
               onClick={handleSubmit}
-              disabled={!hasSelectedItems}>
+              disabled={selectedArticleIds.length === 0}>
               선택 기사 추가
             </Button>
           </BtnContainer>
@@ -219,9 +223,7 @@ const EmptyState = styled.div`
   color: ${color.zinc[500]};
 `;
 
-const Title = styled.div<{
-  isHeader: boolean;
-}>`
+const Title = styled.div`
   font: ${font.b1};
   color: ${color.black};
   margin-left: 4px;

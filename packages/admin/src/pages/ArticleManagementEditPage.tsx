@@ -3,7 +3,7 @@ import { color } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { useEditArticle, useGetArticleDetail, useGetClassDetail } from "@/apis";
+import { useEditArticle, useGetArticleDetail } from "@/apis";
 import { ImgContainer } from "@/components";
 
 export const ArticleManagementEditPage = () => {
@@ -139,7 +139,7 @@ const ContentContainer = styled.div`
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.white};
   border-radius: 16px;
-  padding: 24px;
+  padding: 530px 24px;
   display: flex;
   justify-content: center;
   align-items: center;

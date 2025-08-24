@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { DeleteModal, SelectError } from "@mozu/ui";
+import { color } from "@mozu/design-token";
+import { Del, Modal, SelectError } from "@mozu/ui";
 import { useState } from "react";
 import { useParams } from "react-router";
 import { useDeleteArticle } from "@/apis";
@@ -16,43 +17,41 @@ export const ArticleManagementPage = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const { mutate: delApiData, isPending } = useDeleteArticle(() => setIsModalOpen(false));
 
-  const delApiData = useDeleteArticle();
-
-  const isDeleting = delApiData.isPending;
-
-  const handleDelete = (articleId: number) => {
-    if (delApiData.isPending) {
-      return;
+  const handleDelete = () => {
+    if (articleId !== null) {
+      delApiData(articleId);
     }
-
-    if (articleId) {
-      delApiData.mutate(articleId);
-    }
-    setIsModalOpen(false);
     setSelectedId(null);
   };
 
   return (
-    <Container>
-      <ArticleSearchSideBar
-        setSelectedId={setSelectedId}
-        selectedId={selectedId}
-      />
-      {selectedId ? <ArticleManagementDetail onClick={handleDetailClick} /> : <SelectError isStock={false} />}
+    <>
       {isModalOpen && (
-        <DeleteModal
-          titleComment={"현재 선택된 기사를 삭제하실건가요?"}
-          subComment={"삭제하면 복구가 불가능합니다."}
-          onCancel={handleCloseModal}
-          isPending={isDeleting}
-          onDelete={() => handleDelete(articleId ?? 0)}
+        <Modal
+          mainTitle={"현재 선택된 기사를 삭제하실건가요?"}
+          subTitle={"삭제하면 복구가 불가능합니다."}
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          isPending={isPending}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
+          onSuccessClick={handleDelete}
         />
       )}
-    </Container>
+      <Container>
+        <ArticleSearchSideBar
+          setSelectedId={setSelectedId}
+          selectedId={selectedId}
+        />
+        {selectedId ? <ArticleManagementDetail onClick={handleDetailClick} /> : <SelectError isStock={false} />}
+      </Container>
+    </>
   );
 };
 
