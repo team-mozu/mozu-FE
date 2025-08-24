@@ -4,7 +4,6 @@ export * from "./AddButton.fixture";
 export * from "./Button.fixture";
 export * from "./CheckBox.fixture";
 export * from "./CompanySkeleton.fixture";
-export * from "./DeleteModal.fixture";
 export * from "./EditDiv.fixture";
 export * from "./ExitBtn.fixture";
 export * from "./Header.fixture";

@@ -7,14 +7,15 @@ export interface InputProps {
   readOnly?: boolean;
   fullWidth?: boolean;
   placeholder?: string;
-  value?: string;
+  value?: string | number;
   defaultValue?: string;
-  type?: "text" | "password" | "number" | "search";
+  type?: "text" | "password" | "number" | "money";
   autoFocus?: boolean;
   maxLength?: number;
   minLength?: number;
   required?: boolean;
   name?: string;
+  rightText?: string;
 
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;

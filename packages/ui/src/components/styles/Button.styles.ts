@@ -1,15 +1,27 @@
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { font } from "@mozu/design-token";
-import type { ButtonProps } from "../types";
+import type { ButtonProps } from "../types/Button.types";
 
-export const ButtonContainer = styled.button<ButtonProps>`
-  width: ${({ width }) => width ?? "auto"}px;
+export const buttonStyles = ({
+  width,
+  backgroundColor,
+  color,
+  borderColor,
+  hoverBorderColor,
+  hoverBackgroundColor,
+  hoverColor,
+  hoverBoxShadow,
+  activeBorderColor,
+  activeBackgroundColor,
+  activeColor,
+}: ButtonProps) => css`
+  width: ${width ? `${width}px` : "auto"};
   cursor: pointer;
   padding: 10px 16px;
   border-radius: 8px;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  color: ${({ color }) => color};
-  border: 1px solid ${({ borderColor }) => borderColor};
+  background: ${backgroundColor};
+  color: ${color};
+  border: ${borderColor === "" ? "none" : `1px solid ${borderColor}`};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,20 +30,16 @@ export const ButtonContainer = styled.button<ButtonProps>`
   transition: 0.35s ease-in-out;
 
   &:hover {
-    background-color: ${({ hoverBackgroundColor, backgroundColor }) =>
-      hoverBackgroundColor || backgroundColor};
-    color: ${({ hoverColor, color }) => hoverColor || color};
-    border: 1px solid
-      ${({ hoverBorderColor, borderColor }) => hoverBorderColor || borderColor};
+    background: ${hoverBackgroundColor || backgroundColor};
+    color: ${hoverColor || color};
+    border: 1px solid ${hoverBorderColor || borderColor || "none"};
+    box-shadow: ${hoverBoxShadow || "none"};
   }
 
   &:active {
-    background-color: ${({ activeBackgroundColor, backgroundColor }) =>
-      activeBackgroundColor || backgroundColor};
-    color: ${({ activeColor, color }) => activeColor || color};
-    border: 1px solid
-      ${({ activeBorderColor, borderColor }) =>
-        activeBorderColor || borderColor};
+    background: ${activeBackgroundColor || backgroundColor};
+    color: ${activeColor || color};
+    border: 1px solid ${activeBorderColor || borderColor};
   }
 
   &:disabled {

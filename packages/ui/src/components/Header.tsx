@@ -12,7 +12,7 @@ interface IHeaderProps {
   isMargin?: boolean;
 }
 
-export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeaderProps) => {
+export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { classId, newsId } = useParams();
@@ -46,6 +46,7 @@ export const Header = ({ isAdmin, invDeg, showNav, showRound, isMargin }: IHeade
         )
       }>
       <LogoContainer
+        isClick={isResultPage || isWaitPage}
         onClick={() => {
           if (isResultPage || isWaitPage) return;
           navigate(isAdmin ? "/class-management" : `/${classId}`);
@@ -117,11 +118,11 @@ const HeaderContainer = styled.header<{
   box-shadow: 0 2px 4px rgba(93, 93, 93, 0.1);
 `;
 
-const LogoContainer = styled.div`
+const LogoContainer = styled.div<{ isClick: boolean }>`
   display: flex;
   gap: 12px;
   align-items: center;
-  cursor: pointer;
+  cursor: ${({ isClick }) => isClick ? `default` : `pointer`}
 `;
 
 const MozuTitle = styled.div`

@@ -1,27 +1,19 @@
 import { forwardRef } from "react";
-import {
-  ArticleIcon,
-  Cancel,
-  ClassIcon,
-  Del,
-  Edit,
-  LogOut,
-  Plus,
-  Save,
-  Start,
-} from "../assets";
-import { ButtonContainer } from "./styles";
-import type { ButtonProps, ButtonType } from "./types";
+import type { ButtonProps, ButtonType } from "@/components/types";
+import { ArticleIcon, Cancel, ClassIcon, Del, Edit, LogOut, Plus, Save, Start } from "../assets";
+import { buttonStyles } from "./styles";
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,
       backgroundColor,
+      id,
       color,
-      borderColor,
+      borderColor = "",
       hoverBorderColor,
       hoverBackgroundColor,
+      hoverBoxShadow,
       hoverColor,
       activeBorderColor,
       activeBackgroundColor,
@@ -36,42 +28,93 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       event,
       width,
     },
-    ref
+    ref,
   ) => {
     const buttonIconType: Record<ButtonType, JSX.Element> = {
-      startImg: <Start size={iconSize} color={iconColor} />,
-      delImg: <Del size={iconSize} color={iconColor} />,
-      editImg: <Edit size={iconSize} color={iconColor} />,
-      plusImg: <Plus size={iconSize} color={iconColor} />,
-      saveImg: <Save size={iconSize} color={iconColor} />,
-      cancelImg: <Cancel size={iconSize} color={iconColor} />,
-      logOutImg: <LogOut size={iconSize} color={iconColor} />,
-      articleImg: <ArticleIcon size={iconSize} color={iconColor} />,
-      classImg: <ClassIcon size={iconSize} color={iconColor} />,
+      startImg: (
+        <Start
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+      delImg: (
+        <Del
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+      editImg: (
+        <Edit
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+      plusImg: (
+        <Plus
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+      saveImg: (
+        <Save
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+      cancelImg: (
+        <Cancel
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+      logOutImg: (
+        <LogOut
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+      articleImg: (
+        <ArticleIcon
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+      classImg: (
+        <ClassIcon
+          size={iconSize}
+          color={iconColor}
+        />
+      ),
+    };
+
+    const styleProps = {
+      width,
+      backgroundColor,
+      color,
+      borderColor,
+      hoverBorderColor,
+      hoverBackgroundColor,
+      hoverColor,
+      activeBorderColor,
+      activeBackgroundColor,
+      activeColor,
+      hoverBoxShadow
     };
 
     return (
-      <ButtonContainer
+      // biome-ignore lint/a11y/useButtonType: <임시>
+      <button
         ref={ref}
-        width={width}
-        backgroundColor={backgroundColor}
-        color={color}
-        borderColor={borderColor}
-        hoverBorderColor={hoverBorderColor}
-        hoverBackgroundColor={hoverBackgroundColor}
-        hoverColor={hoverColor}
-        activeBorderColor={activeBorderColor}
-        activeBackgroundColor={activeBackgroundColor}
-        activeColor={activeColor}
+        id={id}
+        css={buttonStyles(styleProps)}
         onClick={event || onClick}
         onChange={onChange}
-        disabled={disabled}
-      >
+        disabled={disabled}>
         {children}
         {isIcon && buttonIconType[type]}
-      </ButtonContainer>
+      </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

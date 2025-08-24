@@ -1,6 +1,6 @@
 interface ISearchType {
-  size?: number;
-  color?: string;
+  size: number;
+  color: string;
 }
 
 export const Search = ({ size, color }: ISearchType) => {

@@ -5,7 +5,6 @@ export * from "./AddButton";
 export * from "./Button";
 export * from "./CheckBox";
 export * from "./CompanySkeleton";
-export * from "./DeleteModal";
 export * from "./EditDiv";
 export * from "./ExitBtn";
 export * from "./Header";

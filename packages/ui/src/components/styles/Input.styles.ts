@@ -42,6 +42,12 @@ export const baseInputStyles = css`
     background-color: ${color.zinc[50]};
     cursor: default;
   }
+
+  &[type="search"]::-webkit-search-cancel-button,
+  &[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
 `;
 
 export const variantStyles = {
@@ -90,6 +96,11 @@ export const startIconStyles = css`
 export const endIconStyles = css`
   ${iconStyles}
   right: 12px;
+`;
+
+export const rightTextStyles = css`
+  font: ${font.t4};
+  color: ${color.black}
 `;
 
 export const inputWithStartIconStyles = css`

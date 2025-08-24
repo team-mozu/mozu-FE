@@ -12,6 +12,7 @@ import {
   inputWithStartIconStyles,
   inputWrapperStyles,
   labelStyles,
+  rightTextStyles,
   startIconStyles,
   stateStyles,
   variantStyles,
@@ -50,7 +51,7 @@ import type { InputProps } from "./types";
  * @param {string} [props.placeholder] - 플레이스홀더 텍스트
  * @param {string} [props.value] - 제어 컴포넌트 값
  * @param {string} [props.defaultValue] - 비제어 컴포넌트 초기값
- * @param {"text" | "password" | "number" | "search"} [props.type="text"] - 인풋 타입
+ * @param {"text" | "password" | "number" | "money"} [props.type="text"] - 인풋 타입
  * @param {boolean} [props.autoFocus=false] - 자동 포커스 여부
  * @param {number} [props.maxLength] - 입력 최대 길이
  * @param {number} [props.minLength] - 입력 최소 길이
@@ -101,19 +102,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       startIcon,
       endIcon,
       className,
+      rightText,
       ...rest
     },
     ref,
   ) => {
     const [showPassword, setShowPassword] = useState(false);
+
     const inputStyles = css`
     ${baseInputStyles}
     ${variantStyles[variant]}
     ${stateStyles[state]}
     ${fullWidth && fullWidthStyle}
     ${startIcon && inputWithStartIconStyles}
-    ${endIcon && inputWithEndIconStyles}
     ${(endIcon || type === "password") && inputWithEndIconStyles}
+    ${type === "money" && `text-align: right;`}
   `;
 
     const wrapperStyles = css`
@@ -140,45 +143,57 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </label>
         )}
 
-        <div css={inputContainerStyles}>
-          {startIcon && <span css={startIconStyles}>{startIcon}</span>}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}>
+          <div
+            css={inputContainerStyles}
+            style={{
+              flex: 1,
+            }}>
+            {startIcon && <span css={startIconStyles}>{startIcon}</span>}
 
-          <input
-            ref={ref}
-            css={inputStyles}
-            type={type === "password" ? (showPassword ? "text" : "password") : type}
-            placeholder={placeholder}
-            value={value}
-            name={name}
-            defaultValue={defaultValue}
-            disabled={disabled}
-            readOnly={readOnly}
-            // biome-ignore lint/a11y/noAutofocus: <임시>
-            autoFocus={autoFocus}
-            maxLength={maxLength}
-            minLength={minLength}
-            required={required}
-            onChange={onChange}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            onKeyDown={onKeyDown}
-            {...rest}
-          />
+            <input
+              ref={ref}
+              css={inputStyles}
+              type={type === "password" ? (showPassword ? "text" : "password") : type === "money" ? "text" : type}
+              placeholder={placeholder}
+              value={value}
+              name={name}
+              defaultValue={defaultValue}
+              disabled={disabled}
+              readOnly={readOnly}
+              // biome-ignore lint/a11y/noAutofocus: <임시>
+              autoFocus={autoFocus}
+              maxLength={maxLength}
+              minLength={minLength}
+              required={required}
+              onChange={onChange}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onKeyDown={onKeyDown}
+              {...rest}
+            />
 
-          {type === "password" ? (
-            // biome-ignore lint/a11y/noStaticElementInteractions: <임시>
-            // biome-ignore lint/a11y/useKeyWithClickEvents: <임시>
-            <span
-              css={endIconStyles}
-              onClick={() => setShowPassword(prev => !prev)}
-              style={{
-                cursor: "pointer",
-              }}>
-              {showPassword ? <EyeOff /> : <Eye />}
-            </span>
-          ) : (
-            endIcon && <span css={endIconStyles}>{endIcon}</span>
-          )}
+            {type === "password" ? (
+              // biome-ignore lint/a11y/noStaticElementInteractions: <임시>
+              // biome-ignore lint/a11y/useKeyWithClickEvents: <임시>
+              <span
+                css={endIconStyles}
+                onClick={() => setShowPassword(prev => !prev)}
+                style={{
+                  cursor: "pointer",
+                }}>
+                {showPassword ? <EyeOff /> : <Eye />}
+              </span>
+            ) : (
+              endIcon && <span css={endIconStyles}>{endIcon}</span>
+            )}
+          </div>
+          {rightText && <span css={rightTextStyles}>{rightText}</span>}
         </div>
 
         {errorMessage && <span css={errorMessageStyles}>{errorMessage}</span>}

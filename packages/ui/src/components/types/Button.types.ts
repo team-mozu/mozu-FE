@@ -15,9 +15,11 @@ export interface ButtonProps {
   children?: ReactNode;
   backgroundColor?: string;
   color?: string;
+  id?: string;
   borderColor?: string;
   hoverBorderColor?: string;
   hoverBackgroundColor?: string;
+  hoverBoxShadow?: string;
   hoverColor?: string;
   activeBorderColor?: string;
   activeBackgroundColor?: string;

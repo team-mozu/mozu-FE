@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { css } from "@emotion/react";
 import { color } from "@mozu/design-token";
 import { useRef } from "react";
@@ -59,6 +57,7 @@ import type { ModalProps } from "./types";
  * @param {"delete" | "complete"} [props.type="delete"] - 모달 타입 (삭제/완료)
  * @param {string} [props.successBtnChildren="삭제하기"] - 확인 버튼 텍스트
  * @param {boolean} props.isOpen - 모달 열림/닫힘 상태
+ * @param {boolean} props.isPending - 데이터 패칭중 상태
  * @param {(isOpen: boolean) => void} props.setIsOpen - 모달 상태를 변경하는 함수
  *
  * @returns {JSX.Element | null} 모달이 열린 상태일 때 JSX 요소, 닫힌 상태일 때 null
@@ -72,6 +71,7 @@ export const Modal = ({
   successBtnChildren = "삭제하기",
   isOpen,
   setIsOpen,
+  isPending
 }: ModalProps) => {
   /**
    * 모달 상단 아이콘 래퍼 스타일
@@ -92,8 +92,9 @@ export const Modal = ({
       color: color.white,
     },
     delete: {
-      backgroundColor: color.red[500],
+      backgroundColor: `linear-gradient(135deg, ${color.red[500]} 0%, ${color.red[600]} 100%)`,
       color: color.white,
+      boxShadow: `0 4px 12px rgba(239, 68, 68, 0.3)`,
     },
   } as const;
 
@@ -126,6 +127,8 @@ export const Modal = ({
 
   return (
     isOpen && (
+      // biome-ignore lint/a11y/noStaticElementInteractions: <임시>
+      // biome-ignore lint/a11y/useKeyWithClickEvents: <임시>
       <div
         onClick={handleBackWrapperClick}
         ref={backWrapperRef}
@@ -145,22 +148,28 @@ export const Modal = ({
           <div css={modalLowerStyles}>
             <div css={buttonWrapperStyles}>
               <Button
-                backgroundColor={color.zinc[50]}
-                color={color.zinc[800]}
+                backgroundColor={color.white}
+                color={color.zinc[700]}
                 borderColor={color.zinc[200]}
-                onClick={handleCancelClick}>
+                onClick={handleCancelClick}
+                hoverBackgroundColor={color.zinc[50]}
+                hoverBorderColor={color.zinc[300]}
+                hoverColor={color.zinc[900]}>
                 취소
               </Button>
               <Button
                 backgroundColor={buttonColorStyles[type].backgroundColor}
                 color={buttonColorStyles[type].color}
-                onClick={onSuccessClick}>
+                onClick={onSuccessClick}
+                hoverBackgroundColor={`linear-gradient(135deg, ${color.red[600]} 0%, ${color.red[700]} 100%)`}
+                hoverBoxShadow={`0 8px 25px rgba(239, 68, 68, 0.3)`}
+                disabled={isPending}>
                 {successBtnChildren}
               </Button>
             </div>
           </div>
         </div>
-      </div>
+      </div >
     )
   );
 };
