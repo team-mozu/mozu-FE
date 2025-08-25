@@ -1612,6 +1612,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mozu/ui@workspace:packages/ui"
   dependencies:
+    "@emotion/babel-plugin": "npm:^11.13.5"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"
     "@mozu/design-token": "workspace:^"

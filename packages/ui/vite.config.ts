@@ -10,7 +10,12 @@ export default defineConfig({
         "src",
       ],
     }),
-    react(),
+    react({
+      jsxImportSource: "@emotion/react", //emotion 지원
+      babel: {
+        plugins: ["@emotion/babel-plugin"], // css props 변환
+      },
+    }),
   ],
 
   build: {
