@@ -23,8 +23,8 @@ export const Edit = ({ size, color }: IEditType) => {
       <defs>
         <clipPath id="clip0_1431_193">
           <rect
-            width={size}
-            height={size}
+            width="20"
+            height="20"
             fill={color}
           />
         </clipPath>
