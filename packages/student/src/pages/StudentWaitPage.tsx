@@ -2,7 +2,7 @@ import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Header, Info, Toast, Users } from "@mozu/ui";
-import { removeCookiesAsync } from "@mozu/util-config";
+import { removeCookies } from "@mozu/util-config";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSSE } from "@/hook";
@@ -46,7 +46,7 @@ export const StudentWaitPage = () => {
         });
 
         const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
-        await removeCookiesAsync(
+        await removeCookies(
           [
             "accessToken",
             "authority",

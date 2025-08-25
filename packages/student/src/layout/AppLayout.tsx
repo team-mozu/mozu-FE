@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Header, Toast } from "@mozu/ui";
-import { removeCookiesAsync } from "@mozu/util-config";
+import { removeCookies } from "@mozu/util-config";
 import { useRef } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useGetClassItem, useGetTeamDetail } from "@/apis";
@@ -44,7 +44,7 @@ export const AppLayout = () => {
       });
       queryClient.clear();
       const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
-      await removeCookiesAsync(
+      await removeCookies(
         [
           "accessToken",
           "authority",
