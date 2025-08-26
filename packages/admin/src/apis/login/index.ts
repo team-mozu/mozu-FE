@@ -1,4 +1,4 @@
-import { instance, setCookies, setTokens } from "@mozu/util-config";
+import { instance, setAuthTokens, setCookies } from "@mozu/util-config";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import type { AuthResponse } from "./type";
@@ -18,7 +18,7 @@ export const useAdminLogin = () => {
       return response.data;
     },
     onSuccess: async res => {
-      setTokens(res.accessToken, res.refreshToken, "admin");
+      setAuthTokens(res.accessToken, res.refreshToken, "admin");
       setCookies("authority", "admin", {
         path: "/",
         secure: true,
