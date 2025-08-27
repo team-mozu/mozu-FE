@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
+import { memo } from "react";
 
 interface IStockType {
   number: number;
@@ -8,7 +9,7 @@ interface IStockType {
   selected: boolean;
 }
 
-export const StockDiv = ({ number, name, onClick, selected }: IStockType) => {
+export const StockDiv = memo(({ number, name, onClick, selected }: IStockType) => {
   return (
     <StockDivContainer
       onClick={onClick}
@@ -17,7 +18,7 @@ export const StockDiv = ({ number, name, onClick, selected }: IStockType) => {
       <Stock selected={selected}>{name}</Stock>
     </StockDivContainer>
   );
-};
+});
 
 const StockDivContainer = styled.div<{
   selected: boolean;

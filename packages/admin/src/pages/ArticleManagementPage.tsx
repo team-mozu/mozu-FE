@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { Del, Modal, SelectError } from "@mozu/ui";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useParams } from "react-router";
 import { useDeleteArticle } from "@/apis";
 import { ArticleManagementDetail, ArticleSearchSideBar } from "@/components";
@@ -13,9 +13,9 @@ export const ArticleManagementPage = () => {
   const { classId, id } = useParams();
   const articleId = id ? parseInt(id) : null;
 
-  const handleDetailClick = () => {
+  const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);
-  };
+  },[]);
 
   const { mutate: delApiData, isPending } = useDeleteArticle(() => setIsModalOpen(false));
 

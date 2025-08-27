@@ -14,23 +14,15 @@ interface ISideBarType {
 export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [isClassColor, setIsClassColor] = useState<boolean>(false);
-  const [isStockColor, setIsStockColor] = useState<boolean>(false);
-  const [isArticleColor, setIsArticleColor] = useState<boolean>(false);
-
+  const [nav, setIsNav] = useState<string>('class')
+  
   useEffect(() => {
-    if (pathname.includes("/class-management")) {
-      setIsClassColor(true);
-      setIsStockColor(false);
-      setIsArticleColor(false);
-    } else if (pathname.includes("/stock-management")) {
-      setIsClassColor(false);
-      setIsStockColor(true);
-      setIsArticleColor(false);
-    } else if (pathname.includes("/article-management")) {
-      setIsClassColor(false);
-      setIsStockColor(false);
-      setIsArticleColor(true);
+    if(pathname.includes('stock-management')) {
+      setIsNav('stock')
+    } else if (pathname.includes('article-management')) {
+      setIsNav('article')
+    } else {
+      setIsNav('class')
     }
   }, [
     pathname,
@@ -59,19 +51,19 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
         <BtnContainer>
           <NavBtn
             type={"classIcon"}
-            isColor={isClassColor}
+            isColor={nav === "class"}
             onClick={() => navigate("/class-management")}>
             수업 관리
           </NavBtn>
           <NavBtn
             type={"stockIcon"}
-            isColor={isStockColor}
+            isColor={nav === "stock"}
             onClick={() => navigate("/stock-management")}>
             종목 관리
           </NavBtn>
           <NavBtn
             type={"articleIcon"}
-            isColor={isArticleColor}
+            isColor={nav === "article"}
             onClick={() => navigate("/article-management")}>
             기사 관리
           </NavBtn>

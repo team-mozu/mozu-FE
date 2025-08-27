@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { noImgIcon } from "@mozu/ui";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetClassItem } from "@/apis";
 
@@ -20,7 +20,7 @@ interface IPercentProps extends Pick<IItemContentType, "isUp"> {
   isZero?: boolean;
 }
 
-const ItemContent = ({
+const ItemContent = memo(({
   itemId,
   itemName,
   itemLogo,
@@ -71,7 +71,8 @@ const ItemContent = ({
       )}
     </ItemContainer>
   );
-};
+});
+
 
 export const ItemSidebar = ({ isMock = false }: { isMock?: boolean }) => {
   const { data } = useGetClassItem({
@@ -81,6 +82,10 @@ export const ItemSidebar = ({ isMock = false }: { isMock?: boolean }) => {
     enabled: !isMock,
   });
   const navigate = useNavigate();
+
+  const handleItemContentClick = useCallback((itemId: number) => {
+    navigate(`stock/${itemId}`)
+  },[navigate])
 
   return (
     <SideBarContainer>
@@ -108,7 +113,7 @@ export const ItemSidebar = ({ isMock = false }: { isMock?: boolean }) => {
                 isUp={isUp}
                 profitMoney={data.profitMoney ?? 0}
                 profitNum={profitNum}
-                onClick={() => navigate(`stock/${data.itemId}`)}
+                onClick={() => handleItemContentClick(data.itemId)}
               />
             );
           })
