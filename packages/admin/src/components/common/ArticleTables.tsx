@@ -57,9 +57,12 @@ export const ArticleTables = memo(({
   useEffect(() => {
     setIsLoading(true);
     if (!isApiLoading) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsLoading(false);
       }, 500);
+      return () => {
+        clearTimeout(timer)
+      }
     }
   }, [isApiLoading, selectedRound]);
 

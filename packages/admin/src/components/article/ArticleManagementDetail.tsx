@@ -126,13 +126,11 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
       <UpperContainer>
         {isLoading ? <DateDiv>{dateText}</DateDiv> : <p>{dateText}</p>}
         <div>
-          <div onClick={onClick}>
-            <Button
-              {...deleteButtonProps}
-              onClick={onClick}>
-              삭제하기
-            </Button>
-          </div>
+          <Button
+            {...deleteButtonProps}
+            onClick={onClick}>
+            삭제하기
+          </Button>
           <Button
             {...editButtonProps}
             onClick={handleEditClick}>

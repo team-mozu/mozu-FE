@@ -1,6 +1,6 @@
 import { color } from "@mozu/design-token";
 import { Button, Input, Save, Select } from "@mozu/ui";
-import { type ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEditClass, useGetArticleList, useGetClassDetail, useGetStockList } from "@/apis";
 import type { ClassData, ClassItemRequest } from "@/apis/class/type";
@@ -286,7 +286,7 @@ export const ClassEdit = () => {
   };
 
   // 기사 테이블 데이터 변환 (UI용)
-  const articleTableData = classArticles.map(group => ({
+  const articleTableData = useMemo(() => classArticles.map(group => ({
     invDeg: group.invDeg,
     articles: group.articles.map(id => {
       const article = articleListData?.article.find(a => a.id === id);
@@ -295,7 +295,7 @@ export const ClassEdit = () => {
         title: article ? article.title : `기사 ID: ${id}`,
       };
     }),
-  }));
+  })),[classArticles, articleListData]);
 
   if (isLoading) return <FullPageLoader />;
 

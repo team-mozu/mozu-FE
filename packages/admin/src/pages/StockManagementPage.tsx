@@ -25,7 +25,7 @@ export const StockManagementPage = () => {
       stockDelete(stockId ?? 0);
     }
     setSelectedId(null);
-  },[selectedId, stockId, stockDelete]);
+  },[selectedId, stockDelete]);
 
 
   return (
