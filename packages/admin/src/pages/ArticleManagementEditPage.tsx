@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useEditArticle, useGetArticleDetail } from "@/apis";
 import { ImgContainer } from "@/components";
@@ -34,22 +34,23 @@ export const ArticleManagementEditPage = () => {
     articleData,
   ]);
 
-  const titleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const titleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDatas(prev => ({
       ...prev,
       title: e.target.value,
     }));
-  };
-  const contentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  },[]);
+
+  const contentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDatas(prev => ({
       ...prev,
       content: e.target.value,
     }));
-  };
+  },[]);
 
   const apiData = useEditArticle();
 
-  const saveClick = () => {
+  const saveClick = useCallback(() => {
     let imageFile = datas.imgUrl;
 
     if (typeof datas.imgUrl === "string") {
@@ -64,7 +65,7 @@ export const ArticleManagementEditPage = () => {
       image: imageFile ?? undefined,
       articleId: articleId ?? 0,
     });
-  };
+  },[datas, articleId, apiData.mutate]);
 
   return (
     <AllContainer>

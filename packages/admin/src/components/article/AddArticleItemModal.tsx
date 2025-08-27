@@ -1,18 +1,14 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, Input, Search } from "@mozu/ui";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetArticleList } from "@/apis";
+import type { Article } from "@/apis/class/type";
 import { ArticleItem } from "./ArticleItem";
-
-interface SelectedArticle {
-  id: number;
-  title: string;
-}
 
 interface IArticleModalType {
   close: () => void;
-  onArticlesSelected: (articles: SelectedArticle[]) => void;
+  onArticlesSelected: (articles: Article[]) => void;
   selectedDegree: number;
   existingArticles?: {
     id: number;
@@ -30,6 +26,7 @@ export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticle
       articleData,
     ],
   );
+
   const existingArticleIds = useMemo(
     () => existingArticles.map(article => article.id),
     [
@@ -53,40 +50,52 @@ export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticle
     ],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
-  useEffect(() => {
-    setSelectedArticleIds([]);
-  }, [filteredArticles]);
-
-  const handleToggleArticle = (articleId: number) => {
+  const handleToggleArticle = useCallback((articleId: number) => {
     setSelectedArticleIds(prev =>
       prev.includes(articleId)
         ? prev.filter(id => id !== articleId)
         : [
-          ...prev,
-          articleId,
-        ],
+            ...prev,
+            articleId,
+          ],
     );
-  };
+  }, []);
 
-  const handleToggleAllArticles = () => {
-    if (selectedArticleIds.length === filteredArticles.length) {
-      setSelectedArticleIds([]);
-    } else {
-      setSelectedArticleIds(filteredArticles.map(article => article.id));
-    }
-  };
+  const handleToggleAllArticles = useCallback(() => {
+    setSelectedArticleIds(prev =>
+      prev.length === filteredArticles.length ? [] : filteredArticles.map(article => article.id),
+    );
+  }, [
+    filteredArticles,
+  ]);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     const selectedArticles = filteredArticles
       .filter(article => selectedArticleIds.includes(article.id))
       .map(article => ({
         id: article.id,
         title: article.title,
-      }));
+      })) as Article[];
+
     onArticlesSelected(selectedArticles);
     close();
-  };
+  }, [
+    filteredArticles,
+    selectedArticleIds,
+    onArticlesSelected,
+    close,
+  ]);
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  }, []);
+
+  // 필터된 기사가 변경될 때 선택 상태 초기화
+  useEffect(() => {
+    setSelectedArticleIds([]);
+  }, [
+    filteredArticles,
+  ]);
 
   const isAllSelected = selectedArticleIds.length === filteredArticles.length && filteredArticles.length > 0;
 
@@ -98,20 +107,27 @@ export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticle
             label="기사 추가"
             placeholder="기사 검색.."
             fullWidth={true}
-            startIcon={<Search color={color.zinc[400]} size={20} />}
+            startIcon={
+              <Search
+                color={color.zinc[400]}
+                size={20}
+              />
+            }
             value={searchText}
-            onChange={e => setSearchText(e.target.value)}
+            onChange={handleSearchChange}
           />
         </SearchContainer>
+
         <TableContainer>
           <ArticleItem
             isHeader={true}
             title1="기사 제목"
             title2="등록일자"
-            id="title"
+            id="select-all"
             checked={isAllSelected}
             onChange={handleToggleAllArticles}
           />
+
           <ItemContents>
             {filteredArticles.length > 0 ? (
               filteredArticles.map(article => (
@@ -129,6 +145,7 @@ export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticle
             )}
           </ItemContents>
         </TableContainer>
+
         <FooterContainer>
           <BtnContainer>
             <Button
@@ -221,10 +238,4 @@ const EmptyState = styled.div`
   height: 200px;
   font: ${font.b2};
   color: ${color.zinc[500]};
-`;
-
-const Title = styled.div`
-  font: ${font.b1};
-  color: ${color.black};
-  margin-left: 4px;
 `;
