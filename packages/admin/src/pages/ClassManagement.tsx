@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { Button, Del, Modal, PageTitle, PostTitle } from "@mozu/ui";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { type ClassItem, useClassDelete, useClassStar, useGetClassList } from "@/apis";
 import { ClassPost, FullPageLoader, SkeletonClassPost } from "@/components";
@@ -45,24 +45,24 @@ export const ClassManagement = () => {
     data,
   ]);
 
-  const openDeleteModal = (id: number) => {
+  const openDeleteModal = useCallback((id: number) => {
     setSelectedClassId(id);
     setIsModal(true);
-  };
+  },[]);
 
   //삭제 api 불러옴
   const { mutate: delClassApi, isPending } = useClassDelete(() => setIsModal(false));
 
   //삭제하기
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (selectedClassId !== null) {
       delClassApi(selectedClassId);
     }
-  };
+  },[selectedClassId,delClassApi]);
 
   const { mutate: apiClassStar } = useClassStar();
 
-  const toggleFavorite = (() => {
+  const toggleFavorite = useCallback((() => {
     let isPending = false;
 
     return async (index: number, type: "favorites" | "common", id?: number) => {
@@ -90,7 +90,7 @@ export const ClassManagement = () => {
         setIsStarLoading(false);
       }
     };
-  })();
+  })(),[]);
 
   if (apiLoading) return <FullPageLoader />;
 

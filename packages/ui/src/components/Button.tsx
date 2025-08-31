@@ -1,9 +1,9 @@
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import type { ButtonProps, ButtonType } from "@/components/types";
 import { ArticleIcon, Cancel, ClassIcon, Del, Edit, LogOut, Plus, Save, Start, Trophy } from "../assets";
 import { buttonStyles } from "./styles";
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,
@@ -121,6 +121,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       </button>
     );
   },
-);
+));
 
 Button.displayName = "Button";

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { AddButton, Input, Search } from "@mozu/ui";
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, memo, type SetStateAction, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetStockList } from "@/apis";
 import { FullPageLoader } from "@/components";
@@ -12,7 +12,7 @@ interface StockSearchSideBarProps {
   selectedId: number | null;
 }
 
-export const StockSearchSideBar = ({ setSelectedId, selectedId }: StockSearchSideBarProps) => {
+export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSearchSideBarProps) => {
   const { classId, id } = useParams<{
     classId: string;
     id: string;
@@ -98,7 +98,7 @@ export const StockSearchSideBar = ({ setSelectedId, selectedId }: StockSearchSid
       />
     </SideBarContainer>
   );
-};
+});
 
 const SideBarContainer = styled.div`
   min-width: 280px;

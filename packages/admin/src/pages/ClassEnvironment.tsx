@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { ArrowLeft, Button, Del, Edit, Modal, Play } from "@mozu/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useClassDelete, useClassStart, useGetClassDetail } from "@/apis";
 import { FullPageLoader } from "@/components";
@@ -125,10 +125,15 @@ export const ClassEnvironment = () => {
     }))
     : [];
 
-  // 기사 데이터 가공
-  const articleTableData = classData?.classArticles || [];
+    // 기사 데이터 가공
+    const articleTableData = classData?.classArticles || [];
+    
+    //리렌더링 최적화
+    const stockData = useMemo(() => stockTableData, [stockTableData]);
+    const articleData = useMemo(() => articleTableData, [articleTableData]);
 
   if (apiLoading) return <FullPageLoader />;
+
 
   return (
     <>
@@ -220,12 +225,12 @@ export const ClassEnvironment = () => {
               isApiLoading={isLoading}
               isEdit={false}
               degree={selectedRound.toString()}
-              data={stockTableData}
+              data={stockData}
             />
             <ArticleTables
               isEdit={false}
               degree={selectedRound.toString()}
-              data={articleTableData}
+              data={articleData}
             />
           </TableBox>
         </Content>

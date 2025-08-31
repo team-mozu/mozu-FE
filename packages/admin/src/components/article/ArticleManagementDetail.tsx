@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Del, Edit } from "@mozu/ui";
-import { useEffect, useState } from "react";
+import { Button } from "@mozu/ui";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useGetArticleDetail } from "@/apis";
 import { FullPageLoader } from "@/components";
@@ -13,13 +13,40 @@ interface IArticleManagementDetailProps {
   onClick?: () => void;
 }
 
-export const ArticleManagementDetail = ({ onClick }: IArticleManagementDetailProps) => {
+
+export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDetailProps) => {
   const navigate = useNavigate();
 
   const { id } = useParams<{
     id: string;
   }>();
-  const articleId = id ? parseInt(id, 10) : null;
+
+  const articleId = useMemo(() => {
+    return id ? parseInt(id, 10) : null;
+  }, [id]);
+
+  //버튼 props 메모이제이션
+  const deleteButtonProps = useMemo(() => ({
+    backgroundColor: color.zinc[50],
+    color: color.zinc[800],
+    borderColor: color.zinc[200],
+    hoverBackgroundColor: color.zinc[100],
+    type: "delImg" as const,
+    isIcon: true,
+    iconSize: 20,
+    iconColor: color.zinc[800],
+  }), []);
+
+  const editButtonProps = useMemo(() => ({
+    backgroundColor: color.orange[50],
+    color: color.orange[500],
+    borderColor: color.orange[200],
+    hoverBackgroundColor: color.orange[100],
+    type: "editImg" as const,
+    isIcon: true,
+    iconSize: 20,
+    iconColor: color.orange[500],
+  }), []);
 
   const [datas, setDatas] = useState<{
     title: string;
@@ -39,9 +66,11 @@ export const ArticleManagementDetail = ({ onClick }: IArticleManagementDetailPro
 
   useEffect(() => {
     if (!apiLoading && articleData) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsLoading(false);
       }, 500);
+
+      return () => clearTimeout(timer);
     }
   }, [
     apiLoading,
@@ -54,6 +83,11 @@ export const ArticleManagementDetail = ({ onClick }: IArticleManagementDetailPro
   }, [
     articleId,
   ]);
+
+  const handleEditClick = useCallback(() => {
+    navigate(`/article-management/${articleId}/edit`);
+  }, [navigate, articleId]);
+
 
   useEffect(() => {
     if (articleData) {
@@ -71,39 +105,36 @@ export const ArticleManagementDetail = ({ onClick }: IArticleManagementDetailPro
     articleData,
   ]);
 
+  const dateText = useMemo(() => `등록일자 | ${datas.createDate}`, [datas.createDate]);
+
+  const articleMainDataProps = useMemo(() => ({
+    img: datas.image,
+    title: datas.title,
+    main: datas.description,
+  }), [datas.image, datas.title, datas.description]);
+
+  const articleSkeletonProps = useMemo(() => ({
+    title: datas.title,
+    main: datas.description,
+  }), [datas.title, datas.description]);
+
   if (apiLoading) {
     return <FullPageLoader />;
   }
   return (
     <Container>
       <UpperContainer>
-        {isLoading ? <DateDiv>등록일자 | {datas.createDate}</DateDiv> : <p>등록일자 | {datas.createDate}</p>}
+        {isLoading ? <DateDiv>{dateText}</DateDiv> : <p>{dateText}</p>}
         <div>
-          <div onClick={onClick}>
-            <Button
-              backgroundColor={color.zinc[50]}
-              color={color.zinc[800]}
-              borderColor={color.zinc[200]}
-              hoverBackgroundColor={color.zinc[100]}
-              onClick={onClick}>
-              삭제하기
-              <Del
-                size={20}
-                color={color.zinc[800]}
-              />
-            </Button>
-          </div>
           <Button
-            backgroundColor={color.orange[50]}
-            color={color.orange[500]}
-            borderColor={color.orange[200]}
-            hoverBackgroundColor={color.orange[100]}
-            onClick={() => navigate(`/article-management/${articleId}/edit`)}>
+            {...deleteButtonProps}
+            onClick={onClick}>
+            삭제하기
+          </Button>
+          <Button
+            {...editButtonProps}
+            onClick={handleEditClick}>
             수정하기
-            <Edit
-              size={20}
-              color={color.orange[500]}
-            />
           </Button>
         </div>
       </UpperContainer>
@@ -111,23 +142,20 @@ export const ArticleManagementDetail = ({ onClick }: IArticleManagementDetailPro
         {isLoading ? (
           <ArticleContainer>
             <ArticleMainDataSkeleton
-              title={datas.title}
-              main={datas.description}
+              {...articleSkeletonProps}
             />
           </ArticleContainer>
         ) : (
           <ArticleContainer>
             <ArticleMainData
-              img={datas.image}
-              title={datas.title}
-              main={datas.description}
+              {...articleMainDataProps}
             />
           </ArticleContainer>
         )}
       </MainArticle>
     </Container>
   );
-};
+});
 
 const DateDiv = styled(Skeleton)`
   color: transparent;

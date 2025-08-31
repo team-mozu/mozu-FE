@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useGetTeamDetail } from "@/apis";
 import type { TeamEndProps } from "@/apis/team/type";
 import { InvestCompleteModal } from "@/components";
@@ -25,7 +25,7 @@ interface ITeamEndProps {
   itemMoney: number;
 }
 
-const TransactionContent = ({ keyword, name, totalPrice, stockPrice, id, onDelete }: ITransactionContentType) => {
+const TransactionContent = memo(({ keyword, name, totalPrice, stockPrice, id, onDelete }: ITransactionContentType) => {
   const isBuy = keyword === "BUY";
 
   const handleDelete = async () => {
@@ -48,7 +48,7 @@ const TransactionContent = ({ keyword, name, totalPrice, stockPrice, id, onDelet
       </TransactionContentContainer>
     </TransactionContainer>
   );
-};
+});
 
 // Mock Data
 const mockTeamData = {
