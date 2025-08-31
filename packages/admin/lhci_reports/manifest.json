@@ -2,11 +2,11 @@
   {
     "url": "http://admin.localhost:3002/stock-management",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management--2025_08_04_11_46_56.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management--2025_08_04_11_46_56.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management--2025_08_31_11_49_17.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management--2025_08_31_11_49_17.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.95,
+      "accessibility": 0.94,
       "best-practices": 0.96,
       "seo": 0.82
     }
@@ -14,104 +14,104 @@
   {
     "url": "http://admin.localhost:3002/stock-management/add",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_add--2025_08_04_11_47_08.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_add--2025_08_04_11_47_08.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_add--2025_08_31_11_49_31.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_add--2025_08_31_11_49_31.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.95,
-      "best-practices": 1,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/article-management",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management--2025_08_04_11_47_20.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management--2025_08_04_11_47_20.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management--2025_08_31_11_49_46.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management--2025_08_31_11_49_46.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.95,
-      "best-practices": 1,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/article-management/add",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_add--2025_08_04_11_47_32.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_add--2025_08_04_11_47_32.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_add--2025_08_31_11_50_00.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_add--2025_08_31_11_50_00.json",
     "summary": {
-      "performance": 0.56,
-      "accessibility": 0.95,
-      "best-practices": 1,
+      "performance": 0.55,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/class-management",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management--2025_08_04_11_47_45.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management--2025_08_04_11_47_45.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management--2025_08_31_11_50_14.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management--2025_08_31_11_50_14.json",
     "summary": {
       "performance": 0.55,
       "accessibility": 0.94,
-      "best-practices": 1,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/class-management/create",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_create--2025_08_04_11_47_57.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_create--2025_08_04_11_47_57.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_create--2025_08_31_11_50_28.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_create--2025_08_31_11_50_28.json",
     "summary": {
-      "performance": 0.55,
-      "accessibility": 0.91,
-      "best-practices": 1,
+      "performance": 0.56,
+      "accessibility": 0.9,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/stock-management/1003",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_1003--2025_08_04_11_48_09.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_1003--2025_08_04_11_48_09.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_1003--2025_08_31_11_50_42.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_1003--2025_08_31_11_50_42.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.95,
-      "best-practices": 1,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/stock-management/1003/edit",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_1003_edit--2025_08_04_11_48_21.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_1003_edit--2025_08_04_11_48_21.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_1003_edit--2025_08_31_11_50_55.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-stock_management_1003_edit--2025_08_31_11_50_55.json",
     "summary": {
-      "performance": 0.55,
+      "performance": 0.56,
       "accessibility": 0.95,
-      "best-practices": 1,
+      "best-practices": 0.96,
       "seo": 0.83
     }
   },
   {
     "url": "http://admin.localhost:3002/article-management/27",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_27--2025_08_04_11_48_33.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_27--2025_08_04_11_48_33.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_27--2025_08_31_11_51_09.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_27--2025_08_31_11_51_09.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.95,
-      "best-practices": 1,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/article-management/27/edit",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_27_edit--2025_08_04_11_48_45.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_27_edit--2025_08_04_11_48_45.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_27_edit--2025_08_31_11_51_26.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-article_management_27_edit--2025_08_31_11_51_26.json",
     "summary": {
       "performance": 0.55,
       "accessibility": 0.95,
@@ -122,48 +122,48 @@
   {
     "url": "http://admin.localhost:3002/class-management/9",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9--2025_08_04_11_48_57.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9--2025_08_04_11_48_57.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9--2025_08_31_11_51_41.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9--2025_08_31_11_51_41.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.89,
-      "best-practices": 1,
+      "accessibility": 0.88,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/class-management/9/edit",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_edit--2025_08_04_11_49_10.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_edit--2025_08_04_11_49_10.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_edit--2025_08_31_11_51_55.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_edit--2025_08_31_11_51_55.json",
     "summary": {
-      "performance": 0.55,
+      "performance": 0.56,
       "accessibility": 0.91,
-      "best-practices": 1,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/class-management/9/start",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_start--2025_08_04_11_49_22.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_start--2025_08_04_11_49_22.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_start--2025_08_31_11_52_09.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_start--2025_08_31_11_52_09.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.94,
-      "best-practices": 1,
+      "accessibility": 0.96,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   },
   {
     "url": "http://admin.localhost:3002/class-management/9/monitoring",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_monitoring--2025_08_04_11_50_18.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_monitoring--2025_08_04_11_50_18.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_monitoring--2025_08_31_11_52_23.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/admin/lhci_reports/report-class_management_9_monitoring--2025_08_31_11_52_23.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.94,
-      "best-practices": 1,
+      "accessibility": 1,
+      "best-practices": 0.96,
       "seo": 0.82
     }
   }

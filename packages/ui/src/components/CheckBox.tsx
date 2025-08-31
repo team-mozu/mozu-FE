@@ -1,56 +1,66 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
+import type { InputHTMLAttributes } from "react";
 import { Check } from "../assets";
 
-interface IProps {
-  onChange?: () => void;
-  checked?: boolean;
-  id?: string;
+interface IProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
-interface ICheckType {
-  backgroundColor: string;
-  borderColor: string;
-}
-
-export const CheckBox = ({ onChange, checked, id }: IProps) => {
+export const CheckBox = ({ checked, id, ...rest }: IProps) => {
   return (
-    <Container>
-      <CheckBoxInput
+    <CheckboxLabel htmlFor={id}>
+      <HiddenInput
         type="checkbox"
-        checked={checked}
-        onChange={onChange}
         id={id}
+        checked={checked}
+        {...rest}
       />
-      <label htmlFor={id}>
-        <CheckBoxLabel
-          borderColor={checked ? color.orange[500] : color.zinc[500]}
-          backgroundColor={checked ? color.orange[500] : color.white}>
-          {checked ? <Check /> : <div></div>}
-        </CheckBoxLabel>
-      </label>
-    </Container>
+      <StyledCheckbox checked={checked}>
+        {checked && <Check />}
+      </StyledCheckbox>
+    </CheckboxLabel>
   );
 };
 
-const Container = styled.div`
+const CheckboxLabel = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  line-height: 0;
+`;
+
+const HiddenInput = styled.input`
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+`;
+
+const StyledCheckbox = styled.div<{ checked?: boolean }>`
+  box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const CheckBoxLabel = styled.div<ICheckType>`
-  background-color: ${props => props.backgroundColor};
   width: 20px;
   height: 20px;
-  border: 1px solid ${props => props.borderColor};
+  flex: 0 0 20px;
   border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  line-height: 20px;
-`;
+  line-height: 0;
+  transition: background-color 150ms, border-color 150ms;
 
-const CheckBoxInput = styled.input`
-  display: none;
+  background-color: ${p => (p.checked ? color.orange[500] : color.white)};
+  border: 1px solid ${p => (p.checked ? color.orange[500] : color.zinc[500])};
+
+  & > svg { display: block; }
+
+  input[type="checkbox"]:focus + & {
+    box-shadow: 0 0 0 3px ${color.orange[200]};
+  }
 `;

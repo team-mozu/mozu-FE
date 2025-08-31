@@ -36,6 +36,7 @@
     "react-toastify": "^11.0.3"
   },
   "devDependencies": {
+    "@emotion/babel-plugin": "^11.13.5",
     "@types/react": "18.3.18",
     "@types/react-dom": "18.3.5",
     "@vitejs/plugin-react": "^5.0.0",
