@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
+import { useCallback } from "react";
 import { useAddArticle } from "@/apis";
 import { ImgContainer } from "@/components";
 import { useForm } from "@/hooks";
@@ -19,13 +20,13 @@ export const ArticleManagementAddPage = () => {
   });
 
   const apiData = useAddArticle();
-  const addClick = () => {
+  const addClick = useCallback(() => {
     apiData.mutate({
       title: state.title,
       description: state.description,
       image: state?.image ?? undefined,
     });
-  };
+  }, [apiData, state]);
 
   return (
     <AllContainer>
@@ -94,11 +95,11 @@ const AddContainer = styled.div`
 
 const ContentContainer = styled.div`
   width: 100%;
-  height: 1028px;
+  height: fit-content;
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.white};
   border-radius: 16px;
-  padding: 530px 24px;
+  padding:24px;
   display: flex;
   justify-content: center;
   align-items: center;

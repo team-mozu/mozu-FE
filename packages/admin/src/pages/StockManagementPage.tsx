@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { Del, Modal, SelectError } from "@mozu/ui";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useParams } from "react-router";
 import { useDeleteStock, useGetStockDetail } from "@/apis";
 import { FullPageLoader, StockManagementDetail, StockSearchSideBar } from "@/components";
@@ -16,16 +16,16 @@ export const StockManagementPage = () => {
   const { mutate: stockDelete, isPending } = useDeleteStock(() => setIsModalOpen(false));
   const { data: stockData } = useGetStockDetail(stockId);
 
-  const handleDetailClick = () => {
+  const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);
-  };
+  },[]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (selectedId !== null) {
       stockDelete(stockId ?? 0);
     }
     setSelectedId(null);
-  };
+  },[selectedId, stockDelete]);
 
 
   return (

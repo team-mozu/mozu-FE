@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { RouterProvider } from "react-router-dom";
 import { Router } from "./router";
 import { StyledProvider } from "./style/StyledProvider";
+import { ArticleProvider } from "./utils";
 import { queryClient } from "./utils/queryClient";
 
 function App() {
@@ -11,9 +12,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
       <StyledProvider>
-        <Suspense fallback={<div>로딩중...</div>}>
-          <RouterProvider router={Router} />
-        </Suspense>
+        <ArticleProvider>
+          <Suspense fallback={<div>로딩중...</div>}>
+            <RouterProvider router={Router} />
+          </Suspense>
+        </ArticleProvider>
       </StyledProvider>
     </QueryClientProvider>
   );

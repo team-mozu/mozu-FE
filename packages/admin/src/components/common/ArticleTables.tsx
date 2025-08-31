@@ -2,9 +2,10 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, CheckBox, Select } from "@mozu/ui";
 import { type ColumnDef, flexRender, getCoreRowModel, type Row, useReactTable } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import type { Article } from "@/apis/class/type";
 import { AddArticleItemModal } from "@/components/article/AddArticleItemModal";
+import { useArticle } from "@/utils";
 import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
 interface ClassArticleItem {
@@ -20,30 +21,23 @@ interface ArticleTablesProps {
   data?: ClassArticleItem[];
   isEdit: boolean;
   degree: string; // 차수 (3, 4, 5)
-  onDeleteArticles?: (articleIds: number[], degree: number) => void;
-  onAddArticles?: (newArticleGroup: { invDeg: number; articles: Article[] }) => void;
   isApiLoading?: boolean;
 }
 
-export const ArticleTables = ({
+export const ArticleTables = memo(({
   data = [],
   isEdit,
   degree,
   isApiLoading,
-  onDeleteArticles,
-  onAddArticles,
 }: ArticleTablesProps) => {
   const [isModal, setIsModal] = useState<boolean>(false);
-  // 선택된 차수 (1, 2, 3, 4, 5)
   const [selectedRound, setSelectedRound] = useState("1");
-
-  // 현재 선택된 차수의 기사 목록
   const [currentArticles, setCurrentArticles] = useState<DisplayArticle[]>([]);
-
-  // 체크된 기사 ID 관리
   const [checkedArticleIds, setCheckedArticleIds] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // 선택된 차수나 데이터가 변경될 때 현재 표시할 기사 목록 업데이트
+  const { addArticles, deleteArticles } = useArticle();
+
   useEffect(() => {
     const round = parseInt(selectedRound);
     const articleGroup = data.find(group => group.invDeg === round);
@@ -58,30 +52,20 @@ export const ArticleTables = ({
     } else {
       setCurrentArticles([]);
     }
-  }, [
-    data,
-    selectedRound,
-    checkedArticleIds,
-  ]);
+  }, [data, selectedRound, checkedArticleIds]);
 
-  //isLoading을 받아 스켈레톤 ui 구현
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  //받아오는 isLoading 값이 변경 될 때(로딩이 다시 될 때)와 selectedRound가 변경될 때 실행
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     setIsLoading(true);
     if (!isApiLoading) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsLoading(false);
       }, 500);
+      return () => {
+        clearTimeout(timer)
+      }
     }
-  }, [
-    isApiLoading,
-    selectedRound,
-  ]);
+  }, [isApiLoading, selectedRound]);
 
-  // 체크 상태가 변경될 때마다 현재 기사 목록 업데이트
   useEffect(() => {
     setCurrentArticles(prevArticles =>
       prevArticles.map(article => ({
@@ -89,89 +73,57 @@ export const ArticleTables = ({
         checked: checkedArticleIds.includes(article.id),
       })),
     );
-  }, [
-    checkedArticleIds,
-  ]);
+  }, [checkedArticleIds]);
 
-  // 차수 선택 변경 핸들러
-  const handleRoundChange = (value: string) => {
+  const handleRoundChange = useCallback((value: string) => {
     setSelectedRound(value);
-    // 차수가 변경되면 체크 상태 초기화
     setCheckedArticleIds([]);
-  };
+  }, []);
 
-  // 헤더 체크박스 토글
-  const toggleAll = () => {
+  const toggleAll = useCallback(() => {
     if (currentArticles.length === 0) return;
 
     if (checkedArticleIds.length === currentArticles.length) {
-      // 모두 체크되어 있으면 모두 해제
       setCheckedArticleIds([]);
     } else {
-      // 일부만 체크되어 있거나 모두 해제되어 있으면 모두 체크
       setCheckedArticleIds(currentArticles.map(article => article.id));
     }
-  };
+  }, [currentArticles, checkedArticleIds]);
 
-  // 개별 기사 체크박스 토글
-  const toggleArticle = (id: number) => {
+  const toggleArticle = useCallback((id: number) => {
     setCheckedArticleIds(prev => {
       if (prev.includes(id)) {
         return prev.filter(itemId => itemId !== id);
       } else {
-        return [
-          ...prev,
-          id,
-        ];
+        return [...prev, id];
       }
     });
-  };
+  }, []);
 
-  // 선택된 항목이 있는지 확인
   const hasCheckedItems = checkedArticleIds.length > 0;
 
-  // 선택된 항목 삭제 처리
-  const handleDeleteChecked = () => {
-    if (!hasCheckedItems || !onDeleteArticles) return;
-
-    // 선택된 기사 ID와 현재 선택된 차수를 부모 컴포넌트에 전달
-    onDeleteArticles(checkedArticleIds, parseInt(selectedRound));
-
-    // 체크 상태 초기화
+  const handleDeleteChecked = useCallback(() => {
+    if (!hasCheckedItems) return;
+    deleteArticles(checkedArticleIds, parseInt(selectedRound));
     setCheckedArticleIds([]);
-  };
+  }, [hasCheckedItems, deleteArticles, checkedArticleIds, selectedRound]);
 
-  // 모달 열기
-  const handleOpenModal = () => setIsModal(true);
+  const handleOpenModal = useCallback(() => setIsModal(true), []);
+  const handleCloseModal = useCallback(() => setIsModal(false), []);
 
-  // 모달 닫기
-  const handleCloseModal = () => setIsModal(false);
-
-  // 모달에서 기사 선택 완료 시 처리
-  const handleArticlesSelected = (selectedArticles: Article[]) => {
-    if (onAddArticles && selectedArticles.length > 0) {
-      // 선택된 차수와 기사 목록을 부모 컴포넌트에 전달
-      onAddArticles({
-        invDeg: parseInt(selectedRound),
-        articles: selectedArticles,
-      });
+  const handleArticlesSelected = useCallback((selectedArticles: Article[]) => {
+    if (selectedArticles.length > 0) {
+      addArticles(parseInt(selectedRound), selectedArticles);
     }
     handleCloseModal();
-  };
+  }, [addArticles, selectedRound, handleCloseModal]);
 
-  // 현재 선택된 차수에 맞는 옵션 배열 생성
   const roundOptions = Array.from(
-    {
-      length: parseInt(degree),
-    },
-    (_, i) => (i + 1).toString(),
+    { length: parseInt(degree) },
+    (_, i) => (i + 1).toString()
   );
 
-  // 이미 추가된 모든 기사의 ID를 수집
-  const allAddedArticleIds = data.flatMap(group => group.articles.map(article => article.id));
-
-  // 테이블 컬럼 정의
-  const columns: ColumnDef<DisplayArticle>[] = [
+  const columns = useMemo<ColumnDef<DisplayArticle>[]>(() => [
     ...(isEdit
       ? [
           {
@@ -199,17 +151,16 @@ export const ArticleTables = ({
       header: "기사 제목",
       cell: ({ row }) => {
         const value = row.original.title;
-        if (isLoading) {
-          return <EmptyValueTextDiv>{value}</EmptyValueTextDiv>;
-        } else {
-          return <EmptyValueText>{value}</EmptyValueText>;
-        }
+        return isLoading ? (
+          <EmptyValueTextDiv>{value}</EmptyValueTextDiv>
+        ) : (
+          <EmptyValueText>{value}</EmptyValueText>
+        );
       },
       size: 1460,
     },
-  ];
+  ], [isEdit, currentArticles.length, checkedArticleIds, toggleAll, toggleArticle, isLoading]);
 
-  // 테이블 인스턴스 생성
   const table = useReactTable({
     data: currentArticles,
     columns,
@@ -318,7 +269,7 @@ export const ArticleTables = ({
       )}
     </TableContainer>
   );
-};
+});
 
 const EmptyValueText = styled.span`
   color: ${color.zinc[900]};
