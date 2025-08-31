@@ -6,14 +6,13 @@ const router = "/class/team";
 
 export const useGetArticleList = () => {
   return useQuery({
-    queryKey: [
-      "getArticle",
-    ],
+    queryKey: ["news", "list"],
     queryFn: async () => {
-      const { data } = await instance.get<ArticleListResponse>(`${router}/classArticle`);
+      const { data } = await instance.get<ArticleListResponse>(
+        `${router}/classArticle`
+      );
       return data;
     },
     staleTime: 5000,
-    gcTime: 5000,
   });
 };

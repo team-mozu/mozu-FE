@@ -6,15 +6,14 @@ const router = "/class/team/classItem";
 
 export const useGetStockDetail = (stockId: number | null) => {
   return useQuery({
-    queryKey: [
-      "getStock",
-      stockId,
-    ],
+    queryKey: ["stock", "detail", stockId],
     queryFn: async () => {
-      const { data } = await instance.get<StockDetailResponse>(`${router}/${stockId}`);
+      const { data } = await instance.get<StockDetailResponse>(
+        `${router}/${stockId}`
+      );
       return data;
     },
+    enabled: !!stockId,
     staleTime: 5000,
-    gcTime: 5000,
   });
 };
