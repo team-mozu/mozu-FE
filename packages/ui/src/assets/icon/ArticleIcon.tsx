@@ -23,8 +23,8 @@ export const ArticleIcon = ({ size = 20, color = "#52525B" }: IArticleType) => {
       <defs>
         <clipPath id="clip0_1495_548">
           <rect
-            width={size}
-            height={size}
+            width="20"
+            height="20"
             fill="white"
           />
         </clipPath>

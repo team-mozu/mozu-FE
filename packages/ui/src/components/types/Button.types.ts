@@ -9,7 +9,8 @@ export type ButtonType =
   | "cancelImg"
   | "logOutImg"
   | "articleImg"
-  | "classImg";
+  | "classImg"
+  | "rankingImg";
 
 export interface ButtonProps {
   children?: ReactNode;

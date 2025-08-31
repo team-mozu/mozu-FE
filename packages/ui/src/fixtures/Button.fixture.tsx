@@ -157,6 +157,21 @@ export default {
     </Button>
   ),
 
+  "Ranking Icon Button": (
+    <Button
+      isIcon={true}
+      type="rankingImg"
+      iconSize={18}
+      color={color.orange[500]}
+      iconColor={color.orange[500]}
+      backgroundColor={color.orange[50]}
+      borderColor={color.orange[500]}
+      hoverBackgroundColor={color.orange[100]}
+    >
+      최종 랭킹 보기
+    </Button>
+  ),
+
   // Icon Only Buttons
   "Icon Only - Plus": (
     <Button

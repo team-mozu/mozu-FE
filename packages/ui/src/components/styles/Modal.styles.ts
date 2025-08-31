@@ -79,7 +79,6 @@ export const modalUpperStyles = css`
 `;
 
 export const modalLowerStyles = css`
-  width: 100%;
   padding: 20px 28px;
   padding: 12px;
   display: flex;
@@ -92,6 +91,7 @@ export const modalMainTitleStyles = css`
   color: ${color.zinc[900]};
   margin: 0;
   letter-spacing: -0.02em;
+  white-space: pre-line;
 `;
 
 export const modalSubTitleStyles = css`
