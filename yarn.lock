@@ -1497,6 +1497,7 @@ __metadata:
   resolution: "@mozu/admin@workspace:packages/admin"
   dependencies:
     "@babel/runtime": "npm:^7.26.0"
+    "@emotion/babel-plugin": "npm:^11.13.5"
     "@emotion/cache": "npm:^11.14.0"
     "@emotion/css": "npm:^11.13.5"
     "@emotion/react": "npm:^11.14.0"
@@ -1612,6 +1613,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mozu/ui@workspace:packages/ui"
   dependencies:
+    "@emotion/babel-plugin": "npm:^11.13.5"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"
     "@mozu/design-token": "workspace:^"

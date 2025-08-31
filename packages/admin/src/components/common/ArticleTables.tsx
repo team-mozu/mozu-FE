@@ -1,11 +1,9 @@
 import styled from "@emotion/styled";
-import { color, font } from "@mozu/design-token";
+import { color, font, Skeleton } from "@mozu/design-token";
 import { Button, CheckBox, Select } from "@mozu/ui";
-import { type ColumnDef, flexRender, getCoreRowModel, type Row, useReactTable } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Article } from "@/apis/class/type";
 import { AddArticleItemModal } from "@/components/article/AddArticleItemModal";
-import { Skeleton } from "../../../../design-token/src/theme/Skeleton";
 
 interface ClassArticleItem {
   invDeg: number;
@@ -19,11 +17,225 @@ interface DisplayArticle extends Article {
 interface ArticleTablesProps {
   data?: ClassArticleItem[];
   isEdit: boolean;
-  degree: string; // 차수 (3, 4, 5)
+  degree: string;
   onDeleteArticles?: (articleIds: number[], degree: number) => void;
   onAddArticles?: (newArticleGroup: { invDeg: number; articles: Article[] }) => void;
   isApiLoading?: boolean;
 }
+
+const SKELETON_DELAY = 500;
+const DEFAULT_ROUND = "1";
+
+const useTableLoading = (isApiLoading?: boolean) => {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (!isApiLoading) {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, SKELETON_DELAY);
+      return () => clearTimeout(timer);
+    }
+  }, [
+    isApiLoading,
+  ]);
+
+  return isLoading;
+};
+
+const useArticleSelection = () => {
+  const [checkedArticleIds, setCheckedArticleIds] = useState<number[]>([]);
+
+  const resetSelection = useCallback(() => {
+    setCheckedArticleIds([]);
+  }, []);
+
+  const toggleArticle = useCallback((id: number) => {
+    setCheckedArticleIds(prev =>
+      prev.includes(id)
+        ? prev.filter(itemId => itemId !== id)
+        : [
+          ...prev,
+          id,
+        ],
+    );
+  }, []);
+
+  const toggleAll = useCallback((articleIds: number[]) => {
+    setCheckedArticleIds(prev => (prev.length === articleIds.length ? [] : articleIds));
+  }, []);
+
+  return {
+    checkedArticleIds,
+    resetSelection,
+    toggleArticle,
+    toggleAll,
+  };
+};
+
+const useRoundSelection = (degree: string) => {
+  const [selectedRound, setSelectedRound] = useState(DEFAULT_ROUND);
+
+  const roundOptions = useMemo(
+    () =>
+      Array.from(
+        {
+          length: parseInt(degree, 10),
+        },
+        (_, i) => (i + 1).toString(),
+      ),
+    [
+      degree,
+    ],
+  );
+
+  const handleRoundChange = useCallback((value: string, onSelectionReset: () => void) => {
+    setSelectedRound(value);
+    onSelectionReset();
+  }, []);
+
+  return {
+    selectedRound,
+    roundOptions,
+    handleRoundChange,
+  };
+};
+
+const TableHeader = ({
+  isEdit,
+  hasItems,
+  onToggleAll,
+}: {
+  isEdit: boolean;
+  hasItems: boolean;
+  onToggleAll: () => void;
+}) => (
+  <Thead>
+    <tr>
+      {isEdit && (
+        <Th width="52px">
+          <CheckBoxWrapper>
+            <CheckBox
+              onChange={onToggleAll}
+              checked={hasItems}
+              id="article-header-checkbox"
+            />
+          </CheckBoxWrapper>
+        </Th>
+      )}
+      <Th>기사 제목</Th>
+    </tr>
+  </Thead>
+);
+
+const ArticleRow = ({
+  article,
+  isEdit,
+  isLoading,
+  onToggle,
+}: {
+  article: DisplayArticle;
+  isEdit: boolean;
+  isLoading: boolean;
+  onToggle: (id: number) => void;
+}) => (
+  <tr key={article.id}>
+    {isEdit && (
+      <Td width="52px">
+        <CheckBoxWrapper>
+          <CheckBox
+            checked={article.checked}
+            onChange={() => onToggle(article.id)}
+            id={`article-row-${article.id}`}
+          />
+        </CheckBoxWrapper>
+      </Td>
+    )}
+    <Td>{isLoading ? <SkeletonText>{article.title}</SkeletonText> : <ArticleTitle>{article.title}</ArticleTitle>}</Td>
+  </tr>
+);
+
+const EmptyState = ({
+  colSpan,
+  isEdit,
+  selectedRound,
+}: {
+  colSpan: number;
+  isEdit: boolean;
+  selectedRound: string;
+}) => (
+  <tr>
+    <EmptyStateTd colSpan={colSpan}>
+      <EmptyStateContainer>
+        <EmptyStateText>{isEdit ? `${selectedRound}차에 추가된 기사가 없습니다.` : "기사가 없습니다."}</EmptyStateText>
+      </EmptyStateContainer>
+    </EmptyStateTd>
+  </tr>
+);
+
+const AddRowButton = ({ colSpan, onClick }: { colSpan: number; onClick: () => void }) => (
+  <tr>
+    <PlusTd
+      colSpan={colSpan}
+      onClick={onClick}>
+      <PlusField>
+        <PlusIcon>+</PlusIcon>
+        추가하기
+      </PlusField>
+    </PlusTd>
+  </tr>
+);
+
+const TableControls = ({
+  selectedRound,
+  roundOptions,
+  isEdit,
+  hasCheckedItems,
+  onRoundChange,
+  onDeleteChecked,
+}: {
+  selectedRound: string;
+  roundOptions: string[];
+  isEdit: boolean;
+  hasCheckedItems: boolean;
+  onRoundChange: (value: string) => void;
+  onDeleteChecked: () => void;
+}) => (
+  <ControlContainer>
+    <TableTitle>기사 목록</TableTitle>
+    <div>
+      <SelectBox>
+        <Select
+          data={roundOptions}
+          width={100}
+          height={40}
+          value={selectedRound}
+          onChange={onRoundChange}
+          padding={{
+            top: 10,
+            bottom: 10,
+            right: 10,
+            left: 16,
+          }}
+        />
+        차
+      </SelectBox>
+      {isEdit && (
+        <RightControls>
+          <Button
+            backgroundColor={color.zinc[50]}
+            borderColor={color.zinc[200]}
+            hoverBackgroundColor={color.zinc[100]}
+            onClick={onDeleteChecked}
+            disabled={!hasCheckedItems}>
+            선택항목 삭제하기
+          </Button>
+        </RightControls>
+      )}
+    </div>
+  </ControlContainer>
+);
 
 export const ArticleTables = ({
   data = [],
@@ -34,276 +246,129 @@ export const ArticleTables = ({
   onAddArticles,
 }: ArticleTablesProps) => {
   const [isModal, setIsModal] = useState<boolean>(false);
-  // 선택된 차수 (1, 2, 3, 4, 5)
-  const [selectedRound, setSelectedRound] = useState("1");
 
-  // 현재 선택된 차수의 기사 목록
-  const [currentArticles, setCurrentArticles] = useState<DisplayArticle[]>([]);
+  const isLoading = useTableLoading(isApiLoading);
+  const { checkedArticleIds, resetSelection, toggleArticle, toggleAll } = useArticleSelection();
+  const { selectedRound, roundOptions, handleRoundChange } = useRoundSelection(degree);
 
-  // 체크된 기사 ID 관리
-  const [checkedArticleIds, setCheckedArticleIds] = useState<number[]>([]);
-
-  // 선택된 차수나 데이터가 변경될 때 현재 표시할 기사 목록 업데이트
-  useEffect(() => {
-    const round = parseInt(selectedRound);
+  const currentArticles = useMemo<DisplayArticle[]>(() => {
+    const round = parseInt(selectedRound, 10);
     const articleGroup = data.find(group => group.invDeg === round);
 
     if (articleGroup) {
-      setCurrentArticles(
-        articleGroup.articles.map(article => ({
-          ...article,
-          checked: checkedArticleIds.includes(article.id),
-        })),
-      );
-    } else {
-      setCurrentArticles([]);
+      return articleGroup.articles.map(article => ({
+        ...article,
+        checked: checkedArticleIds.includes(article.id),
+      }));
     }
+    return [];
   }, [
     data,
     selectedRound,
     checkedArticleIds,
   ]);
 
-  //isLoading을 받아 스켈레톤 ui 구현
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  //받아오는 isLoading 값이 변경 될 때(로딩이 다시 될 때)와 selectedRound가 변경될 때 실행
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
-  useEffect(() => {
-    setIsLoading(true);
-    if (!isApiLoading) {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-    }
-  }, [
-    isApiLoading,
-    selectedRound,
-  ]);
-
-  // 체크 상태가 변경될 때마다 현재 기사 목록 업데이트
-  useEffect(() => {
-    setCurrentArticles(prevArticles =>
-      prevArticles.map(article => ({
-        ...article,
-        checked: checkedArticleIds.includes(article.id),
-      })),
-    );
-  }, [
-    checkedArticleIds,
-  ]);
-
-  // 차수 선택 변경 핸들러
-  const handleRoundChange = (value: string) => {
-    setSelectedRound(value);
-    // 차수가 변경되면 체크 상태 초기화
-    setCheckedArticleIds([]);
-  };
-
-  // 헤더 체크박스 토글
-  const toggleAll = () => {
-    if (currentArticles.length === 0) return;
-
-    if (checkedArticleIds.length === currentArticles.length) {
-      // 모두 체크되어 있으면 모두 해제
-      setCheckedArticleIds([]);
-    } else {
-      // 일부만 체크되어 있거나 모두 해제되어 있으면 모두 체크
-      setCheckedArticleIds(currentArticles.map(article => article.id));
-    }
-  };
-
-  // 개별 기사 체크박스 토글
-  const toggleArticle = (id: number) => {
-    setCheckedArticleIds(prev => {
-      if (prev.includes(id)) {
-        return prev.filter(itemId => itemId !== id);
-      } else {
-        return [
-          ...prev,
-          id,
-        ];
-      }
-    });
-  };
-
-  // 선택된 항목이 있는지 확인
   const hasCheckedItems = checkedArticleIds.length > 0;
-
-  // 선택된 항목 삭제 처리
-  const handleDeleteChecked = () => {
-    if (!hasCheckedItems || !onDeleteArticles) return;
-
-    // 선택된 기사 ID와 현재 선택된 차수를 부모 컴포넌트에 전달
-    onDeleteArticles(checkedArticleIds, parseInt(selectedRound));
-
-    // 체크 상태 초기화
-    setCheckedArticleIds([]);
-  };
-
-  // 모달 열기
-  const handleOpenModal = () => setIsModal(true);
-
-  // 모달 닫기
-  const handleCloseModal = () => setIsModal(false);
-
-  // 모달에서 기사 선택 완료 시 처리
-  const handleArticlesSelected = (selectedArticles: Article[]) => {
-    if (onAddArticles && selectedArticles.length > 0) {
-      // 선택된 차수와 기사 목록을 부모 컴포넌트에 전달
-      onAddArticles({
-        invDeg: parseInt(selectedRound),
-        articles: selectedArticles,
-      });
-    }
-    handleCloseModal();
-  };
-
-  // 현재 선택된 차수에 맞는 옵션 배열 생성
-  const roundOptions = Array.from(
-    {
-      length: parseInt(degree),
-    },
-    (_, i) => (i + 1).toString(),
+  const isAllChecked = currentArticles.length > 0 && checkedArticleIds.length === currentArticles.length;
+  const colSpan = isEdit ? 2 : 1;
+  const existingArticles = useMemo(
+    () => data.flatMap(group => group.articles),
+    [
+      data,
+    ],
   );
 
-  // 이미 추가된 모든 기사의 ID를 수집
-  const allAddedArticleIds = data.flatMap(group => group.articles.map(article => article.id));
-
-  // 테이블 컬럼 정의
-  const columns: ColumnDef<DisplayArticle>[] = [
-    ...(isEdit
-      ? [
-          {
-            accessorKey: "checked",
-            header: () => (
-              <CheckBox
-                onChange={toggleAll}
-                checked={currentArticles.length > 0 && checkedArticleIds.length === currentArticles.length}
-                id="article-header-checkbox"
-              />
-            ),
-            cell: ({ row }: { row: Row<DisplayArticle> }) => (
-              <CheckBox
-                checked={row.original.checked}
-                onChange={() => toggleArticle(row.original.id)}
-                id={`article-row-${row.original.id}`}
-              />
-            ),
-            size: 52,
-          },
-        ]
-      : []),
-    {
-      accessorKey: "title",
-      header: "기사 제목",
-      cell: ({ row }) => {
-        const value = row.original.title;
-        if (isLoading) {
-          return <EmptyValueTextDiv>{value}</EmptyValueTextDiv>;
-        } else {
-          return <EmptyValueText>{value}</EmptyValueText>;
-        }
-      },
-      size: 1460,
+  const handleRoundChangeWithReset = useCallback(
+    (value: string) => {
+      handleRoundChange(value, resetSelection);
     },
-  ];
+    [
+      handleRoundChange,
+      resetSelection,
+    ],
+  );
 
-  // 테이블 인스턴스 생성
-  const table = useReactTable({
-    data: currentArticles,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  const handleToggleAll = useCallback(() => {
+    toggleAll(currentArticles.map(article => article.id));
+  }, [
+    toggleAll,
+    currentArticles,
+  ]);
+
+  const handleDeleteChecked = useCallback(() => {
+    if (!hasCheckedItems || !onDeleteArticles) return;
+    onDeleteArticles(checkedArticleIds, parseInt(selectedRound, 10));
+    resetSelection();
+  }, [
+    hasCheckedItems,
+    onDeleteArticles,
+    checkedArticleIds,
+    selectedRound,
+    resetSelection,
+  ]);
+
+  const handleOpenModal = useCallback(() => setIsModal(true), []);
+  const handleCloseModal = useCallback(() => setIsModal(false), []);
+
+  const handleArticlesSelected = useCallback(
+    (selectedArticles: Article[]) => {
+      if (onAddArticles && selectedArticles.length > 0) {
+        onAddArticles({
+          invDeg: parseInt(selectedRound, 10),
+          articles: selectedArticles,
+        });
+      }
+      handleCloseModal();
+    },
+    [
+      onAddArticles,
+      selectedRound,
+      handleCloseModal,
+    ],
+  );
 
   return (
     <TableContainer>
-      <ControlContainer>
-        <TableTitle>기사 목록</TableTitle>
-
-        <div>
-          <SelectBox>
-            <Select
-              data={roundOptions}
-              width={100}
-              height={40}
-              value={selectedRound}
-              onChange={handleRoundChange}
-              padding={{
-                top: 10,
-                bottom: 10,
-                right: 10,
-                left: 16,
-              }}
-            />
-            차
-          </SelectBox>
-
-          {isEdit && (
-            <RightControls>
-              <Button
-                backgroundColor={color.zinc[50]}
-                borderColor={color.zinc[200]}
-                hoverBackgroundColor={color.zinc[100]}
-                onClick={handleDeleteChecked}
-                disabled={!hasCheckedItems}>
-                선택항목 삭제하기
-              </Button>
-            </RightControls>
-          )}
-        </div>
-      </ControlContainer>
+      <TableControls
+        selectedRound={selectedRound}
+        roundOptions={roundOptions}
+        isEdit={isEdit}
+        hasCheckedItems={hasCheckedItems}
+        onRoundChange={handleRoundChangeWithReset}
+        onDeleteChecked={handleDeleteChecked}
+      />
 
       <Table>
-        <Thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <Th
-                  key={header.id}
-                  width={`${header.column.getSize()}px`}>
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                </Th>
-              ))}
-            </tr>
-          ))}
-        </Thead>
+        <TableHeader
+          isEdit={isEdit}
+          hasItems={isAllChecked}
+          onToggleAll={handleToggleAll}
+        />
 
         <Tbody>
-          {table.getRowModel().rows.length > 0 ? (
-            table.getRowModel().rows.map(row => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <Td
-                    key={cell.id}
-                    width={`${cell.column.getSize()}px`}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Td>
-                ))}
-              </tr>
+          {currentArticles.length > 0 ? (
+            currentArticles.map(article => (
+              <ArticleRow
+                key={article.id}
+                article={article}
+                isEdit={isEdit}
+                isLoading={isLoading}
+                onToggle={toggleArticle}
+              />
             ))
           ) : (
-            <tr>
-              <EmptyStateTd colSpan={columns.length}>
-                <EmptyStateContainer>
-                  <EmptyStateText>
-                    {isEdit ? `${selectedRound}차에 추가된 기사가 없습니다.` : "기사가 없습니다."}
-                  </EmptyStateText>
-                </EmptyStateContainer>
-              </EmptyStateTd>
-            </tr>
+            <EmptyState
+              colSpan={colSpan}
+              isEdit={isEdit}
+              selectedRound={selectedRound}
+            />
           )}
+
           {isEdit && (
-            <tr>
-              <PlusTd
-                colSpan={columns.length}
-                onClick={handleOpenModal}>
-                <PlusField>
-                  <PlusIcon>+</PlusIcon>
-                  추가하기
-                </PlusField>
-              </PlusTd>
-            </tr>
+            <AddRowButton
+              colSpan={colSpan}
+              onClick={handleOpenModal}
+            />
           )}
         </Tbody>
       </Table>
@@ -312,19 +377,19 @@ export const ArticleTables = ({
         <AddArticleItemModal
           close={handleCloseModal}
           onArticlesSelected={handleArticlesSelected}
-          selectedDegree={parseInt(selectedRound)}
-          existingArticles={data.flatMap(group => group.articles)}
+          selectedDegree={parseInt(selectedRound, 10)}
+          existingArticles={existingArticles}
         />
       )}
     </TableContainer>
   );
 };
 
-const EmptyValueText = styled.span`
+const ArticleTitle = styled.span`
   color: ${color.zinc[900]};
 `;
 
-const EmptyValueTextDiv = styled(Skeleton)`
+const SkeletonText = styled(Skeleton)`
   color: transparent;
 `;
 
@@ -369,7 +434,7 @@ const Table = styled.table`
   border-spacing: 0;
   border-radius: 8px;
   overflow: hidden;
-  table-layout: auto;
+  table-layout: fixed;
 `;
 
 const Thead = styled.thead`
@@ -381,12 +446,11 @@ const Tbody = styled.tbody`
 `;
 
 const Th = styled.th<{
-  width: string;
+  width?: string;
 }>`
   font: ${font.t2};
   height: 48px;
   background: ${color.orange[50]};
-  border-bottom: 1px solid ${color.zinc[200]};
   vertical-align: middle;
   border: 1px solid ${color.zinc[200]};
   padding: 16px 14px;
@@ -407,10 +471,10 @@ const Td = styled.td<{
 }>`
   height: 48px;
   font: ${font.t4};
-  border-bottom: 1px solid ${color.zinc[200]};
   border: 1px solid ${color.zinc[200]};
   padding: 16px 14px;
   text-align: left;
+  vertical-align: middle;
   width: ${props => props.width};
 
   tbody tr:last-of-type & {
@@ -459,5 +523,21 @@ const PlusTd = styled(Td)`
   background-color: ${color.zinc[50]};
   &:hover {
     background-color: ${color.zinc[100]};
+  }
+`;
+
+const CheckBoxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0 auto;
+
+  /* CheckBox 컴포넌트의 크기 고정 */
+  & > * {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
   }
 `;

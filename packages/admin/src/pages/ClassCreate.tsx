@@ -428,7 +428,6 @@ export const Contents = styled.div`
   background-color: ${color.white};
   border: 1px solid ${color.zinc[200]};
   width: 100%;
-  height: fit;
   border-radius: 16px;
   padding: 32px 24px 52px;
   display: flex;
@@ -444,7 +443,7 @@ export const BtnContainer = styled.div`
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 40px;
   gap: 8px;

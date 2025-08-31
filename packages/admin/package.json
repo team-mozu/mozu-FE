@@ -33,6 +33,7 @@
     "scheduler": "^0.25.0"
   },
   "devDependencies": {
+    "@emotion/babel-plugin": "^11.13.5",
     "@lhci/cli": "^0.15.1",
     "@mozu/design-token": "workspace:^",
     "@mozu/ui": "workspace:^",

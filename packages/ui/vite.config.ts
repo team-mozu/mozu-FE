@@ -10,7 +10,14 @@ export default defineConfig({
         "src",
       ],
     }),
-    react(),
+    react({
+      jsxImportSource: "@emotion/react",
+      babel: {
+        plugins: [
+          "@emotion/babel-plugin",
+        ],
+      },
+    }),
   ],
 
   build: {
