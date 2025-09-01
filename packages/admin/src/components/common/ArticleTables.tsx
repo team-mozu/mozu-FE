@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 import { color, font, Skeleton } from "@mozu/design-token";
 import { Button, CheckBox, Select } from "@mozu/ui";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import type { Article } from "@/apis/class/type";
 import { AddArticleItemModal } from "@/components/article/AddArticleItemModal";
+import { useArticle } from "@/utils";
 
 interface ClassArticleItem {
   invDeg: number;
@@ -18,8 +19,6 @@ interface ArticleTablesProps {
   data?: ClassArticleItem[];
   isEdit: boolean;
   degree: string;
-  onDeleteArticles?: (articleIds: number[], degree: number) => void;
-  onAddArticles?: (newArticleGroup: { invDeg: number; articles: Article[] }) => void;
   isApiLoading?: boolean;
 }
 
@@ -102,7 +101,7 @@ const useRoundSelection = (degree: string) => {
   };
 };
 
-const TableHeader = ({
+const TableHeader = memo(({
   isEdit,
   hasItems,
   onToggleAll,
@@ -127,9 +126,9 @@ const TableHeader = ({
       <Th>기사 제목</Th>
     </tr>
   </Thead>
-);
+));
 
-const ArticleRow = ({
+const ArticleRow = memo(({
   article,
   isEdit,
   isLoading,
@@ -154,9 +153,9 @@ const ArticleRow = ({
     )}
     <Td>{isLoading ? <SkeletonText>{article.title}</SkeletonText> : <ArticleTitle>{article.title}</ArticleTitle>}</Td>
   </tr>
-);
+));
 
-const EmptyState = ({
+const EmptyState = memo(({
   colSpan,
   isEdit,
   selectedRound,
@@ -172,9 +171,9 @@ const EmptyState = ({
       </EmptyStateContainer>
     </EmptyStateTd>
   </tr>
-);
+));
 
-const AddRowButton = ({ colSpan, onClick }: { colSpan: number; onClick: () => void }) => (
+const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () => void }) => (
   <tr>
     <PlusTd
       colSpan={colSpan}
@@ -185,9 +184,9 @@ const AddRowButton = ({ colSpan, onClick }: { colSpan: number; onClick: () => vo
       </PlusField>
     </PlusTd>
   </tr>
-);
+));
 
-const TableControls = ({
+const TableControls = memo(({
   selectedRound,
   roundOptions,
   isEdit,
@@ -235,21 +234,20 @@ const TableControls = ({
       )}
     </div>
   </ControlContainer>
-);
+));
 
-export const ArticleTables = ({
+export const ArticleTables = memo(({
   data = [],
   isEdit,
   degree,
   isApiLoading,
-  onDeleteArticles,
-  onAddArticles,
 }: ArticleTablesProps) => {
   const [isModal, setIsModal] = useState<boolean>(false);
 
   const isLoading = useTableLoading(isApiLoading);
   const { checkedArticleIds, resetSelection, toggleArticle, toggleAll } = useArticleSelection();
   const { selectedRound, roundOptions, handleRoundChange } = useRoundSelection(degree);
+  const { addArticles, deleteArticles } = useArticle();
 
   const currentArticles = useMemo<DisplayArticle[]>(() => {
     const round = parseInt(selectedRound, 10);
@@ -296,36 +294,21 @@ export const ArticleTables = ({
   ]);
 
   const handleDeleteChecked = useCallback(() => {
-    if (!hasCheckedItems || !onDeleteArticles) return;
-    onDeleteArticles(checkedArticleIds, parseInt(selectedRound, 10));
+    if (!hasCheckedItems) return;
+    deleteArticles(checkedArticleIds, parseInt(selectedRound));
     resetSelection();
-  }, [
-    hasCheckedItems,
-    onDeleteArticles,
-    checkedArticleIds,
-    selectedRound,
-    resetSelection,
-  ]);
+  }, [hasCheckedItems, deleteArticles, resetSelection, checkedArticleIds, selectedRound]);
+
 
   const handleOpenModal = useCallback(() => setIsModal(true), []);
   const handleCloseModal = useCallback(() => setIsModal(false), []);
 
-  const handleArticlesSelected = useCallback(
-    (selectedArticles: Article[]) => {
-      if (onAddArticles && selectedArticles.length > 0) {
-        onAddArticles({
-          invDeg: parseInt(selectedRound, 10),
-          articles: selectedArticles,
-        });
-      }
-      handleCloseModal();
-    },
-    [
-      onAddArticles,
-      selectedRound,
-      handleCloseModal,
-    ],
-  );
+  const handleArticlesSelected = useCallback((selectedArticles: Article[]) => {
+    if (selectedArticles.length > 0) {
+      addArticles(parseInt(selectedRound), selectedArticles);
+    }
+    handleCloseModal();
+  }, [addArticles, selectedRound, handleCloseModal]);
 
   return (
     <TableContainer>
@@ -383,7 +366,7 @@ export const ArticleTables = ({
       )}
     </TableContainer>
   );
-};
+});
 
 const ArticleTitle = styled.span`
   color: ${color.zinc[900]};

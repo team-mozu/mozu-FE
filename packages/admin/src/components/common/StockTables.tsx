@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font, Skeleton } from "@mozu/design-token";
 import { Button, CheckBox } from "@mozu/ui";
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AddInvestItemModal } from "@/components/stock/AddInvestItemModal";
 import { formatPrice } from "@/utils/formatPrice";
 
@@ -108,7 +108,7 @@ interface PriceInputProps {
   onEnterPress?: () => void;
 }
 
-const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>(({
+const PriceInput = memo(forwardRef<HTMLInputElement, PriceInputProps>(({
   value,
   onChange,
   placeholder,
@@ -200,10 +200,10 @@ const PriceInput = forwardRef<HTMLInputElement, PriceInputProps>(({
       autoComplete="off"
     />
   );
-});
+}));
 
 // Table Row Components
-const StockTableHeader = ({
+const StockTableHeader = memo(({
   isEdit,
   degree,
   allChecked,
@@ -246,9 +246,9 @@ const StockTableHeader = ({
       </tr>
     </Thead>
   );
-};
+});
 
-const StockTableRow = ({
+const StockTableRow = memo(({
   stock,
   isEdit,
   isLoading,
@@ -352,9 +352,9 @@ const StockTableRow = ({
       })}
     </tr>
   );
-};
+});
 
-const EmptyState = ({ colSpan }: { colSpan: number }) => (
+const EmptyState = memo(({ colSpan }: { colSpan: number }) => (
   <tr>
     <Td colSpan={colSpan} align="center">
       <EmptyStateContainer>
@@ -362,9 +362,9 @@ const EmptyState = ({ colSpan }: { colSpan: number }) => (
       </EmptyStateContainer>
     </Td>
   </tr>
-);
+));
 
-const AddRowButton = ({ colSpan, onClick }: { colSpan: number; onClick: () => void }) => (
+const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () => void }) => (
   <tr>
     <PlusTd colSpan={colSpan} onClick={onClick}>
       <PlusField>
@@ -373,9 +373,9 @@ const AddRowButton = ({ colSpan, onClick }: { colSpan: number; onClick: () => vo
       </PlusField>
     </PlusTd>
   </tr>
-);
+));
 
-const TableControls = ({
+const TableControls = memo(({
   hasCheckedItems,
   onDeleteSelected,
   isEdit,
@@ -398,10 +398,10 @@ const TableControls = ({
       </Button>
     )}
   </DeleteButtonContainer>
-);
+));
 
 // Main Component
-export const StockTables = ({
+export const StockTables = memo(({
   degree,
   isEdit = true,
   data = [],
@@ -563,7 +563,7 @@ export const StockTables = ({
       )}
     </TableContainer>
   );
-};
+});
 
 // Styled Components
 const TableTitle = styled.div`

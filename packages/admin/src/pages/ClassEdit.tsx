@@ -299,6 +299,11 @@ export const ClassEdit = () => {
 
   if (isLoading) return <FullPageLoader />;
 
+  const cancelClick = () => {
+    resetArticles()
+    navigate(-1)
+  }
+
   return (
     <Container>
       <Header>
@@ -310,7 +315,7 @@ export const ClassEdit = () => {
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
             hoverBorderColor={color.zinc[100]}
-            onClick={() => navigate(-1)}>
+            onClick={cancelClick}>
             취소
           </Button>
           <Button
