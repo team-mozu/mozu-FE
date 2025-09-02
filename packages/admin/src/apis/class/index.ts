@@ -2,32 +2,37 @@ import { Toast } from "@mozu/ui";
 import { instance } from "@mozu/util-config";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router";
-import type { ClassCreateRequest, ClassData, ClassDetailResponse, ClassResponse, TeamDealsResponse } from "@/apis";
+import type {
+  ClassCreateRequest,
+  ClassData,
+  ClassDetailResponse,
+  ClassResponse,
+  TeamDealsResponse,
+} from "@/apis";
 
 const router = "/class";
 
 export const useGetClassList = () => {
   return useQuery({
-    queryKey: [
-      "getClass",
-    ],
+    queryKey: ["class", "list"],
     queryFn: async () => {
       const { data } = await instance.get<ClassResponse>(`${router}`);
       return data;
     },
+    staleTime: 1000 * 60,
   });
 };
 
 export const useGetClassDetail = (id: number) => {
   return useQuery({
-    queryKey: [
-      "getClass",
-      id,
-    ],
+    queryKey: ["class", "detail", id],
     queryFn: async () => {
-      const { data } = await instance.get<ClassDetailResponse>(`${router}/${id}`);
+      const { data } = await instance.get<ClassDetailResponse>(
+        `${router}/${id}`
+      );
       return data;
     },
+    enabled: !!id,
   });
 };
 
@@ -35,7 +40,7 @@ export const useClassCreate = () => {
   const navigate = useNavigate();
   return useMutation({
     mutationFn: async (
-      data: ClassCreateRequest,
+      data: ClassCreateRequest
     ): Promise<{
       id: number;
     }> => {
@@ -44,7 +49,7 @@ export const useClassCreate = () => {
       }>(`${router}`, data);
       return response.data;
     },
-    onSuccess: data => {
+    onSuccess: (data) => {
       Toast("성공적으로 생성되었습니다.", {
         type: "success",
       });
@@ -63,7 +68,7 @@ export const useClassUpdate = (id: string) => {
       });
       return data;
     },
-    onSuccess: data => {
+    onSuccess: (data) => {
       Toast("성공적으로 수정되었습니다.", {
         type: "success",
       });
@@ -74,25 +79,24 @@ export const useClassUpdate = (id: string) => {
 export const useClassStar = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: number) => await instance.post(`${router}/star/${id}`),
+    mutationFn: async (id: number) =>
+      await instance.post(`${router}/star/${id}`),
     onSuccess: (_, id) => {
       queryClient.setQueryData(
-        [
-          "getClass",
-        ],
+        ["class", "list"],
         (oldData: ClassResponse | undefined) => {
           if (!oldData) return oldData;
           return {
-            classes: oldData.classes.map(item =>
+            classes: oldData.classes.map((item) =>
               item.id === id
                 ? {
                     ...item,
                     starYN: !item.starYN,
                   }
-                : item,
+                : item
             ),
           };
-        },
+        }
       );
     },
     onError: () => {
@@ -117,9 +121,7 @@ export const useClassDelete = (onSuccessCallback?: () => void) => {
         onSuccessCallback(); // 모달 닫기 실행
       }
       queryClient.invalidateQueries({
-        queryKey: [
-          "getClass",
-        ],
+        queryKey: ["class", "list"],
       });
     },
     onError: () => {
@@ -140,7 +142,7 @@ export const useClassStart = (id: number) => {
       }>(`${router}/start/${id}`);
       return data;
     },
-    onSuccess: data => {
+    onSuccess: (data) => {
       localStorage.setItem("inviteCode", data.classCode);
       Toast("수업을 성공적으로 시작했습니다.", {
         type: "success",
@@ -175,7 +177,7 @@ export const useNextDegree = (id: number, onSuccessCallback?: () => void) => {
         navigate(newPath);
       }
     },
-    onError: err => {
+    onError: (err) => {
       Toast(`수업 진행에 실패했습니다. ${err}`, {
         type: "error",
       });
@@ -193,7 +195,7 @@ export const useEditClass = (classId: number) => {
         type: "success",
       });
     },
-    onError: err => {
+    onError: (err) => {
       Toast(`수업 수정에 실패했습니다. ${err}`, {
         type: "error",
       });
@@ -203,12 +205,11 @@ export const useEditClass = (classId: number) => {
 
 export const useTeamDeals = (teamId: number) => {
   return useQuery({
-    queryKey: [
-      "teamDeals",
-      teamId,
-    ],
+    queryKey: ["team", "deals", teamId],
     queryFn: async () => {
-      const { data } = await instance.get<TeamDealsResponse[]>(`/team/${teamId}`);
+      const { data } = await instance.get<TeamDealsResponse[]>(
+        `/team/${teamId}`
+      );
       return data;
     },
     enabled: !!teamId,
