@@ -4,7 +4,7 @@ import { Button, CheckBox, Select } from "@mozu/ui";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import type { Article } from "@/apis/class/type";
 import { AddArticleItemModal } from "@/components/article/AddArticleItemModal";
-import { useArticle } from "@/utils";
+import { useArticle } from "@/shared/lib/contexts/ArticleContext";
 
 interface ClassArticleItem {
   invDeg: number;

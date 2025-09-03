@@ -2,40 +2,41 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { useState } from "react";
+import { useParams } from "react-router";
 import { DegCurrentModal, TeamCurrentModal } from "@/components";
 import type { TeamInfo } from "@/store";
-import { roundToFixed } from "@/utils";
+import { useInvestmentProgress } from "@/hooks";
+import { createTableHeaders, transformTeamDataToTableRows } from "@/utils/tableUtils";
+import { TableCell } from "./TableCell";
 
 interface Props {
   teamInfo: TeamInfo[];
-  invDeg: number;
-  maxInvDeg: number;
 }
 
-export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) => {
+export const ImprovedTeamInfoTable = ({ teamInfo }: Props) => {
   const [isOpenTeam, setIsOpenTeam] = useState(false);
   const [isOpenDeg, setIsOpenDeg] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [selectedDegId, setSelectedDegId] = useState<number | null>(null);
-  const [selectedTeamName, setSelectedTeamName] = useState("");
 
-  // 헤더 리스트를 동적으로 생성
-  const getTableHeaders = () => {
-    const headers = [
-      "팀명",
-    ];
-    for (let i = 1; i <= maxInvDeg; i++) {
-      headers.push(`${i}차 투자`);
-    }
-    headers.push("총자산");
-    return headers;
-  };
+  const { id } = useParams();
+  const classId = id ? parseInt(id) : null;
+  const { classData, currentInvDeg } = useInvestmentProgress(classId ?? 0);
 
-  const tableHeaders = getTableHeaders();
+  const maxInvDeg = classData?.maxInvDeg ?? 0;
 
-  const handleOpenModal = (teamId: number, teamName: string) => {
+  // 테이블 데이터 변환 - 메모이제이션 제거하여 즉시 반응하도록
+  console.log("🔄 Table data computing:", {
+    currentInvDeg,
+    maxInvDeg,
+    teamCount: teamInfo?.length
+  });
+
+  const tableData = transformTeamDataToTableRows(teamInfo, currentInvDeg, maxInvDeg);
+  const tableHeaders = createTableHeaders(maxInvDeg);
+
+  const handleOpenModal = (teamId: number) => {
     setSelectedTeamId(teamId);
-    setSelectedTeamName(teamName);
     setIsOpenTeam(true);
   };
 
@@ -45,95 +46,75 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
     setIsOpenDeg(true);
   };
 
-  if (!teamInfo || teamInfo.length <= 0) return null;
+  if (!teamInfo || teamInfo.length <= 0) {
+    return (
+      <Container>
+        <Table>
+          <Tr isHeader>
+            {tableHeaders.map((header, index) => (
+              <Th
+                key={header}
+                isLeft={index === 0}>
+                {header}
+              </Th>
+            ))}
+          </Tr>
+          <Tr>
+            <EmptyMessage colSpan={tableHeaders.length}>팀 정보를 불러오는 중입니다...</EmptyMessage>
+          </Tr>
+        </Table>
+      </Container>
+    );
+  }
 
   return (
     <>
-      <Table>
-        <Tr isHeader>
-          {tableHeaders.map((tableHead, index) => (
-            <Th
-              key={index}
-              isLeft={index === 0}>
-              {tableHead}
-            </Th>
-          ))}
-        </Tr>
-        {teamInfo.map((team, index) => {
-          const isNegative = team.trade.at(-1)?.profitNum.includes("-");
-
-          return (
+      <Container>
+        <Table>
+          <Tr isHeader>
+            {tableHeaders.map((header, index) => (
+              <Th
+                key={header}
+                isLeft={index === 0}>
+                {header}
+              </Th>
+            ))}
+          </Tr>
+          {tableData.map((row, index) => (
             <Tr
-              isNotBorded={index + 1 === teamInfo.length}
-              key={index}>
+              key={row.teamId}
+              isNotBorded={index + 1 === tableData.length}>
+              {/* 팀명 컬럼 */}
               <Td isLeft>
-                <TeamName
-                  isTeamName
-                  onClick={() => handleOpenModal(team.teamId, team.teamName)}>
-                  {team.teamName}
-                </TeamName>
-                {team.trade.length === invDeg && (
+                <TeamName onClick={() => handleOpenModal(row.teamId)}>{row.teamName}</TeamName>
+                {row.isCompleted && (
                   <CompletedBadge>
-                    투자완료{" "}
                     <Check
-                      size={18}
+                      size={12}
                       color={color.green[500]}
                     />
                   </CompletedBadge>
                 )}
               </Td>
-              {Array.from({
-                length: maxInvDeg,
-              }).map((_, degIndex) => {
-                if (degIndex + 1 > invDeg) {
-                  return <Td key={degIndex} />;
-                }
 
-                const isNegative =
-                  team.trade[degIndex] === undefined ? null : team.trade[degIndex].profitNum.includes("-");
+              {/* 각 차수별 컬럼 */}
+              {row.cells.map((cell, cellIndex) => (
+                <TableCell
+                  key={cellIndex}
+                  data={cell}
+                  onClick={() => handleOpenDegModal(row.teamId, cellIndex + 1)}
+                />
+              ))}
 
-                return (
-                  <Td key={degIndex}>
-                    {team.trade[degIndex] === undefined ? (
-                      "진행중"
-                    ) : (
-                      <Rate
-                        isNegative={isNegative}
-                        onClick={() => handleOpenDegModal(team.teamId, degIndex + 1)}>
-                        <span>{team.trade[degIndex].totalMoney.toLocaleString()}원</span>
-                        <span>
-                          {!isNegative && "+"}
-                          {team.trade[degIndex].valMoney.toLocaleString()}원 ({!isNegative && "+"}
-                          {roundToFixed(parseFloat(team.trade[degIndex].profitNum), 2)}
-                          %)
-                        </span>
-                      </Rate>
-                    )}
-                  </Td>
-                );
-              })}
               {/* 총자산 컬럼 */}
-              <Td>
-                {team.trade.length > 0 ? (
-                  <Rate
-                    isNegative={isNegative}
-                    onClick={() => handleOpenModal(team.teamId, team.teamName)}>
-                    <span>{team.trade.at(-1)?.totalMoney.toLocaleString()}원</span>
-                    <span>
-                      {!isNegative && "+"}
-                      {team.trade.at(-1)?.valMoney.toLocaleString()}원 ({!isNegative && "+"}
-                      {roundToFixed(parseFloat(team.trade.at(-1)?.profitNum ?? "0"), 2)}
-                      %)
-                    </span>
-                  </Rate>
-                ) : (
-                  "진행중"
-                )}
-              </Td>
+              <TableCell
+                data={row.totalAssets}
+                onClick={() => handleOpenModal(row.teamId)}
+              />
             </Tr>
-          );
-        })}
-      </Table>
+          ))}
+        </Table>
+      </Container>
       {isOpenTeam && selectedTeamId !== null && (
         <TeamCurrentModal
           isOpen={isOpenTeam}
@@ -151,6 +132,11 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
     </>
   );
 };
+
+const Container = styled.div`
+  width: 100%;
+  overflow-x: auto;
+`;
 
 const Table = styled.table`
   width: 100%;
@@ -211,6 +197,13 @@ const Td = styled.td<{
   }
 `;
 
+const EmptyMessage = styled.td`
+  text-align: center;
+  padding: 40px 16px;
+  color: ${color.zinc[500]};
+  font: ${font.b1};
+`;
+
 const CompletedBadge = styled.span`
   padding: 2px 6px;
   background-color: ${color.green[50]};
@@ -223,31 +216,7 @@ const CompletedBadge = styled.span`
   gap: 2px;
 `;
 
-const Rate = styled.div<{
-  isNegative: boolean | null | undefined;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: end;
-  width: 100%;
-  cursor: pointer;
-  & > span:nth-of-type(1) {
-    ${font.t1};
-  }
-  & > span:nth-of-type(2) {
-    ${font.l1};
-    color: ${({ isNegative }) => (isNegative ? color.blue[500] : color.red[500])};
-  }
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const TeamName = styled.span<{
-  isTeamName?: boolean;
-}>`
+const TeamName = styled.span`
   cursor: pointer;
   font: ${font.t2};
   &:hover {
