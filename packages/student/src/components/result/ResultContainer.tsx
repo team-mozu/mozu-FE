@@ -114,6 +114,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
         <Modal
           mainTitle="투자 마치기"
           subTitle="투자 마치면 총 결과 결산 페이지로 이동합니다."
+          successBtnChildren="마치기"
           onSuccessClick={handleEndClass}
           icon={<Del size={24} color={color.red[400]} />}
           isOpen={isOpenModal}

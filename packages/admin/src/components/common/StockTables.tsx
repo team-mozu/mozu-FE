@@ -667,8 +667,7 @@ const PriceInputStyle = styled.input`
   }
 
   &::placeholder {
-    color: ${color.zinc[400]};
-    font-size: 12px;
+    font: ${font.b2};
   }
 
   &::selection {
