@@ -68,13 +68,18 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
         <Input
           placeholder="기사 검색.."
           fullWidth={true}
-          startIcon={<Search color={color.zinc[400]} size={20} />}
+          startIcon={
+            <Search
+              color={color.zinc[400]}
+              size={20}
+            />
+          }
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
         />
       </UpperWrapper>
       <ArticleWrapper>
-        {filteredDatas.length > 0 ?
+        {filteredDatas.length > 0 ? (
           filteredDatas.map((data, index) => (
             <ArticleDiv
               key={data.id}
@@ -89,9 +94,10 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
                 });
               }}
             />
-          )) :
+          ))
+        ) : (
           <EmptyState>{searchText ? "검색 결과가 없습니다." : "기사가 없습니다."}</EmptyState>
-        }
+        )}
       </ArticleWrapper>
       <AddButton
         onClick={() => navigate("/article-management/add")}

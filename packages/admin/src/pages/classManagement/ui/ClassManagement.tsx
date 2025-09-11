@@ -48,7 +48,7 @@ export const ClassManagement = () => {
   const openDeleteModal = useCallback((id: number) => {
     setSelectedClassId(id);
     setIsModal(true);
-  },[]);
+  }, []);
 
   //삭제 api 불러옴
   const { mutate: delClassApi, isPending } = useClassDelete(() => setIsModal(false));
@@ -58,39 +58,45 @@ export const ClassManagement = () => {
     if (selectedClassId !== null) {
       delClassApi(selectedClassId);
     }
-  },[selectedClassId,delClassApi]);
+  }, [
+    selectedClassId,
+    delClassApi,
+  ]);
 
   const { mutate: apiClassStar } = useClassStar();
 
-  const toggleFavorite = useCallback((() => {
-    let isPending = false;
+  const toggleFavorite = useCallback(
+    (() => {
+      let isPending = false;
 
-    return async (index: number, type: "favorites" | "common", id?: number) => {
-      if (isPending || id === undefined) return;
+      return async (index: number, type: "favorites" | "common", id?: number) => {
+        if (isPending || id === undefined) return;
 
-      isPending = true;
-      setIsStarLoading(true);
+        isPending = true;
+        setIsStarLoading(true);
 
-      try {
-        const updateList = type === "favorites" ? setIsClickFavorites : setIsClickCommon;
+        try {
+          const updateList = type === "favorites" ? setIsClickFavorites : setIsClickCommon;
 
-        updateList(prev => {
-          const updated = [
-            ...prev,
-          ];
-          updated[index] = !updated[index];
-          return updated;
-        });
+          updateList(prev => {
+            const updated = [
+              ...prev,
+            ];
+            updated[index] = !updated[index];
+            return updated;
+          });
 
-        await apiClassStar(id);
-      } catch (error) {
-        console.error("즐겨찾기 요청 실패", error);
-      } finally {
-        isPending = false;
-        setIsStarLoading(false);
-      }
-    };
-  })(),[]);
+          await apiClassStar(id);
+        } catch (error) {
+          console.error("즐겨찾기 요청 실패", error);
+        } finally {
+          isPending = false;
+          setIsStarLoading(false);
+        }
+      };
+    })(),
+    [],
+  );
 
   if (apiLoading) return <FullPageLoader />;
 
@@ -101,7 +107,12 @@ export const ClassManagement = () => {
           mainTitle={"이 수업을 삭제하시겠습니까?"}
           subTitle={"삭제하면 복구가 불가능합니다."}
           onSuccessClick={handleDelete}
-          icon={<Del size={24} color={color.red[400]} />}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
           isOpen={isModal}
           setIsOpen={setIsModal}
           isPending={isPending}
@@ -136,23 +147,23 @@ export const ClassManagement = () => {
                 <PostContents>
                   {isLoading
                     ? favorites.map((_, index) => (
-                      <SkeletonClassPost
-                        key={index}
-                        title={""}
-                        creationDate={""}
-                      />
-                    ))
+                        <SkeletonClassPost
+                          key={index}
+                          title={""}
+                          creationDate={""}
+                        />
+                      ))
                     : favorites.map((item, index) => (
-                      <ClassPost
-                        key={item.id}
-                        title={item.name}
-                        creationDate={item.date}
-                        isClick={item.starYN}
-                        starOnClick={() => toggleFavorite(index, "favorites", item.id)}
-                        delClick={() => openDeleteModal(item.id)}
-                        onClick={() => navigate(`${item.id}`)}
-                      />
-                    ))}
+                        <ClassPost
+                          key={item.id}
+                          title={item.name}
+                          creationDate={item.date}
+                          isClick={item.starYN}
+                          starOnClick={() => toggleFavorite(index, "favorites", item.id)}
+                          delClick={() => openDeleteModal(item.id)}
+                          onClick={() => navigate(`${item.id}`)}
+                        />
+                      ))}
                 </PostContents>
               </PostContainer>
             )}
@@ -164,23 +175,23 @@ export const ClassManagement = () => {
               <PostContents>
                 {isLoading
                   ? common.map((_, index) => (
-                    <SkeletonClassPost
-                      key={index}
-                      title={""}
-                      creationDate={""}
-                    />
-                  ))
+                      <SkeletonClassPost
+                        key={index}
+                        title={""}
+                        creationDate={""}
+                      />
+                    ))
                   : common.map((item, index) => (
-                    <ClassPost
-                      key={item.id}
-                      title={item.name}
-                      creationDate={item.date}
-                      isClick={isClickCommon[index]}
-                      starOnClick={() => toggleFavorite(index, "common", item.id)}
-                      delClick={() => openDeleteModal(item.id)}
-                      onClick={() => navigate(`${item.id}`)}
-                    />
-                  ))}
+                      <ClassPost
+                        key={item.id}
+                        title={item.name}
+                        creationDate={item.date}
+                        isClick={isClickCommon[index]}
+                        starOnClick={() => toggleFavorite(index, "common", item.id)}
+                        delClick={() => openDeleteModal(item.id)}
+                        onClick={() => navigate(`${item.id}`)}
+                      />
+                    ))}
               </PostContents>
             </PostContainer>
           </PostAllContainer>

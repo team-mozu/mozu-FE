@@ -13,7 +13,6 @@ interface IArticleManagementDetailProps {
   onClick?: () => void;
 }
 
-
 export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDetailProps) => {
   const navigate = useNavigate();
 
@@ -23,30 +22,38 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
 
   const articleId = useMemo(() => {
     return id ? parseInt(id, 10) : null;
-  }, [id]);
+  }, [
+    id,
+  ]);
 
   //버튼 props 메모이제이션
-  const deleteButtonProps = useMemo(() => ({
-    backgroundColor: color.zinc[50],
-    color: color.zinc[800],
-    borderColor: color.zinc[200],
-    hoverBackgroundColor: color.zinc[100],
-    type: "delImg" as const,
-    isIcon: true,
-    iconSize: 20,
-    iconColor: color.zinc[800],
-  }), []);
+  const deleteButtonProps = useMemo(
+    () => ({
+      backgroundColor: color.zinc[50],
+      color: color.zinc[800],
+      borderColor: color.zinc[200],
+      hoverBackgroundColor: color.zinc[100],
+      type: "delImg" as const,
+      isIcon: true,
+      iconSize: 20,
+      iconColor: color.zinc[800],
+    }),
+    [],
+  );
 
-  const editButtonProps = useMemo(() => ({
-    backgroundColor: color.orange[50],
-    color: color.orange[500],
-    borderColor: color.orange[200],
-    hoverBackgroundColor: color.orange[100],
-    type: "editImg" as const,
-    isIcon: true,
-    iconSize: 20,
-    iconColor: color.orange[500],
-  }), []);
+  const editButtonProps = useMemo(
+    () => ({
+      backgroundColor: color.orange[50],
+      color: color.orange[500],
+      borderColor: color.orange[200],
+      hoverBackgroundColor: color.orange[100],
+      type: "editImg" as const,
+      isIcon: true,
+      iconSize: 20,
+      iconColor: color.orange[500],
+    }),
+    [],
+  );
 
   const [datas, setDatas] = useState<{
     title: string;
@@ -86,8 +93,10 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
 
   const handleEditClick = useCallback(() => {
     navigate(`/article-management/${articleId}/edit`);
-  }, [navigate, articleId]);
-
+  }, [
+    navigate,
+    articleId,
+  ]);
 
   useEffect(() => {
     if (articleData) {
@@ -105,18 +114,36 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
     articleData,
   ]);
 
-  const dateText = useMemo(() => `등록일자 | ${datas.createDate}`, [datas.createDate]);
+  const dateText = useMemo(
+    () => `등록일자 | ${datas.createDate}`,
+    [
+      datas.createDate,
+    ],
+  );
 
-  const articleMainDataProps = useMemo(() => ({
-    img: datas.image,
-    title: datas.title,
-    main: datas.description,
-  }), [datas.image, datas.title, datas.description]);
+  const articleMainDataProps = useMemo(
+    () => ({
+      img: datas.image,
+      title: datas.title,
+      main: datas.description,
+    }),
+    [
+      datas.image,
+      datas.title,
+      datas.description,
+    ],
+  );
 
-  const articleSkeletonProps = useMemo(() => ({
-    title: datas.title,
-    main: datas.description,
-  }), [datas.title, datas.description]);
+  const articleSkeletonProps = useMemo(
+    () => ({
+      title: datas.title,
+      main: datas.description,
+    }),
+    [
+      datas.title,
+      datas.description,
+    ],
+  );
 
   if (apiLoading) {
     return <FullPageLoader />;
@@ -141,15 +168,11 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
       <MainArticle>
         {isLoading ? (
           <ArticleContainer>
-            <ArticleMainDataSkeleton
-              {...articleSkeletonProps}
-            />
+            <ArticleMainDataSkeleton {...articleSkeletonProps} />
           </ArticleContainer>
         ) : (
           <ArticleContainer>
-            <ArticleMainData
-              {...articleMainDataProps}
-            />
+            <ArticleMainData {...articleMainDataProps} />
           </ArticleContainer>
         )}
       </MainArticle>

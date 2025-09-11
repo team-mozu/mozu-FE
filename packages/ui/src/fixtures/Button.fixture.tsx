@@ -12,8 +12,7 @@ export default {
       hoverBackgroundColor={color.orange[600]}
       hoverBorderColor={color.orange[600]}
       activeBackgroundColor={color.orange[700]}
-      activeBorderColor={color.orange[700]}
-    >
+      activeBorderColor={color.orange[700]}>
       Primary 버튼
     </Button>
   ),
@@ -25,8 +24,7 @@ export default {
       borderColor={color.orange[500]}
       hoverBackgroundColor={color.orange[50]}
       hoverColor={color.orange[600]}
-      activeBackgroundColor={color.orange[100]}
-    >
+      activeBackgroundColor={color.orange[100]}>
       Secondary 버튼
     </Button>
   ),
@@ -38,8 +36,7 @@ export default {
       borderColor={color.red[500]}
       hoverBackgroundColor={color.red[600]}
       hoverBorderColor={color.red[600]}
-      activeBackgroundColor={color.red[700]}
-    >
+      activeBackgroundColor={color.red[700]}>
       Danger 버튼
     </Button>
   ),
@@ -53,8 +50,7 @@ export default {
       iconColor={color.white}
       backgroundColor={color.orange[500]}
       borderColor={color.orange[500]}
-      hoverBackgroundColor={color.orange[600]}
-    >
+      hoverBackgroundColor={color.orange[600]}>
       시작
     </Button>
   ),
@@ -67,8 +63,7 @@ export default {
       iconColor={color.white}
       backgroundColor={color.green[500]}
       borderColor={color.green[500]}
-      hoverBackgroundColor={color.green[600]}
-    >
+      hoverBackgroundColor={color.green[600]}>
       추가
     </Button>
   ),
@@ -81,8 +76,7 @@ export default {
       iconColor={color.white}
       backgroundColor={color.blue[500]}
       borderColor={color.blue[500]}
-      hoverBackgroundColor={color.blue[600]}
-    >
+      hoverBackgroundColor={color.blue[600]}>
       편집
     </Button>
   ),
@@ -95,8 +89,7 @@ export default {
       iconColor={color.white}
       backgroundColor={color.red[500]}
       borderColor={color.red[500]}
-      hoverBackgroundColor={color.red[600]}
-    >
+      hoverBackgroundColor={color.red[600]}>
       삭제
     </Button>
   ),
@@ -109,8 +102,7 @@ export default {
       iconColor={color.white}
       backgroundColor={color.green[500]}
       borderColor={color.green[500]}
-      hoverBackgroundColor={color.green[600]}
-    >
+      hoverBackgroundColor={color.green[600]}>
       저장
     </Button>
   ),
@@ -123,8 +115,7 @@ export default {
       iconColor={color.zinc[600]}
       backgroundColor="transparent"
       borderColor={color.zinc[300]}
-      hoverBackgroundColor={color.zinc[50]}
-    >
+      hoverBackgroundColor={color.zinc[50]}>
       취소
     </Button>
   ),
@@ -137,8 +128,7 @@ export default {
       iconColor={color.white}
       backgroundColor={color.red[500]}
       borderColor={color.red[500]}
-      hoverBackgroundColor={color.red[600]}
-    >
+      hoverBackgroundColor={color.red[600]}>
       로그아웃
     </Button>
   ),
@@ -151,8 +141,7 @@ export default {
       iconColor={color.white}
       backgroundColor={color.blue[500]}
       borderColor={color.blue[500]}
-      hoverBackgroundColor={color.blue[600]}
-    >
+      hoverBackgroundColor={color.blue[600]}>
       게시글
     </Button>
   ),
@@ -166,8 +155,7 @@ export default {
       iconColor={color.orange[500]}
       backgroundColor={color.orange[50]}
       borderColor={color.orange[500]}
-      hoverBackgroundColor={color.orange[100]}
-    >
+      hoverBackgroundColor={color.orange[100]}>
       최종 랭킹 보기
     </Button>
   ),
@@ -205,8 +193,7 @@ export default {
       backgroundColor={color.orange[500]}
       color={color.white}
       borderColor={color.orange[500]}
-      width={80}
-    >
+      width={80}>
       Small
     </Button>
   ),
@@ -216,8 +203,7 @@ export default {
       backgroundColor={color.orange[500]}
       color={color.white}
       borderColor={color.orange[500]}
-      width={200}
-    >
+      width={200}>
       Large Button
     </Button>
   ),
@@ -228,8 +214,7 @@ export default {
       disabled
       backgroundColor={color.zinc[300]}
       color={color.zinc[500]}
-      borderColor={color.zinc[300]}
-    >
+      borderColor={color.zinc[300]}>
       비활성화 버튼
     </Button>
   ),
@@ -242,8 +227,7 @@ export default {
       iconSize={16}
       iconColor={color.zinc[400]}
       backgroundColor={color.zinc[200]}
-      borderColor={color.zinc[300]}
-    >
+      borderColor={color.zinc[300]}>
       비활성화
     </Button>
   ),
@@ -255,8 +239,7 @@ export default {
       color={color.white}
       borderColor={color.orange[500]}
       hoverBackgroundColor={color.orange[600]}
-      hoverBoxShadow="0 4px 12px rgba(255, 165, 0, 0.3)"
-    >
+      hoverBoxShadow="0 4px 12px rgba(255, 165, 0, 0.3)">
       Shadow Effect
     </Button>
   ),
@@ -270,8 +253,7 @@ export default {
       hoverBorderColor={color.blue[700]}
       activeBackgroundColor={color.blue[700]}
       activeBorderColor={color.blue[800]}
-      activeColor={color.blue[50]}
-    >
+      activeColor={color.blue[50]}>
       Gradient Style
     </Button>
   ),

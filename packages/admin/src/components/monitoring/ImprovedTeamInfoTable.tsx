@@ -29,7 +29,7 @@ export const ImprovedTeamInfoTable = ({ teamInfo }: Props) => {
   console.log("🔄 Table data computing:", {
     currentInvDeg,
     maxInvDeg,
-    teamCount: teamInfo?.length
+    teamCount: teamInfo?.length,
   });
 
   const tableData = transformTeamDataToTableRows(teamInfo, currentInvDeg, maxInvDeg);

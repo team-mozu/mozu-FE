@@ -129,7 +129,12 @@ export default {
   "Full Width Input": () => {
     const [value, setValue] = useState("");
     return (
-      <div style={{ width: "400px", padding: "20px", border: "1px solid #ccc" }}>
+      <div
+        style={{
+          width: "400px",
+          padding: "20px",
+          border: "1px solid #ccc",
+        }}>
         <Input
           label="전체 너비 입력"
           placeholder="전체 너비로 표시됩니다"

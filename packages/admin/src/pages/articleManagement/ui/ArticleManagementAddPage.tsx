@@ -26,7 +26,10 @@ export const ArticleManagementAddPage = () => {
       description: state.description,
       image: state?.image ?? undefined,
     });
-  }, [apiData, state]);
+  }, [
+    apiData,
+    state,
+  ]);
 
   return (
     <AllContainer>

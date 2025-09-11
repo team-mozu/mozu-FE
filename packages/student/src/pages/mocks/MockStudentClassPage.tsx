@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useEffect, useState } from "react";
-import { StockTable, TotalProperty } from "@/components";
-import { ArticleModal } from "@/components/news/ArticleModal";
+import { ArticleModal } from "@/features/news-reading/";
+import { StockTable } from "@/features/stock-trading";
+import { TotalProperty } from "@/shared/ui";
 
 // Mock Data for UI rendering
 const mockTeamData = {
@@ -60,7 +61,12 @@ export const MockStudentClassPage = () => {
       {/* 기사 모달 */}
       {isModalOpen && mockNewsData.length > 0 && (
         <ArticleModal
-          article={mockNewsData[currentArticleIndex]}
+          article={{
+            id: mockNewsData[currentArticleIndex].id,
+            title: mockNewsData[currentArticleIndex].title,
+            description: mockNewsData[currentArticleIndex].content,
+            image: "",
+          }}
           total={mockNewsData.length}
           current={currentArticleIndex}
           onPrev={handlePrevArticle}

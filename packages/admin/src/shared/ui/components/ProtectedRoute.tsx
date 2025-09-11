@@ -5,7 +5,12 @@ export const ProtectedRoute = () => {
   const accessToken = getCookies<string>("accessToken");
 
   if (!accessToken) {
-    return <Navigate to="/signin" replace />;
+    return (
+      <Navigate
+        to="/signin"
+        replace
+      />
+    );
   }
 
   return <Outlet />;

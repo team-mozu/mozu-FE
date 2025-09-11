@@ -9,20 +9,22 @@ interface TableCellProps {
 }
 
 export const TableCell = ({ data, onClick }: TableCellProps) => {
-  if (data.type === 'empty') {
+  if (data.type === "empty") {
     return <Td />;
   }
 
-  if (data.type === 'progress') {
+  if (data.type === "progress") {
     return <Td>진행중</Td>;
   }
 
-  if (data.type === 'completed' && data.data) {
+  if (data.type === "completed" && data.data) {
     const { totalMoney, valMoney, profitNum, isNegative } = data.data;
-    
+
     return (
       <Td>
-        <Rate isNegative={isNegative} onClick={onClick}>
+        <Rate
+          isNegative={isNegative}
+          onClick={onClick}>
           <span>{totalMoney.toLocaleString()}원</span>
           <span>
             {!isNegative && "+"}

@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import { font } from "@mozu/design-token";
 import { useState } from "react";
-import { RankModal, ResultContainer } from "@/components";
+import { RankModal } from "@/features/ranking-view";
+import { ResultContainer } from "@/shared/ui";
 
 interface ModalProps {
   isOpen: boolean;
@@ -132,7 +133,7 @@ const ModalContainer = styled.div<{
   position: string;
 }>`
   position: absolute;
-  
+
   ${({ position }) => {
     switch (position) {
       case "top-left":
@@ -200,7 +201,7 @@ const Button = styled.button`
 const CancelButton = styled(Button)`
   background-color: #f5f5f5;
   color: #333;
-  
+
   &:hover {
     background-color: #e0e0e0;
   }
@@ -209,7 +210,7 @@ const CancelButton = styled(Button)`
 const ConfirmButton = styled(Button)`
   background-color: #ff4444;
   color: white;
-  
+
   &:hover {
     background-color: #cc3333;
   }

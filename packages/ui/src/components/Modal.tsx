@@ -71,7 +71,7 @@ export const Modal = ({
   successBtnChildren = "삭제하기",
   isOpen,
   setIsOpen,
-  isPending
+  isPending,
 }: ModalProps) => {
   /**
    * 모달 상단 아이콘 래퍼 스타일
@@ -169,7 +169,7 @@ export const Modal = ({
             </div>
           </div>
         </div>
-      </div >
+      </div>
     )
   );
 };

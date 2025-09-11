@@ -15,29 +15,29 @@ export const useInvestmentProgress = (classId: number) => {
     serverCurInvDeg: classData?.curInvDeg,
     currentInvDeg,
     isLoading,
-    isFetching
+    isFetching,
   });
 
-  const { mutate: nextDegree, isPending: isNextDegreePending } = useNextDegree(
-    classId,
-    () => {
-      console.log("✅ nextDegree success callback");
-      // 잠깐 기다린 후 서버 데이터 동기화
-      queryClient.invalidateQueries({
-        queryKey: ["getClass", classId],
-      });
-      // optimistic state는 서버 데이터가 업데이트된 후에 초기화
-      setTimeout(() => {
-        console.log("🔄 Resetting optimistic state");
-        setOptimisticCurInvDeg(null);
-      }, 100);
-    }
-  );
+  const { mutate: nextDegree, isPending: isNextDegreePending } = useNextDegree(classId, () => {
+    console.log("✅ nextDegree success callback");
+    // 잠깐 기다린 후 서버 데이터 동기화
+    queryClient.invalidateQueries({
+      queryKey: [
+        "getClass",
+        classId,
+      ],
+    });
+    // optimistic state는 서버 데이터가 업데이트된 후에 초기화
+    setTimeout(() => {
+      console.log("🔄 Resetting optimistic state");
+      setOptimisticCurInvDeg(null);
+    }, 100);
+  });
 
   const progressToNextDegree = useCallback(() => {
     console.log("🚀 progressToNextDegree called:", {
       currentInvDeg,
-      willSetTo: currentInvDeg + 1
+      willSetTo: currentInvDeg + 1,
     });
 
     if (!classData) return;
@@ -47,12 +47,13 @@ export const useInvestmentProgress = (classId: number) => {
 
     // API call
     nextDegree();
-  }, [classData, currentInvDeg, nextDegree]);
+  }, [
+    classData,
+    currentInvDeg,
+    nextDegree,
+  ]);
 
-  const canProgressToNext = Boolean(
-    classData &&
-    currentInvDeg < classData.maxInvDeg
-  );
+  const canProgressToNext = Boolean(classData && currentInvDeg < classData.maxInvDeg);
 
   const isLastDegree = currentInvDeg === classData?.maxInvDeg;
 

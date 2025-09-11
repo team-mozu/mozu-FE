@@ -76,9 +76,9 @@ export const ClassEnvironment = () => {
       deleteClass(classId, {
         onSuccess: () => {
           navigate("/class-management");
-        }
+        },
       });
-    };
+    }
   };
 
   // 수업 시작
@@ -95,45 +95,54 @@ export const ClassEnvironment = () => {
   // 정보 배열 구성
   const infos = classData
     ? [
-      {
-        kind: "수업 이름",
-        value: classData.name || "정보 없음",
-      },
-      {
-        kind: "투자 차수",
-        value: `${classData.maxInvDeg}차` || "정보 없음",
-      },
-      {
-        kind: "기초자산",
-        value: `${formatPrice(classData.baseMoney)}원` || "정보 없음",
-      },
-      {
-        kind: "생성일자",
-        value: classData.createdAt || "정보 없음",
-      },
-    ]
+        {
+          kind: "수업 이름",
+          value: classData.name || "정보 없음",
+        },
+        {
+          kind: "투자 차수",
+          value: `${classData.maxInvDeg}차` || "정보 없음",
+        },
+        {
+          kind: "기초자산",
+          value: `${formatPrice(classData.baseMoney)}원` || "정보 없음",
+        },
+        {
+          kind: "생성일자",
+          value: classData.createdAt || "정보 없음",
+        },
+      ]
     : [];
 
   // 투자 종목 데이터 가공
   const stockTableData = classData?.classItems
     ? classData.classItems.map(item => ({
-      itemId: item.itemId,
-      itemCode: String(item.itemId),
-      itemName: item.itemName,
-      money: item.money,
-      stockChecked: false,
-    }))
+        itemId: item.itemId,
+        itemCode: String(item.itemId),
+        itemName: item.itemName,
+        money: item.money,
+        stockChecked: false,
+      }))
     : [];
 
-    // 기사 데이터 가공
-    const articleTableData = classData?.classArticles || [];
-    
-    //리렌더링 최적화
-    const stockData = useMemo(() => stockTableData, [stockTableData]);
-    const articleData = useMemo(() => articleTableData, [articleTableData]);
+  // 기사 데이터 가공
+  const articleTableData = classData?.classArticles || [];
+
+  //리렌더링 최적화
+  const stockData = useMemo(
+    () => stockTableData,
+    [
+      stockTableData,
+    ],
+  );
+  const articleData = useMemo(
+    () => articleTableData,
+    [
+      articleTableData,
+    ],
+  );
 
   if (apiLoading) return <FullPageLoader />;
-
 
   return (
     <>
@@ -142,7 +151,12 @@ export const ClassEnvironment = () => {
           mainTitle={`'${classData?.name || ""}'을 삭제하실 건가요?`}
           subTitle="삭제하면 복구가 불가능합니다."
           onSuccessClick={handleDelete}
-          icon={<Del size={24} color={color.red[400]} />}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
           isOpen={isModal}
           setIsOpen={setIsModal}
           isPending={isPending}
@@ -178,17 +192,17 @@ export const ClassEnvironment = () => {
             <InfoBox>
               {isLoading
                 ? infos.map(data => (
-                  <InfoDiv key={data.kind}>
-                    <span>{data.kind}</span>
-                    {data.value}
-                  </InfoDiv>
-                ))
+                    <InfoDiv key={data.kind}>
+                      <span>{data.kind}</span>
+                      {data.value}
+                    </InfoDiv>
+                  ))
                 : infos.map(data => (
-                  <Info key={data.kind}>
-                    <span>{data.kind}</span>
-                    {data.value}
-                  </Info>
-                ))}
+                    <Info key={data.kind}>
+                      <span>{data.kind}</span>
+                      {data.value}
+                    </Info>
+                  ))}
             </InfoBox>
             <BtnContainer>
               <Button

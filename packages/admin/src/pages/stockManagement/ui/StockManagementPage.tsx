@@ -18,15 +18,17 @@ export const StockManagementPage = () => {
 
   const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);
-  },[]);
+  }, []);
 
   const handleDelete = useCallback(() => {
     if (selectedId !== null) {
       stockDelete(stockId ?? 0);
     }
     setSelectedId(null);
-  },[selectedId, stockDelete]);
-
+  }, [
+    selectedId,
+    stockDelete,
+  ]);
 
   return (
     <>

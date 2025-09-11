@@ -183,7 +183,7 @@ export const CreateClass = () => {
     mutateClassCreate(classCreateData, {
       onSuccess: () => {
         resetArticles(); // 기사 상태 초기화
-      }
+      },
     });
   };
 
@@ -205,9 +205,9 @@ export const CreateClass = () => {
   });
 
   const cancelClick = () => {
-    resetArticles()
-    navigate(-1)
-  }
+    resetArticles();
+    navigate(-1);
+  };
 
   return (
     <Container>

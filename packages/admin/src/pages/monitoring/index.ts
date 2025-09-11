@@ -1,2 +1,2 @@
-export * from './ui/ImprovedClassMonitoringPage';
-export * from './ui/InvestmentPreparation';
+export * from "./ui/ImprovedClassMonitoringPage";
+export * from "./ui/InvestmentPreparation";

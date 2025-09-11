@@ -197,17 +197,17 @@ export const ClassEdit = () => {
       items.map(item =>
         item.id === itemId
           ? {
-            ...item,
-            money: Object.assign(
-              [
-                ...item.money,
-              ],
-              {
-                [levelIndex]: value ?? 0,
-                0: levelIndex === 1 ? (value ?? 0) : item.money[0],
-              },
-            ),
-          }
+              ...item,
+              money: Object.assign(
+                [
+                  ...item.money,
+                ],
+                {
+                  [levelIndex]: value ?? 0,
+                  0: levelIndex === 1 ? (value ?? 0) : item.money[0],
+                },
+              ),
+            }
           : item,
       ),
     );
@@ -215,17 +215,17 @@ export const ClassEdit = () => {
       data.map(item =>
         item.itemId === itemId
           ? {
-            ...item,
-            money: Object.assign(
-              [
-                ...item.money,
-              ],
-              {
-                [levelIndex]: value ?? 0,
-                0: levelIndex === 1 ? (value ?? 0) : item.money[0],
-              },
-            ),
-          }
+              ...item,
+              money: Object.assign(
+                [
+                  ...item.money,
+                ],
+                {
+                  [levelIndex]: value ?? 0,
+                  0: levelIndex === 1 ? (value ?? 0) : item.money[0],
+                },
+              ),
+            }
           : item,
       ),
     );
@@ -280,30 +280,37 @@ export const ClassEdit = () => {
 
     editClass(classData, {
       onSuccess: () => {
-        navigate(`/class-management/${id}`)
+        navigate(`/class-management/${id}`);
         resetArticles();
       },
     });
   };
 
   // 기사 테이블 데이터 변환 (UI용)
-  const articleTableData = useMemo(() => classArticles.map(group => ({
-    invDeg: group.invDeg,
-    articles: group.articles.map(id => {
-      const article = articleListData?.article.find(a => a.id === id);
-      return {
-        id,
-        title: article ? article.title : `기사 ID: ${id}`,
-      };
-    }),
-  })), [classArticles, articleListData]);
+  const articleTableData = useMemo(
+    () =>
+      classArticles.map(group => ({
+        invDeg: group.invDeg,
+        articles: group.articles.map(id => {
+          const article = articleListData?.article.find(a => a.id === id);
+          return {
+            id,
+            title: article ? article.title : `기사 ID: ${id}`,
+          };
+        }),
+      })),
+    [
+      classArticles,
+      articleListData,
+    ],
+  );
 
   if (isLoading) return <FullPageLoader />;
 
   const cancelClick = () => {
-    resetArticles()
-    navigate(-1)
-  }
+    resetArticles();
+    navigate(-1);
+  };
 
   return (
     <Container>

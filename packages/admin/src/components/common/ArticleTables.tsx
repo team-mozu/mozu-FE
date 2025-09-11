@@ -55,9 +55,9 @@ const useArticleSelection = () => {
       prev.includes(id)
         ? prev.filter(itemId => itemId !== id)
         : [
-          ...prev,
-          id,
-        ],
+            ...prev,
+            id,
+          ],
     );
   }, []);
 
@@ -101,77 +101,69 @@ const useRoundSelection = (degree: string) => {
   };
 };
 
-const TableHeader = memo(({
-  isEdit,
-  hasItems,
-  onToggleAll,
-}: {
-  isEdit: boolean;
-  hasItems: boolean;
-  onToggleAll: () => void;
-}) => (
-  <Thead>
-    <tr>
+const TableHeader = memo(
+  ({ isEdit, hasItems, onToggleAll }: { isEdit: boolean; hasItems: boolean; onToggleAll: () => void }) => (
+    <Thead>
+      <tr>
+        {isEdit && (
+          <Th width="52px">
+            <CheckBoxWrapper>
+              <CheckBox
+                onChange={onToggleAll}
+                checked={hasItems}
+                id="article-header-checkbox"
+              />
+            </CheckBoxWrapper>
+          </Th>
+        )}
+        <Th>기사 제목</Th>
+      </tr>
+    </Thead>
+  ),
+);
+
+const ArticleRow = memo(
+  ({
+    article,
+    isEdit,
+    isLoading,
+    onToggle,
+  }: {
+    article: DisplayArticle;
+    isEdit: boolean;
+    isLoading: boolean;
+    onToggle: (id: number) => void;
+  }) => (
+    <tr key={article.id}>
       {isEdit && (
-        <Th width="52px">
+        <Td width="52px">
           <CheckBoxWrapper>
             <CheckBox
-              onChange={onToggleAll}
-              checked={hasItems}
-              id="article-header-checkbox"
+              checked={article.checked}
+              onChange={() => onToggle(article.id)}
+              id={`article-row-${article.id}`}
             />
           </CheckBoxWrapper>
-        </Th>
+        </Td>
       )}
-      <Th>기사 제목</Th>
+      <Td>{isLoading ? <SkeletonText>{article.title}</SkeletonText> : <ArticleTitle>{article.title}</ArticleTitle>}</Td>
     </tr>
-  </Thead>
-));
+  ),
+);
 
-const ArticleRow = memo(({
-  article,
-  isEdit,
-  isLoading,
-  onToggle,
-}: {
-  article: DisplayArticle;
-  isEdit: boolean;
-  isLoading: boolean;
-  onToggle: (id: number) => void;
-}) => (
-  <tr key={article.id}>
-    {isEdit && (
-      <Td width="52px">
-        <CheckBoxWrapper>
-          <CheckBox
-            checked={article.checked}
-            onChange={() => onToggle(article.id)}
-            id={`article-row-${article.id}`}
-          />
-        </CheckBoxWrapper>
-      </Td>
-    )}
-    <Td>{isLoading ? <SkeletonText>{article.title}</SkeletonText> : <ArticleTitle>{article.title}</ArticleTitle>}</Td>
-  </tr>
-));
-
-const EmptyState = memo(({
-  colSpan,
-  isEdit,
-  selectedRound,
-}: {
-  colSpan: number;
-  isEdit: boolean;
-  selectedRound: string;
-}) => (
-  <tr>
-    <EmptyStateTd colSpan={colSpan}>
-      <EmptyStateContainer>
-        <EmptyStateText>{isEdit ? `${selectedRound}차에 추가된 기사가 없습니다.` : "기사가 없습니다."}</EmptyStateText>
-      </EmptyStateContainer>
-    </EmptyStateTd>
-  </tr>
-));
+const EmptyState = memo(
+  ({ colSpan, isEdit, selectedRound }: { colSpan: number; isEdit: boolean; selectedRound: string }) => (
+    <tr>
+      <EmptyStateTd colSpan={colSpan}>
+        <EmptyStateContainer>
+          <EmptyStateText>
+            {isEdit ? `${selectedRound}차에 추가된 기사가 없습니다.` : "기사가 없습니다."}
+          </EmptyStateText>
+        </EmptyStateContainer>
+      </EmptyStateTd>
+    </tr>
+  ),
+);
 
 const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () => void }) => (
   <tr>
@@ -186,62 +178,59 @@ const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () 
   </tr>
 ));
 
-const TableControls = memo(({
-  selectedRound,
-  roundOptions,
-  isEdit,
-  hasCheckedItems,
-  onRoundChange,
-  onDeleteChecked,
-}: {
-  selectedRound: string;
-  roundOptions: string[];
-  isEdit: boolean;
-  hasCheckedItems: boolean;
-  onRoundChange: (value: string) => void;
-  onDeleteChecked: () => void;
-}) => (
-  <ControlContainer>
-    <TableTitle>기사 목록</TableTitle>
-    <div>
-      <SelectBox>
-        <Select
-          data={roundOptions}
-          width={100}
-          height={40}
-          value={selectedRound}
-          onChange={onRoundChange}
-          padding={{
-            top: 10,
-            bottom: 10,
-            right: 10,
-            left: 16,
-          }}
-        />
-        차
-      </SelectBox>
-      {isEdit && (
-        <RightControls>
-          <Button
-            backgroundColor={color.zinc[50]}
-            borderColor={color.zinc[200]}
-            hoverBackgroundColor={color.zinc[100]}
-            onClick={onDeleteChecked}
-            disabled={!hasCheckedItems}>
-            선택항목 삭제하기
-          </Button>
-        </RightControls>
-      )}
-    </div>
-  </ControlContainer>
-));
+const TableControls = memo(
+  ({
+    selectedRound,
+    roundOptions,
+    isEdit,
+    hasCheckedItems,
+    onRoundChange,
+    onDeleteChecked,
+  }: {
+    selectedRound: string;
+    roundOptions: string[];
+    isEdit: boolean;
+    hasCheckedItems: boolean;
+    onRoundChange: (value: string) => void;
+    onDeleteChecked: () => void;
+  }) => (
+    <ControlContainer>
+      <TableTitle>기사 목록</TableTitle>
+      <div>
+        <SelectBox>
+          <Select
+            data={roundOptions}
+            width={100}
+            height={40}
+            value={selectedRound}
+            onChange={onRoundChange}
+            padding={{
+              top: 10,
+              bottom: 10,
+              right: 10,
+              left: 16,
+            }}
+          />
+          차
+        </SelectBox>
+        {isEdit && (
+          <RightControls>
+            <Button
+              backgroundColor={color.zinc[50]}
+              borderColor={color.zinc[200]}
+              hoverBackgroundColor={color.zinc[100]}
+              onClick={onDeleteChecked}
+              disabled={!hasCheckedItems}>
+              선택항목 삭제하기
+            </Button>
+          </RightControls>
+        )}
+      </div>
+    </ControlContainer>
+  ),
+);
 
-export const ArticleTables = memo(({
-  data = [],
-  isEdit,
-  degree,
-  isApiLoading,
-}: ArticleTablesProps) => {
+export const ArticleTables = memo(({ data = [], isEdit, degree, isApiLoading }: ArticleTablesProps) => {
   const [isModal, setIsModal] = useState<boolean>(false);
 
   const isLoading = useTableLoading(isApiLoading);
@@ -297,18 +286,30 @@ export const ArticleTables = memo(({
     if (!hasCheckedItems) return;
     deleteArticles(checkedArticleIds, parseInt(selectedRound));
     resetSelection();
-  }, [hasCheckedItems, deleteArticles, resetSelection, checkedArticleIds, selectedRound]);
-
+  }, [
+    hasCheckedItems,
+    deleteArticles,
+    resetSelection,
+    checkedArticleIds,
+    selectedRound,
+  ]);
 
   const handleOpenModal = useCallback(() => setIsModal(true), []);
   const handleCloseModal = useCallback(() => setIsModal(false), []);
 
-  const handleArticlesSelected = useCallback((selectedArticles: Article[]) => {
-    if (selectedArticles.length > 0) {
-      addArticles(parseInt(selectedRound), selectedArticles);
-    }
-    handleCloseModal();
-  }, [addArticles, selectedRound, handleCloseModal]);
+  const handleArticlesSelected = useCallback(
+    (selectedArticles: Article[]) => {
+      if (selectedArticles.length > 0) {
+        addArticles(parseInt(selectedRound), selectedArticles);
+      }
+      handleCloseModal();
+    },
+    [
+      addArticles,
+      selectedRound,
+      handleCloseModal,
+    ],
+  );
 
   return (
     <TableContainer>

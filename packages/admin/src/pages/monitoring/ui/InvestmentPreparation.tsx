@@ -49,7 +49,7 @@ export const InvestmentPreparation = () => {
 
   useSSE(
     `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
-    data => { },
+    data => {},
     error => {
       Toast(`네트워크 에러가 발생했습니다. 페이지를 새로고침 해주세요`, {
         type: "error",
@@ -91,7 +91,9 @@ export const InvestmentPreparation = () => {
   const handleCancel = () => {
     stopClass(classId ?? 0, {
       onSuccess: () => {
-        Toast("수업을 성공적으로 취소했습니다.", { type: "success" });
+        Toast("수업을 성공적으로 취소했습니다.", {
+          type: "success",
+        });
         navigate(`/class-management/${classId}`);
       },
     });

@@ -14,15 +14,15 @@ interface ISideBarType {
 export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [nav, setIsNav] = useState<string>('class')
-  
+  const [nav, setIsNav] = useState<string>("class");
+
   useEffect(() => {
-    if(pathname.includes('stock-management')) {
-      setIsNav('stock')
-    } else if (pathname.includes('article-management')) {
-      setIsNav('article')
+    if (pathname.includes("stock-management")) {
+      setIsNav("stock");
+    } else if (pathname.includes("article-management")) {
+      setIsNav("article");
     } else {
-      setIsNav('class')
+      setIsNav("class");
     }
   }, [
     pathname,

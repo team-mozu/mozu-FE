@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
-import { BuySellModal, NavBar, StockStatusBar } from "@/components";
+import { BuySellModal, StockStatusBar } from "@/features/stock-trading";
+import { NavBar } from "@/shared/ui";
 
 export const MockStockPage = () => {
   const [modalState, setModalState] = useState<{

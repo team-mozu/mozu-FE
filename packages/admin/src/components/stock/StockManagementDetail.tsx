@@ -11,109 +11,102 @@ interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
 }
 
-const LogoSection = memo(({ logo, name, isLoading }: { 
-  logo: string | null; 
-  name: string; 
-  isLoading: boolean; 
-}) => (
+const LogoSection = memo(({ logo, name, isLoading }: { logo: string | null; name: string; isLoading: boolean }) => (
   <div>
     <Logo>
       {isLoading ? (
         <LogoImgDiv />
       ) : logo ? (
-        <LogoImg src={logo} alt="로고" />
+        <LogoImg
+          src={logo}
+          alt="로고"
+        />
       ) : (
         <StockNoLogo />
       )}
     </Logo>
-    <Text>
-      {isLoading ? (
-        <TitleDiv>{name}</TitleDiv>
-      ) : (
-        <Title>{name}</Title>
-      )}
-    </Text>
+    <Text>{isLoading ? <TitleDiv>{name}</TitleDiv> : <Title>{name}</Title>}</Text>
   </div>
 ));
 
-const CompanyInfoSection = memo(({ 
-  info, 
-  isLoading 
-}: { 
-  info: string; 
-  isLoading: boolean; 
-}) => (
+const CompanyInfoSection = memo(({ info, isLoading }: { info: string; isLoading: boolean }) => (
   <CompanyInfo>
     <Label>회사 정보</Label>
-    {isLoading ? (
-      <CompanySkeleton />
-    ) : (
-      <CompanyText>{info}</CompanyText>
-    )}
+    {isLoading ? <CompanySkeleton /> : <CompanyText>{info}</CompanyText>}
   </CompanyInfo>
 ));
 
+const BalanceSheetSection = memo(
+  ({ debt, capital, isLoading }: { debt: number | null; capital: number | null; isLoading: boolean }) => (
+    <div>
+      <Label>재무상태표</Label>
+      {isLoading ? (
+        <ContentWrapper>
+          <AccountsSkeleton />
+          <AccountsSkeleton />
+        </ContentWrapper>
+      ) : (
+        <ContentWrapper>
+          <Accounts
+            title="부채"
+            content={debt ?? 0}
+          />
+          <Accounts
+            title="자본금"
+            content={capital ?? 0}
+          />
+        </ContentWrapper>
+      )}
+    </div>
+  ),
+);
 
-const BalanceSheetSection = memo(({ 
-  debt, 
-  capital, 
-  isLoading 
-}: { 
-  debt: number | null; 
-  capital: number | null; 
-  isLoading: boolean; 
-}) => (
-  <div>
-    <Label>재무상태표</Label>
-    {isLoading ? (
-      <ContentWrapper>
-        <AccountsSkeleton />
-        <AccountsSkeleton />
-      </ContentWrapper>
-    ) : (
-      <ContentWrapper>
-        <Accounts title="부채" content={debt ?? 0} />
-        <Accounts title="자본금" content={capital ?? 0} />
-      </ContentWrapper>
-    )}
-  </div>
-));
-
-const IncomeStatementSection = memo(({ 
-  profit, 
-  profitOG, 
-  profitBen, 
-  netProfit, 
-  isLoading 
-}: { 
-  profit: number | null; 
-  profitOG: number | null; 
-  profitBen: number | null; 
-  netProfit: number | null; 
-  isLoading: boolean; 
-}) => (
-  <div>
-    <Label>손익계산서</Label>
-    {isLoading ? (
-      <ContentWrapper>
-        <AccountsSkeleton />
-        <AccountsSkeleton />
-        <AccountsSkeleton />
-        <AccountsSkeleton />
-      </ContentWrapper>
-    ) : (
-      <ContentWrapper>
-        <Accounts title="매출액" content={profit ?? 0} />
-        <Accounts title="매출원가" content={profitOG ?? 0} />
-        <Accounts title="매출이익" content={profitBen ?? 0} />
-        <Accounts title="당기순이익" content={netProfit ?? 0} />
-      </ContentWrapper>
-    )}
-  </div>
-));
-
-
-
+const IncomeStatementSection = memo(
+  ({
+    profit,
+    profitOG,
+    profitBen,
+    netProfit,
+    isLoading,
+  }: {
+    profit: number | null;
+    profitOG: number | null;
+    profitBen: number | null;
+    netProfit: number | null;
+    isLoading: boolean;
+  }) => (
+    <div>
+      <Label>손익계산서</Label>
+      {isLoading ? (
+        <ContentWrapper>
+          <AccountsSkeleton />
+          <AccountsSkeleton />
+          <AccountsSkeleton />
+          <AccountsSkeleton />
+        </ContentWrapper>
+      ) : (
+        <ContentWrapper>
+          <Accounts
+            title="매출액"
+            content={profit ?? 0}
+          />
+          <Accounts
+            title="매출원가"
+            content={profitOG ?? 0}
+          />
+          <Accounts
+            title="매출이익"
+            content={profitBen ?? 0}
+          />
+          <Accounts
+            title="당기순이익"
+            content={netProfit ?? 0}
+          />
+        </ContentWrapper>
+      )}
+    </div>
+  ),
+);
 
 export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailProps) => {
   const navigate = useNavigate();
@@ -197,10 +190,10 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
   return (
     <Container>
       <UpperContainer>
-        <LogoSection 
-          logo={datas.logo} 
-          name={datas.name} 
-          isLoading={isLoading} 
+        <LogoSection
+          logo={datas.logo}
+          name={datas.name}
+          isLoading={isLoading}
         />
         <ButtonContainer>
           <div onClick={onClick}>
@@ -233,18 +226,18 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
         </ButtonContainer>
       </UpperContainer>
       <UnderContainer>
-        <CompanyInfoSection 
-          info={datas.info} 
-          isLoading={isLoading} 
+        <CompanyInfoSection
+          info={datas.info}
+          isLoading={isLoading}
         />
         <CompanyMain>
           <Section>
-            <BalanceSheetSection 
-              debt={datas.debt} 
-              capital={datas.capital} 
-              isLoading={isLoading} 
+            <BalanceSheetSection
+              debt={datas.debt}
+              capital={datas.capital}
+              isLoading={isLoading}
             />
-            <IncomeStatementSection 
+            <IncomeStatementSection
               profit={datas.profit}
               profitOG={datas.profitOG}
               profitBen={datas.profitBen}

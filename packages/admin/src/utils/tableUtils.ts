@@ -1,7 +1,7 @@
 import type { TeamInfo } from "@/store";
 
 export interface TableCellData {
-  type: 'empty' | 'progress' | 'completed';
+  type: "empty" | "progress" | "completed";
   data?: {
     totalMoney: number;
     valMoney: number;
@@ -20,7 +20,9 @@ export interface TeamTableRow {
 }
 
 export const createTableHeaders = (maxInvDeg: number): string[] => {
-  const headers = ["팀명"];
+  const headers = [
+    "팀명",
+  ];
   for (let i = 1; i <= maxInvDeg; i++) {
     headers.push(`${i}차 투자`);
   }
@@ -31,54 +33,60 @@ export const createTableHeaders = (maxInvDeg: number): string[] => {
 export const transformTeamDataToTableRows = (
   teamInfo: TeamInfo[],
   currentInvDeg: number,
-  maxInvDeg: number
+  maxInvDeg: number,
 ): TeamTableRow[] => {
   return teamInfo.map(team => {
     const cells: TableCellData[] = [];
-    
+
     // 각 투자 차수별 셀 데이터 생성
     for (let degIndex = 0; degIndex < maxInvDeg; degIndex++) {
       const degree = degIndex + 1;
-      
+
       if (degree > currentInvDeg) {
         // 아직 진행되지 않은 차수
-        cells.push({ type: 'empty' });
+        cells.push({
+          type: "empty",
+        });
       } else {
         const tradeData = team.trade?.[degIndex];
-        
+
         if (!tradeData) {
           // 진행 중인 차수
-          cells.push({ type: 'progress' });
+          cells.push({
+            type: "progress",
+          });
         } else {
           // 완료된 차수
           const isNegative = tradeData.profitNum.includes("-");
           cells.push({
-            type: 'completed',
+            type: "completed",
             data: {
               totalMoney: tradeData.totalMoney,
               valMoney: tradeData.valMoney,
               profitNum: tradeData.profitNum,
               isNegative,
-            }
+            },
           });
         }
       }
     }
-    
+
     // 총자산 셀 데이터
     const lastTrade = team.trade?.at(-1);
     const totalAssets: TableCellData = lastTrade
       ? {
-          type: 'completed',
+          type: "completed",
           data: {
             totalMoney: lastTrade.totalMoney,
             valMoney: lastTrade.valMoney,
             profitNum: lastTrade.profitNum,
             isNegative: lastTrade.profitNum.includes("-"),
-          }
+          },
         }
-      : { type: 'progress' };
-    
+      : {
+          type: "progress",
+        };
+
     return {
       teamId: team.teamId,
       teamName: team.teamName,

@@ -101,7 +101,12 @@ export const AddInvestItemModal = ({
             placeholder="종목 검색.."
             fullWidth={true}
             value={searchText}
-            startIcon={<Search color={color.zinc[400]} size={20} />}
+            startIcon={
+              <Search
+                color={color.zinc[400]}
+                size={20}
+              />
+            }
             onChange={e => handleSearchChange(e.target.value)}
           />
         </SearchContainer>
@@ -151,7 +156,7 @@ export const AddInvestItemModal = ({
           </BtnContainer>
         </FooterContainer>
       </InvestItemContainer>
-    </ModalBackground >
+    </ModalBackground>
   );
 };
 

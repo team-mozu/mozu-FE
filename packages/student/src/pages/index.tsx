@@ -1,7 +1,7 @@
 import { lazy } from "react";
 
 export const HomePage = lazy(() =>
-  import("@/pages/HomePage")
+  import("@/pages/home/ui/HomePage")
     .then(module => ({
       default: module.HomePage,
     }))
@@ -13,7 +13,7 @@ export const HomePage = lazy(() =>
     }),
 );
 export const NewsPage = lazy(() =>
-  import("@/pages/NewsPage")
+  import("@/pages/news/ui/NewsPage")
     .then(module => ({
       default: module.NewsPage,
     }))
@@ -25,7 +25,7 @@ export const NewsPage = lazy(() =>
     }),
 );
 export const SignInPage = lazy(() =>
-  import("@/pages/SignInPage")
+  import("@/pages/waiting/ui/SignInPage")
     .then(module => ({
       default: module.SignInPage,
     }))
@@ -37,7 +37,7 @@ export const SignInPage = lazy(() =>
     }),
 );
 export const StockPage = lazy(() =>
-  import("@/pages/StockPage")
+  import("@/pages/stock-trading/ui/StockPage")
     .then(module => ({
       default: module.StockPage,
     }))
@@ -49,7 +49,7 @@ export const StockPage = lazy(() =>
     }),
 );
 export const ResultPage = lazy(() =>
-  import("@/pages/ResultPage")
+  import("@/pages/results/ui/ResultPage")
     .then(module => ({
       default: module.ResultPage,
     }))
@@ -61,7 +61,7 @@ export const ResultPage = lazy(() =>
     }),
 );
 export const NewsDetailPage = lazy(() =>
-  import("@/pages/NewsDetailPage")
+  import("@/pages/news/ui/NewsDetailPage")
     .then(module => ({
       default: module.NewsDetailPage,
     }))
@@ -74,7 +74,7 @@ export const NewsDetailPage = lazy(() =>
 );
 
 export const StudentWaitPage = lazy(() =>
-  import("@/pages/StudentWaitPage")
+  import("@/pages/waiting/ui/StudentWaitPage")
     .then(module => ({
       default: module.StudentWaitPage,
     }))
@@ -87,7 +87,7 @@ export const StudentWaitPage = lazy(() =>
 );
 
 export const NotFoundPage = lazy(() =>
-  import("@/pages/404")
+  import("@/pages/waiting/ui/404")
     .then(module => ({
       default: module.NotFoundPage,
     }))
@@ -113,7 +113,7 @@ export const MockStudentClassPage = lazy(() =>
 );
 
 export const EndingPage = lazy(() =>
-  import("@/pages/EndingPage")
+  import("@/pages/ending/ui/EndingPage")
     .then(module => ({
       default: module.EndingPage,
     }))

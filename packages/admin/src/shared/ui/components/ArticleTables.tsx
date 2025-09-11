@@ -55,9 +55,9 @@ const useArticleSelection = () => {
       prev.includes(id)
         ? prev.filter(itemId => itemId !== id)
         : [
-          ...prev,
-          id,
-        ],
+            ...prev,
+            id,
+          ],
     );
   }, []);
 

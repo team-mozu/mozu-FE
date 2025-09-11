@@ -30,10 +30,13 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
         return prev.map(g =>
           g.invDeg === invDeg
             ? {
-              ...g,
-              articles: [...g.articles, ...newArticles.map(a => a.id)],
-            }
-            : g
+                ...g,
+                articles: [
+                  ...g.articles,
+                  ...newArticles.map(a => a.id),
+                ],
+              }
+            : g,
         );
       }
       return [
@@ -51,9 +54,12 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
     setClassArticles(prev =>
       prev.map(g =>
         g.invDeg === invDeg
-          ? { ...g, articles: g.articles.filter(id => !articleIds.includes(id)) }
-          : g
-      )
+          ? {
+              ...g,
+              articles: g.articles.filter(id => !articleIds.includes(id)),
+            }
+          : g,
+      ),
     );
   };
 
@@ -69,8 +75,7 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
         addArticles,
         deleteArticles,
         resetArticles,
-      }}
-    >
+      }}>
       {children}
     </ArticleContext.Provider>
   );

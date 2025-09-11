@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { NewsPost } from "@/components";
+import { NewsPost } from "@/features/news-reading";
 
 // 타입 정의 추가
 interface Article {
@@ -80,7 +80,7 @@ const PageWrapper = styled.div`
   padding: 40px 20px;
   display: flex;
   justify-content: center;
-  
+
   @media (max-width: 768px) {
     padding: 20px 16px;
   }
@@ -97,7 +97,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  
+
   @media (max-width: 768px) {
     padding: 20px;
     border-radius: 16px;
@@ -108,7 +108,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;

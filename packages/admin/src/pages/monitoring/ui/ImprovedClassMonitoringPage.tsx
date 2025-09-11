@@ -248,9 +248,7 @@ export const ImprovedClassMonitoringPage = () => {
               </Button>
             </InfoBtn>
           </InfoContainer>
-          <ImprovedTeamInfoTable
-            teamInfo={teamInfo}
-          />
+          <ImprovedTeamInfoTable teamInfo={teamInfo} />
         </MainContainer>
 
         {/* Tooltip 컴포넌트 */}

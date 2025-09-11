@@ -3,8 +3,7 @@ import { color } from "@mozu/design-token";
 import type { InputHTMLAttributes } from "react";
 import { Check } from "../assets";
 
-interface IProps extends InputHTMLAttributes<HTMLInputElement> {
-}
+interface IProps extends InputHTMLAttributes<HTMLInputElement> {}
 
 export const CheckBox = ({ checked, id, ...rest }: IProps) => {
   return (
@@ -15,9 +14,7 @@ export const CheckBox = ({ checked, id, ...rest }: IProps) => {
         checked={checked}
         {...rest}
       />
-      <StyledCheckbox checked={checked}>
-        {checked && <Check />}
-      </StyledCheckbox>
+      <StyledCheckbox checked={checked}>{checked && <Check />}</StyledCheckbox>
     </CheckboxLabel>
   );
 };
@@ -43,7 +40,9 @@ const HiddenInput = styled.input`
   width: 1px;
 `;
 
-const StyledCheckbox = styled.div<{ checked?: boolean }>`
+const StyledCheckbox = styled.div<{
+  checked?: boolean;
+}>`
   box-sizing: border-box;
   display: flex;
   justify-content: center;

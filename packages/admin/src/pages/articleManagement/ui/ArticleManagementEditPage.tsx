@@ -39,14 +39,14 @@ export const ArticleManagementEditPage = () => {
       ...prev,
       title: e.target.value,
     }));
-  },[]);
+  }, []);
 
   const contentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDatas(prev => ({
       ...prev,
       content: e.target.value,
     }));
-  },[]);
+  }, []);
 
   const apiData = useEditArticle();
 
@@ -65,7 +65,11 @@ export const ArticleManagementEditPage = () => {
       image: imageFile ?? undefined,
       articleId: articleId ?? 0,
     });
-  },[datas, articleId, apiData.mutate]);
+  }, [
+    datas,
+    articleId,
+    apiData.mutate,
+  ]);
 
   return (
     <AllContainer>

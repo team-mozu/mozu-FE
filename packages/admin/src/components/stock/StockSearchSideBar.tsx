@@ -67,13 +67,18 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
         <Input
           placeholder="기사 검색.."
           fullWidth={true}
-          startIcon={<Search color={color.zinc[400]} size={20} />}
+          startIcon={
+            <Search
+              color={color.zinc[400]}
+              size={20}
+            />
+          }
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
         />
       </UpperWrapper>
       <ArticleWrapper>
-        {filteredDatas.length > 0 ?
+        {filteredDatas.length > 0 ? (
           filteredDatas.map((data, index) => (
             <StockDiv
               key={data.id}
@@ -87,9 +92,10 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
                 });
               }}
             />
-          )) :
+          ))
+        ) : (
           <EmptyState>{searchText ? "검색 결과가 없습니다." : "종목이 없습니다."}</EmptyState>
-        }
+        )}
       </ArticleWrapper>
 
       <AddButton

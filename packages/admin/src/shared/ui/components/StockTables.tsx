@@ -44,7 +44,9 @@ const useTableLoading = (isApiLoading?: boolean) => {
       }, SKELETON_DELAY);
       return () => clearTimeout(timer);
     }
-  }, [isApiLoading]);
+  }, [
+    isApiLoading,
+  ]);
 
   return isLoading;
 };
@@ -60,7 +62,10 @@ const useStockSelection = () => {
     setCheckedStockIds(prev =>
       prev.includes(id)
         ? prev.filter(itemId => itemId !== id)
-        : [...prev, id]
+        : [
+            ...prev,
+            id,
+          ],
     );
   }, []);
 
@@ -82,22 +87,33 @@ const useStockData = (initialData: StockData[]) => {
 
   useEffect(() => {
     setStockData(initialData);
-  }, [initialData]);
+  }, [
+    initialData,
+  ]);
 
   const updateStockPrice = useCallback((itemId: number, levelIndex: number, value: number | null) => {
     setStockData(prev =>
       prev.map(item => {
         if (item.itemId === itemId) {
-          const newMoney = [...item.money];
+          const newMoney = [
+            ...item.money,
+          ];
           newMoney[levelIndex] = value;
-          return { ...item, money: newMoney };
+          return {
+            ...item,
+            money: newMoney,
+          };
         }
         return item;
-      })
+      }),
     );
   }, []);
 
-  return { stockData, setStockData, updateStockPrice };
+  return {
+    stockData,
+    setStockData,
+    updateStockPrice,
+  };
 };
 
 // Price Input Component
@@ -108,255 +124,304 @@ interface PriceInputProps {
   onEnterPress?: () => void;
 }
 
-const PriceInput = memo(forwardRef<HTMLInputElement, PriceInputProps>(({
-  value,
-  onChange,
-  placeholder,
-  onEnterPress
-}, ref) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [localValue, setLocalValue] = useState(
-    value == null ? "" : value.toString().replace(/,/g, "")
-  );
+const PriceInput = memo(
+  forwardRef<HTMLInputElement, PriceInputProps>(({ value, onChange, placeholder, onEnterPress }, ref) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const [localValue, setLocalValue] = useState(value == null ? "" : value.toString().replace(/,/g, ""));
 
-  const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    setIsFocused(true);
-    setLocalValue(value == null ? "" : value.toString().replace(/,/g, ""));
-    // 포커스 시 모든 텍스트 선택
-    setTimeout(() => {
-      e.target.select();
-    }, 0);
-  }, [value]);
+    const handleFocus = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        setIsFocused(true);
+        setLocalValue(value == null ? "" : value.toString().replace(/,/g, ""));
+        // 포커스 시 모든 텍스트 선택
+        setTimeout(() => {
+          e.target.select();
+        }, 0);
+      },
+      [
+        value,
+      ],
+    );
 
-  const handleBlur = useCallback(() => {
-    setIsFocused(false);
-    if (localValue === "") {
-      onChange(null);
-    } else {
-      const numericValue = Math.min(Number(localValue.replace(/[^0-9]/g, "")) || 0, MAX_PRICE_VALUE);
-      onChange(numericValue);
-    }
-  }, [localValue, onChange]);
-
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/[^\d]/g, "");
-    // 최대값 체크
-    if (Number(inputValue) <= MAX_PRICE_VALUE) {
-      setLocalValue(inputValue);
-    }
-  }, []);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Enter 키를 누르면 현재 값 저장 후 다음 필드로 이동
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleBlur(); // 현재 값 저장
-      if (onEnterPress) {
-        setTimeout(() => onEnterPress(), 0);
+    const handleBlur = useCallback(() => {
+      setIsFocused(false);
+      if (localValue === "") {
+        onChange(null);
+      } else {
+        const numericValue = Math.min(Number(localValue.replace(/[^0-9]/g, "")) || 0, MAX_PRICE_VALUE);
+        onChange(numericValue);
       }
-    }
-    // Ctrl+A로 전체 선택
-    else if (e.key === "a" && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      (e.target as HTMLInputElement).select();
-    }
-    // 숫자, 백스페이스, 삭제, 화살표 키, Tab 키만 허용
-    else if (!/[0-9]/.test(e.key) &&
-      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"].includes(e.key) &&
-      !e.ctrlKey && !e.metaKey) {
-      e.preventDefault();
-    }
-  }, [onEnterPress, handleBlur]);
+    }, [
+      localValue,
+      onChange,
+    ]);
 
-  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const pastedText = e.clipboardData.getData('text');
-    const numbersOnly = pastedText.replace(/[^0-9]/g, '');
-    if (numbersOnly === "" || Number(numbersOnly) <= MAX_PRICE_VALUE) {
-      setLocalValue(numbersOnly);
-      // 붙여넣기 후 자동으로 값 업데이트
-      setTimeout(() => {
-        if (numbersOnly === "") {
-          onChange(null);
-        } else {
-          onChange(Number(numbersOnly));
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      const inputValue = e.target.value.replace(/[^\d]/g, "");
+      // 최대값 체크
+      if (Number(inputValue) <= MAX_PRICE_VALUE) {
+        setLocalValue(inputValue);
+      }
+    }, []);
+
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Enter 키를 누르면 현재 값 저장 후 다음 필드로 이동
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleBlur(); // 현재 값 저장
+          if (onEnterPress) {
+            setTimeout(() => onEnterPress(), 0);
+          }
         }
-      }, 0);
-    }
-  }, [onChange]);
+        // Ctrl+A로 전체 선택
+        else if (e.key === "a" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          (e.target as HTMLInputElement).select();
+        }
+        // 숫자, 백스페이스, 삭제, 화살표 키, Tab 키만 허용
+        else if (
+          !/[0-9]/.test(e.key) &&
+          ![
+            "Backspace",
+            "Delete",
+            "ArrowLeft",
+            "ArrowRight",
+            "Tab",
+            "Home",
+            "End",
+          ].includes(e.key) &&
+          !e.ctrlKey &&
+          !e.metaKey
+        ) {
+          e.preventDefault();
+        }
+      },
+      [
+        onEnterPress,
+        handleBlur,
+      ],
+    );
 
-  return (
-    <PriceInputStyle
-      ref={ref}
-      type="text"
-      value={isFocused ? localValue : value == null ? "" : formatPrice(value)}
-      onChange={handleChange}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
-      onPaste={handlePaste}
-      placeholder={placeholder || ""}
-      inputMode="numeric"
-      autoComplete="off"
-    />
-  );
-}));
+    const handlePaste = useCallback(
+      (e: React.ClipboardEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const pastedText = e.clipboardData.getData("text");
+        const numbersOnly = pastedText.replace(/[^0-9]/g, "");
+        if (numbersOnly === "" || Number(numbersOnly) <= MAX_PRICE_VALUE) {
+          setLocalValue(numbersOnly);
+          // 붙여넣기 후 자동으로 값 업데이트
+          setTimeout(() => {
+            if (numbersOnly === "") {
+              onChange(null);
+            } else {
+              onChange(Number(numbersOnly));
+            }
+          }, 0);
+        }
+      },
+      [
+        onChange,
+      ],
+    );
+
+    return (
+      <PriceInputStyle
+        ref={ref}
+        type="text"
+        value={isFocused ? localValue : value == null ? "" : formatPrice(value)}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        placeholder={placeholder || ""}
+        inputMode="numeric"
+        autoComplete="off"
+      />
+    );
+  }),
+);
 
 // Table Row Components
-const StockTableHeader = memo(({
-  isEdit,
-  degree,
-  allChecked,
-  onToggleAll,
-}: {
-  isEdit: boolean;
-  degree: number;
-  allChecked: boolean;
-  onToggleAll: () => void;
-}) => {
-  const columns = useMemo(() => {
-    const cols = ["현재가"];
-    for (let i = 1; i <= degree; i++) {
-      cols.push(`${i}차`);
-    }
-    return cols;
-  }, [degree]);
+const StockTableHeader = memo(
+  ({
+    isEdit,
+    degree,
+    allChecked,
+    onToggleAll,
+  }: {
+    isEdit: boolean;
+    degree: number;
+    allChecked: boolean;
+    onToggleAll: () => void;
+  }) => {
+    const columns = useMemo(() => {
+      const cols = [
+        "현재가",
+      ];
+      for (let i = 1; i <= degree; i++) {
+        cols.push(`${i}차`);
+      }
+      return cols;
+    }, [
+      degree,
+    ]);
 
-  return (
-    <Thead>
+    return (
+      <Thead>
+        <tr>
+          {isEdit && (
+            <Th width="52px">
+              <CheckBoxWrapper>
+                <CheckBox
+                  onChange={onToggleAll}
+                  checked={allChecked}
+                  id="stock-header-checkbox"
+                />
+              </CheckBoxWrapper>
+            </Th>
+          )}
+          <Th width="120px">종목 코드</Th>
+          <Th width="300px">종목 이름</Th>
+          {columns.map(header => (
+            <Th
+              key={header}
+              width="140px">
+              {header}
+            </Th>
+          ))}
+        </tr>
+      </Thead>
+    );
+  },
+);
+
+const StockTableRow = memo(
+  ({
+    stock,
+    isEdit,
+    isLoading,
+    degree,
+    onToggle,
+    onPriceChange,
+    inputRefs,
+    onCellClick,
+    onMoveToNextField,
+  }: {
+    stock: DisplayStockData;
+    isEdit: boolean;
+    isLoading: boolean;
+    degree: number;
+    onToggle: (id: number) => void;
+    onPriceChange: (itemId: number, levelIndex: number, value: number | null) => void;
+    inputRefs: React.MutableRefObject<{
+      [key: string]: HTMLInputElement | null;
+    }>;
+    onCellClick: (inputId: string, event: React.MouseEvent) => void;
+    onMoveToNextField: (currentItemId: number, currentColumnIndex: number, direction: "next" | "prev") => void;
+  }) => {
+    const priceColumns = useMemo(() => {
+      const cols = [
+        1,
+      ]; // 현재가 (인덱스 1)
+      for (let i = 2; i <= degree + 1; i++) {
+        cols.push(i);
+      }
+      return cols;
+    }, [
+      degree,
+    ]);
+
+    const handleEnterPress = useCallback(
+      (itemId: number, columnIndex: number) => {
+        onMoveToNextField(itemId, columnIndex, "next");
+      },
+      [
+        onMoveToNextField,
+      ],
+    );
+
+    return (
       <tr>
         {isEdit && (
-          <Th width="52px">
+          <Td width="52px">
             <CheckBoxWrapper>
               <CheckBox
-                onChange={onToggleAll}
-                checked={allChecked}
-                id="stock-header-checkbox"
+                checked={stock.checked}
+                onChange={() => onToggle(stock.itemId)}
+                id={`stock-row-${stock.itemId}`}
               />
             </CheckBoxWrapper>
-          </Th>
-        )}
-        <Th width="120px">종목 코드</Th>
-        <Th width="300px">종목 이름</Th>
-        {columns.map((header) => (
-          <Th key={header} width="140px">
-            {header}
-          </Th>
-        ))}
-      </tr>
-    </Thead>
-  );
-});
-
-const StockTableRow = memo(({
-  stock,
-  isEdit,
-  isLoading,
-  degree,
-  onToggle,
-  onPriceChange,
-  inputRefs,
-  onCellClick,
-  onMoveToNextField,
-}: {
-  stock: DisplayStockData;
-  isEdit: boolean;
-  isLoading: boolean;
-  degree: number;
-  onToggle: (id: number) => void;
-  onPriceChange: (itemId: number, levelIndex: number, value: number | null) => void;
-  inputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement | null }>;
-  onCellClick: (inputId: string, event: React.MouseEvent) => void;
-  onMoveToNextField: (currentItemId: number, currentColumnIndex: number, direction: 'next' | 'prev') => void;
-}) => {
-  const priceColumns = useMemo(() => {
-    const cols = [1]; // 현재가 (인덱스 1)
-    for (let i = 2; i <= degree + 1; i++) {
-      cols.push(i);
-    }
-    return cols;
-  }, [degree]);
-
-  const handleEnterPress = useCallback((itemId: number, columnIndex: number) => {
-    onMoveToNextField(itemId, columnIndex, 'next');
-  }, [onMoveToNextField]);
-
-  return (
-    <tr>
-      {isEdit && (
-        <Td width="52px">
-          <CheckBoxWrapper>
-            <CheckBox
-              checked={stock.checked}
-              onChange={() => onToggle(stock.itemId)}
-              id={`stock-row-${stock.itemId}`}
-            />
-          </CheckBoxWrapper>
-        </Td>
-      )}
-      <Td width="120px">
-        {isLoading ? (
-          <SkeletonText>{stock.itemCode}</SkeletonText>
-        ) : (
-          stock.itemCode || <EmptyValueText>-</EmptyValueText>
-        )}
-      </Td>
-      <Td width="300px">
-        {isLoading ? (
-          <SkeletonText>{stock.itemName}</SkeletonText>
-        ) : (
-          stock.itemName || <EmptyValueText>-</EmptyValueText>
-        )}
-      </Td>
-      {priceColumns.map((columnIndex, displayIndex) => {
-        const value = stock.money[columnIndex] ?? null;
-        const inputId = `${stock.itemId}-${columnIndex}`;
-        const headerName = displayIndex === 0 ? "현재가" : `${displayIndex}차`;
-        const placeholder = `${headerName} 입력`;
-
-        return (
-          <Td
-            key={columnIndex}
-            width="140px"
-            align="right"
-            clickable={isEdit}
-            onClick={e => isEdit ? onCellClick(inputId, e) : undefined}
-            onDoubleClick={e => {
-              if (isEdit) {
-                e.preventDefault();
-                const inputElement = inputRefs.current[inputId];
-                if (inputElement) {
-                  inputElement.focus();
-                  setTimeout(() => inputElement.select(), 0);
-                }
-              }
-            }}
-          >
-            {isEdit ? (
-              <PriceInput
-                ref={el => { inputRefs.current[inputId] = el; }}
-                value={value}
-                onChange={newValue => onPriceChange(stock.itemId, columnIndex, newValue)}
-                placeholder={placeholder}
-                onEnterPress={() => handleEnterPress(stock.itemId, columnIndex)}
-              />
-            ) : isLoading ? (
-              <SkeletonText>{value === null ? placeholder : formatPrice(value)}</SkeletonText>
-            ) : value === null ? (
-              <EmptyValueText>{placeholder}</EmptyValueText>
-            ) : (
-              formatPrice(value)
-            )}
           </Td>
-        );
-      })}
-    </tr>
-  );
-});
+        )}
+        <Td width="120px">
+          {isLoading ? (
+            <SkeletonText>{stock.itemCode}</SkeletonText>
+          ) : (
+            stock.itemCode || <EmptyValueText>-</EmptyValueText>
+          )}
+        </Td>
+        <Td width="300px">
+          {isLoading ? (
+            <SkeletonText>{stock.itemName}</SkeletonText>
+          ) : (
+            stock.itemName || <EmptyValueText>-</EmptyValueText>
+          )}
+        </Td>
+        {priceColumns.map((columnIndex, displayIndex) => {
+          const value = stock.money[columnIndex] ?? null;
+          const inputId = `${stock.itemId}-${columnIndex}`;
+          const headerName = displayIndex === 0 ? "현재가" : `${displayIndex}차`;
+          const placeholder = `${headerName} 입력`;
+
+          return (
+            <Td
+              key={columnIndex}
+              width="140px"
+              align="right"
+              clickable={isEdit}
+              onClick={e => (isEdit ? onCellClick(inputId, e) : undefined)}
+              onDoubleClick={e => {
+                if (isEdit) {
+                  e.preventDefault();
+                  const inputElement = inputRefs.current[inputId];
+                  if (inputElement) {
+                    inputElement.focus();
+                    setTimeout(() => inputElement.select(), 0);
+                  }
+                }
+              }}>
+              {isEdit ? (
+                <PriceInput
+                  ref={el => {
+                    inputRefs.current[inputId] = el;
+                  }}
+                  value={value}
+                  onChange={newValue => onPriceChange(stock.itemId, columnIndex, newValue)}
+                  placeholder={placeholder}
+                  onEnterPress={() => handleEnterPress(stock.itemId, columnIndex)}
+                />
+              ) : isLoading ? (
+                <SkeletonText>{value === null ? placeholder : formatPrice(value)}</SkeletonText>
+              ) : value === null ? (
+                <EmptyValueText>{placeholder}</EmptyValueText>
+              ) : (
+                formatPrice(value)
+              )}
+            </Td>
+          );
+        })}
+      </tr>
+    );
+  },
+);
 
 const EmptyState = memo(({ colSpan }: { colSpan: number }) => (
   <tr>
-    <Td colSpan={colSpan} align="center">
+    <Td
+      colSpan={colSpan}
+      align="center">
       <EmptyStateContainer>
         <EmptyStateText>투자 종목을 추가해 주세요.</EmptyStateText>
       </EmptyStateContainer>
@@ -366,7 +431,9 @@ const EmptyState = memo(({ colSpan }: { colSpan: number }) => (
 
 const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () => void }) => (
   <tr>
-    <PlusTd colSpan={colSpan} onClick={onClick}>
+    <PlusTd
+      colSpan={colSpan}
+      onClick={onClick}>
       <PlusField>
         <PlusIcon>+</PlusIcon>
         추가하기
@@ -375,195 +442,223 @@ const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () 
   </tr>
 ));
 
-const TableControls = memo(({
-  hasCheckedItems,
-  onDeleteSelected,
-  isEdit,
-}: {
-  hasCheckedItems: boolean;
-  onDeleteSelected: () => void;
-  isEdit: boolean;
-}) => (
-  <DeleteButtonContainer>
-    <TableTitle>투자 종목</TableTitle>
-    {isEdit && (
-      <Button
-        backgroundColor={color.zinc[50]}
-        borderColor={color.zinc[200]}
-        hoverBackgroundColor={color.zinc[100]}
-        onClick={onDeleteSelected}
-        disabled={!hasCheckedItems}
-      >
-        선택항목 삭제하기
-      </Button>
-    )}
-  </DeleteButtonContainer>
-));
+const TableControls = memo(
+  ({
+    hasCheckedItems,
+    onDeleteSelected,
+    isEdit,
+  }: {
+    hasCheckedItems: boolean;
+    onDeleteSelected: () => void;
+    isEdit: boolean;
+  }) => (
+    <DeleteButtonContainer>
+      <TableTitle>투자 종목</TableTitle>
+      {isEdit && (
+        <Button
+          backgroundColor={color.zinc[50]}
+          borderColor={color.zinc[200]}
+          hoverBackgroundColor={color.zinc[100]}
+          onClick={onDeleteSelected}
+          disabled={!hasCheckedItems}>
+          선택항목 삭제하기
+        </Button>
+      )}
+    </DeleteButtonContainer>
+  ),
+);
 
 // Main Component
-export const StockTables = memo(({
-  degree,
-  isEdit = true,
-  data = [],
-  onPriceChange,
-  onDeleteItems,
-  onAddItems,
-  isApiLoading,
-}: StockTablesProps) => {
-  const selectedRound = parseInt(degree, 10);
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
+export const StockTables = memo(
+  ({ degree, isEdit = true, data = [], onPriceChange, onDeleteItems, onAddItems, isApiLoading }: StockTablesProps) => {
+    const selectedRound = parseInt(degree, 10);
+    const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
-  const isLoading = useTableLoading(isApiLoading);
-  const { stockData, setStockData, updateStockPrice } = useStockData(data);
-  const { checkedStockIds, resetSelection, toggleStock, toggleAll } = useStockSelection();
+    const isLoading = useTableLoading(isApiLoading);
+    const { stockData, setStockData, updateStockPrice } = useStockData(data);
+    const { checkedStockIds, resetSelection, toggleStock, toggleAll } = useStockSelection();
 
-  const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+    const inputRefs = useRef<{
+      [key: string]: HTMLInputElement | null;
+    }>({});
 
-  // Computed values
-  const displayData = useMemo<DisplayStockData[]>(() => {
-    return stockData.map(stock => ({
-      ...stock,
-      checked: checkedStockIds.includes(stock.itemId),
-    }));
-  }, [stockData, checkedStockIds]);
+    // Computed values
+    const displayData = useMemo<DisplayStockData[]>(() => {
+      return stockData.map(stock => ({
+        ...stock,
+        checked: checkedStockIds.includes(stock.itemId),
+      }));
+    }, [
+      stockData,
+      checkedStockIds,
+    ]);
 
-  const hasCheckedItems = checkedStockIds.length > 0;
-  const isAllChecked = stockData.length > 0 && checkedStockIds.length === stockData.length;
-  const colSpan = (isEdit ? 1 : 0) + 3 + selectedRound; // checkbox + code + name + price columns
+    const hasCheckedItems = checkedStockIds.length > 0;
+    const isAllChecked = stockData.length > 0 && checkedStockIds.length === stockData.length;
+    const colSpan = (isEdit ? 1 : 0) + 3 + selectedRound; // checkbox + code + name + price columns
 
-  // Event handlers
-  const handleToggleAll = useCallback(() => {
-    toggleAll(stockData.map(stock => stock.itemId));
-  }, [toggleAll, stockData]);
+    // Event handlers
+    const handleToggleAll = useCallback(() => {
+      toggleAll(stockData.map(stock => stock.itemId));
+    }, [
+      toggleAll,
+      stockData,
+    ]);
 
-  const handleDeleteSelected = useCallback(() => {
-    if (!hasCheckedItems || !onDeleteItems) return;
-    onDeleteItems(checkedStockIds);
-    setStockData(prev => prev.filter(item => !checkedStockIds.includes(item.itemId)));
-    resetSelection();
-  }, [hasCheckedItems, onDeleteItems, checkedStockIds, setStockData, resetSelection]);
+    const handleDeleteSelected = useCallback(() => {
+      if (!hasCheckedItems || !onDeleteItems) return;
+      onDeleteItems(checkedStockIds);
+      setStockData(prev => prev.filter(item => !checkedStockIds.includes(item.itemId)));
+      resetSelection();
+    }, [
+      hasCheckedItems,
+      onDeleteItems,
+      checkedStockIds,
+      setStockData,
+      resetSelection,
+    ]);
 
-  const handlePriceChange = useCallback((itemId: number, levelIndex: number, value: number | null) => {
-    updateStockPrice(itemId, levelIndex, value);
-    if (onPriceChange) {
-      onPriceChange(itemId, levelIndex, value);
-    }
-  }, [updateStockPrice, onPriceChange]);
+    const handlePriceChange = useCallback(
+      (itemId: number, levelIndex: number, value: number | null) => {
+        updateStockPrice(itemId, levelIndex, value);
+        if (onPriceChange) {
+          onPriceChange(itemId, levelIndex, value);
+        }
+      },
+      [
+        updateStockPrice,
+        onPriceChange,
+      ],
+    );
 
-  // 키보드 내비게이션을 위한 필드 이동 함수
-  const handleMoveToNextField = useCallback((currentItemId: number, currentColumnIndex: number, direction: 'next' | 'prev') => {
-    const allStocks = displayData;
-    const currentStockIndex = allStocks.findIndex(stock => stock.itemId === currentItemId);
+    // 키보드 내비게이션을 위한 필드 이동 함수
+    const handleMoveToNextField = useCallback(
+      (currentItemId: number, currentColumnIndex: number, direction: "next" | "prev") => {
+        const allStocks = displayData;
+        const currentStockIndex = allStocks.findIndex(stock => stock.itemId === currentItemId);
 
-    if (currentStockIndex === -1) return;
+        if (currentStockIndex === -1) return;
 
-    let nextInputId: string | null = null;
+        let nextInputId: string | null = null;
 
-    if (direction === 'next') {
-      // 같은 행에서 다음 컬럼으로 이동
-      if (currentColumnIndex < selectedRound + 1) {
-        nextInputId = `${currentItemId}-${currentColumnIndex + 1}`;
+        if (direction === "next") {
+          // 같은 행에서 다음 컬럼으로 이동
+          if (currentColumnIndex < selectedRound + 1) {
+            nextInputId = `${currentItemId}-${currentColumnIndex + 1}`;
+          }
+          // 다음 행의 첫 번째 컬럼으로 이동 (현재가)
+          else if (currentStockIndex < allStocks.length - 1) {
+            const nextStock = allStocks[currentStockIndex + 1];
+            nextInputId = `${nextStock.itemId}-1`;
+          }
+        } else if (direction === "prev") {
+          // 같은 행에서 이전 컬럼으로 이동
+          if (currentColumnIndex > 1) {
+            nextInputId = `${currentItemId}-${currentColumnIndex - 1}`;
+          }
+          // 이전 행의 마지막 컬럼으로 이동
+          else if (currentStockIndex > 0) {
+            const prevStock = allStocks[currentStockIndex - 1];
+            nextInputId = `${prevStock.itemId}-${selectedRound + 1}`;
+          }
+        }
+
+        if (nextInputId && inputRefs.current[nextInputId]) {
+          setTimeout(() => {
+            inputRefs.current[nextInputId]?.focus();
+          }, 0);
+        }
+      },
+      [
+        displayData,
+        selectedRound,
+      ],
+    );
+
+    const handleCellClick = useCallback((inputId: string, event: React.MouseEvent) => {
+      if ((event.target as HTMLElement).closest('input[type="checkbox"]')) {
+        return;
       }
-      // 다음 행의 첫 번째 컬럼으로 이동 (현재가)
-      else if (currentStockIndex < allStocks.length - 1) {
-        const nextStock = allStocks[currentStockIndex + 1];
-        nextInputId = `${nextStock.itemId}-1`;
+      const inputElement = inputRefs.current[inputId];
+      if (inputElement) {
+        inputElement.focus();
       }
-    } else if (direction === 'prev') {
-      // 같은 행에서 이전 컬럼으로 이동
-      if (currentColumnIndex > 1) {
-        nextInputId = `${currentItemId}-${currentColumnIndex - 1}`;
-      }
-      // 이전 행의 마지막 컬럼으로 이동
-      else if (currentStockIndex > 0) {
-        const prevStock = allStocks[currentStockIndex - 1];
-        nextInputId = `${prevStock.itemId}-${selectedRound + 1}`;
-      }
-    }
+    }, []);
 
-    if (nextInputId && inputRefs.current[nextInputId]) {
-      setTimeout(() => {
-        inputRefs.current[nextInputId]?.focus();
-      }, 0);
-    }
-  }, [displayData, selectedRound]);
+    const handleOpenAddModal = useCallback(() => setShowAddModal(true), []);
+    const handleCloseAddModal = useCallback(() => setShowAddModal(false), []);
 
-  const handleCellClick = useCallback((inputId: string, event: React.MouseEvent) => {
-    if ((event.target as HTMLElement).closest('input[type="checkbox"]')) {
-      return;
-    }
-    const inputElement = inputRefs.current[inputId];
-    if (inputElement) {
-      inputElement.focus();
-    }
-  }, []);
+    const handleAddItems = useCallback(
+      (newItems: StockData[]) => {
+        if (onAddItems) {
+          onAddItems(newItems);
+        }
+        setShowAddModal(false);
+      },
+      [
+        onAddItems,
+      ],
+    );
 
-  const handleOpenAddModal = useCallback(() => setShowAddModal(true), []);
-  const handleCloseAddModal = useCallback(() => setShowAddModal(false), []);
-
-  const handleAddItems = useCallback((newItems: StockData[]) => {
-    if (onAddItems) {
-      onAddItems(newItems);
-    }
-    setShowAddModal(false);
-  }, [onAddItems]);
-
-  return (
-    <TableContainer>
-      <TableControls
-        hasCheckedItems={hasCheckedItems}
-        onDeleteSelected={handleDeleteSelected}
-        isEdit={isEdit}
-      />
-
-      <Table>
-        <StockTableHeader
+    return (
+      <TableContainer>
+        <TableControls
+          hasCheckedItems={hasCheckedItems}
+          onDeleteSelected={handleDeleteSelected}
           isEdit={isEdit}
-          degree={selectedRound}
-          allChecked={isAllChecked}
-          onToggleAll={handleToggleAll}
         />
 
-        <Tbody>
-          {displayData.length > 0 ? (
-            displayData.map(stock => (
-              <StockTableRow
-                key={stock.itemId}
-                stock={stock}
-                isEdit={isEdit}
-                isLoading={isLoading}
-                degree={selectedRound}
-                onToggle={toggleStock}
-                onPriceChange={handlePriceChange}
-                inputRefs={inputRefs}
-                onCellClick={handleCellClick}
-                onMoveToNextField={handleMoveToNextField}
+        <Table>
+          <StockTableHeader
+            isEdit={isEdit}
+            degree={selectedRound}
+            allChecked={isAllChecked}
+            onToggleAll={handleToggleAll}
+          />
+
+          <Tbody>
+            {displayData.length > 0 ? (
+              displayData.map(stock => (
+                <StockTableRow
+                  key={stock.itemId}
+                  stock={stock}
+                  isEdit={isEdit}
+                  isLoading={isLoading}
+                  degree={selectedRound}
+                  onToggle={toggleStock}
+                  onPriceChange={handlePriceChange}
+                  inputRefs={inputRefs}
+                  onCellClick={handleCellClick}
+                  onMoveToNextField={handleMoveToNextField}
+                />
+              ))
+            ) : (
+              <EmptyState colSpan={colSpan} />
+            )}
+
+            {isEdit && (
+              <AddRowButton
+                colSpan={colSpan}
+                onClick={handleOpenAddModal}
               />
-            ))
-          ) : (
-            <EmptyState colSpan={colSpan} />
-          )}
+            )}
+          </Tbody>
+        </Table>
 
-          {isEdit && (
-            <AddRowButton
-              colSpan={colSpan}
-              onClick={handleOpenAddModal}
-            />
-          )}
-        </Tbody>
-      </Table>
-
-      {showAddModal && (
-        <AddInvestItemModal
-          close={handleCloseAddModal}
-          onItemsSelected={handleAddItems}
-          selectedDegree={selectedRound}
-          existingItems={stockData.map(item => ({ id: item.itemId }))}
-        />
-      )}
-    </TableContainer>
-  );
-});
+        {showAddModal && (
+          <AddInvestItemModal
+            close={handleCloseAddModal}
+            onItemsSelected={handleAddItems}
+            selectedDegree={selectedRound}
+            existingItems={stockData.map(item => ({
+              id: item.itemId,
+            }))}
+          />
+        )}
+      </TableContainer>
+    );
+  },
+);
 
 // Styled Components
 const TableTitle = styled.div`
