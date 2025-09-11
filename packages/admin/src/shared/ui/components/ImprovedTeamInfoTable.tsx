@@ -2,9 +2,9 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { useState } from "react";
+import type { TeamInfo } from "@/app/store";
 import { DegCurrentModal, TeamCurrentModal } from "@/components";
-import type { TeamInfo } from "@/store";
-import { roundToFixed } from "@/utils";
+import { roundToFixed } from "@/shared/lib";
 
 interface Props {
   teamInfo: TeamInfo[];
@@ -51,16 +51,14 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
         <Table>
           <thead>
             <tr>
-              {tableHeaders.map((header) => (
+              {tableHeaders.map(header => (
                 <th key={header}>{header}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             <tr>
-              <EmptyMessage colSpan={tableHeaders.length}>
-                팀 정보를 불러오는 중입니다...
-              </EmptyMessage>
+              <EmptyMessage colSpan={tableHeaders.length}>팀 정보를 불러오는 중입니다...</EmptyMessage>
             </tr>
           </tbody>
         </Table>
@@ -72,90 +70,90 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
     <>
       <Container>
         <Table>
-        <Tr isHeader>
-          {tableHeaders.map((tableHead, index) => (
-            <Th
-              key={index}
-              isLeft={index === 0}>
-              {tableHead}
-            </Th>
-          ))}
-        </Tr>
-        {teamInfo.map((team, index) => {
-          const isNegative = team.trade.at(-1)?.profitNum.includes("-");
+          <Tr isHeader>
+            {tableHeaders.map((tableHead, index) => (
+              <Th
+                key={index}
+                isLeft={index === 0}>
+                {tableHead}
+              </Th>
+            ))}
+          </Tr>
+          {teamInfo.map((team, index) => {
+            const isNegative = team.trade.at(-1)?.profitNum.includes("-");
 
-          return (
-            <Tr
-              isNotBorded={index + 1 === teamInfo.length}
-              key={index}>
-              <Td isLeft>
-                <TeamName
-                  isTeamName
-                  onClick={() => handleOpenModal(team.teamId, team.teamName)}>
-                  {team.teamName}
-                </TeamName>
-                {team.trade.length === invDeg && (
-                  <CompletedBadge>
-                    투자완료{" "}
-                    <Check
-                      size={18}
-                      color={color.green[500]}
-                    />
-                  </CompletedBadge>
-                )}
-              </Td>
-              {Array.from({
-                length: maxInvDeg,
-              }).map((_, degIndex) => {
-                if (degIndex + 1 > invDeg) {
-                  return <Td key={degIndex} />;
-                }
-
-                const isNegative =
-                  team.trade[degIndex] === undefined ? null : team.trade[degIndex].profitNum.includes("-");
-
-                return (
-                  <Td key={degIndex}>
-                    {team.trade[degIndex] === undefined ? (
-                      "진행중"
-                    ) : (
-                      <Rate
-                        isNegative={isNegative}
-                        onClick={() => handleOpenDegModal(team.teamId, degIndex + 1)}>
-                        <span>{team.trade[degIndex].totalMoney.toLocaleString()}원</span>
-                        <span>
-                          {!isNegative && "+"}
-                          {team.trade[degIndex].valMoney.toLocaleString()}원 ({!isNegative && "+"}
-                          {roundToFixed(parseFloat(team.trade[degIndex].profitNum), 2)}
-                          %)
-                        </span>
-                      </Rate>
-                    )}
-                  </Td>
-                );
-              })}
-              {/* 총자산 컬럼 */}
-              <Td>
-                {team.trade.length > 0 ? (
-                  <Rate
-                    isNegative={isNegative}
+            return (
+              <Tr
+                isNotBorded={index + 1 === teamInfo.length}
+                key={index}>
+                <Td isLeft>
+                  <TeamName
+                    isTeamName
                     onClick={() => handleOpenModal(team.teamId, team.teamName)}>
-                    <span>{team.trade.at(-1)?.totalMoney.toLocaleString()}원</span>
-                    <span>
-                      {!isNegative && "+"}
-                      {team.trade.at(-1)?.valMoney.toLocaleString()}원 ({!isNegative && "+"}
-                      {roundToFixed(parseFloat(team.trade.at(-1)?.profitNum ?? "0"), 2)}
-                      %)
-                    </span>
-                  </Rate>
-                ) : (
-                  "진행중"
-                )}
-              </Td>
-            </Tr>
-          );
-        })}
-      </Table>
+                    {team.teamName}
+                  </TeamName>
+                  {team.trade.length === invDeg && (
+                    <CompletedBadge>
+                      투자완료{" "}
+                      <Check
+                        size={18}
+                        color={color.green[500]}
+                      />
+                    </CompletedBadge>
+                  )}
+                </Td>
+                {Array.from({
+                  length: maxInvDeg,
+                }).map((_, degIndex) => {
+                  if (degIndex + 1 > invDeg) {
+                    return <Td key={degIndex} />;
+                  }
+
+                  const isNegative =
+                    team.trade[degIndex] === undefined ? null : team.trade[degIndex].profitNum.includes("-");
+
+                  return (
+                    <Td key={degIndex}>
+                      {team.trade[degIndex] === undefined ? (
+                        "진행중"
+                      ) : (
+                        <Rate
+                          isNegative={isNegative}
+                          onClick={() => handleOpenDegModal(team.teamId, degIndex + 1)}>
+                          <span>{team.trade[degIndex].totalMoney.toLocaleString()}원</span>
+                          <span>
+                            {!isNegative && "+"}
+                            {team.trade[degIndex].valMoney.toLocaleString()}원 ({!isNegative && "+"}
+                            {roundToFixed(parseFloat(team.trade[degIndex].profitNum), 2)}
+                            %)
+                          </span>
+                        </Rate>
+                      )}
+                    </Td>
+                  );
+                })}
+                {/* 총자산 컬럼 */}
+                <Td>
+                  {team.trade.length > 0 ? (
+                    <Rate
+                      isNegative={isNegative}
+                      onClick={() => handleOpenModal(team.teamId, team.teamName)}>
+                      <span>{team.trade.at(-1)?.totalMoney.toLocaleString()}원</span>
+                      <span>
+                        {!isNegative && "+"}
+                        {team.trade.at(-1)?.valMoney.toLocaleString()}원 ({!isNegative && "+"}
+                        {roundToFixed(parseFloat(team.trade.at(-1)?.profitNum ?? "0"), 2)}
+                        %)
+                      </span>
+                    </Rate>
+                  ) : (
+                    "진행중"
+                  )}
+                </Td>
+              </Tr>
+            );
+          })}
+        </Table>
       </Container>
       {isOpenTeam && selectedTeamId !== null && (
         <TeamCurrentModal

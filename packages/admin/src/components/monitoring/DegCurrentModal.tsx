@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetTeamTradeStatus } from "@/apis";
+import { useTeamStore } from "@/app/store";
 import { TeamInvestStatusTable } from "@/components";
-import { useTeamStore } from "@/store";
 
 interface DegDealContent {
   id: number;

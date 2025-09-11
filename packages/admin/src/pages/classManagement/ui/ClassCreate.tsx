@@ -7,8 +7,7 @@ import { useClassCreate, useGetArticleList, useGetStockList } from "@/apis";
 import type { ClassCreateRequest, ClassItemRequest } from "@/apis/class/type";
 import { ArticleTables } from "@/components/common/ArticleTables";
 import { StockTables } from "@/components/common/StockTables";
-import { useArticle } from "@/shared/lib/contexts/ArticleContext";
-import { formatPrice } from "@/utils/formatPrice";
+import { formatPrice, useArticle } from "@/shared/lib";
 
 export const CreateClass = () => {
   const navigate = useNavigate();
@@ -183,7 +182,7 @@ export const CreateClass = () => {
     mutateClassCreate(classCreateData, {
       onSuccess: () => {
         resetArticles(); // 기사 상태 초기화
-      }
+      },
     });
   };
 
@@ -205,9 +204,9 @@ export const CreateClass = () => {
   });
 
   const cancelClick = () => {
-    resetArticles()
-    navigate(-1)
-  }
+    resetArticles();
+    navigate(-1);
+  };
 
   return (
     <Container>

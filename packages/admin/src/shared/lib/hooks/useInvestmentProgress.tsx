@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useGetClassDetail, useNextDegree } from "@/apis";
-import { queryClient } from "@/utils/queryClient";
+import { queryClient } from "@/shared/lib";
 
 export const useInvestmentProgress = (classId: number) => {
   const [optimisticCurInvDeg, setOptimisticCurInvDeg] = useState<number | null>(null);

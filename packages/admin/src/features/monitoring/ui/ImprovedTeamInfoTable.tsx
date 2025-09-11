@@ -2,9 +2,9 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { useState } from "react";
-import { DegCurrentModal, TeamCurrentModal } from "@/features/monitoring/ui";
 import type { TeamInfo } from "@/app/store";
-import { roundToFixed } from "@/shared/lib/utils";
+import { DegCurrentModal, TeamCurrentModal } from "@/features/monitoring/ui";
+import { roundToFixed } from "@/shared/lib";
 
 interface Props {
   teamInfo: TeamInfo[];

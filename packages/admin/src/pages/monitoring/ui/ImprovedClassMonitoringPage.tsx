@@ -5,9 +5,9 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Tooltip } from "react-tooltip";
 import { useClassStop } from "@/apis";
+import { useTeamStore } from "@/app/store";
 import { ArticleInfoModal, ClassInfoModal, FullPageLoader, ImprovedTeamInfoTable } from "@/components";
-import { useInvestmentProgress, useSSE } from "@/hooks";
-import { useTeamStore } from "@/store";
+import { useInvestmentProgress, useSSE } from "@/shared/lib/hooks";
 
 export const ImprovedClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState(false);
@@ -248,9 +248,7 @@ export const ImprovedClassMonitoringPage = () => {
               </Button>
             </InfoBtn>
           </InfoContainer>
-          <ImprovedTeamInfoTable
-            teamInfo={teamInfo}
-          />
+          <ImprovedTeamInfoTable teamInfo={teamInfo} />
         </MainContainer>
 
         {/* Tooltip 컴포넌트 */}

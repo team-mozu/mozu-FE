@@ -7,8 +7,7 @@ import type { ClassData, ClassItemRequest } from "@/apis/class/type";
 import { FullPageLoader } from "@/components";
 import { ArticleTables } from "@/components/common/ArticleTables";
 import { StockTables } from "@/components/common/StockTables";
-import { useArticle } from "@/shared/lib/contexts/ArticleContext";
-import { formatPrice } from "@/utils/formatPrice";
+import { formatPrice, useArticle } from "@/shared/lib";
 import {
   AssetField,
   BtnContainer,
@@ -280,30 +279,37 @@ export const ClassEdit = () => {
 
     editClass(classData, {
       onSuccess: () => {
-        navigate(`/class-management/${id}`)
+        navigate(`/class-management/${id}`);
         resetArticles();
       },
     });
   };
 
   // 기사 테이블 데이터 변환 (UI용)
-  const articleTableData = useMemo(() => classArticles.map(group => ({
-    invDeg: group.invDeg,
-    articles: group.articles.map(id => {
-      const article = articleListData?.article.find(a => a.id === id);
-      return {
-        id,
-        title: article ? article.title : `기사 ID: ${id}`,
-      };
-    }),
-  })), [classArticles, articleListData]);
+  const articleTableData = useMemo(
+    () =>
+      classArticles.map(group => ({
+        invDeg: group.invDeg,
+        articles: group.articles.map(id => {
+          const article = articleListData?.article.find(a => a.id === id);
+          return {
+            id,
+            title: article ? article.title : `기사 ID: ${id}`,
+          };
+        }),
+      })),
+    [
+      classArticles,
+      articleListData,
+    ],
+  );
 
   if (isLoading) return <FullPageLoader />;
 
   const cancelClick = () => {
-    resetArticles()
-    navigate(-1)
-  }
+    resetArticles();
+    navigate(-1);
+  };
 
   return (
     <Container>

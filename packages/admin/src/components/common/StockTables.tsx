@@ -3,7 +3,7 @@ import { color, font, Skeleton } from "@mozu/design-token";
 import { Button, CheckBox } from "@mozu/ui";
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AddInvestItemModal } from "@/components/stock/AddInvestItemModal";
-import { formatPrice } from "@/utils/formatPrice";
+import { formatPrice } from "@/shared/lib";
 
 // Types
 interface StockData {

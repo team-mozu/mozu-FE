@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { type ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { roundToFixed } from "@/shared/lib/utils";
+import { roundToFixed } from "@/shared/lib";
 
 interface StockData {
   name: string;
@@ -150,8 +150,8 @@ export const HoldStockTable = ({ holdItems }: { holdItems: HoldItem[] }) => {
                   {cell.column.id === "profit"
                     ? cell.column.columnDef.cell
                       ? (cell.column.columnDef.cell as any)({
-                          row,
-                        })
+                        row,
+                      })
                       : cell.renderValue()
                     : cell.renderValue()}
                 </Td>

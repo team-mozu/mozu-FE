@@ -4,9 +4,9 @@ import { Button, Del, Modal, Toast, WarningMsg } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useClassStop, useGetClassDetail, useNextDegree } from "@/apis";
+import { useTeamStore } from "@/app/store";
 import { ParticipationContainer } from "@/components";
-import { useSSE } from "@/hooks";
-import { useTeamStore } from "@/store";
+import { useSSE } from "@/shared/lib";
 
 export const InvestmentPreparation = () => {
   const { id } = useParams();
@@ -91,7 +91,9 @@ export const InvestmentPreparation = () => {
   const handleCancel = () => {
     stopClass(classId ?? 0, {
       onSuccess: () => {
-        Toast("수업을 성공적으로 취소했습니다.", { type: "success" });
+        Toast("수업을 성공적으로 취소했습니다.", {
+          type: "success",
+        });
         navigate(`/class-management/${classId}`);
       },
     });

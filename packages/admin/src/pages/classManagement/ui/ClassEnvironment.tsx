@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { color, font } from "@mozu/design-token";
+import { color, font, Skeleton } from "@mozu/design-token";
 import { ArrowLeft, Button, Del, Edit, Modal, Play } from "@mozu/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
@@ -7,8 +7,7 @@ import { useClassDelete, useClassStart, useGetClassDetail } from "@/apis";
 import { FullPageLoader } from "@/components";
 import { ArticleTables } from "@/components/common/ArticleTables";
 import { StockTables } from "@/components/common/StockTables";
-import { formatPrice } from "@/utils/formatPrice";
-import { Skeleton } from "@mozu/design-token";
+import { formatPrice } from "@/shared/lib";
 
 export const ClassEnvironment = () => {
   const { id } = useParams();
@@ -76,9 +75,9 @@ export const ClassEnvironment = () => {
       deleteClass(classId, {
         onSuccess: () => {
           navigate("/class-management");
-        }
+        },
       });
-    };
+    }
   };
 
   // 수업 시작
@@ -125,15 +124,24 @@ export const ClassEnvironment = () => {
     }))
     : [];
 
-    // 기사 데이터 가공
-    const articleTableData = classData?.classArticles || [];
-    
-    //리렌더링 최적화
-    const stockData = useMemo(() => stockTableData, [stockTableData]);
-    const articleData = useMemo(() => articleTableData, [articleTableData]);
+  // 기사 데이터 가공
+  const articleTableData = classData?.classArticles || [];
+
+  //리렌더링 최적화
+  const stockData = useMemo(
+    () => stockTableData,
+    [
+      stockTableData,
+    ],
+  );
+  const articleData = useMemo(
+    () => articleTableData,
+    [
+      articleTableData,
+    ],
+  );
 
   if (apiLoading) return <FullPageLoader />;
-
 
   return (
     <>
@@ -142,7 +150,12 @@ export const ClassEnvironment = () => {
           mainTitle={`'${classData?.name || ""}'을 삭제하실 건가요?`}
           subTitle="삭제하면 복구가 불가능합니다."
           onSuccessClick={handleDelete}
-          icon={<Del size={24} color={color.red[400]} />}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
           isOpen={isModal}
           setIsOpen={setIsModal}
           isPending={isPending}

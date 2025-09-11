@@ -3,10 +3,10 @@ import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { useState } from "react";
 import { useParams } from "react-router";
+import type { TeamInfo } from "@/app/store";
 import { DegCurrentModal, TeamCurrentModal } from "@/components";
-import type { TeamInfo } from "@/store";
-import { useInvestmentProgress } from "@/hooks";
-import { createTableHeaders, transformTeamDataToTableRows } from "@/utils/tableUtils";
+import { useInvestmentProgress } from "@/shared/lib/hooks";
+import { createTableHeaders, transformTeamDataToTableRows } from "@/shared/lib/utils";
 import { TableCell } from "./TableCell";
 
 interface Props {
@@ -29,7 +29,7 @@ export const ImprovedTeamInfoTable = ({ teamInfo }: Props) => {
   console.log("🔄 Table data computing:", {
     currentInvDeg,
     maxInvDeg,
-    teamCount: teamInfo?.length
+    teamCount: teamInfo?.length,
   });
 
   const tableData = transformTeamDataToTableRows(teamInfo, currentInvDeg, maxInvDeg);

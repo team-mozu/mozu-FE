@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
-import { roundToFixed, type TableCellData } from "@/utils/tableUtils";
+import { roundToFixed, type TableCellData } from "@/shared/lib";
 
 interface TableCellProps {
   data: TableCellData;
@@ -19,7 +19,7 @@ export const TableCell = ({ data, onClick }: TableCellProps) => {
 
   if (data.type === 'completed' && data.data) {
     const { totalMoney, valMoney, profitNum, isNegative } = data.data;
-    
+
     return (
       <Td>
         <Rate isNegative={isNegative} onClick={onClick}>

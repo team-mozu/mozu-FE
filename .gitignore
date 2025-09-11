@@ -15,6 +15,7 @@
 .claude
 CLAUDE.md
 GEMINI.md
+.kiro/*
 
 .dist
 .build
