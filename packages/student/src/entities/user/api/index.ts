@@ -70,24 +70,24 @@ export const useStudentLogin = () => {
 
 export const useGetTeamDetail = (options?: UseQueryOptions<TeamDeatilResponse, AxiosError>) => {
   return useQuery<TeamDeatilResponse, AxiosError>({
-    queryKey: [
-      "getTeam",
-    ],
+    queryKey: ["team", "detail"],
     queryFn: async () => {
       const { data } = await instance.get<TeamDeatilResponse>(`${router}`);
       return data;
     },
     staleTime: 5000,
-    gcTime: 5000,
     ...options,
   });
 };
 
 export const useTeamEnd = (options?: UseMutationOptions<void, AxiosError, TeamEndProps>) => {
   return useMutation<void, AxiosError, TeamEndProps>({
-    mutationFn: async teamData => {
+    mutationFn: async (teamData) => {
       const response = await instance.post("/team/end", teamData);
       return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team"] });
     },
     ...options,
   });
@@ -95,28 +95,27 @@ export const useTeamEnd = (options?: UseMutationOptions<void, AxiosError, TeamEn
 
 export const useTeamResult = (options?: UseQueryOptions<TeamResultResponse, AxiosError>) => {
   return useQuery<TeamResultResponse, AxiosError>({
-    queryKey: [
-      "getTeamResult",
-    ],
+    queryKey: ["team", "result"],
     queryFn: async () => {
-      const { data } = await instance.get<TeamResultResponse>(`${router}/result`);
+      const { data } = await instance.get<TeamResultResponse>(
+        `${router}/result`
+      );
       return data;
     },
     ...options,
   });
 };
 
-export const useTeamRank = (options?: UseQueryOptions<TeamRankResponse, AxiosError>) => {
+export const useTeamRank = (
+  options?: UseQueryOptions<TeamRankResponse, AxiosError>
+) => {
   return useQuery<TeamRankResponse, AxiosError>({
-    queryKey: [
-      "getTeamRank",
-    ],
+    queryKey: ["team", "rank"],
     queryFn: async () => {
       const { data } = await instance.get<TeamRankResponse>(`${router}/rank`);
       return data;
     },
     staleTime: 5000,
-    gcTime: 5000,
     ...options,
   });
 };

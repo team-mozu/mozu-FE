@@ -21,7 +21,7 @@ export const useAddArticle = () => {
         },
       });
     },
-    onSuccess: response => {
+    onSuccess: (response) => {
       const id = response.data.id;
       navigate(`/article-management/${id}`);
     },
@@ -38,9 +38,7 @@ export const useDeleteArticle = (onSuccessCallback?: () => void) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [
-          "getArticle",
-        ],
+        queryKey: ["article", "list"],
       });
       if (onSuccessCallback) {
         onSuccessCallback(); // 모달 닫기 실행
@@ -52,13 +50,12 @@ export const useDeleteArticle = (onSuccessCallback?: () => void) => {
 
 export const useGetArticleDetail = (articleId: number | null | undefined) => {
   return useQuery({
-    queryKey: [
-      "getArticle",
-      articleId,
-    ],
+    queryKey: ["article", "detail", articleId],
     queryFn: async () => {
       if (!articleId) throw new Error("err");
-      const { data } = await instance.get<ArticleDetailResponse>(`${router}/${articleId}`);
+      const { data } = await instance.get<ArticleDetailResponse>(
+        `${router}/${articleId}`
+      );
       return data;
     },
     enabled: !!articleId,
@@ -67,9 +64,7 @@ export const useGetArticleDetail = (articleId: number | null | undefined) => {
 
 export const useGetArticleList = () => {
   return useQuery({
-    queryKey: [
-      "getArticle",
-    ],
+    queryKey: ["article", "list"],
     queryFn: async () => {
       try {
         const { data } = await instance.get<{
@@ -80,11 +75,13 @@ export const useGetArticleList = () => {
         throw error;
       }
     },
+    staleTime: 1000 * 60,
   });
 };
 
 export const useEditArticle = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: ArticleManagementEditRequest) => {
@@ -96,11 +93,12 @@ export const useEditArticle = () => {
         },
       });
     },
-    onSuccess: () => {
+    onSuccess: (_, data) => {
+      queryClient.invalidateQueries({ queryKey: ["article", "list"] });
+      queryClient.invalidateQueries({
+        queryKey: ["article", "detail", data.articleId],
+      });
       navigate(-1);
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
     },
     onError: () => {},
   });
