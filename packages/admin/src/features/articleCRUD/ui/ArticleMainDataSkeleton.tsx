@@ -18,7 +18,7 @@ export const ArticleMainDataSkeleton = ({ title, main }: IArticleMainDataType) =
           <p>{title}</p>
         </ArticleTitle>
         <ArticleMain>
-          {lines.map(line => (line.trim() === "" ? <br key={line} /> : <p key={line}>{line}</p>))}
+          {lines.map((line, index) => (line.trim() === "" ? <br key={`br-${index}`} /> : <p key={`p-${index}`}>{line}</p>))}
         </ArticleMain>
       </ContentWrapper>
     </Container>

@@ -1,212 +1,99 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, Input, Select } from "@mozu/ui";
-import { type ChangeEvent, useState } from "react";
-import { useNavigate } from "react-router";
-import { useClassCreate, useGetArticleList, useGetStockList } from "@/apis";
-import type { ClassCreateRequest, ClassItemRequest } from "@/apis/class/type";
-import { ArticleTables } from "@/components/common/ArticleTables";
-import { StockTables } from "@/components/common/StockTables";
-import { formatPrice, useArticle } from "@/shared/lib";
+import type { ChangeEvent } from "react";
+import { useGetArticleList } from "@/entities/article";
+import { ArticleTables } from "@/features/articleCRUD/ui/ArticleTables";
+import { useClassCreation } from "@/features/classManagement/hooks/useClassCreation";
+import { formatPrice } from "@/shared/lib";
+import { StockTables } from "@/shared/ui";
 
+/**
+ * 수업 생성 페이지 컴포넌트
+ * 수업명, 투자 차수, 기초자산을 설정하고 투자 종목과 기사를 추가할 수 있습니다.
+ */
 export const CreateClass = () => {
-  const navigate = useNavigate();
-  const { mutate: mutateClassCreate } = useClassCreate();
-  const [className, setClassName] = useState<string>("");
-  const [classDeg, setClassDeg] = useState<"3" | "4" | "5">("3");
-  const [baseMoney, setBaseMoney] = useState<number>(1000000);
-  const [classItems, setClassItems] = useState<ClassItemRequest[]>([]);
-  const [stockData, setStockData] = useState<any[]>([]);
-  const { data: stockListData } = useGetStockList();
-  const { data: articleListData } = useGetArticleList();
-  const { classArticles, resetArticles } = useArticle();
 
+  const {
+    // 폼 데이터
+    formData,
+    stockTableData,
+    classArticles,
+
+    // 폼 핸들러
+    updateLessonName,
+    handleLessonRoundChange,
+    updateBaseMoney,
+
+    // 아이템 핸들러
+    addItems,
+    removeItems,
+    updateItemPrice,
+
+    // 제출/취소
+    handleSubmit,
+    handleCancel,
+
+    // 상태
+    isPending,
+  } = useClassCreation();
+
+  /**
+   * 수업 이름 변경 핸들러
+   */
   const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setClassName(e.target.value);
+    updateLessonName(e.target.value);
   };
 
+  /**
+   * 투자 차수 변경 핸들러
+   */
   const onDegreeChange = (value: "3" | "4" | "5") => {
-    setClassDeg(value);
+    handleLessonRoundChange(parseInt(value, 10));
   };
 
+  /**
+   * 기초자산 변경 핸들러
+   */
   const onBaseMoneyChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^\d]/g, "");
     const numValue = value === "" ? 0 : parseInt(value, 10);
-
-    setBaseMoney(numValue);
+    updateBaseMoney(numValue);
   };
 
-  // 투자 종목 관련 핸들러
-  const handleAddItems = (newItems: any[]) => {
-    // Add new items to the classItems array
-    setClassItems(prevItems => [
-      ...prevItems,
-      ...newItems.map(item => {
-        const requiredLength = parseInt(classDeg, 10) + 2;
-        const money = [
-          ...(item.money || []),
-        ];
-
-        // money 배열 길이 보정
-        while (money.length < requiredLength) {
-          money.push(0);
-        }
-
-        return {
-          ...item,
-          money,
-        };
-      }),
-    ]);
-
-    // Convert to display format for the table
-    const newStockData = newItems.map(item => {
-      const requiredLength = parseInt(classDeg, 10) + 2;
-      const money = [
-        ...(item.money || []),
-      ];
-
-      while (money.length < requiredLength) {
-        money.push(0);
-      }
-
-      const stockItem = stockListData?.items.find(stockItem => stockItem.id === item.id);
-      const itemName = stockItem ? stockItem.name : `Item ${item.id}`;
-
-      return {
-        itemId: item.id,
-        itemCode: String(item.id),
-        itemName: itemName,
-        money: money,
-        stockChecked: false,
-      };
-    });
-
-    setStockData(prevData => [
-      ...prevData,
-      ...newStockData,
-    ]);
+  /**
+   * 투자 종목 추가 핸들러
+   */
+  const handleAddItems = (
+    newItems: Array<{
+      itemId: number;
+      money?: number[];
+    }>,
+  ) => {
+    addItems(newItems);
   };
 
+  /**
+   * 투자 종목 삭제 핸들러
+   */
   const onDeleteItems = (itemIds: number[]) => {
-    // Remove items from the classItems array
-    setClassItems(classItems.filter(item => !itemIds.includes(item.id)));
-
-    // Remove items from the stockData array
-    setStockData(stockData.filter(item => !itemIds.includes(item.itemId)));
+    removeItems(itemIds);
   };
 
+  /**
+   * 투자 종목 가격 업데이트 핸들러
+   */
   const handleUpdateItemPrice = (itemId: number, levelIndex: number, value: number | null) => {
-    // classItems 업데이트
-    setClassItems(items =>
-      items.map(item => {
-        if (item.id === itemId) {
-          const updatedMoney = [
-            ...item.money,
-          ];
-          updatedMoney[levelIndex] = value ?? 0;
-
-          // 1번 인덱스(현재가)가 변경된 경우, 0번 인덱스도 같은 값으로 설정
-          if (levelIndex === 1) {
-            updatedMoney[0] = value ?? 0;
-          }
-
-          return {
-            ...item,
-            money: updatedMoney,
-          };
-        }
-        return item;
-      }),
-    );
-
-    // stockData 업데이트
-    setStockData(data =>
-      data.map(item => {
-        if (item.itemId === itemId) {
-          const updatedMoney = [
-            ...item.money,
-          ];
-          updatedMoney[levelIndex] = value ?? 0;
-
-          // 1번 인덱스(현재가)가 변경된 경우, 0번 인덱스도 같은 값으로 설정
-          if (levelIndex === 1) {
-            updatedMoney[0] = value ?? 0;
-          }
-
-          return {
-            ...item,
-            money: updatedMoney,
-          };
-        }
-        return item;
-      }),
-    );
+    updateItemPrice(itemId, levelIndex, value);
   };
 
-  const onSubmit = () => {
-    // Validate inputs
-    if (!className.trim()) {
-      alert("수업 이름을 입력해주세요.");
-      return;
-    }
-
-    if (classItems.length === 0) {
-      alert("최소 하나 이상의 투자 종목을 추가해주세요.");
-      return;
-    }
-
-    // 요청 전에 classItems의 0번 인덱스를 1번 인덱스(현재가)와 같게 설정
-    const processedClassItems = classItems.map(item => {
-      const updatedMoney = [
-        ...item.money,
-      ];
-      // 0번 인덱스를 1번 인덱스(현재가)와 같게 설정
-      if (updatedMoney.length > 1) {
-        updatedMoney[0] = updatedMoney[1];
-      }
-      return {
-        ...item,
-        money: updatedMoney,
-      };
-    });
-
-    const classCreateData: ClassCreateRequest = {
-      className,
-      classDeg: parseInt(classDeg),
-      baseMoney,
-      classItems: processedClassItems,
-      classArticles,
-    };
-
-    mutateClassCreate(classCreateData, {
-      onSuccess: () => {
-        resetArticles(); // 기사 상태 초기화
-      },
-    });
-  };
-
-  // 기사 테이블용 데이터 변환
-  const articleTableData = classArticles.map(group => {
-    // API 데이터에서 기사 제목 찾기
-    const articleDetails = group.articles.map(id => {
-      const article = articleListData?.article.find(a => a.id === id);
-      return {
-        id: id,
-        title: article ? article.title : `기사 ID: ${id}`,
-      };
-    });
-
-    return {
-      invDeg: group.invDeg,
-      articles: articleDetails,
-    };
-  });
-
-  const cancelClick = () => {
-    resetArticles();
-    navigate(-1);
-  };
+  /**
+   * 기사 테이블용 데이터 변환
+   */
+  const articleTableData = classArticles.map(group => ({
+    investmentRound: group.invDeg,
+    articles: group.articles, // 이미 Article[] 형태
+  }));
 
   return (
     <Container>
@@ -218,7 +105,7 @@ export const CreateClass = () => {
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
-            onClick={cancelClick}>
+            onClick={handleCancel}>
             취소
           </Button>
           <Button
@@ -226,8 +113,9 @@ export const CreateClass = () => {
             borderColor={color.orange[500]}
             color={color.white}
             hoverBackgroundColor={color.orange[600]}
-            onClick={onSubmit}>
-            생성하기
+            onClick={handleSubmit}
+            disabled={isPending}>
+            {isPending ? "생성 중..." : "생성하기"}
           </Button>
         </BtnContainer>
       </Header>
@@ -241,7 +129,7 @@ export const CreateClass = () => {
             <Input
               placeholder="수업 이름을 입력해 주세요.."
               fullWidth={true}
-              value={className}
+              value={formData.lessonName}
               onChange={onTitleChange}
             />
           </FlexInputBox>
@@ -262,7 +150,7 @@ export const CreateClass = () => {
                   left: 16,
                   right: 10,
                 }}
-                value={classDeg}
+                value={String(formData.lessonRound)}
                 onChange={onDegreeChange as (value: string) => void}
               />
               차
@@ -279,7 +167,7 @@ export const CreateClass = () => {
                 type="money"
                 placeholder="기초자산을 입력하세요.."
                 onChange={onBaseMoneyChange}
-                value={baseMoney === 0 ? "" : formatPrice(baseMoney)}
+                value={formData.baseMoney === 0 ? "" : formatPrice(formData.baseMoney)}
                 rightText="원"
               />
             </AssetField>
@@ -290,8 +178,8 @@ export const CreateClass = () => {
         <TableField>
           <StockTables
             isEdit
-            degree={classDeg}
-            data={stockData || []}
+            degree={String(formData.lessonRound)}
+            data={stockTableData}
             onPriceChange={handleUpdateItemPrice}
             onDeleteItems={onDeleteItems}
             onAddItems={handleAddItems}
@@ -302,7 +190,7 @@ export const CreateClass = () => {
         <TableField>
           <ArticleTables
             isEdit
-            degree={classDeg}
+            degree={String(formData.lessonRound)}
             data={articleTableData}
           />
         </TableField>

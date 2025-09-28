@@ -1,23 +1,23 @@
-export type TeamTradeStatus = {
-  id: number;
-  itemId: number;
+export type TeamCurrentGetResponse = {
+  id: string;
+  itemId: string;
   itemName: string;
-  itemMoney: number;
+  itemPrice: number;
   orderCount: number;
   totalMoney: number;
   orderType: "BUY" | "SELL";
-  invDeg: number;
+  invCount: number;
 };
 
-export type HoldItem = {
-  id: number; // 거래 ID
-  itemId: number; // 종목 ID
-  itemName: string; // 종목 이름
-  itemCnt: number; // 수량
-  buyMoney: number; // 매입 단가
-  totalMoney: number; // 총 매입 금액
-  nowMoney: number; // 현재 가격
-  valMoney: number; // 평가 금액
-  valProfit: number; // 평가 손익
-  profitNum: number; // 수익률 (단위: %, 소수)
+export type TeamHoldItemGetResponse = {
+  id: string;
+  itemId: string;
+  itemName: string;
+  avgPurchasePrice: number;
+  quantity: number;
+  totalMoney: number;
+  nowMoney: number;
+  valuationMoney: number;
+  valProfit: number;
+  profitNum: number;
 };

@@ -2,12 +2,12 @@ import { color } from "@mozu/design-token";
 import { Button, Input, Save, Select } from "@mozu/ui";
 import { type ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useEditClass, useGetArticleList, useGetClassDetail, useGetStockList } from "@/apis";
-import type { ClassData, ClassItemRequest } from "@/apis/class/type";
-import { FullPageLoader } from "@/components";
-import { ArticleTables } from "@/components/common/ArticleTables";
-import { StockTables } from "@/components/common/StockTables";
+import { useGetClassDetail, useUpdateClass } from "@/entities/class";
+import { useGetStockList } from "@/entities/stock";
+import { ArticleTables } from "@/features/articleCRUD/ui/ArticleTables";
 import { formatPrice, useArticle } from "@/shared/lib";
+import type { ClassData } from "@/shared/types";
+import { FullPageLoader, StockTables } from "@/shared/ui";
 import {
   AssetField,
   BtnContainer,
@@ -23,28 +23,32 @@ import {
 
 interface StockData {
   itemId: number;
-  itemCode: string;
+  itemCode: number;
   itemName: string;
   money: (number | null)[];
   stockChecked?: boolean;
 }
 
+interface ClassItem {
+  itemId: number;
+  itemName: string;
+  money: number[];
+}
+
 export const ClassEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const classId = id ? parseInt(id) : null;
 
   // API 호출
-  const { data: classDetailData, isLoading } = useGetClassDetail(classId ?? 0);
-  const { data: articleListData } = useGetArticleList();
+  const { data: classDetailData, isLoading } = useGetClassDetail(id ?? "");
   const { data: stockListData } = useGetStockList();
-  const { mutate: editClass } = useEditClass(classId ?? 0);
+  const { mutate: editClass } = useUpdateClass(id ?? "");
 
   // 상태 관리
   const [className, setClassName] = useState<string>("");
   const [classDeg, setClassDeg] = useState<string>("3");
   const [baseMoney, setBaseMoney] = useState<number>(1000000);
-  const [classItems, setClassItems] = useState<ClassItemRequest[]>([]);
+  const [classItems, setClassItems] = useState<ClassItem[]>([]);
   const [stockData, setStockData] = useState<StockData[]>([]);
 
   // ✅ 기사 Context
@@ -56,33 +60,34 @@ export const ClassEdit = () => {
     if (classDetailData) {
       // 기본 정보 설정
       setClassName(classDetailData.name);
-      setClassDeg(classDetailData.maxInvDeg.toString());
+      setClassDeg(classDetailData.maxInvRound.toString());
       setBaseMoney(classDetailData.baseMoney);
 
       // 투자 종목 데이터 설정
-      const items = classDetailData.classItems.map(item => ({
-        id: item.itemId,
+      const items = classDetailData.lessonItems.map(item => ({
+        itemId: item.itemId,
+        itemName: item.itemName,
         money: item.money,
       }));
       setClassItems(items);
 
       // 스톡 테이블 데이터 설정
-      const stockItems = classDetailData.classItems.map(item => {
+      const stockItems = classDetailData.lessonItems.map(item => {
         const money = [
           ...item.money,
         ];
 
         // 투자 차수에 맞춰 길이 맞춤
-        const requiredLength = parseInt(classDetailData.maxInvDeg.toString());
+        const requiredLength = parseInt(classDetailData.maxInvRound.toString());
         while (money.length <= requiredLength + 1) {
           money.push(0);
         }
 
         return {
           itemId: item.itemId,
-          itemCode: String(item.itemId),
+          itemCode: item.itemId,
           itemName: item.itemName,
-          money: money,
+          money: item.money,
           stockChecked: false,
         };
       });
@@ -90,8 +95,13 @@ export const ClassEdit = () => {
 
       // ✅ 기사 데이터 Context 초기화
       resetArticles();
-      classDetailData.classArticles.forEach(group => {
-        addArticles(group.invDeg, group.articles); // group.articles는 Article[]
+      classDetailData.lessonArticles.forEach(group => {
+        // BaseArticle[]을 Article[]로 변환
+        const convertedArticles = group.articles.map(baseArticle => ({
+          articleId: String(baseArticle.articleId),
+          title: baseArticle.title,
+        }));
+        addArticles(group.investmentRound, convertedArticles);
       });
     }
   }, [
@@ -171,12 +181,12 @@ export const ClassEdit = () => {
       ...newItems,
     ]);
     const newStockData = newItems.map(item => {
-      const stockItem = stockListData?.items.find(stock => stock.id === item.id);
+      const stockItem = stockListData?.find(stock => stock.itemId === item.itemId);
       return {
-        itemId: item.id,
-        itemCode: String(item.id),
-        itemName: stockItem ? stockItem.name : `Item ${item.id}`,
-        money: item.money,
+        itemId: item.itemId,
+        itemCode: item.itemId,
+        itemName: stockItem ? stockItem.itemName : `Item ${item.itemId}`,
+        money: item.money || [],
         stockChecked: false,
       };
     });
@@ -187,14 +197,14 @@ export const ClassEdit = () => {
   };
 
   const onDeleteItems = (itemIds: number[]) => {
-    setClassItems(classItems.filter(item => !itemIds.includes(item.id)));
+    setClassItems(classItems.filter(item => !itemIds.includes(item.itemId)));
     setStockData(stockData.filter(item => !itemIds.includes(item.itemId)));
   };
 
   const handleUpdateItemPrice = (itemId: number, levelIndex: number, value: number | null) => {
     setClassItems(items =>
       items.map(item =>
-        item.id === itemId
+        item.itemId === itemId
           ? {
             ...item,
             money: Object.assign(
@@ -255,10 +265,10 @@ export const ClassEdit = () => {
     });
 
     const classData: ClassData = {
-      className,
-      classDeg: parseInt(classDeg),
+      lessonName: className,
+      lessonRound: parseInt(classDeg),
       baseMoney,
-      classItems: processedClassItems.map(item => {
+      lessonItems: processedClassItems.map(item => {
         const moneyForRequest = [
           ...item.money.slice(0, parseInt(classDeg) + 2),
         ];
@@ -266,14 +276,14 @@ export const ClassEdit = () => {
           moneyForRequest.push(0);
         }
         return {
-          id: item.id,
+          itemId: item.itemId,
           money: moneyForRequest,
         };
       }),
-      // ✅ Context에서 가져온 기사 데이터 사용
-      classArticles: classArticles.map(group => ({
-        invDeg: group.invDeg,
-        articles: group.articles,
+      // ✅ Context에서 가져온 기사 데이터 사용 (API 요청 형태로 변환)
+      lessonArticles: classArticles.map(group => ({
+        investmentRound: group.invDeg,
+        articles: group.articles.map(article => article.articleId), // Article[]에서 ID만 추출
       })),
     };
 
@@ -289,19 +299,10 @@ export const ClassEdit = () => {
   const articleTableData = useMemo(
     () =>
       classArticles.map(group => ({
-        invDeg: group.invDeg,
-        articles: group.articles.map(id => {
-          const article = articleListData?.article.find(a => a.id === id);
-          return {
-            id,
-            title: article ? article.title : `기사 ID: ${id}`,
-          };
-        }),
+        investmentRound: group.invDeg,
+        articles: group.articles, // 이미 Article[] 형태
       })),
-    [
-      classArticles,
-      articleListData,
-    ],
+    [classArticles],
   );
 
   if (isLoading) return <FullPageLoader />;

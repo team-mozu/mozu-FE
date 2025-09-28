@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
-import { useAddStock } from "@/entities/stock/api";
+import { useCreateStock } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";
 import { useForm, usePriceFormatter } from "@/shared/lib/hooks";
 
@@ -62,19 +62,19 @@ export const StockManagementAddPage = () => {
     },
   );
 
-  const { mutate: apiData } = useAddStock();
+  const { mutate: apiData } = useCreateStock();
 
   const addClick = () => {
     apiData({
-      name: state.name,
-      info: state.info,
-      logo: state.logo || "",
+      itemName: state.name,
+      itemInfo: state.info,
+      itemLogo: state.logo || "",
       money: Number(state.money.replace(/,/g, "")),
       debt: Number(state.debt.replace(/,/g, "")),
       capital: Number(state.capital.replace(/,/g, "")),
       profit: Number(state.profit.replace(/,/g, "")),
-      profitOG: Number(state.profitOG.replace(/,/g, "")),
-      profitBen: Number(state.profitBen.replace(/,/g, "")),
+      profitOg: Number(state.profitOG.replace(/,/g, "")),
+      profitBenefit: Number(state.profitBen.replace(/,/g, "")),
       netProfit: Number(state.netProfit.replace(/,/g, "")),
     });
   };

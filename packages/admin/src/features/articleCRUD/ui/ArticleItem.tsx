@@ -14,7 +14,7 @@ interface IArticleItemType {
 
 export const ArticleItem = ({ isHeader = false, title1, title2, onChange, checked, id }: IArticleItemType) => {
   return (
-    <TableContent isHeader={isHeader}>
+    <TableContent onClick={!isHeader ? onChange : undefined} isHeader={isHeader}>
       <ContentContainer>
         <CheckBox
           id={id}
@@ -35,7 +35,7 @@ const Title1 = styled.div<{
 }>`
   font: ${({ isHeader }) => (isHeader ? font.b1 : font.b2)};
   color: ${color.black};
-  width: 580px;
+  width: 560px;
 `;
 
 const Title2 = styled(Title1)`
@@ -49,17 +49,30 @@ const TableContent = styled.div<{
   height: 48px;
   display: flex;
   align-items: center;
-  padding-left: 16px;
+  padding-left: 46px;
   background-color: ${({ isHeader }) => (isHeader ? color.zinc[50] : "transparent")};
   border-bottom: 1px solid
     ${({ isHeader }) => (isHeader ? color.zinc[200] : "transparent")};
   border-top: 1px solid
     ${({ isHeader }) => (isHeader ? color.zinc[200] : "transparent")};
+
+  ${({ isHeader }) =>
+    !isHeader &&
+    `
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: ${color.zinc[50]};
+    }
+  `}
 `;
 
 const TitleContainer = styled.div`
   display: flex;
   gap: 24px;
+  cursor: pointer;
+  flex: 1;
 `;
 
 const ContentContainer = styled.div`

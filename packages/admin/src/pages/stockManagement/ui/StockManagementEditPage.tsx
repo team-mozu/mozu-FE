@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router";
-import { useEditStock, useGetStockDetail } from "@/entities/stock/api";
+import { useParams } from "react-router";
+import { useGetStockDetail, useStockUpdate } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";
 import { useForm, usePriceFormatter } from "@/shared/lib/hooks";
 
@@ -22,8 +22,7 @@ type FormState = {
 
 export const StockManagementEditPage = () => {
   const { id } = useParams();
-  const stockId = id ? parseInt(id) : null;
-  const navigate = useNavigate();
+  const stockId = Number(id);
 
   const { state, onChangeInputValue, setState } = useForm<FormState>({
     name: "",
@@ -38,8 +37,8 @@ export const StockManagementEditPage = () => {
     netProfit: "",
   });
 
-  const { mutate: apiData } = useEditStock();
-  const { data: stockData, isLoading } = useGetStockDetail(stockId);
+  const { mutate: stockUpdate } = useStockUpdate(id);
+  const { data: stockData } = useGetStockDetail(stockId);
   const handlePriceChange = (index: number, value: number) => {
     const fieldMap = [
       "money",
@@ -59,17 +58,17 @@ export const StockManagementEditPage = () => {
   const { priceChangeHandler } = usePriceFormatter([], handlePriceChange); // 수정
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
-    if (stockData) {
+    if (id && stockData) {
       const newState: FormState = {
-        name: stockData.name || "",
-        info: stockData.info || "",
-        logo: stockData.logo || null,
+        name: stockData.itemName || "",
+        info: stockData.itemInfo || "",
+        logo: stockData.itemLogo || null,
         money: String(stockData.money || 0),
         debt: String(stockData.debt || 0),
         capital: String(stockData.capital || 0),
         profit: String(stockData.profit || 0),
-        profitOG: String(stockData.profitOG || 0),
-        profitBen: String(stockData.profitBen || 0),
+        profitOG: String(stockData.profitOg || 0),
+        profitBen: String(stockData.profitBenefit || 0),
         netProfit: String(stockData.netProfit || 0),
       };
       setState(newState);
@@ -79,19 +78,20 @@ export const StockManagementEditPage = () => {
   ]);
 
   const editClick = () => {
-    apiData({
-      name: state.name,
-      info: state.info,
-      logo: state.logo,
-      money: Number(state.money),
-      debt: Number(state.debt),
-      capital: Number(state.capital),
-      profit: Number(state.profit),
-      profitOG: Number(state.profitOG),
-      profitBen: Number(state.profitBen),
-      netProfit: Number(state.netProfit),
-      stockId: stockId ?? 0,
-    });
+    if (id) {
+      stockUpdate({
+        itemName: state.name,
+        itemInfo: state.info,
+        itemLogo: state.logo,
+        money: Number(state.money),
+        debt: Number(state.debt),
+        capital: Number(state.capital),
+        profit: Number(state.profit),
+        profitOg: Number(state.profitOG),
+        profitBenefit: Number(state.profitBen),
+        netProfit: Number(state.netProfit),
+      });
+    }
   };
 
   return (

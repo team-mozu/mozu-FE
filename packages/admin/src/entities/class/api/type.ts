@@ -1,89 +1,111 @@
-// /class
-export type ClassResponse = {
-  classes: ClassItem[];
+// 공통 타입 정의
+type BaseLessonItem = {
+  itemId: number;
+  itemName: string;
+  money: number[];
 };
 
-export type ClassItem = {
-  id: number;
+type BaseArticle = {
+  id: string;
+  articleName: string;
+  articleDesc: string;
+  articleImg: string | null;
+  createdAt: string;
+  isDeleted: boolean;
+};
+
+// --------------------
+// GET / LIST RESPONSE
+// --------------------
+export type LessonGetListResponse = {
+  lessons: LessonSummary[];
+};
+
+type LessonSummary = {
+  id: string;
   name: string;
-  starYN: boolean;
+  isStarred: boolean;
   date: string;
 };
 
-// /class/:id
-export type ClassDetailResponse = {
-  id: number;
+export type LessonGetDetailResponse = {
+  id: string;
   name: string;
-  maxInvDeg: number;
-  curInvDeg: number | null;
+  maxInvRound: number;
+  curInvRound: number | null;
   baseMoney: number;
-  classNum: number | null;
-  progressYN: boolean;
-  starYN: boolean;
+  lessonNum: string;
+  isInProgress: boolean;
+  isStarred: boolean;
+  isDeleted: boolean;
   createdAt: string;
-  deleteYN: boolean;
-  classArticles: ClassArticle[];
-  classItems: ClassStock[];
+  lessonItems: LessonItemDetail[];
+  lessonArticles: LessonArticleDetail[];
 };
 
-export type ClassArticle = {
-  invDeg: number;
-  articles: Article[];
+type LessonItemDetail = BaseLessonItem;
+
+type LessonArticleDetail = {
+  investmentRound: number;
+  articles: LessonArticles[];
 };
 
-export type ClassStock = {
-  itemId: number;
-  itemName: string;
-  money: number[];
-};
-
-export type Article = {
-  id: number;
+type LessonArticles = {
+  articleId: string;
   title: string;
 };
 
-// class/create
-export type ClassCreateRequest = {
-  className: string;
+// --------------------
+// CREATE REQUEST / RESPONSE
+// --------------------
+export type LessonCreateRequest = {
+  lessonName: string;
   baseMoney: number;
-  classDeg: number;
-  classItems: ClassItemRequest[];
-  classArticles: ClassArticleRequest[];
+  lessonRound: number;
+  lessonItems: LessonItemRequest[];
+  lessonArticles: LessonArticleRequest[];
 };
 
-export type ClassItemRequest = {
-  id: number;
+type LessonItemRequest = {
+  itemId: number;
   money: number[];
 };
 
-export type ClassArticleRequest = {
-  invDeg: number;
-  articles: number[];
+type LessonArticleRequest = {
+  investmentRound: number;
+  articles: string[];
 };
 
-// class/edit
+export type LessonCreateResponse = LessonGetDetailResponse;
 
-export type ClassData = {
-  className: string;
-  classDeg: number;
+// --------------------
+// EDIT REQUEST
+// --------------------
+export type LessonEditDetailRequest = {
+  lessonName: string;
   baseMoney: number;
-  classItems: {
-    id: number;
-    money: number[];
-  }[];
-  classArticles: {
-    invDeg: number;
-    articles: number[];
-  }[];
+  lessonRound: number;
+  lessonItems: LessonItemRequest[];
+  lessonArticles: LessonArticleRequest[];
 };
 
-export type TeamDealsResponse = {
-  id: number;
-  itemId: number;
-  itemName: string;
-  itemMoney: number;
-  orderCount: number;
-  totalMoney: number;
-  orderType: string;
-  invDeg: number;
+export type LessonEditResponse = LessonGetDetailResponse;
+
+// --------------------
+// START RESPONSE
+// --------------------
+export type LessonStartResponse = {
+  lessonCode: string;
+};
+
+// TODO: sse API..
+
+// --------------------
+// ITEM / ARTICLE LIST
+// --------------------
+export type LessonGetItemListResponse = BaseLessonItem;
+
+export type LessonGetArticleListResponse = {
+  investmentRound: number;
+  articles: BaseArticle[];
 };

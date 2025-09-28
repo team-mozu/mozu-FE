@@ -102,6 +102,30 @@ const ParticipationAllContainer = styled.div`
   background-color: ${color.white};
   display: flex;
   align-items: center;
+
+  /* 데스크탑 반응형 - 컨테이너 크기 조정 */
+  @media (max-width: 1440px) {
+    width: 920px;
+    height: 380px;
+  }
+
+  @media (max-width: 1200px) {
+    width: 840px;
+    height: 360px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 760px;
+    height: 340px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 900px) {
+    width: 680px;
+    height: 320px;
+    border-radius: 8px;
+  }
 `;
 const TeamTitle = styled.div`
   font: ${font.h4};
@@ -128,6 +152,32 @@ const TeamContentContainer = styled.div`
   align-items: center;
   padding: 8px;
   overflow: scroll;
+
+  /* 데스크탑 반응형 - 팀 콘텐츠 영역 조정 */
+  @media (max-width: 1440px) {
+    width: 536px;
+    height: 364px;
+  }
+
+  @media (max-width: 1200px) {
+    width: 488px;
+    height: 344px;
+    border-radius: 6px;
+    padding: 6px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 440px;
+    height: 324px;
+    padding: 6px;
+  }
+
+  @media (max-width: 900px) {
+    width: 392px;
+    height: 304px;
+    border-radius: 4px;
+    padding: 4px;
+  }
 `;
 const CodeContainer = styled.div`
   position: relative;
@@ -136,6 +186,27 @@ const CodeContainer = styled.div`
   align-items: center;
   width: 400px;
   height: 400px;
+
+  /* 데스크탑 반응형 - 코드 컨테이너 조정 */
+  @media (max-width: 1440px) {
+    width: 368px;
+    height: 380px;
+  }
+
+  @media (max-width: 1200px) {
+    width: 336px;
+    height: 360px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 304px;
+    height: 340px;
+  }
+
+  @media (max-width: 900px) {
+    width: 272px;
+    height: 320px;
+  }
 `;
 const CodeSubContent = styled.div`
   display: flex;
@@ -146,6 +217,19 @@ const CodeSubContent = styled.div`
 const CodeTitle = styled.div`
   font: ${font.t2};
   color: ${color.black};
+
+  /* 데스크탑 반응형 - 폰트 크기 조정 */
+  @media (max-width: 1200px) {
+    font: ${font.t3};
+  }
+
+  @media (max-width: 1024px) {
+    font: ${font.t4};
+  }
+
+  @media (max-width: 900px) {
+    font: ${font.b1};
+  }
 `;
 const Code = styled.div`
   cursor: pointer;
@@ -155,6 +239,19 @@ const Code = styled.div`
   &:hover {
     text-decoration: underline;
   }
+
+  /* 데스크탑 반응형 - 코드 폰트 크기 조정 */
+  @media (max-width: 1200px) {
+    font: ${font.h2};
+  }
+
+  @media (max-width: 1024px) {
+    font: ${font.h3};
+  }
+
+  @media (max-width: 900px) {
+    font: ${font.h4};
+  }
 `;
 const CodeSubTitle = styled.div`
   font: ${font.l1};
@@ -162,4 +259,29 @@ const CodeSubTitle = styled.div`
   position: absolute;
   bottom: 24px;
   left: 95px;
+
+  /* 데스크탑 반응형 - 서브타이틀 조정 */
+  @media (max-width: 1440px) {
+    bottom: 22px;
+    left: 87px;
+    font: ${font.l1};
+  }
+
+  @media (max-width: 1200px) {
+    bottom: 20px;
+    left: 79px;
+    font: ${font.l2};
+  }
+
+  @media (max-width: 1024px) {
+    bottom: 18px;
+    left: 71px;
+    font: ${font.l2};
+  }
+
+  @media (max-width: 900px) {
+    bottom: 16px;
+    left: 63px;
+    font: ${font.l2};
+  }
 `;

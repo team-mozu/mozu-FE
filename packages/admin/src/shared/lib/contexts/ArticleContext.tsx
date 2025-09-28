@@ -1,17 +1,30 @@
 import { createContext, type ReactNode, useContext, useState } from "react";
-import type { Article } from "@/apis/class/type";
+
+export interface Article {
+  id: string;
+  articleName: string;
+  articleDesc: string;
+  articleImg: string | null;
+  createdAt: string;
+  isDeleted: boolean;
+}
 
 // 한 차수(invDeg)별로 선택된 기사 그룹
-interface ClassArticleGroup {
+export interface ClassArticleGroup {
   invDeg: number;
-  articles: number[]; // 기사 ID 배열
+  articles: LessonArticle[]; // 기사 ID 배열
+}
+
+interface LessonArticle {
+  articleId: string;
+  title: string;
 }
 
 // Context에서 제공할 타입 정의
 interface ArticleContextType {
   classArticles: ClassArticleGroup[];
-  addArticles: (invDeg: number, newArticles: Article[]) => void;
-  deleteArticles: (articleIds: number[], invDeg: number) => void;
+  addArticles: (invDeg: number, newArticles: LessonArticle[]) => void;
+  deleteArticles: (articleIds: string[], invDeg: number) => void;
   resetArticles: () => void; // 선택된 기사 초기화 함수
 }
 
@@ -23,7 +36,7 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
   const [classArticles, setClassArticles] = useState<ClassArticleGroup[]>([]);
 
   // 기사 추가
-  const addArticles = (invDeg: number, newArticles: Article[]) => {
+  const addArticles = (invDeg: number, newArticles: LessonArticle[]) => {
     setClassArticles(prev => {
       const group = prev.find(g => g.invDeg === invDeg);
       if (group) {
@@ -31,7 +44,7 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
           g.invDeg === invDeg
             ? {
               ...g,
-              articles: [...g.articles, ...newArticles.map(a => a.id)],
+              articles: [...g.articles, ...newArticles],
             }
             : g
         );
@@ -40,18 +53,18 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
         ...prev,
         {
           invDeg,
-          articles: newArticles.map(a => a.id),
+          articles: newArticles,
         },
       ];
     });
   };
 
   // 기사 삭제
-  const deleteArticles = (articleIds: number[], invDeg: number) => {
+  const deleteArticles = (articleIds: string[], invDeg: number) => {
     setClassArticles(prev =>
       prev.map(g =>
         g.invDeg === invDeg
-          ? { ...g, articles: g.articles.filter(id => !articleIds.includes(id)) }
+          ? { ...g, articles: g.articles.filter(article => !articleIds.includes(article.articleId)) }
           : g
       )
     );

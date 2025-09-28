@@ -3,7 +3,7 @@ import { color, font } from "@mozu/design-token";
 import { Input, LogoWithText, Toast } from "@mozu/ui";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useAdminLogin } from "@/entities/user/api";
+import { useAdminLogin } from "@/entities/organ";
 import { isTruthValues } from "@/shared/lib";
 import { useForm } from "@/shared/lib/hooks";
 

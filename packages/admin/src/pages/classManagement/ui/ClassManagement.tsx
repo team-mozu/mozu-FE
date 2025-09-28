@@ -1,10 +1,12 @@
 import styled from "@emotion/styled";
-import { color } from "@mozu/design-token";
+import { color, font } from "@mozu/design-token";
 import { Button, Del, Modal, PageTitle, PostTitle } from "@mozu/ui";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { type ClassItem, useClassDelete, useClassStar, useGetClassList } from "@/apis";
-import { ClassPost, FullPageLoader, SkeletonClassPost } from "@/components";
+import { useDeleteClass, useGetClassList, useStarClass } from "@/entities/class";
+import type { LessonGetListResponse } from "@/entities/class/api/type";
+import { ClassPost, SkeletonClassPost } from "@/features/classCRUD";
+import { FullPageLoader } from "@/shared/ui";
 
 export const ClassManagement = () => {
   const { data, isLoading: apiLoading } = useGetClassList();
@@ -24,12 +26,14 @@ export const ClassManagement = () => {
 
   const navigate = useNavigate();
   const [isModal, setIsModal] = useState(false);
-  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+  const [selectedClassId, setSelectedClassId] = useState<string>("");
 
   // API 데이터 구조에 맞게 가공
-  const classData: ClassItem[] = data?.classes || [];
-  const favorites = classData.filter(item => item.starYN);
-  const common = classData.filter(item => !item.starYN);
+  const classData: LessonGetListResponse = data ?? {
+    lessons: [],
+  };
+  const favorites = classData.lessons.filter(item => item.isStarred);
+  const common = classData.lessons.filter(item => !item.isStarred);
 
   // 즐겨찾기 여부를 저장할 state
   const [, setIsClickFavorites] = useState<boolean[]>([]);
@@ -45,52 +49,58 @@ export const ClassManagement = () => {
     data,
   ]);
 
-  const openDeleteModal = useCallback((id: number) => {
+  const openDeleteModal = useCallback((id: string) => {
     setSelectedClassId(id);
     setIsModal(true);
-  },[]);
+  }, []);
 
   //삭제 api 불러옴
-  const { mutate: delClassApi, isPending } = useClassDelete(() => setIsModal(false));
+  const { mutate: delClassApi, isPending } = useDeleteClass(selectedClassId, () => setIsModal(false));
 
   //삭제하기
   const handleDelete = useCallback(() => {
     if (selectedClassId !== null) {
-      delClassApi(selectedClassId);
+      delClassApi();
     }
-  },[selectedClassId,delClassApi]);
+  }, [
+    selectedClassId,
+    delClassApi,
+  ]);
 
-  const { mutate: apiClassStar } = useClassStar();
+  const { mutate: apiClassStar } = useStarClass(selectedClassId);
 
-  const toggleFavorite = useCallback((() => {
-    let isPending = false;
+  const toggleFavorite = useCallback(
+    (() => {
+      let isPending = false;
 
-    return async (index: number, type: "favorites" | "common", id?: number) => {
-      if (isPending || id === undefined) return;
+      return async (index: number, type: "favorites" | "common", id?: string) => {
+        if (isPending || id === undefined) return;
 
-      isPending = true;
-      setIsStarLoading(true);
+        isPending = true;
+        setIsStarLoading(true);
 
-      try {
-        const updateList = type === "favorites" ? setIsClickFavorites : setIsClickCommon;
+        try {
+          const updateList = type === "favorites" ? setIsClickFavorites : setIsClickCommon;
 
-        updateList(prev => {
-          const updated = [
-            ...prev,
-          ];
-          updated[index] = !updated[index];
-          return updated;
-        });
+          updateList(prev => {
+            const updated = [
+              ...prev,
+            ];
+            updated[index] = !updated[index];
+            return updated;
+          });
 
-        await apiClassStar(id);
-      } catch (error) {
-        console.error("즐겨찾기 요청 실패", error);
-      } finally {
-        isPending = false;
-        setIsStarLoading(false);
-      }
-    };
-  })(),[]);
+          await apiClassStar();
+        } catch (error) {
+          console.error("즐겨찾기 요청 실패", error);
+        } finally {
+          isPending = false;
+          setIsStarLoading(false);
+        }
+      };
+    })(),
+    [],
+  );
 
   if (apiLoading) return <FullPageLoader />;
 
@@ -101,7 +111,12 @@ export const ClassManagement = () => {
           mainTitle={"이 수업을 삭제하시겠습니까?"}
           subTitle={"삭제하면 복구가 불가능합니다."}
           onSuccessClick={handleDelete}
-          icon={<Del size={24} color={color.red[400]} />}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
           isOpen={isModal}
           setIsOpen={setIsModal}
           isPending={isPending}
@@ -126,64 +141,84 @@ export const ClassManagement = () => {
           </Button>
         </TitleContainer>
         <ContentContainer>
-          <PostAllContainer>
-            {favorites.length > 0 && (
+          {classData.lessons.length === 0 ? (
+            <EmptyStateContainer>
+              <EmptyStateContent>
+                <EmptyStateText>생성한 수업이 없습니다</EmptyStateText>
+                <EmptyStateSubText>첫 번째 수업을 만들어보세요</EmptyStateSubText>
+                <EmptyStateButton
+                  type="plusImg"
+                  backgroundColor={color.orange[500]}
+                  color={color.white}
+                  isIcon
+                  iconSize={24}
+                  iconColor={color.white}
+                  onClick={() => navigate("create")}
+                  hoverBackgroundColor={color.orange[600]}>
+                  수업 만들러 가기
+                </EmptyStateButton>
+              </EmptyStateContent>
+            </EmptyStateContainer>
+          ) : (
+            <PostAllContainer>
+              {favorites.length > 0 && (
+                <PostContainer>
+                  <PostTitle
+                    title="즐겨찾기"
+                    count={favorites.length}
+                  />
+                  <PostContents>
+                    {isLoading
+                      ? favorites.map((_, index) => (
+                        <SkeletonClassPost
+                          key={index}
+                          title={""}
+                          creationDate={""}
+                        />
+                      ))
+                      : favorites.map((item, index) => (
+                        <ClassPost
+                          key={item.id}
+                          title={item.name}
+                          creationDate={item.date}
+                          isClick={item.isStarred}
+                          starOnClick={() => toggleFavorite(index, "favorites", item.id)}
+                          delClick={() => openDeleteModal(item.id)}
+                          onClick={() => navigate(`${item.id}`)}
+                        />
+                      ))}
+                  </PostContents>
+                </PostContainer>
+              )}
               <PostContainer>
                 <PostTitle
-                  title="즐겨찾기"
-                  count={favorites.length}
+                  title="전체"
+                  count={common.length}
                 />
                 <PostContents>
                   {isLoading
-                    ? favorites.map((_, index) => (
+                    ? common.map((_, index) => (
                       <SkeletonClassPost
                         key={index}
                         title={""}
                         creationDate={""}
                       />
                     ))
-                    : favorites.map((item, index) => (
+                    : common.map((item, index) => (
                       <ClassPost
                         key={item.id}
                         title={item.name}
                         creationDate={item.date}
-                        isClick={item.starYN}
-                        starOnClick={() => toggleFavorite(index, "favorites", item.id)}
+                        isClick={isClickCommon[index]}
+                        starOnClick={() => toggleFavorite(index, "common", item.id)}
                         delClick={() => openDeleteModal(item.id)}
                         onClick={() => navigate(`${item.id}`)}
                       />
                     ))}
                 </PostContents>
               </PostContainer>
-            )}
-            <PostContainer>
-              <PostTitle
-                title="전체"
-                count={common.length}
-              />
-              <PostContents>
-                {isLoading
-                  ? common.map((_, index) => (
-                    <SkeletonClassPost
-                      key={index}
-                      title={""}
-                      creationDate={""}
-                    />
-                  ))
-                  : common.map((item, index) => (
-                    <ClassPost
-                      key={item.id}
-                      title={item.name}
-                      creationDate={item.date}
-                      isClick={isClickCommon[index]}
-                      starOnClick={() => toggleFavorite(index, "common", item.id)}
-                      delClick={() => openDeleteModal(item.id)}
-                      onClick={() => navigate(`${item.id}`)}
-                    />
-                  ))}
-              </PostContents>
-            </PostContainer>
-          </PostAllContainer>
+            </PostAllContainer>
+          )}
         </ContentContainer>
       </ClassManagementContent>
     </>
@@ -238,4 +273,37 @@ const PostContents = styled.div`
   flex-wrap: wrap;
   display: flex;
   gap: 1.25rem;
+`;
+
+const EmptyStateContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+`;
+
+const EmptyStateContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+`;
+
+const EmptyStateText = styled.div`
+  font: ${font.t1};
+  color: ${color.zinc[800]};
+  text-align: center;
+`;
+
+const EmptyStateSubText = styled.div`
+  font: ${font.b1};
+  color: ${color.zinc[500]};
+  text-align: center;
+  margin-bottom: 8px;
+`;
+
+const EmptyStateButton = styled(Button)`
+  margin-top: 8px;
 `;

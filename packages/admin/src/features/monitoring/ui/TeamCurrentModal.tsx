@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useCallback, useEffect, useRef } from "react";
-import { useGetTeamHoldItems } from "@/entities/monitoring/api";
-import { HoldStockTable } from "@/shared/ui";
-// import { useMyHoldings } from "@/apis";
+import { useGetHoldStock } from "@/entities/monitoring";
+import { HoldStockTable } from "./HoldStockTable";
 
 export const TeamCurrentModal = ({
   isOpen,
@@ -12,7 +11,7 @@ export const TeamCurrentModal = ({
 }: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  id: number;
+  id: string;
 }) => {
   const backgroundRef = useRef<HTMLDivElement>(null);
 
@@ -42,9 +41,9 @@ export const TeamCurrentModal = ({
     isOpen,
   ]);
 
-  const { data: holdItems } = useGetTeamHoldItems(id);
+  const { data: holdItems } = useGetHoldStock(id);
 
-  const totalValuation = holdItems?.reduce((sum, item) => sum + item.valMoney, 0) ?? 0;
+  const totalValuation = holdItems?.reduce((sum, item) => sum + item.valuationMoney, 0) ?? 0;
 
   return (
     isOpen && (

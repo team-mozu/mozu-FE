@@ -11,7 +11,7 @@ export interface TableCellData {
 }
 
 export interface TeamTableRow {
-  teamId: number;
+  teamId: string;
   teamName: string;
   schoolName: string;
   isCompleted: boolean;

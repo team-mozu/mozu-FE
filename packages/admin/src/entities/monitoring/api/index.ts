@@ -1,51 +1,24 @@
 import { instance } from "@mozu/util-config";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type { HoldItem, TeamTradeStatus } from "./type";
+import type { TeamCurrentGetResponse, TeamHoldItemGetResponse } from "./type";
 
-const router = "/class";
+const router = "/team";
 
-export const useClassStop = (onSuccessCallback?: () => void) => {
-  return useMutation({
-    mutationFn: async (
-      id: number,
-    ): Promise<{
-      id: number;
-    }> => {
-      const response = await instance.post<{
-        id: number;
-      }>(`${router}/stop/${id}`);
-      return response.data;
-    },
-    onSuccess: () => {
-      if (onSuccessCallback) {
-        onSuccessCallback();
-      }
-    },
-  });
+/**
+ * 현재 진행 중인 수업의 모든 팀 정보를 조회하는 API 함수입니다.
+ * @param {string} id - 조회할 팀의 ID (UUID)
+ * @returns {Promise<TeamCurrentGetResponse[]>} 현재 수업의 팀 목록 데이터
+ */
+export const getCurrent = async (id: string): Promise<TeamCurrentGetResponse[]> => {
+  const { data } = await instance.get(`${router}/${id}`);
+  return data;
 };
 
-export const useGetTeamTradeStatus = (id: number) => {
-  return useQuery({
-    queryKey: [
-      "getTeamTradeStatus",
-      id,
-    ],
-    queryFn: async () => {
-      const { data } = await instance.get<TeamTradeStatus[]>(`/team/${id}`);
-      return data;
-    },
-  });
-};
-
-export const useGetTeamHoldItems = (id: number) => {
-  return useQuery({
-    queryKey: [
-      "getTeamHoldItems",
-      id,
-    ],
-    queryFn: async () => {
-      const { data } = await instance.get<HoldItem[]>(`/team/${id}/holdItems`);
-      return data;
-    },
-  });
+/**
+ * 특정 팀이 보유하고 있는 투자 종목들을 조회하는 API 함수입니다.
+ * @param {string} id - 조회할 팀의 ID (UUID)
+ * @returns {Promise<TeamHoldItemGetResponse[]>} 팀이 보유한 종목 목록 데이터 (종목명, 수량, 가치 등)
+ */
+export const getHoldItem = async (id: string): Promise<TeamHoldItemGetResponse[]> => {
+  const { data } = await instance.get(`${router}/${id}/holditem`);
+  return data;
 };

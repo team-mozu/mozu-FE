@@ -1,242 +1,120 @@
-import { Toast } from "@mozu/ui";
 import { instance } from "@mozu/util-config";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router";
 import type {
-  ClassCreateRequest,
-  ClassData,
-  ClassDetailResponse,
-  ClassResponse,
-  TeamDealsResponse,
-} from "@/shared/api/class/type";
+  LessonCreateRequest,
+  LessonCreateResponse,
+  LessonEditDetailRequest,
+  LessonEditResponse,
+  LessonGetArticleListResponse,
+  LessonGetDetailResponse,
+  LessonGetItemListResponse,
+  LessonGetListResponse,
+  LessonStartResponse,
+} from "./type";
 
-const router = "/class";
+const router = "/lesson";
 
-export const useGetClassList = () => {
-  return useQuery({
-    queryKey: [
-      "getClass",
-    ],
-    queryFn: async () => {
-      const { data } = await instance.get<ClassResponse>(`${router}`);
-      return data;
-    },
-  });
+/**
+ * 수업 목록을 조회하는 API 함수입니다.
+ * @returns {Promise<LessonGetListResponse>} 수업 목록 데이터
+ */
+export const getLessonList = async (): Promise<LessonGetListResponse> => {
+  const { data } = await instance.get(router);
+  return data;
 };
 
-export const useGetClassDetail = (id: number) => {
-  return useQuery({
-    queryKey: [
-      "getClass",
-      id,
-    ],
-    queryFn: async () => {
-      const { data } = await instance.get<ClassDetailResponse>(`${router}/${id}`);
-      return data;
-    },
-  });
+/**
+ * 새로운 수업을 생성하는 API 함수입니다.
+ * @param {LessonCreateRequest} payload - 생성할 수업의 데이터 (제목, 설명, 설정 등)
+ * @returns {Promise<LessonCreateResponse>} 생성된 수업 정보
+ */
+export const createLesson = async (payload: LessonCreateRequest): Promise<LessonCreateResponse> => {
+  const { data } = await instance.post(router, payload);
+  return data;
 };
 
-export const useClassCreate = () => {
-  const navigate = useNavigate();
-  return useMutation({
-    mutationFn: async (
-      data: ClassCreateRequest,
-    ): Promise<{
-      id: number;
-    }> => {
-      const response = await instance.post<{
-        id: number;
-      }>(`${router}`, data);
-      return response.data;
-    },
-    onSuccess: data => {
-      Toast("성공적으로 생성되었습니다.", {
-        type: "success",
-      });
-      navigate(`/class-management/${data.id}`);
-    },
-  });
+/**
+ * 특정 수업의 상세 정보를 조회하는 API 함수입니다.
+ * @param {string} id - 조회할 수업의 ID (UUID)
+ * @returns {Promise<LessonGetDetailResponse>} 수업 상세 정보 (제목, 설명, 설정, 상태 등)
+ */
+export const getLessonDetail = async (id: string): Promise<LessonGetDetailResponse> => {
+  const { data } = await instance.get(`${router}/${id}`);
+  return data;
 };
 
-export const useClassUpdate = (id: string) => {
-  return useMutation({
-    mutationFn: async () => {
-      const { data } = await instance.post(`${router}/update/${id}`, FormData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return data;
-    },
-    onSuccess: data => {
-      Toast("성공적으로 수정되었습니다.", {
-        type: "success",
-      });
-    },
-  });
+/**
+ * 수업을 삭제하는 API 함수입니다.
+ * @param {string} id - 삭제할 수업의 ID (UUID)
+ * @returns {Promise<void>} 삭제 완료 응답
+ */
+export const deleteLesson = async (id: string) => {
+  return await instance.delete(`${router}/${id}`);
 };
 
-export const useClassStar = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: number) => await instance.post(`${router}/star/${id}`),
-    onSuccess: (_, id) => {
-      queryClient.setQueryData(
-        [
-          "getClass",
-        ],
-        (oldData: ClassResponse | undefined) => {
-          if (!oldData) return oldData;
-          return {
-            classes: oldData.classes.map(item =>
-              item.id === id
-                ? {
-                    ...item,
-                    starYN: !item.starYN,
-                  }
-                : item,
-            ),
-          };
-        },
-      );
-    },
-    onError: () => {
-      Toast("즐겨찾기 변경에 실패 했습니다.", {
-        type: "error",
-      });
-    },
-  });
+/**
+ * 기존 수업의 정보를 수정하는 API 함수입니다.
+ * @param {string} id - 수정할 수업의 ID (UUID)
+ * @param {LessonEditDetailRequest} payload - 수정할 수업 데이터 (제목, 설명, 설정 등)
+ * @returns {Promise<LessonEditResponse>} 수정된 수업 정보
+ */
+export const updateLesson = async (id: string, payload: LessonEditDetailRequest): Promise<LessonEditResponse> => {
+  const { data } = await instance.patch(`${router}/${id}`, payload);
+  return data;
 };
 
-export const useClassDelete = (onSuccessCallback?: () => void) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: number) => {
-      return await instance.delete(`${router}/${id}`);
-    },
-    onSuccess: () => {
-      Toast("삭제에 성공했습니다.", {
-        type: "success",
-      });
-      if (onSuccessCallback) {
-        onSuccessCallback(); // 모달 닫기 실행
-      }
-      queryClient.invalidateQueries({
-        queryKey: [
-          "getClass",
-        ],
-      });
-    },
-    onError: () => {
-      Toast("수업 삭제에 실패했습니다.", {
-        type: "error",
-      });
-    },
-  });
+/**
+ * 수업을 시작하는 API 함수입니다.
+ * @param {string} id - 시작할 수업의 ID (UUID)
+ * @returns {Promise<LessonStartResponse>} 수업 시작 응답 (수업 코드 등)
+ */
+export const startLesson = async (id: string): Promise<LessonStartResponse> => {
+  const { data } = await instance.patch(`${router}/start/${id}`);
+  return data;
 };
 
-export const useClassStart = (id: number) => {
-  const navigate = useNavigate();
-
-  return useMutation({
-    mutationFn: async () => {
-      const { data } = await instance.post<{
-        classCode: string;
-      }>(`${router}/start/${id}`);
-      return data;
-    },
-    onSuccess: data => {
-      localStorage.setItem("inviteCode", data.classCode);
-      Toast("수업을 성공적으로 시작했습니다.", {
-        type: "success",
-      });
-      navigate(`start`);
-      // biome-ignore lint/correctness/noSelfAssign: <임시>
-      window.location.href = window.location.href;
-    },
-    onError: () => {},
-  });
+/**
+ * 수업의 즐겨찾기 상태를 토글하는 API 함수입니다.
+ * @param {string} id - 즐겨찾기를 변경할 수업의 ID (UUID)
+ * @returns {Promise<void>} 즐겨찾기 변경 완료 응답
+ */
+export const toggleStar = async (id?: string) => {
+  return await instance.patch(`${router}/star/${id}`);
 };
 
-export const useNextDegree = (id: number, onSuccessCallback?: () => void) => {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  return useMutation({
-    mutationFn: async () => {
-      await instance.post<{
-        id: number;
-      }>(`${router}/next/${id}`);
-    },
-    onSuccess: () => {
-      Toast(`수업이 진행되었습니다.`, {
-        type: "success",
-      });
-
-      if (onSuccessCallback) {
-        onSuccessCallback();
-      } else {
-        const newPath = pathname.replace(/\/start$/, "/monitoring");
-        navigate(newPath);
-      }
-    },
-    onError: err => {
-      Toast(`수업 진행에 실패했습니다. ${err}`, {
-        type: "error",
-      });
-    },
-  });
+/**
+ * 수업을 다음 차수로 진행하는 API 함수입니다.
+ * @param {string} id - 진행할 수업의 ID (UUID)
+ * @returns {Promise<void>} 수업 진행 완료 응답
+ */
+export const nextDegree = async (id: string) => {
+  return await instance.patch(`${router}/next/${id}`);
 };
 
-export const useEditClass = (classId: number) => {
-  return useMutation({
-    mutationFn: async (payload: ClassData) => {
-      await instance.post(`${router}/${classId}`, payload);
-    },
-    onSuccess: () => {
-      Toast(`수업이 수정되었습니다.`, {
-        type: "success",
-      });
-    },
-    onError: err => {
-      Toast(`수업 수정에 실패했습니다. ${err}`, {
-        type: "error",
-      });
-    },
-  });
+/**
+ * 진행 중인 수업을 종료하는 API 함수입니다.
+ * @param {string} id - 종료할 수업의 ID (UUID)
+ * @returns {Promise<void>} 수업 종료 완료 응답
+ */
+export const endLesson = async (id?: string) => {
+  await instance.patch(`${router}/end/${id}`);
 };
 
-export const useTeamDeals = (teamId: number) => {
-  return useQuery({
-    queryKey: [
-      "teamDeals",
-      teamId,
-    ],
-    queryFn: async () => {
-      const { data } = await instance.get<TeamDealsResponse[]>(`/team/${teamId}`);
-      return data;
-    },
-    enabled: !!teamId,
-  });
+/**
+ * 특정 수업의 종목(투자 아이템) 목록을 조회하는 API 함수입니다.
+ * @param {string} id - 조회할 수업의 ID (UUID)
+ * @returns {Promise<LessonGetItemListResponse>} 수업의 종목 목록 데이터
+ */
+export const getLessonItemList = async (id: string): Promise<LessonGetItemListResponse> => {
+  const { data } = await instance.get(`${router}/items/${id}`);
+  return data;
 };
 
-export const useClassStop = (onSuccessCallback?: () => void) => {
-  return useMutation({
-    mutationFn: async (
-      id: number,
-    ): Promise<{
-      id: number;
-    }> => {
-      const response = await instance.post<{
-        id: number;
-      }>(`${router}/stop/${id}`);
-      return response.data;
-    },
-    onSuccess: () => {
-      if (onSuccessCallback) {
-        onSuccessCallback();
-      }
-    },
-  });
+/**
+ * 특정 수업의 기사 목록을 조회하는 API 함수입니다.
+ * @param {string} id - 조회할 수업의 ID (UUID)
+ * @returns {Promise<LessonGetArticleListResponse>} 수업의 기사 목록 데이터
+ */
+export const getLessonArticleList = async (id: string): Promise<LessonGetArticleListResponse> => {
+  const { data } = await instance.get(`${router}/articles/${id}`);
+  return data;
 };

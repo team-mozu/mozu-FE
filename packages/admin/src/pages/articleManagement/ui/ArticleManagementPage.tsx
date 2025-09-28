@@ -3,25 +3,24 @@ import { color } from "@mozu/design-token";
 import { Del, Modal, SelectError } from "@mozu/ui";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router";
-import { useDeleteArticle } from "@/apis";
-import { ArticleManagementDetail, ArticleSearchSideBar } from "@/components";
+import { useDeleteArticle } from "@/entities/article";
+import { ArticleManagementDetail, ArticleSearchSideBar } from "@/features/articleCRUD";
 
 export const ArticleManagementPage = () => {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const { classId, id } = useParams();
-  const articleId = id ? parseInt(id) : null;
+  const { id } = useParams();
 
   const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);
   }, []);
 
-  const { mutate: delApiData, isPending } = useDeleteArticle(() => setIsModalOpen(false));
+  const { mutate: delApiData, isPending } = useDeleteArticle(id, () => setIsModalOpen(false));
 
   const handleDelete = () => {
-    if (articleId !== null) {
-      delApiData(articleId);
+    if (id !== null) {
+      delApiData();
     }
     setSelectedId(null);
   };

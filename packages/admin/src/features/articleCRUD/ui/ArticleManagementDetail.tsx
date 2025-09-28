@@ -1,18 +1,16 @@
 import styled from "@emotion/styled";
-import { color, font } from "@mozu/design-token";
+import { color, font, Skeleton } from "@mozu/design-token";
 import { Button } from "@mozu/ui";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useGetArticleDetail } from "@/entities/article/api";
+import { useGetArticleDetail } from "@/entities/article";
 import { FullPageLoader } from "@/shared/ui";
-import { Skeleton } from "@mozu/design-token";
 import { ArticleMainData } from "./ArticleMainData";
 import { ArticleMainDataSkeleton } from "./ArticleMainDataSkeleton";
 
 interface IArticleManagementDetailProps {
   onClick?: () => void;
 }
-
 
 export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDetailProps) => {
   const navigate = useNavigate();
@@ -21,32 +19,34 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
     id: string;
   }>();
 
-  const articleId = useMemo(() => {
-    return id ? parseInt(id, 10) : null;
-  }, [id]);
-
   //버튼 props 메모이제이션
-  const deleteButtonProps = useMemo(() => ({
-    backgroundColor: color.zinc[50],
-    color: color.zinc[800],
-    borderColor: color.zinc[200],
-    hoverBackgroundColor: color.zinc[100],
-    type: "delImg" as const,
-    isIcon: true,
-    iconSize: 20,
-    iconColor: color.zinc[800],
-  }), []);
+  const deleteButtonProps = useMemo(
+    () => ({
+      backgroundColor: color.zinc[50],
+      color: color.zinc[800],
+      borderColor: color.zinc[200],
+      hoverBackgroundColor: color.zinc[100],
+      type: "delImg" as const,
+      isIcon: true,
+      iconSize: 20,
+      iconColor: color.zinc[800],
+    }),
+    [],
+  );
 
-  const editButtonProps = useMemo(() => ({
-    backgroundColor: color.orange[50],
-    color: color.orange[500],
-    borderColor: color.orange[200],
-    hoverBackgroundColor: color.orange[100],
-    type: "editImg" as const,
-    isIcon: true,
-    iconSize: 20,
-    iconColor: color.orange[500],
-  }), []);
+  const editButtonProps = useMemo(
+    () => ({
+      backgroundColor: color.orange[50],
+      color: color.orange[500],
+      borderColor: color.orange[200],
+      hoverBackgroundColor: color.orange[100],
+      type: "editImg" as const,
+      isIcon: true,
+      iconSize: 20,
+      iconColor: color.orange[500],
+    }),
+    [],
+  );
 
   const [datas, setDatas] = useState<{
     title: string;
@@ -60,7 +60,7 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
     createDate: "",
   });
 
-  const { data: articleData, isLoading: apiLoading } = useGetArticleDetail(articleId);
+  const { data: articleData, isLoading: apiLoading } = useGetArticleDetail(id);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -81,42 +81,62 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
   useEffect(() => {
     setIsLoading(true);
   }, [
-    articleId,
+    id,
   ]);
 
   const handleEditClick = useCallback(() => {
-    navigate(`/article-management/${articleId}/edit`);
-  }, [navigate, articleId]);
-
+    navigate(`/article-management/${id}/edit`);
+  }, [
+    navigate,
+    id,
+  ]);
 
   useEffect(() => {
     if (articleData) {
       setDatas({
-        title: articleData.title || "",
-        description: articleData.description || "",
+        title: articleData.articleName || "",
+        description: articleData.articleDesc || "",
         image:
-          articleData.image === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg"
+          articleData.articleImg === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/기사 기본 이미지.svg"
             ? null
-            : articleData.image,
-        createDate: articleData.createDate || "",
+            : articleData.articleImg,
+        createDate: articleData.createdAt || "",
       });
     }
   }, [
     articleData,
   ]);
 
-  const dateText = useMemo(() => `등록일자 | ${datas.createDate}`, [datas.createDate]);
+  const dateText = useMemo(
+    () => `등록일자 | ${datas.createDate}`,
+    [
+      datas.createDate,
+    ],
+  );
 
-  const articleMainDataProps = useMemo(() => ({
-    img: datas.image,
-    title: datas.title,
-    main: datas.description,
-  }), [datas.image, datas.title, datas.description]);
+  const articleMainDataProps = useMemo(
+    () => ({
+      img: datas.image,
+      title: datas.title,
+      main: datas.description,
+    }),
+    [
+      datas.image,
+      datas.title,
+      datas.description,
+    ],
+  );
 
-  const articleSkeletonProps = useMemo(() => ({
-    title: datas.title,
-    main: datas.description,
-  }), [datas.title, datas.description]);
+  const articleSkeletonProps = useMemo(
+    () => ({
+      title: datas.title,
+      main: datas.description,
+    }),
+    [
+      datas.title,
+      datas.description,
+    ],
+  );
 
   if (apiLoading) {
     return <FullPageLoader />;
@@ -141,15 +161,11 @@ export const ArticleManagementDetail = memo(({ onClick }: IArticleManagementDeta
       <MainArticle>
         {isLoading ? (
           <ArticleContainer>
-            <ArticleMainDataSkeleton
-              {...articleSkeletonProps}
-            />
+            <ArticleMainDataSkeleton {...articleSkeletonProps} />
           </ArticleContainer>
         ) : (
           <ArticleContainer>
-            <ArticleMainData
-              {...articleMainDataProps}
-            />
+            <ArticleMainData {...articleMainDataProps} />
           </ArticleContainer>
         )}
       </MainArticle>

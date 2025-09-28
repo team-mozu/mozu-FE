@@ -15,15 +15,16 @@ interface ITdProps {
 }
 
 interface DealContent {
-  id: number;
-  itemId: number;
+  id: string;
+  itemId: string;
   itemName: string;
-  itemMoney: number;
+  itemPrice: number;
   orderCount: number;
   totalMoney: number;
   orderType: "BUY" | "SELL";
-  invDeg: number;
+  invCount: number;
 }
+
 
 interface TeamInvestStatusTableProps {
   contents: DealContent[];
@@ -54,7 +55,7 @@ export const TeamInvestStatusTable = ({ contents }: TeamInvestStatusTableProps) 
   ];
 
   const renderRate = (item: DealContent) => {
-    const buyAmount = item.itemMoney * item.orderCount;
+    const buyAmount = item.itemPrice * item.orderCount;
     const rateAmount = item.totalMoney - buyAmount;
     const ratePercent = ((rateAmount / buyAmount) * 100).toFixed(2);
     const sign = rateAmount >= 0 ? "+" : "-";
@@ -103,7 +104,7 @@ export const TeamInvestStatusTable = ({ contents }: TeamInvestStatusTableProps) 
                 textAlign="right"
                 padding="0 16px 0 0"
                 color={color.black}>
-                {item.itemMoney.toLocaleString()}
+                {item.itemPrice.toLocaleString()}
               </Td>
 
               <Td
@@ -122,9 +123,9 @@ export const TeamInvestStatusTable = ({ contents }: TeamInvestStatusTableProps) 
                 {item.totalMoney.toLocaleString()}
                 <RateDiv
                   color={
-                    item.totalMoney - item.itemMoney * item.orderCount > 0
+                    item.totalMoney - item.itemPrice * item.orderCount > 0
                       ? color.red[500]
-                      : item.totalMoney - item.itemMoney * item.orderCount < 0
+                      : item.totalMoney - item.itemPrice * item.orderCount < 0
                         ? color.blue[500]
                         : color.green[600]
                   }>

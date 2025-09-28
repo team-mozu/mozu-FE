@@ -1,131 +1,124 @@
 import styled from "@emotion/styled";
-import { color, font } from "@mozu/design-token";
+import { color, font, Skeleton } from "@mozu/design-token";
 import { Accounts, AccountsSkeleton, Button, CompanySkeleton, Del, Edit, StockNoLogo } from "@mozu/ui";
 import { memo, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useDeleteStock, useGetStockDetail } from "@/entities/stock/api";
+import { useGetStockDetail } from "@/entities/stock";
 import { FullPageLoader } from "@/shared/ui";
-import { Skeleton } from "@mozu/design-token";
 
 interface IStockManagementDetailProps {
   onClick?: () => void; // onClick을 옵션으로 추가
 }
 
-const LogoSection = memo(({ logo, name, isLoading }: { 
-  logo: string | null; 
-  name: string; 
-  isLoading: boolean; 
-}) => (
+const LogoSection = memo(({ logo, name, isLoading }: { logo?: string | null; name: string; isLoading: boolean }) => (
   <div>
     <Logo>
       {isLoading ? (
         <LogoImgDiv />
       ) : logo ? (
-        <LogoImg src={logo} alt="로고" />
+        <LogoImg
+          src={logo}
+          alt="로고"
+        />
       ) : (
         <StockNoLogo />
       )}
     </Logo>
-    <Text>
-      {isLoading ? (
-        <TitleDiv>{name}</TitleDiv>
-      ) : (
-        <Title>{name}</Title>
-      )}
-    </Text>
+    <Text>{isLoading ? <TitleDiv>{name}</TitleDiv> : <Title>{name}</Title>}</Text>
   </div>
 ));
 
-const CompanyInfoSection = memo(({ 
-  info, 
-  isLoading 
-}: { 
-  info: string; 
-  isLoading: boolean; 
-}) => (
+const CompanyInfoSection = memo(({ info, isLoading }: { info: string; isLoading: boolean }) => (
   <CompanyInfo>
     <Label>회사 정보</Label>
-    {isLoading ? (
-      <CompanySkeleton />
-    ) : (
-      <CompanyText>{info}</CompanyText>
-    )}
+    {isLoading ? <CompanySkeleton /> : <CompanyText>{info}</CompanyText>}
   </CompanyInfo>
 ));
 
+const BalanceSheetSection = memo(
+  ({ debt, capital, isLoading }: { debt: number | null; capital: number | null; isLoading: boolean }) => (
+    <div>
+      <Label>재무상태표</Label>
+      {isLoading ? (
+        <ContentWrapper>
+          <AccountsSkeleton />
+          <AccountsSkeleton />
+        </ContentWrapper>
+      ) : (
+        <ContentWrapper>
+          <Accounts
+            title="부채"
+            content={debt ?? 0}
+          />
+          <Accounts
+            title="자본금"
+            content={capital ?? 0}
+          />
+        </ContentWrapper>
+      )}
+    </div>
+  ),
+);
 
-const BalanceSheetSection = memo(({ 
-  debt, 
-  capital, 
-  isLoading 
-}: { 
-  debt: number | null; 
-  capital: number | null; 
-  isLoading: boolean; 
-}) => (
-  <div>
-    <Label>재무상태표</Label>
-    {isLoading ? (
-      <ContentWrapper>
-        <AccountsSkeleton />
-        <AccountsSkeleton />
-      </ContentWrapper>
-    ) : (
-      <ContentWrapper>
-        <Accounts title="부채" content={debt ?? 0} />
-        <Accounts title="자본금" content={capital ?? 0} />
-      </ContentWrapper>
-    )}
-  </div>
-));
-
-const IncomeStatementSection = memo(({ 
-  profit, 
-  profitOG, 
-  profitBen, 
-  netProfit, 
-  isLoading 
-}: { 
-  profit: number | null; 
-  profitOG: number | null; 
-  profitBen: number | null; 
-  netProfit: number | null; 
-  isLoading: boolean; 
-}) => (
-  <div>
-    <Label>손익계산서</Label>
-    {isLoading ? (
-      <ContentWrapper>
-        <AccountsSkeleton />
-        <AccountsSkeleton />
-        <AccountsSkeleton />
-        <AccountsSkeleton />
-      </ContentWrapper>
-    ) : (
-      <ContentWrapper>
-        <Accounts title="매출액" content={profit ?? 0} />
-        <Accounts title="매출원가" content={profitOG ?? 0} />
-        <Accounts title="매출이익" content={profitBen ?? 0} />
-        <Accounts title="당기순이익" content={netProfit ?? 0} />
-      </ContentWrapper>
-    )}
-  </div>
-));
-
-
-
+const IncomeStatementSection = memo(
+  ({
+    profit,
+    profitOG,
+    profitBen,
+    netProfit,
+    isLoading,
+  }: {
+    profit: number | null;
+    profitOG: number | null;
+    profitBen: number | null;
+    netProfit: number | null;
+    isLoading: boolean;
+  }) => (
+    <div>
+      <Label>손익계산서</Label>
+      {isLoading ? (
+        <ContentWrapper>
+          <AccountsSkeleton />
+          <AccountsSkeleton />
+          <AccountsSkeleton />
+          <AccountsSkeleton />
+        </ContentWrapper>
+      ) : (
+        <ContentWrapper>
+          <Accounts
+            title="매출액"
+            content={profit ?? 0}
+          />
+          <Accounts
+            title="매출원가"
+            content={profitOG ?? 0}
+          />
+          <Accounts
+            title="매출이익"
+            content={profitBen ?? 0}
+          />
+          <Accounts
+            title="당기순이익"
+            content={netProfit ?? 0}
+          />
+        </ContentWrapper>
+      )}
+    </div>
+  ),
+);
 
 export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailProps) => {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const stockId = id ? parseInt(id) : null;
+
+  const stockId = Number(id);
 
   // const [imgUrl, setImgUrl] = useState<string>('');
   const [datas, setDatas] = useState<{
     name: string;
     info: string;
-    logo: string | null;
+    logo?: string | null;
     money: number | null;
     debt: number | null;
     capital: number | null;
@@ -146,7 +139,7 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
     netProfit: null,
   });
 
-  const { data: stockData, isLoading: apiLoading } = useGetStockDetail(stockId);
+  const { data: stockData, isLoading: apiLoading } = useGetStockDetail(stockId ?? 0);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -154,7 +147,7 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
   useEffect(() => {
     setIsLoading(true);
   }, [
-    stockId,
+    id,
   ]);
 
   useEffect(() => {
@@ -168,23 +161,21 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
     stockData,
   ]);
 
-  const lines = datas.info ? datas.info.split("\n") : [];
-
   useEffect(() => {
     if (stockData) {
       setDatas({
-        name: stockData.name || "",
-        info: stockData.info || "",
+        name: stockData.itemName || "",
+        info: stockData.itemInfo || "",
         logo:
-          stockData.logo === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg"
+          stockData.itemLogo === "https://mozu-bucket.s3.ap-northeast-2.amazonaws.com/종목 기본 이미지.svg"
             ? null
-            : stockData.logo,
+            : stockData.itemLogo,
         money: stockData.money || null,
         debt: stockData.debt || null,
         capital: stockData.capital || null,
         profit: stockData.profit || null,
-        profitOG: stockData.profitOG || null,
-        profitBen: stockData.profitBen || null,
+        profitOG: stockData.profitOg || null,
+        profitBen: stockData.profitBenefit || null,
         netProfit: stockData.netProfit || null,
       });
     }
@@ -197,10 +188,10 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
   return (
     <Container>
       <UpperContainer>
-        <LogoSection 
-          logo={datas.logo} 
-          name={datas.name} 
-          isLoading={isLoading} 
+        <LogoSection
+          logo={datas?.logo}
+          name={datas.name}
+          isLoading={isLoading}
         />
         <ButtonContainer>
           <div onClick={onClick}>
@@ -222,7 +213,7 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
             color={color.orange[500]}
             borderColor={color.orange[200]}
             hoverBackgroundColor={color.orange[100]}
-            onClick={() => navigate(`/stock-management/${stockId}/edit`)}
+            onClick={() => navigate(`/stock-management/${id}/edit`)}
             disabled={isLoading}>
             수정하기
             <Edit
@@ -233,18 +224,18 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
         </ButtonContainer>
       </UpperContainer>
       <UnderContainer>
-        <CompanyInfoSection 
-          info={datas.info} 
-          isLoading={isLoading} 
+        <CompanyInfoSection
+          info={datas.info}
+          isLoading={isLoading}
         />
         <CompanyMain>
           <Section>
-            <BalanceSheetSection 
-              debt={datas.debt} 
-              capital={datas.capital} 
-              isLoading={isLoading} 
+            <BalanceSheetSection
+              debt={datas.debt}
+              capital={datas.capital}
+              isLoading={isLoading}
             />
-            <IncomeStatementSection 
+            <IncomeStatementSection
               profit={datas.profit}
               profitOG={datas.profitOG}
               profitBen={datas.profitBen}

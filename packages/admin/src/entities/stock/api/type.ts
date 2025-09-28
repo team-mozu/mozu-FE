@@ -1,45 +1,47 @@
-export type StockAddRequest = {
-  name: string;
-  info: string;
-  logo: File | string;
+// 공통 타입 정의
+export interface BaseStock {
+  itemId: number;
+  itemName: string;
+  itemInfo: string;
+  itemLogo?: string | null;
   money: number;
   debt: number;
   capital: number;
   profit: number;
-  profitOG: number;
-  profitBen: number;
+  profitOg: number;
+  profitBenefit: number;
   netProfit: number;
-};
+  isDeleted: boolean;
+  createdAt: string;
+}
 
-export type StockDetailResponse = {
-  name: string;
-  info: string;
-  logo: string;
+export interface BaseStockRequest {
+  itemName: string;
+  itemInfo: string;
+  itemLogo?: string | null | File;
   money: number;
   debt: number;
   capital: number;
   profit: number;
-  profitOG: number;
-  profitBen: number;
+  profitOg: number;
+  profitBenefit: number;
   netProfit: number;
-  stockId: number;
-};
+}
 
-export type StockManagementEditRequest = {
-  name: string;
-  info: string;
-  logo: File | string | null;
-  money: number;
-  debt: number;
-  capital: number;
-  profit: number;
-  profitOG: number;
-  profitBen: number;
-  netProfit: number;
-  stockId: number;
-};
+// --------------------
+// GET RESPONSE
+// --------------------
+export type ItemGetListResponse = Pick<BaseStock, "itemId" | "itemName">;
+export type ItemGetDetailResponse = BaseStock;
 
-export type StockListResponse = {
-  id: number;
-  name: string;
-};
+// --------------------
+// CREATE REQUEST / RESPONSE
+// --------------------
+export type ItemCreateRequest = BaseStockRequest;
+export type ItemCreateResponse = BaseStock;
+
+// --------------------
+// EDIT REQUEST / RESPONSE
+// --------------------
+export type ItemEditRequest = BaseStockRequest;
+export type ItemEditResponse = BaseStock;

@@ -9,6 +9,15 @@ interface IArticleType {
   articleNumber: number;
 }
 
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).replace(/\./g, '/').replace(/\s/g, '').slice(0, -1);
+};
+
 export const ArticleDiv = ({ title, date, onClick, selected, articleNumber }: IArticleType) => {
   return (
     <ArticleDivContiner
@@ -18,7 +27,7 @@ export const ArticleDiv = ({ title, date, onClick, selected, articleNumber }: IA
         <ArticleNumber>{articleNumber}</ArticleNumber>
         <ArticleTitle selected={selected}>{title}</ArticleTitle>
       </div>
-      <DateDiv selected={selected}>{date}</DateDiv>
+      <DateDiv selected={selected}>{formatDate(date)}</DateDiv>
     </ArticleDivContiner>
   );
 };
@@ -50,12 +59,29 @@ const ArticleDivContiner = styled.div<{
 const ArticleTitle = styled.p<{
   selected: boolean;
 }>`
-  max-width: 340px;
+  max-width: 350px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font: ${font.b2};
   color: ${({ selected }) => (selected ? color.orange[600] : color.black)};
+
+  /* 반응형 조정 */
+  @media (max-width: 1440px) {
+    max-width: 240px;
+  }
+
+  @media (max-width: 1200px) {
+    max-width: 200px;
+  }
+
+  @media (max-width: 1024px) {
+    max-width: 160px;
+  }
+
+  @media (max-width: 900px) {
+    max-width: 120px;
+  }
 `;
 
 const DateDiv = styled.p<{

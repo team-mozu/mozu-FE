@@ -1,5 +1,5 @@
 export type Article = {
-  id: number;
+  id: string;
   title: string;
   articleChecked?: boolean;
 };
@@ -23,17 +23,17 @@ export type ClassArticle = {
   articleGroupChecked?: boolean;
 };
 
+// API와 일치하는 수업 데이터 타입
 export type ClassData = {
-  id: number;
-  name: string;
-  maxInvDeg: number;
-  curInvDeg: number | null;
+  lessonName: string;
   baseMoney: number;
-  classNum: number | null;
-  progressYN: boolean;
-  starYN: boolean;
-  createdAt: string;
-  deleteYN: boolean;
-  classArticles: ClassArticle[];
-  classItems: ClassStock[];
+  lessonRound: number;
+  lessonItems: {
+    itemId: number;
+    money: number[];
+  }[];
+  lessonArticles: {
+    investmentRound: number;
+    articles: string[];
+  }[];
 };

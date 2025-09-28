@@ -8,7 +8,7 @@ import { formatPrice } from "@/shared/lib";
 // Types
 interface StockData {
   itemId: number;
-  itemCode: string;
+  itemCode: number;
   itemName: string;
   money: (number | null)[]; // [현재가, 현재가, 1차, 2차, 3차] - 0번 인덱스는 렌더링 안함
   stockChecked?: boolean;
@@ -20,7 +20,7 @@ interface StockTablesProps {
   data?: StockData[];
   onPriceChange?: (itemId: number, levelIndex: number, value: number | null) => void;
   onDeleteItems?: (itemIds: number[]) => void;
-  onAddItems?: (items: StockData[]) => void;
+  onAddItems?: (items: any[]) => void;
   isApiLoading?: boolean;
 }
 
@@ -377,25 +377,41 @@ const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () 
 
 const TableControls = memo(({
   hasCheckedItems,
+  hasStockData,
   onDeleteSelected,
+  onFillRandomValues,
   isEdit,
 }: {
   hasCheckedItems: boolean;
+  hasStockData: boolean;
   onDeleteSelected: () => void;
+  onFillRandomValues: () => void;
   isEdit: boolean;
 }) => (
   <DeleteButtonContainer>
     <TableTitle>투자 종목</TableTitle>
     {isEdit && (
-      <Button
-        backgroundColor={color.zinc[50]}
-        borderColor={color.zinc[200]}
-        hoverBackgroundColor={color.zinc[100]}
-        onClick={onDeleteSelected}
-        disabled={!hasCheckedItems}
-      >
-        선택항목 삭제하기
-      </Button>
+      <ButtonGroup>
+        <Button
+          backgroundColor={color.orange[50]}
+          borderColor={color.orange[200]}
+          color={color.orange[700]}
+          hoverBackgroundColor={color.orange[100]}
+          onClick={onFillRandomValues}
+          disabled={!hasStockData}
+        >
+          랜덤 값 채우기
+        </Button>
+        <Button
+          backgroundColor={color.zinc[50]}
+          borderColor={color.zinc[200]}
+          hoverBackgroundColor={color.zinc[100]}
+          onClick={onDeleteSelected}
+          disabled={!hasCheckedItems}
+        >
+          선택항목 삭제하기
+        </Button>
+      </ButtonGroup>
     )}
   </DeleteButtonContainer>
 ));
@@ -428,6 +444,7 @@ export const StockTables = memo(({
   }, [stockData, checkedStockIds]);
 
   const hasCheckedItems = checkedStockIds.length > 0;
+  const hasStockData = stockData.length > 0;
   const isAllChecked = stockData.length > 0 && checkedStockIds.length === stockData.length;
   const colSpan = (isEdit ? 1 : 0) + 3 + selectedRound; // checkbox + code + name + price columns
 
@@ -508,11 +525,41 @@ export const StockTables = memo(({
     setShowAddModal(false);
   }, [onAddItems]);
 
+  // 랜덤 값 채우기 함수
+  const handleFillRandomValues = useCallback(() => {
+    const updatedData = stockData.map(stock => {
+      const newMoney = [...stock.money];
+      // 현재가 (인덱스 1)와 각 차수별로 랜덤 값 생성
+      for (let i = 1; i <= selectedRound + 1; i++) {
+        // 주식 가격에 맞는 현실적인 범위: 1,000원 ~ 500,000원
+        const minPrice = 1000;
+        const maxPrice = 500000;
+        // 100원 단위로 반올림
+        const randomValue = Math.floor(Math.random() * (maxPrice - minPrice) / 100) * 100 + minPrice;
+        newMoney[i] = randomValue;
+      }
+      return { ...stock, money: newMoney };
+    });
+
+    setStockData(updatedData);
+
+    // 상위 컴포넌트에도 변경사항 전달
+    if (onPriceChange) {
+      updatedData.forEach(stock => {
+        for (let i = 1; i <= selectedRound + 1; i++) {
+          onPriceChange(stock.itemId, i, stock.money[i]);
+        }
+      });
+    }
+  }, [stockData, selectedRound, setStockData, onPriceChange]);
+
   return (
     <TableContainer>
       <TableControls
         hasCheckedItems={hasCheckedItems}
+        hasStockData={hasStockData}
         onDeleteSelected={handleDeleteSelected}
+        onFillRandomValues={handleFillRandomValues}
         isEdit={isEdit}
       />
 
@@ -573,6 +620,23 @@ const TableTitle = styled.div`
 
 const TableContainer = styled.div`
   width: 100%;
+  overflow-x: auto;
+
+  /* 데스크탑 반응형 - 스크롤 영역 최적화 */
+  @media (max-width: 1200px) {
+    margin: 0 -8px;
+    padding: 0 8px;
+  }
+
+  @media (max-width: 1024px) {
+    margin: 0 -12px;
+    padding: 0 12px;
+  }
+
+  @media (max-width: 900px) {
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
 `;
 
 const DeleteButtonContainer = styled.div`
@@ -582,6 +646,12 @@ const DeleteButtonContainer = styled.div`
   margin-bottom: 12px;
 `;
 
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
 const Table = styled.table`
   width: 100%;
   border-collapse: separate;
@@ -589,6 +659,26 @@ const Table = styled.table`
   border-radius: 8px;
   overflow: hidden;
   table-layout: auto;
+  min-width: 720px;
+
+  /* 데스크탑 반응형 - 테이블 최소 너비 및 스타일 조정 */
+  @media (max-width: 1440px) {
+    min-width: 680px;
+  }
+
+  @media (max-width: 1200px) {
+    min-width: 620px;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 1024px) {
+    min-width: 580px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 900px) {
+    min-width: 520px;
+  }
 `;
 
 const Thead = styled.thead`
@@ -619,6 +709,28 @@ const Th = styled.th<{
   &:last-of-type {
     border-top-right-radius: 8px;
   }
+
+  /* 데스크탑 반응형 - 높이, 패딩, 폰트 조정 */
+  @media (max-width: 1200px) {
+    height: 44px;
+    padding: 12px 10px;
+    font: ${font.t3};
+    min-width: 70px;
+  }
+
+  @media (max-width: 1024px) {
+    height: 40px;
+    padding: 10px 8px;
+    font: ${font.t4};
+    min-width: 60px;
+  }
+
+  @media (max-width: 900px) {
+    height: 36px;
+    padding: 8px 6px;
+    font: ${font.b2};
+    min-width: 50px;
+  }
 `;
 
 const Td = styled.td<{
@@ -644,6 +756,25 @@ const Td = styled.td<{
       border-bottom-right-radius: 8px;
     }
   }
+
+  /* 데스크탑 반응형 - 높이, 패딩, 폰트 조정 */
+  @media (max-width: 1200px) {
+    height: 44px;
+    padding: 12px 10px;
+    font: ${font.b2};
+  }
+
+  @media (max-width: 1024px) {
+    height: 40px;
+    padding: 10px 8px;
+    font: ${font.l1};
+  }
+
+  @media (max-width: 900px) {
+    height: 36px;
+    padding: 8px 6px;
+    font: ${font.l2};
+  }
 `;
 
 const PriceInputStyle = styled.input`
@@ -668,11 +799,29 @@ const PriceInputStyle = styled.input`
 
   &::placeholder {
     color: ${color.zinc[400]};
-    font-size: 12px;
+    font: ${font.b2};
   }
 
   &::selection {
     background-color: ${color.blue[200]};
+  }
+
+  /* 데스크탑 반응형 - 입력 필드 너비 조정 */
+  @media (max-width: 1200px) {
+    width: 100px;
+    font: ${font.l1};
+  }
+
+  @media (max-width: 1024px) {
+    width: 90px;
+    font: ${font.l2};
+    padding: 1px 3px;
+  }
+
+  @media (max-width: 900px) {
+    width: 80px;
+    font: ${font.l2};
+    padding: 1px 2px;
   }
 `;
 

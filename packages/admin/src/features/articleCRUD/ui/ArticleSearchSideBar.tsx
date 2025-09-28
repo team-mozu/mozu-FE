@@ -1,15 +1,15 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { AddButton, Input, Search } from "@mozu/ui";
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetArticleList } from "@/entities/article/api";
+import { useGetArticleList } from "@/entities/article";
 import { FullPageLoader } from "@/shared/ui";
 import { ArticleDiv } from "./ArticleDiv";
 
 interface ArticleSearchSideBarProps {
-  setSelectedId: Dispatch<SetStateAction<number | null>>;
-  selectedId: number | null;
+  setSelectedId: Dispatch<SetStateAction<string | null>>;
+  selectedId: string | null;
 }
 
 export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearchSideBarProps) => {
@@ -18,9 +18,9 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
   }>();
   const [datas, setDatas] = useState<
     {
-      id: number;
-      title: string;
-      date: string;
+      id: string;
+      articleName: string;
+      createdAt: string;
     }[]
   >([]);
   const { data: articleData, isLoading } = useGetArticleList();
@@ -30,17 +30,29 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
   const filteredDatas = datas.filter(
     item =>
       searchText === "" ||
-      item.title.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.articleName.toLowerCase().includes(searchText.toLowerCase()) ||
       String(item.id).includes(searchText),
   );
 
-  useEffect(() => {
-    if (!articleData?.article) return;
+  const articles = useMemo(() => {
+    if (!articleData) return [];
+    // ArticleListResponse가 단일 객체인 경우 배열로 변환
+    return Array.isArray(articleData)
+      ? articleData
+      : [
+        articleData,
+      ];
+  }, [
+    articleData,
+  ]);
 
-    const mappedData = articleData.article.map(({ id, title, date }) => ({
+  useEffect(() => {
+    if (!articles) return;
+
+    const mappedData = articles.map(({ id, articleName, createdAt }) => ({
       id,
-      title,
-      date,
+      articleName,
+      createdAt,
     }));
 
     setDatas(mappedData);
@@ -51,7 +63,7 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
       setSelectedId(mappedData[0].id);
     }
   }, [
-    articleData,
+    articles,
     id,
     navigate,
     setSelectedId,
@@ -68,19 +80,24 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
         <Input
           placeholder="기사 검색.."
           fullWidth={true}
-          startIcon={<Search color={color.zinc[400]} size={20} />}
+          startIcon={
+            <Search
+              color={color.zinc[400]}
+              size={20}
+            />
+          }
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
         />
       </UpperWrapper>
       <ArticleWrapper>
-        {filteredDatas.length > 0 ?
+        {filteredDatas.length > 0 ? (
           filteredDatas.map((data, index) => (
             <ArticleDiv
               key={data.id}
               articleNumber={index + 1}
-              title={data.title}
-              date={data.date}
+              title={data.articleName}
+              date={data.createdAt}
               selected={selectedId === data.id}
               onClick={() => {
                 setSelectedId(data.id);
@@ -89,9 +106,10 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
                 });
               }}
             />
-          )) :
+          ))
+        ) : (
           <EmptyState>{searchText ? "검색 결과가 없습니다." : "기사가 없습니다."}</EmptyState>
-        }
+        )}
       </ArticleWrapper>
       <AddButton
         onClick={() => navigate("/article-management/add")}
@@ -108,6 +126,23 @@ const SideBarContainer = styled.div`
   border-right: 1px solid ${color.zinc[200]};
   display: flex;
   flex-direction: column;
+
+  /* 데스크탑 반응형 - 사이드바 최소 너비 조정 */
+  @media (max-width: 1440px) {
+    min-width: 440px;
+  }
+
+  @media (max-width: 1200px) {
+    min-width: 380px;
+  }
+
+  @media (max-width: 1024px) {
+    min-width: 320px;
+  }
+
+  @media (max-width: 900px) {
+    min-width: 280px;
+  }
 `;
 
 const UpperWrapper = styled.div`
@@ -119,6 +154,25 @@ const UpperWrapper = styled.div`
   border-bottom: 1px solid ${color.zinc[200]};
   p > span {
     color: ${color.orange[600]};
+  }
+
+  /* 데스크탑 반응형 - 상단 래퍼 조정 */
+  @media (max-width: 1200px) {
+    font: ${font.b2};
+    padding: 10px;
+    gap: 6px;
+  }
+
+  @media (max-width: 1024px) {
+    font: ${font.l1};
+    padding: 8px;
+    gap: 4px;
+  }
+
+  @media (max-width: 900px) {
+    font: ${font.l2};
+    padding: 6px;
+    gap: 4px;
   }
 `;
 
@@ -134,4 +188,20 @@ const EmptyState = styled.div`
   height: 200px;
   font: ${font.b2};
   color: ${color.zinc[500]};
+
+  /* 데스크탑 반응형 - 빈 상태 조정 */
+  @media (max-width: 1200px) {
+    height: 180px;
+    font: ${font.l1};
+  }
+
+  @media (max-width: 1024px) {
+    height: 160px;
+    font: ${font.l2};
+  }
+
+  @media (max-width: 900px) {
+    height: 140px;
+    font: ${font.l2};
+  }
 `;

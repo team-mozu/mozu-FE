@@ -1,107 +1,60 @@
 import { instance } from "@mozu/util-config";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
 import type {
   ArticleAddRequest,
+  ArticleAddResponse,
   ArticleDetailResponse,
+  ArticleEditRequest,
+  ArticleEditResponse,
   ArticleListResponse,
-  ArticleManagementEditRequest,
 } from "./type";
 
 const router = "/article";
 
-export const useAddArticle = () => {
-  const navigate = useNavigate();
-
-  return useMutation({
-    mutationFn: async (addData: ArticleAddRequest) => {
-      return await instance.post(`${router}`, addData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-    },
-    onSuccess: response => {
-      const id = response.data.id;
-      navigate(`/article-management/${id}`);
-    },
-    onError: () => {},
-  });
+/**
+ * 전체 기사 목록을 조회하는 API 함수입니다.
+ * @returns {Promise<ArticleListResponse>} 기사 목록 데이터
+ */
+export const getArticleList = async (): Promise<ArticleListResponse[]> => {
+  const { data } = await instance.get(router);
+  return data;
 };
 
-export const useDeleteArticle = (onSuccessCallback?: () => void) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (articleId: number) => {
-      return await instance.delete(`${router}/${articleId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [
-          "getArticle",
-        ],
-      });
-      if (onSuccessCallback) {
-        onSuccessCallback(); // 모달 닫기 실행
-      }
-    },
-    onError: () => {},
-  });
+/**
+ * 새로운 기사를 생성하는 API 함수입니다.
+ * @param {ArticleAddRequest} payload - 생성할 기사의 데이터 (제목, 내용, 링크 등)
+ * @returns {Promise<ArticleAddResponse>} 생성된 기사 정보
+ */
+export const createArticle = async (payload: ArticleAddRequest): Promise<ArticleAddResponse> => {
+  const { data } = await instance.post(router, payload);
+  return data;
 };
 
-export const useGetArticleDetail = (articleId: number | null | undefined) => {
-  return useQuery({
-    queryKey: [
-      "getArticle",
-      articleId,
-    ],
-    queryFn: async () => {
-      if (!articleId) throw new Error("err");
-      const { data } = await instance.get<ArticleDetailResponse>(`${router}/${articleId}`);
-      return data;
-    },
-    enabled: !!articleId,
-  });
+/**
+ * 특정 기사의 상세 정보를 조회하는 API 함수입니다.
+ * @param {string} id - 조회할 기사의 ID (UUID)
+ * @returns {Promise<ArticleDetailResponse>} 기사 상세 정보 (제목, 내용, 링크, 작성일 등)
+ */
+export const getArticleDetail = async (id: string): Promise<ArticleDetailResponse> => {
+  const { data } = await instance.get(`${router}/${id}`);
+  return data;
 };
 
-export const useGetArticleList = () => {
-  return useQuery({
-    queryKey: [
-      "getArticle",
-    ],
-    queryFn: async () => {
-      try {
-        const { data } = await instance.get<{
-          article: ArticleListResponse[];
-        }>(router);
-        return data;
-      } catch (error) {
-        throw error;
-      }
-    },
-  });
+/**
+ * 기사를 삭제하는 API 함수입니다.
+ * @param {string} id - 삭제할 기사의 ID (UUID)
+ * @returns {Promise<void>} 삭제 완료 응답
+ */
+export const deleteArticle = async (id: string) => {
+  return await instance.delete(`${router}/${id}`);
 };
 
-export const useEditArticle = () => {
-  const navigate = useNavigate();
-
-  return useMutation({
-    mutationFn: async (data: ArticleManagementEditRequest) => {
-      const { articleId: _, ...datas } = data;
-
-      return await instance.post(`${router}/${data.articleId}`, datas, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-    },
-    onSuccess: () => {
-      navigate(-1);
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
-    },
-    onError: () => {},
-  });
+/**
+ * 기존 기사의 정보를 수정하는 API 함수입니다.
+ * @param {string} id - 수정할 기사의 ID (UUID)
+ * @param {ArticleEditRequest} payload - 수정할 기사 데이터 (제목, 내용, 링크 등)
+ * @returns {Promise<ArticleEditResponse>} 수정된 기사 정보
+ */
+export const updateArticle = async (id: string, payload: ArticleEditRequest): Promise<ArticleEditResponse> => {
+  const { data } = await instance.patch(`${router}/${id}`, payload);
+  return data;
 };

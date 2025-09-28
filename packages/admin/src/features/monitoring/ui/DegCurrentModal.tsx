@@ -1,19 +1,19 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useGetTeamTradeStatus } from "@/entities/monitoring/api";
-import { TeamInvestStatusTable } from "@/shared/ui";
 import { useTeamStore } from "@/app/store";
+import { useGetCurrent } from "@/entities/monitoring";
+import { TeamInvestStatusTable } from "@/shared/ui";
 
 interface DegDealContent {
-  id: number;
-  itemId: number;
+  id: string;
+  itemId: string;
   itemName: string;
-  itemMoney: number;
+  itemPrice: number;
   orderCount: number;
   totalMoney: number;
   orderType: "BUY" | "SELL";
-  invDeg: number;
+  invCount: number;
 }
 
 interface DegData {
@@ -25,11 +25,11 @@ interface DegData {
 interface IDegCurrentType {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  id: number;
+  id: string;
 }
 
 export const DegCurrentModal = ({ isOpen, setIsOpen, id }: IDegCurrentType) => {
-  const { data: degData } = useGetTeamTradeStatus(id);
+  const { data: degData } = useGetCurrent(id ?? "");
   const { teamInfoMap } = useTeamStore();
   const backgroundRef = useRef<HTMLDivElement>(null);
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
@@ -39,8 +39,8 @@ export const DegCurrentModal = ({ isOpen, setIsOpen, id }: IDegCurrentType) => {
     const grouped: Record<number, DegDealContent[]> = {};
 
     degData.forEach(deal => {
-      if (!grouped[deal.invDeg]) grouped[deal.invDeg] = [];
-      grouped[deal.invDeg].push(deal);
+      if (!grouped[deal.invCount]) grouped[deal.invCount] = [];
+      grouped[deal.invCount].push(deal);
     });
 
     const sortedDegNumbers = Object.keys(grouped)

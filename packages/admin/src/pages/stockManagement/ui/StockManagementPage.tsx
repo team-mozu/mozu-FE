@@ -3,36 +3,37 @@ import { color } from "@mozu/design-token";
 import { Del, Modal, SelectError } from "@mozu/ui";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router";
-import { useDeleteStock, useGetStockDetail } from "@/apis";
-import { FullPageLoader, StockManagementDetail, StockSearchSideBar } from "@/components";
+import { useDeleteStock, useGetStockDetail } from "@/entities/stock";
+import { StockManagementDetail, StockSearchSideBar } from "@/features/stockCRUD";
 
 export const StockManagementPage = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { id } = useParams();
-  const stockId = id ? parseInt(id) : null;
+  const stockId = Number(id);
 
-  const { mutate: stockDelete, isPending } = useDeleteStock(() => setIsModalOpen(false));
+  const stockDelete = useDeleteStock(stockId, () => { setIsModalOpen(false) });
   const { data: stockData } = useGetStockDetail(stockId);
 
   const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);
-  },[]);
+  }, []);
 
   const handleDelete = useCallback(() => {
     if (selectedId !== null) {
-      stockDelete(stockId ?? 0);
+      stockDelete.mutate();
     }
-    setSelectedId(null);
-  },[selectedId, stockDelete]);
-
+  }, [
+    selectedId,
+    stockDelete,
+  ]);
 
   return (
     <>
       {isModalOpen && (
         <Modal
-          mainTitle={`${stockData?.name}를 삭제하실선가요?`}
+          mainTitle={`${stockData?.itemName}를 삭제하실선가요?`}
           subTitle={"삭제하면 복구가 불가능합니다."}
           onSuccessClick={handleDelete}
           icon={
@@ -43,7 +44,7 @@ export const StockManagementPage = () => {
           }
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
-          isPending={isPending}
+          isPending={stockDelete.isPending}
         />
       )}
       <Container>

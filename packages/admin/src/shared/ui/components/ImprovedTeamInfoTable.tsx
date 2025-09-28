@@ -3,7 +3,7 @@ import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { useState } from "react";
 import type { TeamInfo } from "@/app/store";
-import { DegCurrentModal, TeamCurrentModal } from "@/components";
+import { DegCurrentModal, TeamCurrentModal } from "@/features/monitoring";
 import { roundToFixed } from "@/shared/lib";
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) => {
   const [isOpenTeam, setIsOpenTeam] = useState(false);
   const [isOpenDeg, setIsOpenDeg] = useState(false);
-  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedDegId, setSelectedDegId] = useState<number | null>(null);
   const [selectedTeamName, setSelectedTeamName] = useState("");
 
@@ -33,13 +33,13 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
 
   const tableHeaders = getTableHeaders();
 
-  const handleOpenModal = (teamId: number, teamName: string) => {
+  const handleOpenModal = (teamId: string, teamName: string) => {
     setSelectedTeamId(teamId);
     setSelectedTeamName(teamName);
     setIsOpenTeam(true);
   };
 
-  const handleOpenDegModal = (teamId: number, invDeg: number) => {
+  const handleOpenDegModal = (teamId: string, invDeg: number) => {
     setSelectedTeamId(teamId);
     setSelectedDegId(invDeg);
     setIsOpenDeg(true);
@@ -166,7 +166,7 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
         <DegCurrentModal
           isOpen={isOpenDeg}
           setIsOpen={setIsOpenDeg}
-          id={selectedTeamId ?? 0}
+          id={selectedTeamId ?? ""}
         />
       )}
     </>

@@ -3,20 +3,18 @@ import { color, font, Skeleton } from "@mozu/design-token";
 import { ArrowLeft, Button, Del, Edit, Modal, Play } from "@mozu/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { useClassDelete, useClassStart, useGetClassDetail } from "@/apis";
-import { FullPageLoader } from "@/components";
-import { ArticleTables } from "@/components/common/ArticleTables";
-import { StockTables } from "@/components/common/StockTables";
+import { useDeleteClass, useGetClassDetail, useStartClass } from "@/entities/class";
+import { ArticleTables } from "@/features/articleCRUD/ui/ArticleTables";
 import { formatPrice } from "@/shared/lib";
+import { FullPageLoader, StockTables } from "@/shared/ui";
 
 export const ClassEnvironment = () => {
   const { id } = useParams();
-  const classId = id ? parseInt(id) : null;
   const navigate = useNavigate();
   const location = useLocation();
 
   // API 호출
-  const { data: classData, isLoading: apiLoading, refetch } = useGetClassDetail(classId ?? 0);
+  const { data: classData, isLoading: apiLoading, refetch } = useGetClassDetail(id ?? "");
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,7 +22,7 @@ export const ClassEnvironment = () => {
   useEffect(() => {
     setIsLoading(true);
   }, [
-    classId,
+    id,
   ]);
 
   useEffect(() => {
@@ -38,8 +36,8 @@ export const ClassEnvironment = () => {
     classData,
   ]);
 
-  const { mutate: startClass } = useClassStart(classId ?? 0);
-  const { mutate: deleteClass, isPending } = useClassDelete(() => setIsModal(false));
+  const { mutate: startClass } = useStartClass(id ?? '');
+  const { mutate: deleteClass, isPending } = useDeleteClass(id, () => setIsModal(false));
 
   // 상태 관리
   const [isModal, setIsModal] = useState<boolean>(false);
@@ -48,11 +46,11 @@ export const ClassEnvironment = () => {
 
   // 차수 변경 시 최대 차수로 업데이트
   useEffect(() => {
-    if (classData?.maxInvDeg) {
-      setSelectedRound(classData.maxInvDeg);
+    if (classData?.maxInvRound) {
+      setSelectedRound(classData.maxInvRound);
     }
   }, [
-    classData?.maxInvDeg,
+    classData?.maxInvRound,
   ]);
 
   // 페이지 이동 시 데이터 갱신
@@ -71,18 +69,14 @@ export const ClassEnvironment = () => {
 
   // 클래스 삭제
   const handleDelete = () => {
-    if (classId !== null) {
-      deleteClass(classId, {
-        onSuccess: () => {
-          navigate("/class-management");
-        },
-      });
+    if (id !== null) {
+      deleteClass();
     }
   };
 
   // 수업 시작
   const handleStartClass = () => {
-    if (isStarting || !classId) return;
+    if (isStarting || !id) return;
     setIsStarting(true);
     startClass(undefined, {
       onSettled: () => {
@@ -100,7 +94,7 @@ export const ClassEnvironment = () => {
       },
       {
         kind: "투자 차수",
-        value: `${classData.maxInvDeg}차` || "정보 없음",
+        value: `${classData.maxInvRound}차` || "정보 없음",
       },
       {
         kind: "기초자산",
@@ -114,10 +108,10 @@ export const ClassEnvironment = () => {
     : [];
 
   // 투자 종목 데이터 가공
-  const stockTableData = classData?.classItems
-    ? classData.classItems.map(item => ({
+  const stockTableData = classData?.lessonItems
+    ? classData.lessonItems.map(item => ({
       itemId: item.itemId,
-      itemCode: String(item.itemId),
+      itemCode: item.itemId,
       itemName: item.itemName,
       money: item.money,
       stockChecked: false,
@@ -125,7 +119,7 @@ export const ClassEnvironment = () => {
     : [];
 
   // 기사 데이터 가공
-  const articleTableData = classData?.classArticles || [];
+  const articleTableData = classData?.lessonArticles || [];
 
   //리렌더링 최적화
   const stockData = useMemo(
@@ -223,7 +217,7 @@ export const ClassEnvironment = () => {
                 color={color.orange[500]}
                 hoverBackgroundColor={color.orange[100]}
                 hoverBorderColor={color.orange[100]}
-                onClick={() => navigate(`/class-management/${classId}/edit`)}
+                onClick={() => navigate(`/class-management/${id}/edit`)}
                 disabled={isLoading}>
                 수정하기
                 <Edit

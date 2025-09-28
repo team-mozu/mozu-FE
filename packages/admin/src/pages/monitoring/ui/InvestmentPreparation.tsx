@@ -3,15 +3,14 @@ import { color, font } from "@mozu/design-token";
 import { Button, Del, Modal, Toast, WarningMsg } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useClassStop, useGetClassDetail, useNextDegree } from "@/apis";
 import { useTeamStore } from "@/app/store";
-import { ParticipationContainer } from "@/components";
+import { useEndClass as useClassStop, useGetClassDetail, useNextDegree } from "@/entities/class";
+import { ParticipationContainer } from "@/features/monitoring";
 import { useSSE } from "@/shared/lib";
 
 export const InvestmentPreparation = () => {
   const { id } = useParams();
-  const classId = id ? parseInt(id) : null;
-  const { data: classNameData } = useGetClassDetail(classId ?? 0);
+  const { data: classNameData } = useGetClassDetail(id ?? "");
   const [inviteCode] = useState(() => localStorage.getItem("inviteCode") || "로딩중...");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [datas, setDatas] = useState<{
@@ -23,8 +22,16 @@ export const InvestmentPreparation = () => {
     teams: [],
   });
 
-  const { mutate: nextDegree } = useNextDegree(classId ?? 0);
-  const { mutate: stopClass, isPending } = useClassStop(() => setIsModalOpen(false));
+  const nextDegree = useNextDegree(id, () => {
+    setIsSubmitting(false);
+  });
+  const stopClass = useClassStop(id, () => {
+    setIsModalOpen(false)
+    Toast("수업을 성공적으로 취소했습니다.", {
+      type: "success",
+    });
+    navigate(`/class-management/${id}`);
+  });
   const { setTeamInfo, clearTeamInfo } = useTeamStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -35,22 +42,24 @@ export const InvestmentPreparation = () => {
   }, []);
 
   const handleNext = () => {
-    if (isSubmitting) return;
-    if (datas.teams.length === 0) {
-      Toast("최소 한 팀 이상이 참여해야 합니다.", {
-        type: "error",
-      });
-      return;
-    }
+    if (id) {
+      if (isSubmitting) return;
+      if (datas.teams.length === 0) {
+        Toast("최소 한 팀 이상이 참여해야 합니다.", {
+          type: "error",
+        });
+        return;
+      }
 
-    setIsSubmitting(true);
-    nextDegree();
+      setIsSubmitting(true);
+      nextDegree.mutate();
+    }
   };
 
   useSSE(
-    `${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`,
-    data => { },
-    error => {
+    `${import.meta.env.VITE_SERVER_URL}/sse/subscribe?clientId=${id}`,
+    () => { },
+    () => {
       Toast(`네트워크 에러가 발생했습니다. 페이지를 새로고침 해주세요`, {
         type: "error",
       });
@@ -89,14 +98,9 @@ export const InvestmentPreparation = () => {
   );
 
   const handleCancel = () => {
-    stopClass(classId ?? 0, {
-      onSuccess: () => {
-        Toast("수업을 성공적으로 취소했습니다.", {
-          type: "success",
-        });
-        navigate(`/class-management/${classId}`);
-      },
-    });
+    if (id) {
+      stopClass.mutate();
+    }
   };
 
   const handleOpenCancelModal = () => {
@@ -118,7 +122,7 @@ export const InvestmentPreparation = () => {
           }
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
-          isPending={isPending}
+          isPending={stopClass.isPending}
         />
       )}
       <InvestmentPreparationContainer>

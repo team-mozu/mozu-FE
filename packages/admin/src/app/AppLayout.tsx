@@ -62,4 +62,24 @@ const MainContent = styled.div<{
   margin-left: ${({ isMargin }) => (isMargin ? "280px" : "0")};
   margin-top: 64px;
   flex: 1;
+  transition: all 0.3s ease;
+
+  /* 데스크탑 반응형 - 사이드바 너비와 헤더 높이에 맞춰 조정 */
+  @media (max-width: 1440px) {
+    margin-left: ${({ isMargin }) => (isMargin ? "260px" : "0")};
+  }
+
+  @media (max-width: 1200px) {
+    margin-left: ${({ isMargin }) => (isMargin ? "240px" : "0")};
+  }
+
+  @media (max-width: 1024px) {
+    margin-left: ${({ isMargin }) => (isMargin ? "220px" : "0")};
+    margin-top: 56px;
+  }
+
+  @media (max-width: 900px) {
+    margin-left: ${({ isMargin }) => (isMargin ? "72px" : "0")};
+    margin-top: 52px;
+  }
 `;

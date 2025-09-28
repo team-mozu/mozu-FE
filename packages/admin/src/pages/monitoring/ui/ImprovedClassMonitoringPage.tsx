@@ -4,10 +4,11 @@ import { Button, Del, Modal, Toast } from "@mozu/ui";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Tooltip } from "react-tooltip";
-import { useClassStop } from "@/apis";
 import { useTeamStore } from "@/app/store";
-import { ArticleInfoModal, ClassInfoModal, FullPageLoader, ImprovedTeamInfoTable } from "@/components";
+import { useEndClass } from "@/entities/class";
+import { ArticleInfoModal, ClassInfoModal, ImprovedTeamInfoTable } from "@/features/monitoring";
 import { useInvestmentProgress, useSSE } from "@/shared/lib/hooks";
+import { FullPageLoader } from "@/shared/ui";
 
 export const ImprovedClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState(false);
@@ -17,17 +18,29 @@ export const ImprovedClassMonitoringPage = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const classId = id ? parseInt(id) : null;
 
   const { teamInfoMap, appendTrade } = useTeamStore();
   const teamInfo = Object.values(teamInfoMap);
 
   const { classData, currentInvDeg, isLoading, isLastDegree, isProgressing, progressToNextDegree } =
-    useInvestmentProgress(classId ?? 0);
+    useInvestmentProgress(id ?? "");
 
-  const { mutate: stopClass, isPending: isStopClassPending } = useClassStop(() => {
-    setIsCancleModalOpen(false);
+  const endClass = useEndClass(id, () => {
     setIsEndModalOpen(false);
+    setIsCancleModalOpen(false);
+    Toast("수업을 성공적으로 종료했습니다.", {
+      type: "success",
+    });
+    navigate(`/class-management/${id}`);
+  });
+
+  const stopClass = useEndClass(id, () => {
+    setIsEndModalOpen(false);
+    setIsCancleModalOpen(false);
+    Toast("수업을 성공적으로 중단했습니다.", {
+      type: "success",
+    });
+    navigate(`/class-management/${id}`);
   });
 
   // 모든 팀이 현재 차수 투자를 완료했는지 확인
@@ -41,7 +54,7 @@ export const ImprovedClassMonitoringPage = () => {
     setIsOpenClass(true);
   };
 
-  useSSE(`${import.meta.env.VITE_SERVER_URL}/class/sse/${classId}`, undefined, undefined, {
+  useSSE(`${import.meta.env.VITE_SERVER_URL}/class/sse/${id}`, undefined, undefined, {
     TEAM_INV_END: data => {
       Toast(`${data.teamName}팀의 투자가 종료되었습니다!`, {
         type: "success",
@@ -56,28 +69,14 @@ export const ImprovedClassMonitoringPage = () => {
   });
 
   const handleStopClass = () => {
-    if (classId !== null) {
-      stopClass(classId, {
-        onSuccess: () => {
-          Toast("수업을 성공적으로 취소했습니다.", {
-            type: "success",
-          });
-          navigate(`/class-management/${classId}`);
-        },
-      });
+    if (id) {
+      stopClass.mutate();
     }
   };
 
   const handleEndClass = () => {
-    if (classId !== null) {
-      stopClass(classId, {
-        onSuccess: () => {
-          Toast("수업을 성공적으로 종료했습니다.", {
-            type: "success",
-          });
-          navigate(`/class-management/${classId}`);
-        },
-      });
+    if (id) {
+      endClass.mutate();
     }
   };
 
@@ -109,7 +108,7 @@ export const ImprovedClassMonitoringPage = () => {
           }
           isOpen={isCancleModalOpen}
           setIsOpen={setIsCancleModalOpen}
-          isPending={isStopClassPending}
+          isPending={stopClass.isPending}
           successBtnChildren={"확인"}
         />
       )}
@@ -126,21 +125,21 @@ export const ImprovedClassMonitoringPage = () => {
           }
           isOpen={isEndModalOpen}
           setIsOpen={setIsEndModalOpen}
-          isPending={isStopClassPending}
+          isPending={stopClass.isPending}
           successBtnChildren={"확인"}
         />
       )}
       <Container>
         {isOpenArticle && (
           <ArticleInfoModal
-            classArticles={classData?.classArticles}
+            lessonArticles={classData?.lessonArticles}
             isOpen={isOpenArticle}
             setIsOpen={setIsOpenArticle}
           />
         )}
         {isOpenClass && (
           <ClassInfoModal
-            classItems={classData?.classItems}
+            classItems={classData?.lessonItems}
             isOpen={isOpenClass}
             setIsOpen={setIsOpenClass}
           />
@@ -214,7 +213,7 @@ export const ImprovedClassMonitoringPage = () => {
           <InfoContainer>
             <ClassInfo>
               <p>
-                투자 차수 <span>{classData?.maxInvDeg}차</span>
+                투자 차수 <span>{classData?.maxInvRound}차</span>
               </p>
               <span>|</span>
               <p>
@@ -248,7 +247,7 @@ export const ImprovedClassMonitoringPage = () => {
               </Button>
             </InfoBtn>
           </InfoContainer>
-          <ImprovedTeamInfoTable teamInfo={teamInfo} />
+          <ImprovedTeamInfoTable teamInfo={teamInfo} invDeg={currentInvDeg} maxInvDeg={classData?.maxInvRound} />
         </MainContainer>
 
         {/* Tooltip 컴포넌트 */}

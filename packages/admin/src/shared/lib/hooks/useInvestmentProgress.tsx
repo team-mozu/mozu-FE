@@ -1,18 +1,18 @@
 import { useCallback, useState } from "react";
-import { useGetClassDetail, useNextDegree } from "@/apis";
+import { useGetClassDetail, useNextDegree } from "@/entities/class";
 import { queryClient } from "@/shared/lib";
 
-export const useInvestmentProgress = (classId: number) => {
+export const useInvestmentProgress = (classId: string) => {
   const [optimisticCurInvDeg, setOptimisticCurInvDeg] = useState<number | null>(null);
 
   const { data: classData, isLoading, isFetching } = useGetClassDetail(classId);
 
   // 실제 사용할 현재 투자 차수
-  const currentInvDeg = optimisticCurInvDeg ?? classData?.curInvDeg ?? 0;
+  const currentInvDeg = optimisticCurInvDeg ?? classData?.curInvRound ?? 0;
 
   console.log("📊 useInvestmentProgress:", {
     optimisticCurInvDeg,
-    serverCurInvDeg: classData?.curInvDeg,
+    serverCurInvDeg: classData?.curInvRound,
     currentInvDeg,
     isLoading,
     isFetching
@@ -51,10 +51,10 @@ export const useInvestmentProgress = (classId: number) => {
 
   const canProgressToNext = Boolean(
     classData &&
-    currentInvDeg < classData.maxInvDeg
+    currentInvDeg < classData.maxInvRound
   );
 
-  const isLastDegree = currentInvDeg === classData?.maxInvDeg;
+  const isLastDegree = currentInvDeg === classData?.maxInvRound;
 
   return {
     classData,

@@ -2,38 +2,37 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { ArticleIcon, Button } from "@mozu/ui";
 import { useEffect, useRef, useState } from "react";
-import { useGetArticleDetail } from "@/entities/article/api";
+import { useGetArticleDetail } from "@/entities/article";
 
-interface ArticleType {
-  id: number;
+interface LessonArticle {
+  articleId: string;
   title: string;
-  content?: string; // 기사 내용 추가
 }
 
 interface ClassArticle {
-  invDeg: number;
-  articles: ArticleType[];
+  investmentRound: number;
+  articles: LessonArticle[];
 }
 
 interface IArticleInfoType {
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  classArticles: ClassArticle[];
+  lessonArticles: ClassArticle[];
 }
 
-export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleInfoType) => {
+export const ArticleInfoModal = ({ isOpen, setIsOpen, lessonArticles }: IArticleInfoType) => {
   const [datas, setDatas] = useState<
     {
       isClicked: boolean;
-      articleContent: ArticleType[];
+      articleContent: LessonArticle[];
     }[]
   >([]);
 
   // 기사 상세 보기 상태 추가
-  const [selectedArticle, setSelectedArticle] = useState<ArticleType | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<LessonArticle | null>(null);
   const [isDetailView, setIsDetailView] = useState<boolean>(false);
 
-  const { data: articleDetailData } = useGetArticleDetail(selectedArticle?.id);
+  const { data: articleDetailData } = useGetArticleDetail(selectedArticle?.articleId);
 
   const outSideRef = useRef<HTMLDivElement | null>(null);
   const outSideClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -52,16 +51,16 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
     setDatas(prev =>
       prev
         ? prev.map((data, idx) =>
-            idx === index
-              ? {
-                  ...data,
-                  isClicked: true,
-                }
-              : {
-                  ...data,
-                  isClicked: false,
-                },
-          )
+          idx === index
+            ? {
+              ...data,
+              isClicked: true,
+            }
+            : {
+              ...data,
+              isClicked: false,
+            },
+        )
         : [],
     );
     // 탭 변경시 상세 보기 해제
@@ -70,7 +69,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
   };
 
   // 기사 클릭 핸들러
-  const handleArticleClick = (article: ArticleType) => {
+  const handleArticleClick = (article: LessonArticle) => {
     setSelectedArticle(article);
     setIsDetailView(true);
   };
@@ -82,15 +81,15 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
   };
 
   useEffect(() => {
-    if (classArticles && classArticles.length > 0) {
-      const formatted = classArticles.map((item, index) => ({
+    if (lessonArticles && lessonArticles.length > 0) {
+      const formatted = lessonArticles.map((item, index) => ({
         isClicked: index === 0,
         articleContent: item.articles,
       }));
       setDatas(formatted);
     }
   }, [
-    classArticles,
+    lessonArticles,
   ]);
 
   useEffect(() => {
@@ -159,7 +158,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
               // 기사 상세 보기
               <ArticleDetailContainer>
                 <ArticleDetailContent>
-                  {articleDetailData?.description || selectedArticle?.content || "기사 내용을 불러오는 중입니다..."}
+                  {articleDetailData?.articleDesc || "기사 내용을 불러오는 중입니다..."}
                 </ArticleDetailContent>
               </ArticleDetailContainer>
             ) : (
@@ -168,7 +167,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, classArticles }: IArticleI
                 {selectedData?.articleContent.length ? (
                   selectedData.articleContent.map((content, idx) => (
                     <ArticleItem
-                      key={content.id}
+                      key={content.articleId}
                       onClick={() => handleArticleClick(content)}>
                       <ArticleNumber>{idx + 1}</ArticleNumber>
                       <ArticleTitle>{content.title}</ArticleTitle>

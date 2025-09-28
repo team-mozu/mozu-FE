@@ -17,16 +17,16 @@ interface StockData {
 }
 
 interface HoldItem {
-  id: number; // 거래 ID
-  itemId: number; // 종목 ID
-  itemName: string; // 종목 이름
-  itemCnt: number; // 수량
-  buyMoney: number; // 매입 단가
-  totalMoney: number; // 총 매입 금액
-  nowMoney: number; // 현재 가격
-  valMoney: number; // 평가 금액
-  valProfit: number; // 평가 손익
-  profitNum: number; // 수익률 (단위: %, 소수)
+  id: string;
+  itemId: string;
+  itemName: string;
+  avgPurchasePrice: number;
+  quantity: number;
+  totalMoney: number;
+  nowMoney: number;
+  valuationMoney: number;
+  valProfit: number;
+  profitNum: number;
 }
 
 const columns: ColumnDef<StockData>[] = [
@@ -93,12 +93,12 @@ export const HoldStockTable = ({ holdItems }: { holdItems: HoldItem[] }) => {
   const stockRows: StockData[] = (holdItems ?? []).map(item => {
     return {
       name: item.itemName,
-      tradePrice: item.buyMoney.toLocaleString("ko-KR"),
-      quantity: item.itemCnt.toString(),
+      tradePrice: item.avgPurchasePrice.toLocaleString("ko-KR"),
+      quantity: item.quantity.toString(),
       tradeAmount: item.totalMoney.toLocaleString("ko-KR"),
       currentPrice: item.nowMoney.toLocaleString("ko-KR"),
       profit: {
-        valueMoney: item.valMoney,
+        valueMoney: item.valuationMoney,
         profitMoney: item.valProfit,
         profitRate: item.profitNum,
       },

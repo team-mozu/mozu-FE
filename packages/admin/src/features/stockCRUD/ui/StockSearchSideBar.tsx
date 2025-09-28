@@ -3,7 +3,7 @@ import { color, font } from "@mozu/design-token";
 import { AddButton, Input, Search } from "@mozu/ui";
 import { type Dispatch, memo, type SetStateAction, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetStockList } from "@/entities/stock/api";
+import { useGetStockList } from "@/entities/stock";
 import { FullPageLoader } from "@/shared/ui";
 import { StockDiv } from "./StockDiv";
 
@@ -19,8 +19,8 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
   }>();
   const [datas, setDatas] = useState<
     {
-      id: number;
-      name: string;
+      itemId: number;
+      itemName: string;
     }[]
   >([]);
   const { data: stockData, isLoading } = useGetStockList();
@@ -30,24 +30,24 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
   const filteredDatas = datas.filter(
     item =>
       searchText === "" ||
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      String(item.id).includes(searchText),
+      item.itemName.toLowerCase().includes(searchText.toLowerCase()) ||
+      String(item.itemId).includes(searchText),
   );
 
   useEffect(() => {
-    if (!stockData?.items) return;
+    if (!stockData) return;
 
-    const mappedData = stockData.items.map(({ id, name }) => ({
-      id,
-      name,
+    const mappedData = stockData.map(({ itemId, itemName }) => ({
+      itemId,
+      itemName,
     }));
     setDatas(mappedData);
 
     if (!id && mappedData.length > 0) {
-      navigate(`/stock-management/${mappedData[0].id}`, {
+      navigate(`/stock-management/${mappedData[0].itemId}`, {
         replace: true,
       });
-      setSelectedId(mappedData[0].id);
+      setSelectedId(mappedData[0].itemId);
     }
   }, [
     stockData,
@@ -76,13 +76,13 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
         {filteredDatas.length > 0 ?
           filteredDatas.map((data, index) => (
             <StockDiv
-              key={data.id}
-              name={data.name}
+              key={data.itemId}
+              name={data.itemName}
               number={index + 1}
-              selected={selectedId === data.id}
+              selected={selectedId === data.itemId}
               onClick={() => {
-                setSelectedId(data.id);
-                navigate(`/stock-management/${data.id}`, {
+                setSelectedId(data.itemId);
+                navigate(`/stock-management/${data.itemId}`, {
                   replace: true,
                 });
               }}

@@ -1,110 +1,198 @@
 import styled from "@emotion/styled";
-import { color } from "@mozu/design-token";
-import { EditDiv, Input, TextArea } from "@mozu/ui";
+import { color, font } from "@mozu/design-token";
+import { EditDiv, Input, TextArea, Toast } from "@mozu/ui";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { useEditArticle, useGetArticleDetail } from "@/apis";
-import { ImgContainer } from "@/components";
+import { useNavigate, useParams } from "react-router";
+import { useArticleUpdate, useGetArticleDetail } from "@/entities/article";
+import { ImgContainer } from "@/features/articleCRUD";
+
+interface FormErrors {
+  articleName?: string;
+  articleDesc?: string;
+  articleImage?: string;
+}
 
 export const ArticleManagementEditPage = () => {
-  const { classId, id } = useParams();
-  const articleId = id ? parseInt(id) : null;
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [datas, setDatas] = useState<{
-    title: string;
-    content: string;
-    imgUrl: File | string | null;
+    articleName: string;
+    articleDesc: string;
+    articleImage?: string | null | File;
   }>({
-    title: "",
-    content: "",
-    imgUrl: null,
+    articleName: "",
+    articleDesc: "",
+    articleImage: null,
   });
 
-  const { data: articleData, isLoading } = useGetArticleDetail(articleId);
+  const [originalImage, setOriginalImage] = useState<string | null>(null);
+
+  const { data: articleData } = useGetArticleDetail(id);
 
   useEffect(() => {
     if (articleData) {
+      const originalImg = articleData.articleImg || null;
       setDatas({
-        title: articleData.title || "",
-        content: articleData.description || "",
-        imgUrl: articleData.image || null,
+        articleName: articleData.articleName || "",
+        articleDesc: articleData.articleDesc || "",
+        articleImage: originalImg,
       });
+      setOriginalImage(originalImg);
     }
-  }, [
-    articleData,
-  ]);
+  }, [articleData]);
+
+  const validateForm = useCallback((): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!datas.articleName.trim()) {
+      newErrors.articleName = "기사 제목을 입력해주세요.";
+    } else if (datas.articleName.length < 2) {
+      newErrors.articleName = "기사 제목은 2자 이상 입력해주세요.";
+    }
+
+    if (!datas.articleDesc.trim()) {
+      newErrors.articleDesc = "기사 내용을 입력해주세요.";
+    } else if (datas.articleDesc.length < 10) {
+      newErrors.articleDesc = "기사 내용은 10자 이상 입력해주세요.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [datas.articleName, datas.articleDesc]);
 
   const titleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDatas(prev => ({
       ...prev,
-      title: e.target.value,
+      articleName: e.target.value,
     }));
-  },[]);
+    // 에러가 있다면 제거
+    if (errors.articleName && e.target.value.trim()) {
+      setErrors(prev => ({ ...prev, articleName: undefined }));
+    }
+  }, [errors.articleName]);
 
   const contentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDatas(prev => ({
       ...prev,
-      content: e.target.value,
+      articleDesc: e.target.value,
     }));
-  },[]);
+    // 에러가 있다면 제거
+    if (errors.articleDesc && e.target.value.trim()) {
+      setErrors(prev => ({ ...prev, articleDesc: undefined }));
+    }
+  }, [errors.articleDesc]);
 
-  const apiData = useEditArticle();
+  const handleImageChange = useCallback((file: File | string | null) => {
+    setDatas(prev => ({
+      ...prev,
+      articleImage: file,
+    }));
+    // 이미지 에러가 있다면 제거
+    if (errors.articleImage && file) {
+      setErrors(prev => ({ ...prev, articleImage: undefined }));
+    }
+  }, [errors.articleImage]);
 
-  const saveClick = useCallback(() => {
-    let imageFile = datas.imgUrl;
+  const handleCancel = useCallback(() => {
+    navigate('/article-management');
+  }, [navigate]);
 
-    if (typeof datas.imgUrl === "string") {
-      imageFile = "";
-    } else if (datas.imgUrl instanceof File) {
-      imageFile = datas.imgUrl;
+  const formData = {
+    articleName: datas.articleName.trim(),
+    articleDesc: datas.articleDesc.trim(),
+    articleImage: datas.articleImage === originalImage ? null : datas.articleImage,
+  };
+
+  const { mutate: updateArticle, isPending } = useArticleUpdate(id, formData);
+
+  const handleSubmit = useCallback(() => {
+    if (!validateForm()) {
+      return;
     }
 
-    apiData.mutate({
-      title: datas.title,
-      description: datas.content,
-      image: imageFile ?? undefined,
-      articleId: articleId ?? 0,
+    setIsSubmitting(true);
+
+    updateArticle(undefined, {
+      onSuccess: () => {
+        setIsSubmitting(false);
+      },
+      onError: (error) => {
+        setIsSubmitting(false);
+        console.error('기사 수정 실패:', error);
+        Toast("기사 수정에 실패하였습니다.", {
+          type: "error",
+        });
+      },
     });
-  },[datas, articleId, apiData.mutate]);
+  }, [validateForm, updateArticle]);
+
+  const isFormDisabled: boolean = isPending || isSubmitting;
 
   return (
     <AllContainer>
       <AddContainer>
         <EditDiv
           value1="취소"
-          value2="저장하기"
+          value2={isFormDisabled ? "수정 중..." : "수정하기"}
           title="기사 수정"
-          iconColor2={color.white}
-          iconSize2={20}
-          isIcon2={true}
-          type2="saveImg"
-          onClick={saveClick}
+          disabled={isFormDisabled}
+          onCancel={handleCancel}
+          onClick={handleSubmit}
         />
         <ContentContainer>
           <InputContainer>
-            <Input
-              placeholder="기사 제목을 입력해 주세요.."
-              label="기사 제목"
-              value={datas.title}
-              onChange={titleChange}
-            />
-            <TextArea
-              placeholder="기사 내용을 입력해 주세요.."
-              label="기사 내용"
-              height={480}
-              value={datas.content}
-              onChange={contentChange}
-            />
-            <ImgContainer
-              label="기사 이미지"
-              img={datas.imgUrl && datas.imgUrl instanceof File ? URL.createObjectURL(datas.imgUrl) : datas.imgUrl}
-              onImageChange={newImgUrl =>
-                setDatas(prev => ({
-                  ...prev,
-                  imgUrl: newImgUrl,
-                }))
-              }
-            />
+            <InputWrapper>
+              <Input
+                value={datas.articleName}
+                name="articleName"
+                type="text"
+                onChange={titleChange}
+                placeholder="기사 제목을 입력해 주세요.."
+                label="기사 제목"
+                disabled={isFormDisabled}
+                aria-invalid={!!errors.articleName}
+                aria-describedby={errors.articleName ? "title-error" : undefined}
+              />
+              {errors.articleName && (
+                <ErrorMessage id="title-error" role="alert">
+                  {errors.articleName}
+                </ErrorMessage>
+              )}
+            </InputWrapper>
+            <InputWrapper>
+              <TextArea
+                value={datas.articleDesc}
+                name="articleDesc"
+                onChange={contentChange}
+                placeholder="기사 내용을 입력해 주세요.."
+                label="기사 내용"
+                height={480}
+                aria-invalid={!!errors.articleDesc}
+                aria-describedby={errors.articleDesc ? "desc-error" : undefined}
+              />
+              {errors.articleDesc && (
+                <ErrorMessage id="desc-error" role="alert">
+                  {errors.articleDesc}
+                </ErrorMessage>
+              )}
+            </InputWrapper>
+            <InputWrapper>
+              <ImgContainer
+                label="기사 이미지"
+                img={datas.articleImage instanceof File ? URL.createObjectURL(datas.articleImage) : datas.articleImage || null}
+                onImageChange={handleImageChange}
+                aria-invalid={!!errors.articleImage}
+                aria-describedby={errors.articleImage ? "image-error" : undefined}
+              />
+              {errors.articleImage && (
+                <ErrorMessage id="image-error" role="alert">
+                  {errors.articleImage}
+                </ErrorMessage>
+              )}
+            </InputWrapper>
           </InputContainer>
         </ContentContainer>
       </AddContainer>
@@ -116,33 +204,46 @@ const AllContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   padding: 40px;
+  width: 100%;
 `;
 
 const InputContainer = styled.div`
-  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
 `;
 
 const AddContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   gap: 8px;
+  width: 100%;
 `;
 
 const ContentContainer = styled.div`
   width: 100%;
-  height: 1028px;
+  height: fit-content;
   border: 1px solid ${color.zinc[200]};
   background-color: ${color.white};
   border-radius: 16px;
-  padding: 530px 24px;
+  padding: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 40px;
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+`;
+
+const ErrorMessage = styled.div`
+  font: ${font.b2};
+  color: ${color.red[500]};
+  margin-top: 4px;
 `;
