@@ -71,7 +71,7 @@ export const AppLayout = () => {
     <AppContainer>
       <Header
         isAdmin={false}
-        invDeg={teamData?.invDeg ?? 0}
+        invDeg={teamData?.curInvRound ?? 0}
         showNav={headerConfig.showNav}
         showRound={headerConfig.showRound}
         isMargin={headerConfig.isAdminMargin}

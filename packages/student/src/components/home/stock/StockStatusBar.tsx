@@ -9,7 +9,7 @@ import { Skeleton } from "../../../../../design-token/src/theme/Skeleton";
 export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "매도") => void }) => {
   const { stockId } = useParams();
   const ItemId = stockId ? parseInt(stockId) : null;
-  const { data, isLoading } = useGetStockDetail(ItemId);
+  const { data, isLoading } = useGetStockDetail(ItemId ?? 0);
 
   const [imgSrc, setImgSrc] = useState(data?.itemLogo ?? "");
   const [hasErrored, setHasErrored] = useState(false);

@@ -3,7 +3,7 @@ export interface AuthResponse {
 }
 
 export interface StudentLoginProps {
-  classNum: number | null;
+  lessonNum: number | null;
   schoolName: string;
   teamName: string;
 }

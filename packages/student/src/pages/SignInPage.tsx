@@ -8,7 +8,7 @@ import { useForm } from "@/hook";
 
 export const SignInPage = () => {
   const { state, onChangeInputValue } = useForm<StudentLoginProps>({
-    classNum: null,
+    lessonNum: null,
     schoolName: "",
     teamName: "",
   });
@@ -57,7 +57,7 @@ export const SignInPage = () => {
    * @return {boolean}
    */
   const isValidForm = () =>
-    state.classNum !== null && state.schoolName.trim() !== "" && state.teamName.trim() !== "" && !isPending;
+    state.lessonNum !== null && state.schoolName.trim() !== "" && state.teamName.trim() !== "" && !isPending;
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,9 +67,9 @@ export const SignInPage = () => {
     });
   };
 
-  const handleChange = (field: "classNum" | "schoolName" | "teamName") => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (field: "lessonNum" | "schoolName" | "teamName") => (e: React.ChangeEvent<HTMLInputElement>) => {
     let value: string | number = e.target.value;
-    if (field === "classNum") {
+    if (field === "lessonNum") {
       value = value.replace(/\D/g, "").slice(0, 7);
     }
     onChangeInputValue({
@@ -98,9 +98,9 @@ export const SignInPage = () => {
           <Input
             placeholder="참가 코드를 입력해 주세요.."
             label="참가 코드"
-            value={state.classNum ?? ""}
+            value={state.lessonNum ?? ""}
             name="classNum"
-            onChange={handleChange("classNum")}
+            onChange={handleChange("lessonNum")}
             required={true}
           />
           <Input

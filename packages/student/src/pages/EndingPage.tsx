@@ -74,7 +74,7 @@ export const EndingPage = () => {
                 {getRankIcon(myTeamRank)}
                 <MyRankText>내 순위: {myTeamRank}위</MyRankText>
               </MyRankContainer>
-              <MyTeamName>{myTeam.name}</MyTeamName>
+              <MyTeamName>{myTeam.teamName}</MyTeamName>
               <MySchoolName>{myTeam.schoolName}</MySchoolName>
               <MyTotalMoney>{formatMoney(myTeam.totalMoney)}</MyTotalMoney>
               <MyMoneyLabel>
@@ -112,7 +112,7 @@ export const EndingPage = () => {
                     <RankIconWrapper>{getRankIcon(rank)}</RankIconWrapper>
 
                     <div>
-                      <TeamName>{team.name}</TeamName>
+                      <TeamName>{team.teamName}</TeamName>
                       <SchoolName>{team.schoolName}</SchoolName>
                     </div>
                   </RankingLeft>

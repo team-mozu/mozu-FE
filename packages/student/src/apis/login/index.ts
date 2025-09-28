@@ -8,9 +8,9 @@ import type { AuthResponse, StudentLoginProps } from "./type";
 export const useStudentLogin = () => {
   const navigate = useNavigate();
   return useMutation<AuthResponse, AxiosError, StudentLoginProps>({
-    mutationFn: async ({ classNum, schoolName, teamName }) => {
+    mutationFn: async ({ lessonNum, schoolName, teamName }) => {
       const response = await instance.post<AuthResponse>("/team/participate", {
-        classNum,
+        lessonNum,
         schoolName,
         teamName,
       });

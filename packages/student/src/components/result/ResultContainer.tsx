@@ -28,7 +28,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     classId: string;
   }>();
 
-  const valueProfitStr = teamResult?.valueProfit ?? "0";
+  const valueProfitStr = teamResult?.valProfit ?? "0";
 
   const profitNumRaw = teamResult?.profitNum ?? "0%";
   const profitNum = parseFloat(profitNumRaw.toString().replace("%", ""));
@@ -130,13 +130,13 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
               color={color.orange[500]}
             />
           </Logo>
-          {teamResult?.invDeg === endRound ? (
+          {teamResult?.invRound === endRound ? (
             <p>
-              {teamOrders && teamOrders.length > 0 && teamOrders[teamOrders.length - 1]?.invDeg}
+              {teamOrders && teamOrders.length > 0 && teamOrders[teamOrders.length - 1]?.invCount}
               차(최종) 투자 종료
             </p>
           ) : (
-            <p>{teamOrders && teamOrders.length > 0 && teamOrders[teamOrders.length - 1]?.invDeg}차 투자 종료</p>
+            <p>{teamOrders && teamOrders.length > 0 && teamOrders[teamOrders.length - 1]?.invCount}차 투자 종료</p>
           )}
         </Title>
         <Main>
@@ -145,12 +145,12 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
             {teamOrders &&
               teamOrders.length > 0 &&
               [
-                ...Array(teamOrders[teamOrders.length - 1].invDeg),
+                ...Array(teamOrders[teamOrders.length - 1].invCount),
               ]
                 .map((_, i) => i + 1) // 1부터 시작
                 .reverse()
                 .map(deg => {
-                  const ordersInDeg = teamOrders.filter(order => order.invDeg === deg);
+                  const ordersInDeg = teamOrders.filter(order => order.invCount === deg);
                   if (ordersInDeg.length === 0) return null;
 
                   return (
@@ -164,7 +164,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                               key={idx}
                               type={order.orderType}
                               totalMoney={order.totalMoney.toLocaleString()}
-                              itemMoney={order.itemMoney.toLocaleString()}
+                              itemMoney={order.itemPrice.toLocaleString()}
                               itemCount={order.orderCount}
                               itemName={order.itemName}
                             />
@@ -177,7 +177,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
           </Transaction>
           <RightContainer>
             <Result>
-              {teamResult?.invDeg === endRound ? <label>총 결과 요약</label> : <label>결과 요약</label>}
+              {teamResult?.invRound === endRound ? <label>총 결과 요약</label> : <label>결과 요약</label>}
               <AssetChange
                 baseMoney={teamResult?.baseMoney ?? 0}
                 totalMoney={teamResult?.totalMoney ?? 0}
@@ -214,13 +214,13 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                 onClick={onRankClick}
                 hoverBackgroundColor={color.orange[100]}
                 hoverBorderColor={color.orange[300]}>
-                {teamResult?.invDeg === endRound ? "최종 랭킹 보기" : "현재 랭킹 보기"}
+                {teamResult?.invRound === endRound ? "최종 랭킹 보기" : "현재 랭킹 보기"}
                 <Trophy
                   size={24}
                   color={color.orange[500]}
                 />
               </Button>
-              {teamResult?.invDeg === endRound ? (
+              {teamResult?.invRound === endRound ? (
                 <Button
                   backgroundColor={color.zinc[50]}
                   color={color.zinc[800]}

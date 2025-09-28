@@ -94,7 +94,7 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
   });
 
   // isMock 값에 따라 실제 데이터 또는 목 데이터를 사용
-  const teamData = isMock ? mockTeamData : realTeamData;
+  const teamData = realTeamData;
 
   const [isOpen, setIsOpen] = useState(false);
   const [realTradeData, setRealTradeData] = useLocalStorage<TeamEndProps>("trade", []);
@@ -128,11 +128,11 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
   ]);
 
   const formattedData = {
-    teamName: teamData?.name,
+    teamName: teamData?.teamName,
     totalMoney: teamData?.totalMoney.toLocaleString(),
     cashMoney: cashMoney.toLocaleString(),
-    valueMoney: ((teamData?.valueMoney ?? 0) + totalBuy - totalSell).toLocaleString(),
-    valueProfit: teamData?.valueProfit,
+    valueMoney: ((teamData?.valuationMoney ?? 0) + totalBuy - totalSell).toLocaleString(),
+    valueProfit: teamData?.valProfit,
     profitNum: teamData?.profitNum,
     totalBuy: totalBuy.toLocaleString(),
     totalSell: totalSell.toLocaleString(),
@@ -197,12 +197,12 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
               <Title>총 평가 자산</Title>
               <TotalAssetPrice
                 color={
-                  sameValue ? color.green[600] : (teamData?.valueProfit ?? 0) > 0 ? color.red[500] : color.blue[500]
+                  sameValue ? color.green[600] : (teamData?.valProfit ?? 0) > 0 ? color.red[500] : color.blue[500]
                 }>
                 {formattedData.totalMoney}원
               </TotalAssetPrice>
-              {(teamData?.valueProfit ?? 0) !== 0 ? (
-                <ProfitContainer profit={teamData?.valueProfit ?? 0}>
+              {(teamData?.valProfit ?? 0) !== 0 ? (
+                <ProfitContainer profit={teamData?.valProfit ?? 0}>
                   {(formattedData?.valueProfit ?? 0).toLocaleString().includes("-") ? "" : "+"}
                   {(formattedData?.valueProfit ?? 0).toLocaleString()}원 (
                   {roundToFixed(parseFloat(formattedProfitNum), 2)}%)
@@ -211,7 +211,7 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
             </TotalAssetLeft>
 
             <TeamContainer>
-              <TeamContent>{teamData?.name}</TeamContent>
+              <TeamContent>{teamData?.teamName}</TeamContent>
             </TeamContainer>
           </TotalAssetContainer>
           <HoldContainer>

@@ -65,6 +65,6 @@ const Final = styled.div<{
   > p {
     font: ${font.t1};
     color: ${props =>
-      props.status === "profit" ? color.red[500] : props.status === "loss" ? color.blue[500] : color.green[500]};
+    props.status === "profit" ? color.red[500] : props.status === "loss" ? color.blue[500] : color.green[500]};
   }
 `;

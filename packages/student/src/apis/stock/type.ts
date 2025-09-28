@@ -11,7 +11,7 @@ export type StockDetailResponse = {
   debt: number;
   capital: number;
   profit: number;
-  profitOG: number;
+  profitOg: number;
   profitBen: number;
   netProfit: number;
 };
