@@ -3,12 +3,13 @@ import { ADMIN_COOKIE_DOMAIN, COOKIE_DOMAIN, STUDENT_COOKIE_DOMAIN } from "../en
 import { getCookies, removeCookies, setCookies } from "../utils/cookies";
 import { instance } from "./apiClient";
 
-const REFRESH_API_PATH = "/organ/token/re-issue";
+const REFRESH_API_PATH = "/organ/token/reissue";
 
 interface IRefreshResponse {
   accessToken: string;
-  // refreshToken도 응답에 포함될 경우를 대비하여 추가
-  // refreshToken?: string;
+  refreshToken: string;
+  accessExpiredAt: string;
+  refreshExpiredAt: string;
 }
 
 /**
@@ -17,19 +18,34 @@ interface IRefreshResponse {
  * @returns API 응답 데이터 (새 Access Token 포함)
  */
 export const reIssueToken = async (refreshToken: string) => {
-  const response = await instance.post<IRefreshResponse>(
-    REFRESH_API_PATH,
-    {
-      refreshToken: `Bearer ${refreshToken}`,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const response = await instance.patch<IRefreshResponse>(
+      REFRESH_API_PATH,
+      {
+        refreshToken: refreshToken,
       },
-      withCredentials: true,
-    },
-  );
-  return response.data;
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    // refresh token이 만료되었거나 유효하지 않은 경우
+    if ((error as any)?.response?.status === 401 || (error as any)?.response?.status === 403) {
+      console.log("Refresh token expired or invalid, removing tokens and redirecting");
+      removeAuthTokens();
+
+      // 테스트 환경이 아닐 때만 로그인 페이지로 리디렉션
+      if (!window.location.pathname.includes("__test__")) {
+        console.log("Redirecting to /signin due to invalid refresh token");
+        window.location.replace("/signin");
+      }
+    }
+    throw error;
+  }
 };
 
 /**

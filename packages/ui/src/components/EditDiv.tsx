@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { useNavigate } from "react-router-dom";
 import { Button } from "./Button";
 
 interface IEditType {
@@ -8,35 +7,37 @@ interface IEditType {
   value1?: string;
   value2?: string;
   type1?:
-    | "startImg"
-    | "delImg"
-    | "editImg"
-    | "plusImg"
-    | "saveImg"
-    | "cancelImg"
-    | "logOutImg"
-    | "articleImg"
-    | "classImg";
+  | "startImg"
+  | "delImg"
+  | "editImg"
+  | "plusImg"
+  | "saveImg"
+  | "cancelImg"
+  | "logOutImg"
+  | "articleImg"
+  | "classImg";
   type2?:
-    | "startImg"
-    | "delImg"
-    | "editImg"
-    | "plusImg"
-    | "saveImg"
-    | "cancelImg"
-    | "logOutImg"
-    | "articleImg"
-    | "classImg";
+  | "startImg"
+  | "delImg"
+  | "editImg"
+  | "plusImg"
+  | "saveImg"
+  | "cancelImg"
+  | "logOutImg"
+  | "articleImg"
+  | "classImg";
   iconSize1?: number;
   iconSize2?: number;
   iconColor1?: string;
   iconColor2?: string;
   isIcon1?: boolean;
   isIcon2?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
+  onCancel?: () => void;
 }
 
-export const EditDiv = ({
+export const EditDiv: React.FC<IEditType> = ({
   title,
   value1,
   value2,
@@ -48,9 +49,10 @@ export const EditDiv = ({
   iconColor2,
   isIcon1,
   isIcon2,
+  disabled,
   onClick,
-}: IEditType) => {
-  const navigate = useNavigate();
+  onCancel,
+}) => {
   return (
     <EditContainer>
       <Title>{title}</Title>
@@ -63,8 +65,9 @@ export const EditDiv = ({
           iconSize={iconSize1}
           iconColor={iconColor1}
           isIcon={isIcon1}
-          onClick={() => navigate(-1)}
-          hoverBackgroundColor={color.zinc[100]}>
+          onClick={onCancel}
+          hoverBackgroundColor={color.zinc[100]}
+        >
           {value1}
         </Button>
         <Button
@@ -73,6 +76,7 @@ export const EditDiv = ({
           borderColor={color.orange[500]}
           type={type2}
           iconSize={iconSize2}
+          disabled={disabled}
           iconColor={iconColor2}
           isIcon={isIcon2}
           hoverBackgroundColor={color.orange[600]}

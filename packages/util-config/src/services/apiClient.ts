@@ -5,18 +5,22 @@ import { getCookies } from "../utils/cookies";
 import { reIssueToken, removeAuthTokens, setAuthTokens } from "./auth";
 
 // 📝 NOTE: 실제 환경 변수 파일(.env)에서 가져오도록 설정하세요.
-const REFRESH_API_PATH_FOR_CHECK = "/organ/token/re-issue";
+const REFRESH_API_PATH_FOR_CHECK = "/organ/token/reissue";
 
 export const instance = axios.create({
   baseURL: SERVER_URL,
   timeout: 10_000,
 });
 
-// 요청 인터셉터: 헤더에 Access Token 자동 추가
+// 요청 인터셉터: 헤더에 Access Token 자동 추가 및 multipart/form-data 자동 변환
 instance.interceptors.request.use(
   config => {
-    // 토큰 재발급 요청 시에는 Authorization 헤더를 추가하지 않음
-    if (config.url === REFRESH_API_PATH_FOR_CHECK) {
+    // 토큰 재발급 요청 및 로그인 요청 시에는 Authorization 헤더를 추가하지 않음
+    if (
+      config.url === REFRESH_API_PATH_FOR_CHECK ||
+      config.url?.includes("/organ/login") ||
+      config.url?.includes("/team/participate")
+    ) {
       return config;
     }
 
@@ -24,6 +28,33 @@ instance.interceptors.request.use(
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
+
+    // multipart/form-data가 필요한 엔드포인트들
+    const multipartEndpoints = [
+      "/item",
+      "/article",
+    ];
+    const needsFormData = multipartEndpoints.some(
+      endpoint => config.url?.includes(endpoint) && (config.method === "post" || config.method === "patch"),
+    );
+
+    // 데이터가 있고 이미 FormData가 아닌 경우에만 변환
+    if (needsFormData && config.data && !(config.data instanceof FormData)) {
+      const formData = new FormData();
+
+      Object.entries(config.data).forEach(([key, value]) => {
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else if (value !== null && value !== undefined && value !== "") {
+          formData.append(key, value.toString());
+        }
+      });
+
+      config.data = formData;
+      // axios가 자동으로 multipart/form-data 헤더를 설정하도록 Content-Type 제거
+      delete config.headers["Content-Type"];
+    }
+
     return config;
   },
   error => Promise.reject(error),
@@ -79,11 +110,17 @@ instance.interceptors.response.use(
     const refreshToken = getCookies("refreshToken");
     const userType = getCookies<"student" | "admin">("authority");
 
+    console.log("401/403 Error - refreshToken:", refreshToken);
+    console.log("401/403 Error - userType:", userType);
+    console.log("401/403 Error - current path:", window.location.pathname);
+
     if (!refreshToken || !userType) {
       isRefreshing = false;
       removeAuthTokens();
+      console.log("No refresh token or user type, redirecting to signin");
       // 테스트 환경이 아닐 때만 로그인 페이지로 리디렉션
       if (!window.location.pathname.includes("__test__")) {
+        console.log("Redirecting to /signin");
         window.location.replace("/signin");
       }
       return Promise.reject(error);
@@ -102,13 +139,16 @@ instance.interceptors.response.use(
       return await instance(originalRequest);
     } catch (refreshError) {
       // 토큰 재발급 실패 시 (e.g., Refresh Token 만료)
+      console.log("Token refresh failed:", refreshError);
       processQueue(refreshError as AxiosError, null);
       removeAuthTokens();
 
       Toast("세션이 만료되었습니다. 다시 로그인해주세요.", {
         type: "error",
       });
+      console.log("Token refresh failed, redirecting to signin");
       if (!window.location.pathname.includes("__test__")) {
+        console.log("Redirecting to /signin after refresh failure");
         window.location.replace("/signin");
       }
       return Promise.reject(refreshError);
