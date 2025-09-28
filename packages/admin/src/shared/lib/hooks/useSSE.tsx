@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 type EventType = "TEAM_PART_IN" | "TEAM_INV_END";
 
 interface TeamPartInData {
-  teamId: number;
+  teamId: string;
   teamName: string;
   schoolName: string;
 }
