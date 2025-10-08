@@ -186,11 +186,24 @@ export const useStarClass = (id?: string) => {
 export const useNextDegree = (id?: string, onSuccessCallback?: () => void) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: () => nextDegree(id!),
     onSuccess: () => {
       Toast(`수업이 진행되었습니다.`, {
         type: "success",
+      });
+
+      // React Query 캐시 무효화 - 수업 및 팀 관련 데이터 새로고침
+      queryClient.invalidateQueries({
+        queryKey: ["getClass"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["getMonitoring"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["getTeam"],
       });
 
       if (onSuccessCallback) {

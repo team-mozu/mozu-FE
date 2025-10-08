@@ -1,5 +1,5 @@
 export * from "./FullPageLoader";
-export * from "./ImprovedTeamInfoTable";
 export * from "./ProtectedRoute";
+export * from "./SSELoadingSpinner";
 export * from "./StockTables";
 export * from "./TeamInvestStatusTable";

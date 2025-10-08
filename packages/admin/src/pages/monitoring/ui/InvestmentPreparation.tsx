@@ -6,7 +6,8 @@ import { useNavigate, useParams } from "react-router";
 import { useTeamStore } from "@/app/store";
 import { useEndClass as useClassStop, useGetClassDetail, useNextDegree } from "@/entities/class";
 import { ParticipationContainer } from "@/features/monitoring";
-import { useSSE } from "@/shared/lib";
+import { type LessonSSEConnectedData, type TeamPartInData, useTypeSSE } from "@/shared/lib/hooks";
+import { SSELoadingSpinner } from "@/shared/ui";
 
 export const InvestmentPreparation = () => {
   const { id } = useParams();
@@ -24,9 +25,10 @@ export const InvestmentPreparation = () => {
 
   const nextDegree = useNextDegree(id, () => {
     setIsSubmitting(false);
+    navigate(`/class-management/${id}/monitoring`);
   });
   const stopClass = useClassStop(id, () => {
-    setIsModalOpen(false)
+    setIsModalOpen(false);
     Toast("수업을 성공적으로 취소했습니다.", {
       type: "success",
     });
@@ -35,6 +37,52 @@ export const InvestmentPreparation = () => {
   const { setTeamInfo, clearTeamInfo } = useTeamStore();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  const { isConnected, isConnecting } = useTypeSSE(
+    `${import.meta.env.VITE_SERVER_URL}/lesson/sse/${id}`,
+    (data: any) => {
+      console.log(data.message);
+    },
+    (error: any) => {
+      console.log(error.message);
+    },
+    {
+      LESSON_SSE_CONNECTED: (data: LessonSSEConnectedData) => {
+        console.log("SSE 연결 성공:", data.message);
+      },
+      TEAM_PART_IN: (data: TeamPartInData) => {
+        console.log("참여팀:", data.teamName, "학교:", data.schoolName);
+        setDatas(prev => {
+          const updatedData = {
+            ...prev,
+            teams: [
+              ...(prev?.teams || []),
+              {
+                title: data.teamName,
+                school: data.schoolName,
+              },
+            ],
+          };
+          console.log("업데이트된 데이터:", updatedData);
+          return updatedData;
+        });
+        setTeamInfo({
+          teamId: data.teamId,
+          teamName: data.teamName,
+          schoolName: data.schoolName,
+          trade: [],
+        });
+        Toast(`${data.teamName}이 참가했습니다`, {
+          type: "success",
+        });
+      },
+      TEAM_INV_END: () => {
+        Toast("팀 투자가 종료되었습니다", {
+          type: "info",
+        });
+      },
+    },
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
@@ -56,47 +104,6 @@ export const InvestmentPreparation = () => {
     }
   };
 
-  useSSE(
-    `${import.meta.env.VITE_SERVER_URL}/sse/subscribe?clientId=${id}`,
-    () => { },
-    () => {
-      Toast(`네트워크 에러가 발생했습니다. 페이지를 새로고침 해주세요`, {
-        type: "error",
-      });
-    },
-    {
-      TEAM_PART_IN: teamData => {
-        setDatas(prev => {
-          const updatedData = {
-            ...prev,
-            teams: [
-              ...(prev?.teams || []),
-              {
-                title: teamData.teamName,
-                school: teamData.schoolName,
-              },
-            ],
-          };
-          return updatedData;
-        });
-        setTeamInfo({
-          teamId: teamData.teamId,
-          teamName: teamData.teamName,
-          schoolName: teamData.schoolName,
-          trade: [],
-        });
-        Toast("새로운 팀이 참가했습니다", {
-          type: "success",
-        });
-      },
-      TEAM_INV_END: () => {
-        Toast("팀 투자가 종료되었습니다", {
-          type: "info",
-        });
-      },
-    },
-  );
-
   const handleCancel = () => {
     if (id) {
       stopClass.mutate();
@@ -109,6 +116,7 @@ export const InvestmentPreparation = () => {
 
   return (
     <>
+      <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
       {isModalOpen && (
         <Modal
           mainTitle={"수업을 취소하실 건가요?"}

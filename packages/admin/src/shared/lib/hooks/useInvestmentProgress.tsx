@@ -1,9 +1,11 @@
 import { useCallback, useState } from "react";
+import { useTeamStore } from "@/app/store";
 import { useGetClassDetail, useNextDegree } from "@/entities/class";
 import { queryClient } from "@/shared/lib";
 
 export const useInvestmentProgress = (classId: string) => {
   const [optimisticCurInvDeg, setOptimisticCurInvDeg] = useState<number | null>(null);
+  const { clearTeamInfo } = useTeamStore();
 
   const { data: classData, isLoading, isFetching } = useGetClassDetail(classId);
 
@@ -22,15 +24,10 @@ export const useInvestmentProgress = (classId: string) => {
     classId,
     () => {
       console.log("✅ nextDegree success callback");
-      // 잠깐 기다린 후 서버 데이터 동기화
-      queryClient.invalidateQueries({
-        queryKey: ["getClass", classId],
-      });
-      // optimistic state는 서버 데이터가 업데이트된 후에 초기화
-      setTimeout(() => {
-        console.log("🔄 Resetting optimistic state");
-        setOptimisticCurInvDeg(null);
-      }, 100);
+      // 캐시 무효화는 useNextDegree 내부에서 이미 처리됨
+      // optimistic state 즉시 초기화
+      console.log("🔄 Resetting optimistic state");
+      setOptimisticCurInvDeg(null);
     }
   );
 
