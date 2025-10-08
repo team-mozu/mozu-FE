@@ -31,7 +31,7 @@ export interface BaseStockRequest {
 // --------------------
 // GET RESPONSE
 // --------------------
-export type ItemGetListResponse = Pick<BaseStock, "itemId" | "itemName">;
+export type ItemGetListResponse = Pick<BaseStock, "itemId" | "itemName" | "createdAt">;
 export type ItemGetDetailResponse = BaseStock;
 
 // --------------------

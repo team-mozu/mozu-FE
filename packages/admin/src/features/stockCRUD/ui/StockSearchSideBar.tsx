@@ -13,7 +13,7 @@ interface StockSearchSideBarProps {
 }
 
 export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSearchSideBarProps) => {
-  const { classId, id } = useParams<{
+  const { id } = useParams<{
     classId: string;
     id: string;
   }>();
@@ -40,7 +40,7 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
     const mappedData = stockData.map(({ itemId, itemName }) => ({
       itemId,
       itemName,
-    }));
+    })).reverse(); // 리스트 역순으로 정렬
     setDatas(mappedData);
 
     if (!id && mappedData.length > 0) {

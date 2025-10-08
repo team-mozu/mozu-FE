@@ -235,6 +235,7 @@ export const ClassEnvironment = () => {
               data={stockData}
             />
             <ArticleTables
+              isApiLoading={isLoading}
               isEdit={false}
               degree={selectedRound.toString()}
               data={articleData}

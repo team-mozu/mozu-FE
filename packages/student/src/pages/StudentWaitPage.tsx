@@ -2,24 +2,17 @@ import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Header, Info, Toast, Users } from "@mozu/ui";
-import { removeCookies } from "@mozu/util-config";
-import { useRef } from "react";
+import { removeCookiesAsync } from "@mozu/util-config";
 import { useNavigate } from "react-router-dom";
-import { useSSE } from "@/hook";
-import { resetShownInvDegs } from "./HomePage";
+import { SSELoadingSpinner } from "@/components";
+import { type ClassNextInvStartData, type TeamSSEConnectedData, useTypeSSE } from "@/hook";
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
-  const dirtyFix = useRef<number>(0);
 
-  useSSE(
+  const { isConnected, isConnecting } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    data => {
-      console.log(data);
-      Toast("모의투자 시작을 기다리는중..", {
-        type: "info",
-      });
-    },
+    undefined,
     error => {
       console.log(error);
       Toast(`네트워크 에러 발생`, {
@@ -27,26 +20,26 @@ export const StudentWaitPage = () => {
       });
     },
     {
-      CLASS_NEXT_INV_START: async data => {
-        resetShownInvDegs();
-        localStorage.removeItem("trade");
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        navigate(`/${data.classId}`, {
-          replace: true,
+      TEAM_SSE_CONNECTED: (data: TeamSSEConnectedData) => {
+        console.log(data);
+        Toast("모의투자 시작을 기다리는중..", {
+          type: "info",
         });
       },
+      CLASS_NEXT_INV_START: (data: ClassNextInvStartData) => {
+        localStorage.removeItem("trade");
+        Toast("투자가 시작되었습니다", {
+          type: "info",
+        });
+        navigate(`/${data.lessonId}`);
+      },
       CLASS_CANCEL: async () => {
-        if (dirtyFix.current === 0) {
-          dirtyFix.current++;
-          return;
-        }
         Toast("수업이 취소되었습니다.", {
           type: "error",
         });
 
         const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
-        await removeCookies(
+        await removeCookiesAsync(
           [
             "accessToken",
             "authority",
@@ -65,6 +58,8 @@ export const StudentWaitPage = () => {
 
   return (
     <AppContainer>
+      <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
+      
       <Header
         isAdmin={false}
         showNav={false}

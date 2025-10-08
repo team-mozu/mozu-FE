@@ -25,6 +25,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, lessonArticles }: IArticle
     {
       isClicked: boolean;
       articleContent: LessonArticle[];
+      investmentRound: number;
     }[]
   >([]);
 
@@ -82,9 +83,13 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, lessonArticles }: IArticle
 
   useEffect(() => {
     if (lessonArticles && lessonArticles.length > 0) {
-      const formatted = lessonArticles.map((item, index) => ({
+      // investmentRound 순으로 정렬
+      const sortedArticles = [...lessonArticles].sort((a, b) => a.investmentRound - b.investmentRound);
+      
+      const formatted = sortedArticles.map((item, index) => ({
         isClicked: index === 0,
         articleContent: item.articles,
+        investmentRound: item.investmentRound,
       }));
       setDatas(formatted);
     }
@@ -145,7 +150,7 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, lessonArticles }: IArticle
                   onClick={() => barClick(index)}
                   // biome-ignore lint/suspicious/noArrayIndexKey: <임시>
                   key={index}>
-                  <TabNumber>{index + 1}</TabNumber>
+                  <TabNumber>{data.investmentRound}</TabNumber>
                   <TabLabel>차</TabLabel>
                   {data.isClicked && <ActiveIndicator />}
                 </TabButton>

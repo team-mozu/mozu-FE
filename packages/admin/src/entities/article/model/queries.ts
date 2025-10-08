@@ -4,6 +4,7 @@ import type { ArticleDetailResponse, ArticleListResponse } from "../api/type";
 
 /**
  * 기사 목록을 조회하는 React Query 훅입니다.
+ * 최신순으로 정렬됩니다.
  * @returns {UseQueryResult<ArticleListResponse[]>} 기사 목록 데이터와 로딩 상태
  */
 export const useGetArticleList = () => {
@@ -11,7 +12,11 @@ export const useGetArticleList = () => {
     queryKey: [
       "getArticle",
     ],
-    queryFn: getArticleList,
+    queryFn: async () => {
+      const data = await getArticleList();
+      // 최신순으로 정렬 (내림차순)
+      return data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
   });
 };
 

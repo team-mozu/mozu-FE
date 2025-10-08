@@ -15,7 +15,7 @@ interface IHeaderProps {
 export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { classId, newsId } = useParams();
+  const { classId } = useParams();
 
   /** 📌 현재 페이지 상태를 useMemo로 계산 */
   const currentPage = useMemo(() => {

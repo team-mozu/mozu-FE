@@ -74,5 +74,5 @@ const Title1 = styled.div<{
 `;
 
 const Title2 = styled(Title1)`
-  width: 120px;
+  width: 300px;
 `;

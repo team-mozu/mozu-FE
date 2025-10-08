@@ -32,6 +32,8 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
 
   const { mutate: teamEnd, isPending: isTeamEndPending } = useTeamEnd({
     onSuccess: () => {
+      localStorage.removeItem("trade");
+
       Toast("투자 완료에 성공하였습니다", {
         type: "success",
       });
@@ -81,10 +83,10 @@ export const InvestCompleteModal = memo(({ isOpen, setIsOpen }: IInvestCompleteT
           item =>
             item.itemId &&
             item.itemName &&
-            item.itemMoney &&
+            item.itemPrice &&
             item.orderCount !== undefined &&
-            item.totalMoney &&
-            item.orderType,
+            item.orderType &&
+            item.totalMoney,
         );
 
       if (!isValidData) {

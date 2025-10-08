@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface ILogoType {
   img?: string;
-  onImageChange?: (file: File | null) => void;
+  onImageChange?: (file: File | null | "DELETE") => void;
 }
 
 export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
@@ -28,7 +28,7 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
     setLogo(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
-      onImageChange?.(null);
+      onImageChange?.("DELETE");
     }
   };
 

@@ -12,7 +12,7 @@ interface classItem {
 }
 
 export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
-  const maxRound = Math.max(...classItems.map(item => item.money.length - 2));
+  const maxRound = Math.max(...classItems.map(item => item.money.length - 1));
   const header = [
     "종목 이름",
     "현재가",
@@ -45,14 +45,14 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
               <Td
                 width="12.5%"
                 alignRight>
-                {item.money[1].toLocaleString()}
+                {item.money[0].toLocaleString()}
               </Td>
               {Array.from(
                 {
                   length: maxRound,
                 },
                 (_, idx) => {
-                  const amount = item.money[idx + 2];
+                  const amount = item.money[idx + 1];
                   const isNumber = typeof amount === "number";
                   return (
                     <Td

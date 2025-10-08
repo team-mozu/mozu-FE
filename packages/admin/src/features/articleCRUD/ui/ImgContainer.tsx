@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 interface IImgType {
   label?: string;
   img?: string | File | null;
-  onImageChange?: (file: File | string | null) => void;
+  onImageChange?: (file: File | string | null | "DELETE") => void;
 }
 
 export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
@@ -37,7 +37,7 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
   const delClick = () => {
     setImgUrl(null);
     if (onImageChange) {
-      onImageChange(null);
+      onImageChange("DELETE");
     }
     if (imgRef.current) {
       imgRef.current.value = "";

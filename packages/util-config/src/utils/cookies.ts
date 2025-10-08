@@ -49,3 +49,10 @@ export const removeCookies = (key: string | string[], options?: CookieSetOptions
       ];
   keys.forEach(k => cookies.remove(k, options));
 };
+
+export const removeCookiesAsync = (key: string | string[], options?: CookieSetOptions): Promise<void> => {
+  return new Promise(resolve => {
+    removeCookies(key, options);
+    resolve();
+  });
+};

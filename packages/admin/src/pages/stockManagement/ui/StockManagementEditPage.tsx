@@ -10,7 +10,7 @@ import { useForm, usePriceFormatter } from "@/shared/lib/hooks";
 type FormState = {
   name: string;
   info: string;
-  logo: string | File | null;
+  logo: string | File | null | "DELETE";
   money: string;
   debt: string;
   capital: string;
@@ -79,10 +79,24 @@ export const StockManagementEditPage = () => {
 
   const editClick = () => {
     if (id) {
+      // 로고 처리 로직
+      let logoToSend: File | null | "" = null;
+      
+      if (state.logo === "DELETE") {
+        // 명시적 삭제 - 빈 문자열로 서버에 전달
+        logoToSend = "";
+      } else if (state.logo instanceof File) {
+        // 새 파일 업로드
+        logoToSend = state.logo;
+      } else if (typeof state.logo === 'string') {
+        // 기존 URL - 변경없음으로 null 전달
+        logoToSend = null;
+      }
+      
       stockUpdate({
         itemName: state.name,
         itemInfo: state.info,
-        itemLogo: state.logo,
+        itemLogo: logoToSend,
         money: Number(state.money),
         debt: Number(state.debt),
         capital: Number(state.capital),
@@ -110,7 +124,7 @@ export const StockManagementEditPage = () => {
         <LeftContainer>
           <div>
             <LogoUploader
-              img={typeof state.logo === "string" ? state.logo : state.logo ? URL.createObjectURL(state.logo) : ""}
+              img={typeof state.logo === "string" && state.logo !== "DELETE" ? state.logo : state.logo instanceof File ? URL.createObjectURL(state.logo) : ""}
               onImageChange={file =>
                 setState(prev => ({
                   ...prev,

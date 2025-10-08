@@ -62,11 +62,13 @@ const ItemContent = memo(({
       {hasValidData && (
         <ItemPriceContainer>
           <Price>{nowMoney.toLocaleString()}원</Price>
-          <Percent
-            isUp={isUp}
-            isZero={isZeroPercent}>
-            {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""}${profitNum})`}
-          </Percent>
+          {!isZeroPercent && (
+            <Percent
+              isUp={isUp}
+              isZero={isZeroPercent}>
+              {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${profitNum})`}
+            </Percent>
+          )}
         </ItemPriceContainer>
       )}
     </ItemContainer>
@@ -85,7 +87,7 @@ export const ItemSidebar = ({ isMock = false }: { isMock?: boolean }) => {
 
   const handleItemContentClick = useCallback((itemId: number) => {
     navigate(`stock/${itemId}`)
-  },[navigate])
+  }, [navigate])
 
   return (
     <SideBarContainer>

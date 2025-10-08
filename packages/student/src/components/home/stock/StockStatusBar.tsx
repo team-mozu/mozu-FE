@@ -59,7 +59,9 @@ export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "�
             </StockName>
             <StockPrice color={priceColor}>
               {data?.nowMoney?.toLocaleString()}원{" "}
-              <span>{`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""}${profitNum})`}</span>
+              {!isZeroPercent && (
+                <span>{`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${profitNum})`}</span>
+              )}
             </StockPrice>
           </StockInfo>
         )}

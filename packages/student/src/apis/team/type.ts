@@ -34,12 +34,14 @@ export type TeamCashType = {
 };
 
 export type TeamEndData = {
+  id?: string;
   itemId: number;
   itemName: string;
   itemPrice: number;
   orderCount: number;
   totalMoney: number;
   orderType: "BUY" | "SELL";
+  invCount: number;
 };
 
 export type TeamOrdersResponse = TeamOrdersData[];

@@ -21,7 +21,7 @@ export const ArticleManagementEditPage = () => {
   const [datas, setDatas] = useState<{
     articleName: string;
     articleDesc: string;
-    articleImage?: string | null | File;
+    articleImage?: string | null | File | "DELETE";
   }>({
     articleName: "",
     articleDesc: "",
@@ -103,7 +103,15 @@ export const ArticleManagementEditPage = () => {
   const formData = {
     articleName: datas.articleName.trim(),
     articleDesc: datas.articleDesc.trim(),
-    articleImage: datas.articleImage === originalImage ? null : datas.articleImage,
+    articleImage: (() => {
+      if (datas.articleImage === "DELETE") {
+        return ""; // 명시적 삭제
+      } else if (datas.articleImage === originalImage) {
+        return null; // 변경없음
+      } else {
+        return datas.articleImage; // 새 파일 또는 null
+      }
+    })(),
   };
 
   const { mutate: updateArticle, isPending } = useArticleUpdate(id, formData);
@@ -182,7 +190,7 @@ export const ArticleManagementEditPage = () => {
             <InputWrapper>
               <ImgContainer
                 label="기사 이미지"
-                img={datas.articleImage instanceof File ? URL.createObjectURL(datas.articleImage) : datas.articleImage || null}
+                img={datas.articleImage instanceof File ? URL.createObjectURL(datas.articleImage) : (typeof datas.articleImage === "string" && datas.articleImage !== "DELETE") ? datas.articleImage : null}
                 onImageChange={handleImageChange}
                 aria-invalid={!!errors.articleImage}
                 aria-describedby={errors.articleImage ? "image-error" : undefined}

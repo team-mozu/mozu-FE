@@ -19,6 +19,6 @@ export const getCurrent = async (id: string): Promise<TeamCurrentGetResponse[]> 
  * @returns {Promise<TeamHoldItemGetResponse[]>} 팀이 보유한 종목 목록 데이터 (종목명, 수량, 가치 등)
  */
 export const getHoldItem = async (id: string): Promise<TeamHoldItemGetResponse[]> => {
-  const { data } = await instance.get(`${router}/${id}/holditem`);
+  const { data } = await instance.get(`${router}/${id}/holditems`);
   return data;
 };

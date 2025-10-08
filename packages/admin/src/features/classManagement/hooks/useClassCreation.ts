@@ -95,7 +95,7 @@ export const useClassCreation = () => {
       lessonItems: getApiRequestData(),
       lessonArticles: classArticles.map(group => ({
         investmentRound: group.invDeg,
-        articles: group.articles.map(article => article.id), // Article[]에서 ID만 추출
+        articles: group.articles.map(article => article.articleId), // LessonArticle[]에서 articleId만 추출
       })),
     };
 

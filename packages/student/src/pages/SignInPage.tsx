@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Input, LogoWithText } from "@mozu/ui";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useStudentLogin } from "@/apis";
 import type { StudentLoginProps } from "@/apis/login/type";
@@ -14,6 +15,18 @@ export const SignInPage = () => {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const { mutate: studentLogin, isPending } = useStudentLogin();
+  const queryClient = useQueryClient();
+
+  // 캐시 초기화 useEffect
+  useEffect(() => {
+    // React Query 캐시 전체 초기화
+    queryClient.clear();
+    
+    // 로컬 스토리지의 trade 데이터 초기화
+    localStorage.removeItem("trade");
+    
+    console.log("[SignInPage] 캐시 초기화 완료");
+  }, [queryClient]);
 
   // 뒤로가기 방지 useEffect
   useEffect(() => {

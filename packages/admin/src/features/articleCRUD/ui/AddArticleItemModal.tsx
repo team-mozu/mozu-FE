@@ -4,7 +4,6 @@ import { Button, CheckBox, Input, Search } from "@mozu/ui";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetArticleList } from "@/entities/article";
-import type { Article } from "@/shared/lib/contexts/ArticleContext";
 import { ArticleItem } from "./ArticleItem";
 
 interface AddArticleItemModalProps {

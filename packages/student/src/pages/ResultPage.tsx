@@ -137,6 +137,7 @@ export const ResultPage = () => {
   const { data: teamInfo } = useGetTeamDetail();
   const endRound = teamInfo?.maxInvRound;
 
+
   return (
     <Container>
       <ResultContainer

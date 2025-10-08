@@ -3,13 +3,13 @@ import { color, font } from "@mozu/design-token";
 import { Button, Del, Modal, PageTitle, PostTitle } from "@mozu/ui";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDeleteClass, useGetClassList, useStarClass } from "@/entities/class";
+import { toggleStar, useDeleteClass, useGetClassList } from "@/entities/class";
 import type { LessonGetListResponse } from "@/entities/class/api/type";
 import { ClassPost, SkeletonClassPost } from "@/features/classCRUD";
 import { FullPageLoader } from "@/shared/ui";
 
 export const ClassManagement = () => {
-  const { data, isLoading: apiLoading } = useGetClassList();
+  const { data, isLoading: apiLoading, refetch } = useGetClassList();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -67,8 +67,6 @@ export const ClassManagement = () => {
     delClassApi,
   ]);
 
-  const { mutate: apiClassStar } = useStarClass(selectedClassId);
-
   const toggleFavorite = useCallback(
     (() => {
       let isPending = false;
@@ -90,7 +88,11 @@ export const ClassManagement = () => {
             return updated;
           });
 
-          await apiClassStar();
+          // toggleStar API를 직접 호출하여 실제 클릭한 아이템의 ID 사용
+          await toggleStar(id);
+
+          // 캐시 무효화로 최신 데이터 반영
+          refetch();
         } catch (error) {
           console.error("즐겨찾기 요청 실패", error);
         } finally {
@@ -99,7 +101,9 @@ export const ClassManagement = () => {
         }
       };
     })(),
-    [],
+    [
+      refetch,
+    ],
   );
 
   if (apiLoading) return <FullPageLoader />;

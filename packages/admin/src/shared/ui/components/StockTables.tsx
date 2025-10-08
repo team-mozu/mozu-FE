@@ -10,7 +10,7 @@ interface StockData {
   itemId: number;
   itemCode: number;
   itemName: string;
-  money: (number | null)[]; // [현재가, 현재가, 1차, 2차, 3차] - 0번 인덱스는 렌더링 안함
+  money: (number | null)[]; // [현재가, 1차, 2차, 3차, 4차] - 0번 인덱스부터 시작
   stockChecked?: boolean;
 }
 
@@ -270,8 +270,8 @@ const StockTableRow = memo(({
   onMoveToNextField: (currentItemId: number, currentColumnIndex: number, direction: 'next' | 'prev') => void;
 }) => {
   const priceColumns = useMemo(() => {
-    const cols = [1]; // 현재가 (인덱스 1)
-    for (let i = 2; i <= degree + 1; i++) {
+    const cols = [0]; // 현재가 (인덱스 0)
+    for (let i = 1; i <= degree; i++) {
       cols.push(i);
     }
     return cols;
@@ -478,23 +478,23 @@ export const StockTables = memo(({
 
     if (direction === 'next') {
       // 같은 행에서 다음 컬럼으로 이동
-      if (currentColumnIndex < selectedRound + 1) {
+      if (currentColumnIndex < selectedRound) {
         nextInputId = `${currentItemId}-${currentColumnIndex + 1}`;
       }
       // 다음 행의 첫 번째 컬럼으로 이동 (현재가)
       else if (currentStockIndex < allStocks.length - 1) {
         const nextStock = allStocks[currentStockIndex + 1];
-        nextInputId = `${nextStock.itemId}-1`;
+        nextInputId = `${nextStock.itemId}-0`;
       }
     } else if (direction === 'prev') {
       // 같은 행에서 이전 컬럼으로 이동
-      if (currentColumnIndex > 1) {
+      if (currentColumnIndex > 0) {
         nextInputId = `${currentItemId}-${currentColumnIndex - 1}`;
       }
       // 이전 행의 마지막 컬럼으로 이동
       else if (currentStockIndex > 0) {
         const prevStock = allStocks[currentStockIndex - 1];
-        nextInputId = `${prevStock.itemId}-${selectedRound + 1}`;
+        nextInputId = `${prevStock.itemId}-${selectedRound}`;
       }
     }
 
@@ -529,8 +529,8 @@ export const StockTables = memo(({
   const handleFillRandomValues = useCallback(() => {
     const updatedData = stockData.map(stock => {
       const newMoney = [...stock.money];
-      // 현재가 (인덱스 1)와 각 차수별로 랜덤 값 생성
-      for (let i = 1; i <= selectedRound + 1; i++) {
+      // 현재가 (인덱스 0)와 각 차수별로 랜덤 값 생성
+      for (let i = 0; i <= selectedRound; i++) {
         // 주식 가격에 맞는 현실적인 범위: 1,000원 ~ 500,000원
         const minPrice = 1000;
         const maxPrice = 500000;
@@ -546,7 +546,7 @@ export const StockTables = memo(({
     // 상위 컴포넌트에도 변경사항 전달
     if (onPriceChange) {
       updatedData.forEach(stock => {
-        for (let i = 1; i <= selectedRound + 1; i++) {
+        for (let i = 0; i <= selectedRound; i++) {
           onPriceChange(stock.itemId, i, stock.money[i]);
         }
       });

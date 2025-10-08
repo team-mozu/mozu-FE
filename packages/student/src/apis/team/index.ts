@@ -25,10 +25,10 @@ export const useGetTeamDetail = (options?: UseQueryOptions<TeamDeatilResponse, A
       "detail",
     ],
     queryFn: async () => {
-      const { data } = await instance.get<TeamDeatilResponse>(`${router}`);
+      const { data } = await instance.get<TeamDeatilResponse>(`${router}/detail`);
       return data;
     },
-    staleTime: 5000,
+    staleTime: 1000,
     ...options,
   });
 };
@@ -100,7 +100,7 @@ export const useTeamRank = (options?: UseQueryOptions<TeamRankResponse, AxiosErr
       "rank",
     ],
     queryFn: async () => {
-      const { data } = await instance.get<TeamRankResponse>(`${router}/rank`);
+      const { data } = await instance.get<TeamRankResponse>(`${router}/ranks`);
       return data;
     },
     staleTime: 5000,

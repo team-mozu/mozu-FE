@@ -12,3 +12,10 @@ export const login = async (payload: OrganLoginRequest): Promise<OrganLoginRespo
   const { data } = await instance.post(`${router}/login`, payload);
   return data;
 };
+
+export const myId = async (): Promise<{
+  organId: string;
+}> => {
+  const { data } = await instance.get(`${router}/my`);
+  return data;
+};

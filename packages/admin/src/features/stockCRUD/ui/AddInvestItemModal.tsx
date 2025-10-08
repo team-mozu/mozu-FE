@@ -47,18 +47,20 @@ export const AddInvestItemModal = ({
   }, [stockData]);
 
   /**
-   * 검색어와 기존 종목을 필터링한 종목 목록
+   * 검색어와 기존 종목을 필터링한 종목 목록 (역순 정렬)
    */
   const filteredStocks = useMemo(() => {
-    return stocks.filter(stock => {
-      const isNotExisting = !existingStockIds.includes(stock.itemId);
-      const matchesSearch =
-        searchText === "" ||
-        stock.itemName.toLowerCase().includes(searchText.toLowerCase()) ||
-        String(stock.itemId).includes(searchText);
+    return stocks
+      .filter(stock => {
+        const isNotExisting = !existingStockIds.includes(stock.itemId);
+        const matchesSearch =
+          searchText === "" ||
+          stock.itemName.toLowerCase().includes(searchText.toLowerCase()) ||
+          String(stock.itemId).includes(searchText);
 
-      return isNotExisting && matchesSearch;
-    });
+        return isNotExisting && matchesSearch;
+      })
+      .reverse(); // 역순으로 정렬 (최신 등록된 종목이 위로)
   }, [stocks, existingStockIds, searchText]);
 
   /**

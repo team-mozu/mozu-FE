@@ -11,6 +11,7 @@ export const useGetCurrent = (id?: string) =>
   useQuery<TeamCurrentGetResponse[]>({
     queryKey: [
       "getCurrent",
+      id,
     ],
     queryFn: () => getCurrent(id!),
     enabled: !!id,

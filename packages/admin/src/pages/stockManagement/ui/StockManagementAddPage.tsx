@@ -8,7 +8,7 @@ import { useForm, usePriceFormatter } from "@/shared/lib/hooks";
 type FormState = {
   name: string;
   info: string;
-  logo: File | null;
+  logo: File | null | "DELETE";
   money: string;
   debt: string;
   capital: string;
@@ -91,7 +91,7 @@ export const StockManagementAddPage = () => {
         <LeftContainer>
           <div>
             <LogoUploader
-              img={state.logo ? URL.createObjectURL(state.logo) : ""}
+              img={state.logo instanceof File ? URL.createObjectURL(state.logo) : ""}
               onImageChange={file =>
                 setState(prev => ({
                   ...prev,

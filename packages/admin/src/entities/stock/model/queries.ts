@@ -4,6 +4,7 @@ import type { ItemGetDetailResponse, ItemGetListResponse } from "../api/type";
 
 /**
  * 투자 종목 목록을 조회하는 React Query 훅입니다.
+ * 최신 생성순으로 정렬됩니다.
  * @returns {UseQueryResult<ItemGetListResponse[]>} 투자 종목 목록 데이터와 로딩 상태
  */
 export const useGetStockList = () => {
@@ -11,7 +12,11 @@ export const useGetStockList = () => {
     queryKey: [
       "getStock",
     ],
-    queryFn: getItemList,
+    queryFn: async () => {
+      const data = await getItemList();
+      // 최신 생성순으로 정렬 (내림차순)
+      return data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
   });
 };
 

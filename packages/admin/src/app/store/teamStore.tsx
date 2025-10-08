@@ -10,14 +10,14 @@ interface TradeData {
 export interface TeamInfo {
   teamId: string;
   teamName: string;
-  schoolName: string;
+  schoolName?: string;
   trade: TradeData[]; // ✅ 선택적 필드로 추가
 }
 
 interface TeamStore {
   teamInfoMap: Record<string, TeamInfo>;
   setTeamInfo: (team: TeamInfo) => void;
-  appendTrade: (teamId: number, trade: TradeData) => void; // ✅ trade 누적 메서드 추가
+  appendTrade: (teamId: string, trade: TradeData) => void; // ✅ trade 누적 메서드 추가
   getTeamInfo: (teamId: number) => TeamInfo | null;
   clearTeamInfo: (teamId?: number) => void;
 }

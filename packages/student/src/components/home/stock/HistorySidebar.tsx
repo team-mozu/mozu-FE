@@ -8,12 +8,12 @@ import { useLocalStorage, useUnchangedValue } from "@/hook";
 import { roundToFixed } from "@/utils";
 
 interface ITransactionContentType {
-  id: number;
+  id: string;
   keyword: "BUY" | "SELL";
   name: string;
   totalPrice: number;
   stockPrice: number;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   isBuy?: boolean;
 }
 
@@ -22,7 +22,7 @@ interface ITeamEndProps {
   itemName: string;
   orderType: "BUY" | "SELL";
   totalMoney: number;
-  itemMoney: number;
+  itemPrice: number;
 }
 
 const TransactionContent = memo(({ keyword, name, totalPrice, stockPrice, id, onDelete }: ITransactionContentType) => {
@@ -40,9 +40,10 @@ const TransactionContent = memo(({ keyword, name, totalPrice, stockPrice, id, on
       <TransactionContentContainer>
         <TransactionPriceContainer>
           <UpDownDiv isBuy={isBuy}>
-            {totalPrice.toLocaleString()}원 ({(totalPrice / stockPrice).toLocaleString()}주)
+            {(totalPrice ?? 0).toLocaleString()}원 (
+            {stockPrice && stockPrice > 0 ? Math.floor((totalPrice ?? 0) / stockPrice).toLocaleString() : "0"}주)
           </UpDownDiv>
-          <StockPrice>{stockPrice.toLocaleString()}원</StockPrice>
+          <StockPrice>{stockPrice && stockPrice > 0 ? stockPrice.toLocaleString() : "가격 정보 없음"}원</StockPrice>
         </TransactionPriceContainer>
         <CancleBtn onClick={handleDelete}>취소</CancleBtn>
       </TransactionContentContainer>
@@ -67,21 +68,22 @@ const mockTradeData: ITeamEndProps[] = [
     itemName: "모의주식A",
     orderType: "BUY",
     totalMoney: 500000,
-    itemMoney: 70000,
+    itemPrice: 70000,
+
   },
   {
     itemId: 102,
     itemName: "모의주식B",
     orderType: "SELL",
     totalMoney: 200000,
-    itemMoney: 50000,
+    itemPrice: 50000,
   },
   {
     itemId: 103,
     itemName: "모의주식C",
     orderType: "BUY",
     totalMoney: 300000,
-    itemMoney: 80000,
+    itemPrice: 80000,
   },
 ];
 
@@ -99,9 +101,15 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [realTradeData, setRealTradeData] = useLocalStorage<TeamEndProps>("trade", []);
   const [realCashMoney, setRealCashMoney] = useLocalStorage<number>("cashMoney", 0);
+  const [lastSyncedInvRound, setLastSyncedInvRound] = useState<number | null>(null);
 
   // isMock 값에 따라 실제 데이터 또는 목 데이터를 사용
-  const tradeData = isMock ? mockTradeData : realTradeData;
+  const allTradeData = realTradeData;
+  // 현재 투자 라운드에 해당하는 거래만 필터링
+  const currentInvRound = realTeamData?.curInvRound ?? 1;
+  const tradeData = isMock
+    ? mockTradeData
+    : allTradeData.filter(trade => trade.invCount === currentInvRound);
   const cashMoney = isMock ? mockTeamData.cashMoney : realCashMoney;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
@@ -111,34 +119,49 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
 
   const totalBuy = tradeData
     .filter(tradeItem => tradeItem.orderType === "BUY")
-    .reduce((acc, item) => acc + item.totalMoney, 0);
+    .reduce((acc, item) => acc + (item.totalMoney ?? 0), 0);
   const totalSell = tradeData
     .filter(tradeItem => tradeItem.orderType === "SELL")
-    .reduce((acc, item) => acc + item.totalMoney, 0);
+    .reduce((acc, item) => acc + (item.totalMoney ?? 0), 0);
   const buyableAmount = cashMoney;
 
+  // 서버 데이터와 동기화: 초기 로딩 시 또는 투자 라운드가 변경되었을 때
   useEffect(() => {
-    if (!isMock && realTeamData?.cashMoney !== undefined) {
-      setCashMoneyStable(realTeamData.cashMoney);
+    if (!isMock && realTeamData?.cashMoney !== undefined && realTeamData?.curInvRound !== undefined) {
+      const currentInvRound = realTeamData.curInvRound;
+
+      // 초기 로딩이거나 투자 라운드가 변경된 경우 서버 데이터로 동기화
+      if (lastSyncedInvRound === null || lastSyncedInvRound !== currentInvRound) {
+        setCashMoneyStable(realTeamData.cashMoney);
+        setLastSyncedInvRound(currentInvRound);
+        console.log(`[HistorySidebar] cashMoney 동기화: ${realTeamData.cashMoney}원 (투자라운드: ${currentInvRound})`);
+
+        // 투자 라운드가 변경된 경우 로그만 출력 (거래 내역은 누적 보관)
+        if (lastSyncedInvRound !== null && lastSyncedInvRound !== currentInvRound) {
+          console.log(`[HistorySidebar] 투자 라운드 변경 - 현재 라운드 거래만 표시 (${lastSyncedInvRound} → ${currentInvRound})`);
+        }
+      }
     }
   }, [
-    realTeamData,
+    realTeamData?.cashMoney,
+    realTeamData?.curInvRound,
     setCashMoneyStable,
     isMock,
+    lastSyncedInvRound,
   ]);
 
   const formattedData = {
     teamName: teamData?.teamName,
-    totalMoney: teamData?.totalMoney.toLocaleString(),
-    cashMoney: cashMoney.toLocaleString(),
+    totalMoney: (teamData?.totalMoney ?? 0).toLocaleString(),
+    cashMoney: (cashMoney ?? 0).toLocaleString(),
     valueMoney: ((teamData?.valuationMoney ?? 0) + totalBuy - totalSell).toLocaleString(),
-    valueProfit: teamData?.valProfit,
+    valueProfit: teamData?.valProfit ?? 0,
     profitNum: teamData?.profitNum,
     totalBuy: totalBuy.toLocaleString(),
     totalSell: totalSell.toLocaleString(),
-    buyableAmount: buyableAmount.toLocaleString(),
+    buyableAmount: (buyableAmount ?? 0).toLocaleString(),
   };
-  const fixedProfitNum = Number(teamData?.profitNum.replace("%", "")).toFixed(3);
+  const fixedProfitNum = Number((teamData?.profitNum ?? "0%").replace("%", "")).toFixed(3);
   const formattedProfitNum = fixedProfitNum.includes("-") ? `${fixedProfitNum}%` : `+${fixedProfitNum}%`;
 
   // Mock 페이지에서는 로딩 상태를 표시하지 않음
@@ -154,19 +177,15 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
     setIsOpen(true);
   };
 
-  const handleDeleteTransaction = (deletedId: number) => {
+  const handleDeleteTransaction = (deletedId: string) => {
     // Mock 모드에서는 실제 로컬 스토리지 업데이트 대신 목 데이터만 변경
     if (isMock) {
-      // 목 데이터는 불변성을 유지하기 위해 복사 후 필터링
-      const updatedMockTradeData = (tradeData as ITeamEndProps[]).filter(item => item.itemId !== deletedId);
-      // 실제 목 데이터 상태를 업데이트하는 로직이 필요하다면 여기에 추가
-      // (현재는 목 데이터가 상수이므로 직접 업데이트하지 않음)
-      console.log("Mock transaction deleted:", updatedMockTradeData);
+      console.log("Mock transaction deleted:", deletedId);
       return;
     }
 
-    const deletedTrade = realTradeData.find(tradeItem => {
-      return tradeItem.itemId === deletedId;
+    const deletedTrade = allTradeData.find(tradeItem => {
+      return tradeItem.id === deletedId;
     });
 
     if (!deletedTrade) return;
@@ -179,7 +198,7 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
 
     setRealTradeData(
       realTradeData.filter(tradeItem => {
-        return tradeItem.itemId !== deletedId;
+        return tradeItem.id !== deletedId;
       }),
     );
   };
@@ -203,9 +222,8 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
               </TotalAssetPrice>
               {(teamData?.valProfit ?? 0) !== 0 ? (
                 <ProfitContainer profit={teamData?.valProfit ?? 0}>
-                  {(formattedData?.valueProfit ?? 0).toLocaleString().includes("-") ? "" : "+"}
-                  {(formattedData?.valueProfit ?? 0).toLocaleString()}원 (
-                  {roundToFixed(parseFloat(formattedProfitNum), 2)}%)
+                  {formattedData.valueProfit.toLocaleString().includes("-") ? "" : "+"}
+                  {formattedData.valueProfit.toLocaleString()}원 ({roundToFixed(parseFloat(formattedProfitNum), 2)}%)
                 </ProfitContainer>
               ) : null}
             </TotalAssetLeft>
@@ -228,18 +246,18 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
         </UpperContainer>
         <TransactionHistoryContents>
           {[
-            ...(tradeData as ITeamEndProps[]),
+            ...(tradeData as TeamEndProps),
           ]
             .reverse()
             .map(data => (
               <TransactionContent
-                key={data.itemId}
-                id={data.itemId}
+                key={data.id || `${data.itemId}-${data.invCount}`}
+                id={data.id || `${data.itemId}-${data.invCount}`}
                 onDelete={handleDeleteTransaction}
                 keyword={data.orderType}
-                name={data.itemName}
-                totalPrice={data.totalMoney}
-                stockPrice={data.itemMoney}
+                name={data.itemName ?? ""}
+                totalPrice={data.totalMoney ?? 0}
+                stockPrice={data.itemPrice ?? 0}
               />
             ))}
         </TransactionHistoryContents>

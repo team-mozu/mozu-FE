@@ -110,17 +110,21 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     }
 
     const newTradeItem: TeamEndData = {
+      id: `${stockData.itemId}-${Date.now()}-${Math.random()}`,
       itemId: stockData.itemId,
       itemName: stockData.itemName,
       itemPrice: stockData.nowMoney,
       orderCount: numericQuantity,
       totalMoney: numericQuantity * stockData.nowMoney,
       orderType: modalType === "매수" ? "BUY" : "SELL",
+      invCount: teamData?.curInvRound ?? 1,
     };
 
     try {
       const existingIndex = tradeData.findIndex(
-        tradeItem => tradeItem.itemId === itemIdNum && tradeItem.orderType === newTradeItem.orderType,
+        tradeItem => tradeItem.itemId === itemIdNum && 
+                    tradeItem.orderType === newTradeItem.orderType &&
+                    tradeItem.invCount === newTradeItem.invCount,
       );
 
       let updatedTradeData: TeamEndData[];
