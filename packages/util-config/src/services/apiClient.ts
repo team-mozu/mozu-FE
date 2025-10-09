@@ -118,16 +118,8 @@ instance.interceptors.response.use(
       isRefreshing = false;
       removeAuthTokens();
       
-      // SSE 연결 해제 (student 앱에서만)
-      try {
-        const { sseManager } = await import('../../../student/src/services/SSEManager');
-        if (sseManager) {
-          console.log('[API Client] No token, disconnecting SSE');
-          sseManager.disconnect();
-        }
-      } catch (importError) {
-        console.log('[API Client] SSEManager not available (probably admin app)');
-      }
+      // SSE 연결 해제는 각 앱에서 개별적으로 처리
+      console.log('[API Client] No token, SSE disconnection handled by app');
       
       console.log("No refresh token or user type, redirecting to signin");
       // 테스트 환경이 아닐 때만 로그인 페이지로 리디렉션
@@ -143,18 +135,8 @@ instance.interceptors.response.use(
 
       setAuthTokens(newAccessToken, refreshToken, userType);
 
-      // SSE 연결에 새 토큰 적용 (student 앱에서만)
-      try {
-        // 동적 import로 SSEManager 사용 (admin 앱에서는 없을 수 있음)
-        const { sseManager } = await import('../../../student/src/services/SSEManager');
-        if (sseManager && sseManager.isConnected()) {
-          console.log('[API Client] Token refreshed, SSE connection maintained');
-          // SSE는 기존 연결을 유지 (토큰 갱신으로 인한 재연결 방지)
-        }
-      } catch (importError) {
-        // admin 앱이나 SSEManager가 없는 경우 무시
-        console.log('[API Client] SSEManager not available (probably admin app)');
-      }
+      // SSE 토큰 갱신은 각 앱에서 개별적으로 처리
+      console.log('[API Client] Token refreshed, SSE token update handled by app');
 
       // 대기열에 있던 모든 요청을 새로운 토큰으로 재실행
       processQueue(null, newAccessToken);
@@ -168,16 +150,8 @@ instance.interceptors.response.use(
       processQueue(refreshError as AxiosError, null);
       removeAuthTokens();
 
-      // SSE 연결 해제 (student 앱에서만)
-      try {
-        const { sseManager } = await import('../../../student/src/services/SSEManager');
-        if (sseManager) {
-          console.log('[API Client] Token refresh failed, disconnecting SSE');
-          sseManager.disconnect();
-        }
-      } catch (importError) {
-        console.log('[API Client] SSEManager not available (probably admin app)');
-      }
+      // SSE 연결 해제는 각 앱에서 개별적으로 처리
+      console.log('[API Client] Token refresh failed, SSE disconnection handled by app');
 
       Toast("세션이 만료되었습니다. 다시 로그인해주세요.", {
         type: "error",
