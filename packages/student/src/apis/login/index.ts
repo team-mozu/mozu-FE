@@ -1,5 +1,5 @@
 import { Toast } from "@mozu/ui";
-import { instance, setCookies, setTokens } from "@mozu/util-config";
+import { instance, setAuthTokens, setCookies } from "@mozu/util-config";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
@@ -8,9 +8,9 @@ import type { AuthResponse, StudentLoginProps } from "./type";
 export const useStudentLogin = () => {
   const navigate = useNavigate();
   return useMutation<AuthResponse, AxiosError, StudentLoginProps>({
-    mutationFn: async ({ classNum, schoolName, teamName }) => {
+    mutationFn: async ({ lessonNum, schoolName, teamName }) => {
       const response = await instance.post<AuthResponse>("/team/participate", {
-        classNum,
+        lessonNum,
         schoolName,
         teamName,
       });
@@ -28,7 +28,7 @@ export const useStudentLogin = () => {
       }
       let redirectUrl: string;
       redirectUrl = "wait";
-      setTokens(accessToken, "", "student");
+      setAuthTokens(accessToken, "", "student");
       setCookies("authority", "student", {
         path: "/",
         secure: true,

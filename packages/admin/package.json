@@ -5,11 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,css,html}\""
+    "lhci": "rm -rf ./lhci_reports && yarn build && lhci autorun && rm -rf ./.lighthouseci"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.0",
@@ -24,6 +22,7 @@
     "@tanstack/react-query": "^5.62.15",
     "@tanstack/react-query-devtools": "^5.62.15",
     "axios": "^1.7.9",
+    "dotenv": "^17.2.1",
     "framer-motion": "^12.15.0",
     "hoist-non-react-statics": "^3.3.2",
     "react": "^18.3.1",
@@ -34,6 +33,8 @@
     "scheduler": "^0.25.0"
   },
   "devDependencies": {
+    "@emotion/babel-plugin": "^11.13.5",
+    "@lhci/cli": "^0.15.1",
     "@mozu/design-token": "workspace:^",
     "@mozu/ui": "workspace:^",
     "@mozu/util-config": "workspace:^",
@@ -47,7 +48,9 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitejs/plugin-react-refresh": "^1.3.6",
     "@yarnpkg/sdks": "^3.2.0",
+    "corepack": "^0.34.0",
     "event-source-polyfill": "^1.0.31",
+    "puppeteer": "^24.15.0",
     "react-tooltip": "^5.28.0",
     "typescript": "^5.7.3",
     "vite": "^6.0.5",

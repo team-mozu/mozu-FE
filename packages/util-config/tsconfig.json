@@ -12,11 +12,12 @@
     "sourceMap": true,
     "declarationMap": true,
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
-    "types": ["node"],
+    "types": ["node", "vite/client"],
     "paths": {
       "@/*": ["src/*"]
     }
   },
+  "references": [{ "path": "../ui", "prebuild": true }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

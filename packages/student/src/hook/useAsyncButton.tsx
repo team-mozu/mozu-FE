@@ -14,7 +14,7 @@ type AsyncFn<T extends any[]> = (...args: T) => Promise<void> | void;
  */
 export const useAsyncButton = <T extends any[]>(
   asyncFn: AsyncFn<T>,
-  cooldownMs = 1000
+  cooldownMs = 1000,
 ): {
   onClick: (...args: T) => Promise<void>;
   isLoading: boolean;
@@ -35,7 +35,7 @@ export const useAsyncButton = <T extends any[]>(
         await result;
       }
     } catch (error) {
-      console.error('AsyncButton error:', error);
+      console.error("AsyncButton error:", error);
     } finally {
       setIsLoading(false);
 
@@ -49,6 +49,6 @@ export const useAsyncButton = <T extends any[]>(
   return {
     onClick,
     isLoading,
-    disabled: isLoading || isOnCooldown
+    disabled: isLoading || isOnCooldown,
   };
 };

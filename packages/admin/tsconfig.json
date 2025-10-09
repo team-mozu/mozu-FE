@@ -1,32 +1,33 @@
 {
+  "extends": "../../tsconfig.base.json",
+
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "ESNext",
-    "resolveJsonModule": true,
-    "moduleResolution": "bundler",
-    "isolatedModules": true,
-    "noEmit": false,
-    "jsx": "react-jsx",
-    "outDir": "./dist",
     "baseUrl": ".",
+    "outDir": "dist",
+    "rootDir": ".",
+    "composite": true,
+    "declarationDir": "dist/types",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "plugins": [{ "name": "@yarnpkg/typescript-plugin" }],
+    "typeRoots": ["node_modules/@types", "src/@types"],
     "paths": {
       "@/*": ["src/*"],
-      "@mozu/ui": ["../ui/dist"],
-      "@mozu/design-token": ["../design-token/dist"],
-      "@configs/util": ["../util-config/dist"]
-    },
-    "typeRoots": ["node_modules/@types", "src/@types"]
+      "@/app/*": ["src/app/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/widgets/*": ["src/widgets/*"],
+      "@/features/*": ["src/features/*"],
+      "@/entities/*": ["src/entities/*"],
+      "@/shared/*": ["src/shared/*"]
+    }
   },
   "references": [
     { "path": "../ui", "prebuild": true },
+    { "path": "../design-token", "prebuild": true },
     { "path": "../util-config", "prebuild": true }
   ],
   "include": ["src/**/*", "vite.config.ts"],

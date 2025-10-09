@@ -1,14 +1,14 @@
-// TODO: state 변동 시에 리렌더링 됨에 따라 useSSE가 재실행 됨
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, DeleteModal, HandCoins, Toast, Trophy } from "@mozu/ui";
+import { Button, Del, HandCoins, Modal, Toast, Trophy } from "@mozu/ui";
+import { removeCookiesAsync } from "@mozu/util-config";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
-import { useTeamOrders, useTeamResult } from "@/apis";
-import { AssetChange, History, NthDeal } from "@/components";
-import { useSSE } from "@/hook";
+import { useGetTeamDetail, useTeamOrders, useTeamResult } from "@/apis";
+import { AssetChange, History, NthDeal, SSELoadingSpinner } from "@/components";
+import { useTypeSSE } from "@/hook";
 import { resetShownInvDegs } from "@/pages/HomePage";
 import { roundToFixed } from "@/utils";
 
@@ -21,14 +21,15 @@ interface ValueStyleProps {
 export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
   const { data: teamOrders } = useTeamOrders();
   const { data: teamResult } = useTeamResult();
+  const { data: teamDetail } = useGetTeamDetail();
   const [isWait, setIsWait] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const navigate = useNavigate();
   const { classId } = useParams<{
     classId: string;
   }>();
 
-  const valueProfitStr = teamResult?.valueProfit ?? "0";
+  const valueProfitStr = teamResult?.valProfit ?? "0";
 
   const profitNumRaw = teamResult?.profitNum ?? "0%";
   const profitNum = parseFloat(profitNumRaw.toString().replace("%", ""));
@@ -92,17 +93,20 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     });
   };
 
-  useSSE(
+  const { isConnected, isConnecting } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    data => { },
+    data => {
+      console.log(data);
+    },
     error => {
       console.log(error);
-      Toast(`네트워크 에러 발생`, {
-        type: "error",
-      });
     },
     {
+      TEAM_SSE_CONNECTED: (data) => {
+        console.log("[ResultContainer] SSE 연결 완료:", data);
+      },
       CLASS_NEXT_INV_START: () => {
+        Toast("다음 투자가 시작되었습니다", { type: "info" });
         setIsWait(false);
       },
     },
@@ -110,16 +114,25 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
 
   return (
     <>
-      {isOpen ? (
-        <DeleteModal
-          titleComment="투자 마치기"
-          subComment="투자 마치면 총 결과 결산 페이지로 이동합니다."
-          message="마치기"
+      <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
+      
+      {isOpenModal && (
+        <Modal
+          mainTitle="투자 마치기"
+          subTitle="투자 마치면 총 결과 결산 페이지로 이동합니다."
+          successBtnChildren="마치기"
+          onSuccessClick={handleEndClass}
+          icon={
+            <Del
+              size={24}
+              color={color.red[400]}
+            />
+          }
+          isOpen={isOpenModal}
+          setIsOpen={setIsOpenModal}
           isPending={false}
-          onDelete={handleEndClass}
-          onCancel={() => setIsOpen(false)}
         />
-      ) : null}
+      )}
       <Container>
         <Title>
           <Logo>
@@ -128,13 +141,13 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
               color={color.orange[500]}
             />
           </Logo>
-          {teamResult?.invDeg === endRound ? (
+          {teamDetail?.curInvRound === endRound ? (
             <p>
-              {teamOrders && teamOrders.length > 0 && teamOrders[teamOrders.length - 1]?.invDeg}
+              {teamDetail && teamDetail.curInvRound > 0 && teamDetail?.curInvRound}
               차(최종) 투자 종료
             </p>
           ) : (
-            <p>{teamOrders && teamOrders.length > 0 && teamOrders[teamOrders.length - 1]?.invDeg}차 투자 종료</p>
+            <p>{teamDetail && teamDetail.curInvRound > 0 && teamDetail?.curInvRound}차 투자 종료</p>
           )}
         </Title>
         <Main>
@@ -143,12 +156,12 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
             {teamOrders &&
               teamOrders.length > 0 &&
               [
-                ...Array(teamOrders[teamOrders.length - 1].invDeg),
+                ...Array(Math.max(...teamOrders.map(order => order.invCount))),
               ]
                 .map((_, i) => i + 1) // 1부터 시작
                 .reverse()
                 .map(deg => {
-                  const ordersInDeg = teamOrders.filter(order => order.invDeg === deg);
+                  const ordersInDeg = teamOrders.filter(order => order.invCount === deg);
                   if (ordersInDeg.length === 0) return null;
 
                   return (
@@ -156,18 +169,16 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                       key={deg}
                       deal={deg}
                       orderHistory={
-                        <>
-                          {ordersInDeg.reverse().map((order, idx) => (
-                            <History
-                              key={idx}
-                              type={order.orderType}
-                              totalMoney={order.totalMoney.toLocaleString()}
-                              itemMoney={order.itemMoney.toLocaleString()}
-                              itemCount={order.orderCount}
-                              itemName={order.itemName}
-                            />
-                          ))}
-                        </>
+                        ordersInDeg.reverse().map((order, idx) => (
+                          <History
+                            key={idx}
+                            type={order.orderType}
+                            totalMoney={order.totalMoney.toLocaleString()}
+                            itemMoney={order.itemPrice.toLocaleString()}
+                            itemCount={order.orderCount}
+                            itemName={order.itemName}
+                          />
+                        ))
                       }
                     />
                   );
@@ -175,7 +186,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
           </Transaction>
           <RightContainer>
             <Result>
-              {teamResult?.invDeg === endRound ? <label>총 결과 요약</label> : <label>결과 요약</label>}
+              {teamResult?.invRound === endRound ? <label>총 결과 요약</label> : <label>결과 요약</label>}
               <AssetChange
                 baseMoney={teamResult?.baseMoney ?? 0}
                 totalMoney={teamResult?.totalMoney ?? 0}
@@ -212,13 +223,13 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                 onClick={onRankClick}
                 hoverBackgroundColor={color.orange[100]}
                 hoverBorderColor={color.orange[300]}>
-                {teamResult?.invDeg === endRound ? "최종 랭킹 보기" : "현재 랭킹 보기"}
+                {teamResult?.invRound === endRound ? "최종 랭킹 보기" : "현재 랭킹 보기"}
                 <Trophy
                   size={24}
                   color={color.orange[500]}
                 />
               </Button>
-              {teamResult?.invDeg === endRound ? (
+              {teamResult?.invRound === endRound ? (
                 <Button
                   backgroundColor={color.zinc[50]}
                   color={color.zinc[800]}
@@ -229,7 +240,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                   borderColor={color.zinc[200]}
                   hoverBackgroundColor={color.zinc[100]}
                   type="logOutImg"
-                  onClick={() => setIsOpen(true)}>
+                  onClick={() => setIsOpenModal(true)}>
                   투자 마치기
                 </Button>
               ) : (

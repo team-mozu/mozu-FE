@@ -28,7 +28,7 @@ export const StockInfo = () => {
     stockId,
   ]);
 
-  const { data, isLoading, error } = useGetStockDetail(itemId);
+  const { data, isLoading, error } = useGetStockDetail(itemId ?? 0);
 
   // 에러 처리
   if (error) {
@@ -100,7 +100,7 @@ export const StockInfo = () => {
               />
               <Accounts
                 title="매출원가"
-                content={data?.profitOG ?? 0}
+                content={data?.profitOg ?? 0}
               />
               <Accounts
                 title="매출이익"

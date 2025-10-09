@@ -20,7 +20,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   const ItemId = stockId ? parseInt(stockId) : null;
 
   const { data: teamData } = useGetTeamDetail();
-  const { data: stockData } = useGetStockDetail(ItemId);
+  const { data: stockData } = useGetStockDetail(ItemId ?? 0);
   const { data: holdItemData } = useGetHoldItems();
   const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
   const [cashMoney, setCashMoney] = useLocalStorage<number>("cashMoney", 0);
@@ -52,7 +52,6 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     teamData?.cashMoney,
   ]);
 
-
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   const maxQuantity = useMemo(() => {
     if (!stockData || !stockData.nowMoney || !holdItemData) return 0;
@@ -61,7 +60,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       return stockData.nowMoney > 0 ? Math.floor(cashMoney / stockData.nowMoney) : 0;
     } else if (modalType === "매도") {
       const holding = holdItemData.find(item => item.itemId === stockData.itemId);
-      return holding?.itemCnt || 0;
+      return holding?.quantity || 0;
     }
     return 0;
   }, [
@@ -100,7 +99,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
 
     if (modalType === "매도") {
       const holding = holdItemData.find(item => item.itemId === itemIdNum);
-      const holdingCount = holding?.itemCnt || 0;
+      const holdingCount = holding?.quantity || 0;
 
       if (numericQuantity > holdingCount) {
         Toast("보유하고 있는 종목의 수량보다 많이 매도할 수 없습니다", {
@@ -111,17 +110,21 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     }
 
     const newTradeItem: TeamEndData = {
+      id: `${stockData.itemId}-${Date.now()}-${Math.random()}`,
       itemId: stockData.itemId,
       itemName: stockData.itemName,
-      itemMoney: stockData.nowMoney,
+      itemPrice: stockData.nowMoney,
       orderCount: numericQuantity,
       totalMoney: numericQuantity * stockData.nowMoney,
       orderType: modalType === "매수" ? "BUY" : "SELL",
+      invCount: teamData?.curInvRound ?? 1,
     };
 
     try {
       const existingIndex = tradeData.findIndex(
-        tradeItem => tradeItem.itemId === itemIdNum && tradeItem.orderType === newTradeItem.orderType,
+        tradeItem => tradeItem.itemId === itemIdNum && 
+                    tradeItem.orderType === newTradeItem.orderType &&
+                    tradeItem.invCount === newTradeItem.invCount,
       );
 
       let updatedTradeData: TeamEndData[];

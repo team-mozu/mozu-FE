@@ -1,27 +1,27 @@
 export type TeamDeatilResponse = {
-  id: number;
-  name: string;
+  id: string;
+  teamName: string;
   baseMoney: number;
   totalMoney: number;
   cashMoney: number;
-  valueMoney: number;
-  invDeg: number;
-  maxInvDeg: number;
-  valueProfit: number;
+  valuationMoney: number;
+  curInvRound: number;
+  valProfit: number;
   profitNum: string;
+  maxInvRound: number;
 };
 
 export type HoldItemsResponse = ItemType[];
 
 export type ItemType = {
-  id: number;
+  id: string;
   itemId: number;
   itemName: string;
-  itemCnt: number;
-  buyMoney: number;
+  avgPurchasePrice: number;
+  quantity: number;
   totalMoney: number;
   nowMoney: number;
-  valMoney: number;
+  valuationMoney: number;
   valProfit: number;
   profitNum: number;
 };
@@ -34,34 +34,36 @@ export type TeamCashType = {
 };
 
 export type TeamEndData = {
+  id?: string;
   itemId: number;
   itemName: string;
-  itemMoney: number;
+  itemPrice: number;
   orderCount: number;
   totalMoney: number;
   orderType: "BUY" | "SELL";
+  invCount: number;
 };
 
 export type TeamOrdersResponse = TeamOrdersData[];
 
 export type TeamOrdersData = {
-  id: number;
+  id: string;
   itemId: number;
   itemName: string;
-  itemMoney: number;
+  itemPrice: number;
   orderCount: number;
   totalMoney: number;
   orderType: "BUY" | "SELL";
-  invDeg: number;
+  invCount: number;
 };
 
 export type TeamResultResponse = {
-  id: number;
-  name: string;
+  id: string;
+  teamName: string;
   baseMoney: number;
   totalMoney: number;
-  invDeg: number;
-  valueProfit: number;
+  invRound: number;
+  valProfit: number;
   profitNum: string;
   orderCount: number;
 };
@@ -69,8 +71,8 @@ export type TeamResultResponse = {
 export type TeamRankResponse = TeamRank[];
 
 export type TeamRank = {
-  id: number;
-  name: string;
+  id: string;
+  teamName: string;
   schoolName: string;
   totalMoney: number;
   isMyTeam: boolean;

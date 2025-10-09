@@ -7,7 +7,7 @@ import { NewsPost } from "@/components";
 
 // 타입 정의 추가
 interface Article {
-  articleId: number;
+  articleId: string;
   title: string;
   description: string;
   image?: string;

@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { noImgIcon } from "@mozu/ui";
+import { memo, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetClassItem } from "@/apis";
 
@@ -19,7 +20,7 @@ interface IPercentProps extends Pick<IItemContentType, "isUp"> {
   isZero?: boolean;
 }
 
-const ItemContent = ({
+const ItemContent = memo(({
   itemId,
   itemName,
   itemLogo,
@@ -29,21 +30,29 @@ const ItemContent = ({
   onClick,
   isUp,
 }: IItemContentType) => {
+  const [imgSrc, setImgSrc] = useState<string>(itemLogo);
+  const [hasErrored, setHasErrored] = useState(false);
+
   // profitMoney와 profitNum이 유효한 값인지 확인 (0%도 표시)
   const hasValidData = profitMoney !== undefined && profitNum !== undefined;
 
   // 0%인지 확인
   const isZeroPercent = profitMoney === 0 && profitNum === "0.00%";
 
+  const handleImageError = () => {
+    if (!hasErrored) {
+      setHasErrored(true);
+      setImgSrc(noImgIcon);
+    }
+  };
+
   return (
     <ItemContainer onClick={onClick}>
       <LogoContainer>
         <Logo
-          src={itemLogo}
+          src={imgSrc}
           alt={itemName}
-          onError={(e) => {
-            e.currentTarget.src = noImgIcon;
-          }}
+          onError={handleImageError}
         />
         <ItemTitleContainer>
           <ItemTitle>{itemName}</ItemTitle>
@@ -53,19 +62,32 @@ const ItemContent = ({
       {hasValidData && (
         <ItemPriceContainer>
           <Price>{nowMoney.toLocaleString()}원</Price>
-          <Percent isUp={isUp} isZero={isZeroPercent}>
-            {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${isUp ? "+" : ""
-              }${profitNum})`}
-          </Percent>
+          {!isZeroPercent && (
+            <Percent
+              isUp={isUp}
+              isZero={isZeroPercent}>
+              {`${isUp ? "+" : ""}${profitMoney.toLocaleString()}원 (${profitNum})`}
+            </Percent>
+          )}
         </ItemPriceContainer>
       )}
     </ItemContainer>
   );
-};
+});
 
-export const ItemSidebar = () => {
-  const { data } = useGetClassItem();
+
+export const ItemSidebar = ({ isMock = false }: { isMock?: boolean }) => {
+  const { data } = useGetClassItem({
+    queryKey: [
+      "getClass",
+    ],
+    enabled: !isMock,
+  });
   const navigate = useNavigate();
+
+  const handleItemContentClick = useCallback((itemId: number) => {
+    navigate(`stock/${itemId}`)
+  }, [navigate])
 
   return (
     <SideBarContainer>
@@ -73,9 +95,7 @@ export const ItemSidebar = () => {
       <ItemContentContainer>
         {Array.isArray(data) && data.length > 0 ? (
           data.map((data, id) => {
-            const profitNum = data.profitNum && !isNaN(parseFloat(data.profitNum))
-              ? data.profitNum
-              : "0%";
+            const profitNum = data.profitNum && !Number.isNaN(parseFloat(data.profitNum)) ? data.profitNum : "0%";
 
             // 0%인지 확인
             const isZeroPercent = (data.profitMoney ?? 0) === 0 && (profitNum === "0%" || profitNum === "0");
@@ -95,7 +115,7 @@ export const ItemSidebar = () => {
                 isUp={isUp}
                 profitMoney={data.profitMoney ?? 0}
                 profitNum={profitNum}
-                onClick={() => navigate(`stock/${data.itemId}`)}
+                onClick={() => handleItemContentClick(data.itemId)}
               />
             );
           })

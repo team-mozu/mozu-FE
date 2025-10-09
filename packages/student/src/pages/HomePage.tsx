@@ -38,7 +38,7 @@ export const HomePage = () => {
   useEffect(() => {
     if (isLoading || !teamData || !newsData) return;
 
-    const currentInvDeg = teamData.invDeg;
+    const currentInvDeg = teamData.curInvRound;
 
     // 해당 차수의 모달을 아직 표시하지 않은 경우에만 표시
     if (!shownInvDegs.has(currentInvDeg)) {
@@ -49,7 +49,7 @@ export const HomePage = () => {
       showArticlesForCurrentInvDeg();
     }
   }, [
-    teamData?.invDeg,
+    teamData?.curInvRound,
     newsData,
     isLoading,
   ]);
@@ -115,10 +115,10 @@ export const HomePage = () => {
       <TotalProperty
         totalMoney={teamData?.totalMoney.toLocaleString() ?? "0"}
         profitNum={teamData?.profitNum ?? "0"}
-        valueProfit={teamData?.valueProfit ?? 0}
+        valueProfit={teamData?.valProfit ?? 0}
         basicMoney={teamData?.baseMoney.toLocaleString() ?? "0"}
         cashMoney={teamData?.cashMoney.toLocaleString() ?? "0"}
-        valueMoney={teamData?.valueMoney.toLocaleString() ?? "0"}
+        valueMoney={teamData?.valuationMoney.toLocaleString() ?? "0"}
       />
 
       <TableDiv>

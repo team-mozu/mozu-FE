@@ -9,11 +9,10 @@ export const NewsDetailPage = () => {
   const navigate = useNavigate();
   const { data: newsData } = useGetArticleList();
   const { newsId } = useParams();
-  const index = newsData?.find(article => article.articleId === targetId);
   if (!newsId) {
     return <div>잘못된 접근입니다.</div>;
   }
-  const targetId = parseInt(newsId);
+  const index = newsData?.find(article => article.articleId === newsId);
   return (
     <PageContainer>
       <Wrapper>

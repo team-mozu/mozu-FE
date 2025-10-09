@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Input, LogoWithText } from "@mozu/ui";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useStudentLogin } from "@/apis";
 import type { StudentLoginProps } from "@/apis/login/type";
@@ -8,12 +9,24 @@ import { useForm } from "@/hook";
 
 export const SignInPage = () => {
   const { state, onChangeInputValue } = useForm<StudentLoginProps>({
-    classNum: null,
+    lessonNum: null,
     schoolName: "",
     teamName: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
   const { mutate: studentLogin, isPending } = useStudentLogin();
+  const queryClient = useQueryClient();
+
+  // 캐시 초기화 useEffect
+  useEffect(() => {
+    // React Query 캐시 전체 초기화
+    queryClient.clear();
+    
+    // 로컬 스토리지의 trade 데이터 초기화
+    localStorage.removeItem("trade");
+    
+    console.log("[SignInPage] 캐시 초기화 완료");
+  }, [queryClient]);
 
   // 뒤로가기 방지 useEffect
   useEffect(() => {
@@ -57,7 +70,7 @@ export const SignInPage = () => {
    * @return {boolean}
    */
   const isValidForm = () =>
-    state.classNum !== null && state.schoolName.trim() !== "" && state.teamName.trim() !== "" && !isPending;
+    state.lessonNum !== null && state.schoolName.trim() !== "" && state.teamName.trim() !== "" && !isPending;
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,9 +80,9 @@ export const SignInPage = () => {
     });
   };
 
-  const handleChange = (field: "classNum" | "schoolName" | "teamName") => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (field: "lessonNum" | "schoolName" | "teamName") => (e: React.ChangeEvent<HTMLInputElement>) => {
     let value: string | number = e.target.value;
-    if (field === "classNum") {
+    if (field === "lessonNum") {
       value = value.replace(/\D/g, "").slice(0, 7);
     }
     onChangeInputValue({
@@ -96,11 +109,12 @@ export const SignInPage = () => {
         <Title>학생 로그인</Title>
         <FormGroup>
           <Input
-            label="참가 코드"
             placeholder="참가 코드를 입력해 주세요.."
-            value={state.classNum ?? ""}
+            label="참가 코드"
+            value={state.lessonNum ?? ""}
             name="classNum"
-            onChange={handleChange("classNum")}
+            onChange={handleChange("lessonNum")}
+            required={true}
           />
           <Input
             label="학교"
@@ -108,6 +122,7 @@ export const SignInPage = () => {
             value={state.schoolName}
             name="schoolName"
             onChange={handleChange("schoolName")}
+            required={true}
           />
           <Input
             label="팀명"
@@ -115,6 +130,7 @@ export const SignInPage = () => {
             value={state.teamName}
             name="teamName"
             onChange={handleChange("teamName")}
+            required={true}
           />
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </FormGroup>

@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "jsxImportSource": "@emotion/react",
     "baseUrl": ".",
     "outDir": "dist",
     "rootDir": ".",
@@ -18,5 +19,5 @@
   },
   "references": [{ "path": "../design-token" }],
   "include": ["src/**/*", "./declarations.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "vite.config.ts"]
 }

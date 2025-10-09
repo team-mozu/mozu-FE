@@ -13,7 +13,7 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
   const { data: teamResult } = useTeamResult();
   const { data: teamDetail } = useGetTeamDetail();
 
-  console.log(teamResult?.invDeg, endRound);
+  console.log(teamResult?.invRound, endRound);
 
   return (
     <ModalBackdrop onClick={onCancle}>
@@ -26,7 +26,7 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
             />
           </IconDiv>
           <TitleSection>
-            {(teamResult?.invDeg ?? 0 === endRound) ? <Title>최종 모둠 랭킹</Title> : <Title>현재 모둠 랭킹</Title>}
+            {(teamResult?.invRound ?? 0 === endRound) ? <Title>최종 모둠 랭킹</Title> : <Title>현재 모둠 랭킹</Title>}
             <Subtitle>실시간 모둠별 순위를 확인해보세요</Subtitle>
           </TitleSection>
         </Header>
@@ -36,10 +36,10 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
             <RankingDiv
               key={index}
               rank={index + 1}
-              teamName={data.name}
+              teamName={data.teamName}
               schoolName={data.schoolName}
               price={data.totalMoney}
-              isOurTeam={data.name === teamDetail?.name}
+              isOurTeam={data.isMyTeam}
             />
           )) || (
               <LoadingWrapper>

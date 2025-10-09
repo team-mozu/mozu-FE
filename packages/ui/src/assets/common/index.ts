@@ -1,4 +1,2 @@
-import noImg from "./noImg.svg";
-
 export * from "./LogoWithText";
-export { noImg };
+export const noImg = "./noImg.svg";

@@ -79,4 +79,6 @@ export const color = {
     900: "#7F1D1D",
     950: "#450A0A",
   },
-};
+} as const;
+
+export type Color = typeof color;

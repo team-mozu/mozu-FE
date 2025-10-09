@@ -20,8 +20,13 @@ interface StockData {
   };
 }
 
-export const StockTable = () => {
-  const { data, isLoading, error } = useGetHoldItems();
+export const StockTable = ({ isMock = false }: { isMock?: boolean }) => {
+  const { data, isLoading, error } = useGetHoldItems({
+    queryKey: [
+      "getHoldItem",
+    ],
+    enabled: !isMock,
+  });
   const navigate = useNavigate();
 
   // 종목 이름 클릭 핸들러
@@ -135,11 +140,11 @@ export const StockTable = () => {
       const safeItem = {
         itemId: item?.itemId || item?.id || "",
         itemName: item?.itemName || "",
-        buyMoney: typeof item?.buyMoney === "number" ? item.buyMoney : 0,
-        itemCnt: typeof item?.itemCnt === "number" ? item.itemCnt : 0,
+        buyMoney: typeof item?.avgPurchasePrice === "number" ? item.avgPurchasePrice : 0,
+        itemCnt: typeof item?.quantity === "number" ? item.quantity : 0,
         totalMoney: typeof item?.totalMoney === "number" ? item.totalMoney : 0,
         nowMoney: typeof item?.nowMoney === "number" ? item.nowMoney : 0,
-        valMoney: typeof item?.valMoney === "number" ? item.valMoney : 0,
+        valMoney: typeof item?.valuationMoney === "number" ? item.valuationMoney : 0,
         valProfit: typeof item?.valProfit === "number" ? item.valProfit : 0,
         profitNum: typeof item?.profitNum === "number" ? item.profitNum : 0,
       };

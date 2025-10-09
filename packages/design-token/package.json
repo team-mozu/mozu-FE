@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "main": "dist/index.js",
-  "types": "index.d.ts",
+  "types": "dist/index.d.ts",
   "author": "",
   "license": "ISC",
   "scripts": {
@@ -12,7 +12,8 @@
   },
   "exports": {
     ".": {
-      "types": "./index.d.ts",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.js"
     }
   },

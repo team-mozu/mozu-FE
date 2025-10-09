@@ -1,0 +1,146 @@
+[
+  {
+    "url": "http://student.localhost:3001/__test__/mock-classroom",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_08_05_06_12_14.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_08_05_06_12_14.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.95,
+      "best-practices": 1,
+      "seo": 0.83
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-news",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_08_05_06_12_46.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_08_05_06_12_46.json",
+    "summary": {
+      "performance": 0.54,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
+      "seo": 0.83
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-news/1",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_08_05_06_13_17.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_08_05_06_13_17.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.87,
+      "best-practices": 0.96,
+      "seo": 0.83
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-result",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_08_05_06_13_32.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_08_05_06_13_32.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
+      "seo": 0.82
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-stock",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_08_05_06_13_57.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_08_05_06_13_57.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.87,
+      "best-practices": 0.96,
+      "seo": 0.75
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-wait",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_08_05_06_14_36.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_08_05_06_14_36.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.94,
+      "best-practices": 1,
+      "seo": 0.82
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-classroom",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_08_05_06_11_58.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_08_05_06_11_58.json",
+    "summary": {
+      "performance": 0.54,
+      "accessibility": 0.95,
+      "best-practices": 1,
+      "seo": 0.83
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-news",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_08_05_06_12_29.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_08_05_06_12_29.json",
+    "summary": {
+      "performance": 0.52,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
+      "seo": 0.83
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-news/1",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_08_05_06_13_01.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_08_05_06_13_01.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.87,
+      "best-practices": 0.96,
+      "seo": 0.83
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-result",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_08_05_06_13_44.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_08_05_06_13_44.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.94,
+      "best-practices": 0.96,
+      "seo": 0.82
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-stock",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_08_05_06_14_10.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_08_05_06_14_10.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.87,
+      "best-practices": 0.96,
+      "seo": 0.75
+    }
+  },
+  {
+    "url": "http://student.localhost:3001/__test__/mock-wait",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_08_05_06_14_24.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_08_05_06_14_24.json",
+    "summary": {
+      "performance": 0.55,
+      "accessibility": 0.94,
+      "best-practices": 1,
+      "seo": 0.82
+    }
+  }
+]

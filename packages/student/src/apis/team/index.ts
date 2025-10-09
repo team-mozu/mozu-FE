@@ -1,5 +1,11 @@
 import { instance } from "@mozu/util-config";
-import { type UseMutationOptions, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  type UseMutationOptions,
+  type UseQueryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import type {
   HoldItemsResponse,
@@ -12,77 +18,92 @@ import type {
 
 const router = "/team";
 
-export const useGetTeamDetail = () => {
-  return useQuery({
+export const useGetTeamDetail = (options?: UseQueryOptions<TeamDeatilResponse, AxiosError>) => {
+  return useQuery<TeamDeatilResponse, AxiosError>({
     queryKey: [
-      "getTeam",
+      "team",
+      "detail",
     ],
     queryFn: async () => {
-      const { data } = await instance.get<TeamDeatilResponse>(`${router}`);
+      const { data } = await instance.get<TeamDeatilResponse>(`${router}/detail`);
       return data;
     },
-    staleTime: 5000,
-    gcTime: 5000,
+    staleTime: 1000,
+    ...options,
   });
 };
 
-export const useGetHoldItems = () => {
-  return useQuery({
+export const useGetHoldItems = (options?: UseQueryOptions<HoldItemsResponse, AxiosError>) => {
+  return useQuery<HoldItemsResponse, AxiosError>({
     queryKey: [
-      "getHoldItem",
+      "team",
+      "holdItems",
     ],
     queryFn: async () => {
-      const { data } = await instance.get<HoldItemsResponse>(`${router}/holditems`);
-      console.log("data:", data);
+      const { data } = await instance.get<HoldItemsResponse>(`${router}/stocks`);
       return data;
-    },
-  });
-};
-
-export const useTeamEnd = (options?: UseMutationOptions<void, AxiosError, TeamEndProps>) => {
-  return useMutation<void, AxiosError, TeamEndProps>({
-    mutationFn: async teamData => {
-      const response = await instance.post("/team/end", teamData);
-      return response.data;
     },
     ...options,
   });
 };
 
-export const useTeamOrders = () => {
-  return useQuery({
+export const useTeamEnd = (options?: UseMutationOptions<void, AxiosError, TeamEndProps>) => {
+  const queryClient = useQueryClient();
+  return useMutation<void, AxiosError, TeamEndProps>({
+    mutationFn: async teamData => {
+      const response = await instance.post("/team/end", teamData);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "team",
+        ],
+      });
+    },
+    ...options,
+  });
+};
+
+export const useTeamOrders = (options?: UseQueryOptions<TeamOrdersResponse, AxiosError>) => {
+  return useQuery<TeamOrdersResponse, AxiosError>({
     queryKey: [
-      "getTeamOrder",
+      "team",
+      "orders",
     ],
     queryFn: async () => {
       const { data } = await instance.get<TeamOrdersResponse>(`${router}/orders`);
       return data;
     },
+    ...options,
   });
 };
 
-export const useTeamResult = () => {
-  return useQuery({
+export const useTeamResult = (options?: UseQueryOptions<TeamResultResponse, AxiosError>) => {
+  return useQuery<TeamResultResponse, AxiosError>({
     queryKey: [
-      "getTeamResult",
+      "team",
+      "result",
     ],
     queryFn: async () => {
       const { data } = await instance.get<TeamResultResponse>(`${router}/result`);
       return data;
     },
+    ...options,
   });
 };
 
-export const useTeamRank = () => {
-  return useQuery({
+export const useTeamRank = (options?: UseQueryOptions<TeamRankResponse, AxiosError>) => {
+  return useQuery<TeamRankResponse, AxiosError>({
     queryKey: [
-      "getTeamRank",
+      "team",
+      "rank",
     ],
     queryFn: async () => {
-      const { data } = await instance.get<TeamRankResponse>(`${router}/rank`);
+      const { data } = await instance.get<TeamRankResponse>(`${router}/ranks`);
       return data;
     },
     staleTime: 5000,
-    gcTime: 5000,
+    ...options,
   });
 };

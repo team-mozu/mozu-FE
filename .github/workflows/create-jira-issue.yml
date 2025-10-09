@@ -2,8 +2,10 @@ name: Create Jira Issue and Feature Branch
 
 on:
   issues:
-    types:
-      - opened
+    types: [opened]
+  push:
+    branches-ignore:
+      - '**'
 
 jobs:
   create-jira-issue:
