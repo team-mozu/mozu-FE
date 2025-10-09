@@ -4,7 +4,7 @@ import { useGetStockList } from "@/entities/stock";
 export interface ClassItem {
   itemId: number;
   itemName: string;
-  money: number[];
+  money: (number | null)[];
 }
 
 export interface StockTableItem {
@@ -26,14 +26,14 @@ export const useClassItems = (lessonRound: number) => {
    * money 배열의 길이를 lessonRound에 맞게 조정하는 유틸리티 함수
    */
   const adjustMoneyArrayLength = useCallback(
-    (money: number[] = []) => {
+    (money: (number | null)[] = []) => {
       const requiredLength = lessonRound + 2; // 0: 시작가, 1: 현재가, 2~N: 차수별 가격
       const adjustedMoney = [
         ...money,
       ];
 
       while (adjustedMoney.length < requiredLength) {
-        adjustedMoney.push(0);
+        adjustedMoney.push(null);
       }
 
       return adjustedMoney.slice(0, requiredLength);
@@ -50,7 +50,7 @@ export const useClassItems = (lessonRound: number) => {
     (
       newItems: Array<{
         itemId: number;
-        money?: number[];
+        money?: (number | null)[];
       }>,
     ) => {
       const processedItems: ClassItem[] = newItems.map(item => {
@@ -94,11 +94,11 @@ export const useClassItems = (lessonRound: number) => {
         const updatedMoney = [
           ...item.money,
         ];
-        updatedMoney[levelIndex] = value ?? 0;
+        updatedMoney[levelIndex] = value;
 
         // 1번 인덱스(현재가)가 변경된 경우, 0번 인덱스(시작가)도 같은 값으로 설정
         if (levelIndex === 1) {
-          updatedMoney[0] = value ?? 0;
+          updatedMoney[0] = value;
         }
 
         return {
@@ -143,9 +143,7 @@ export const useClassItems = (lessonRound: number) => {
    */
   const getApiRequestData = useCallback(() => {
     return classItems.map(item => {
-      const processedMoney = [
-        ...item.money,
-      ];
+      const processedMoney = item.money.map(price => price ?? 0);
       // API 전송 전에 0번 인덱스를 1번 인덱스(현재가)와 같게 설정
       if (processedMoney.length > 1) {
         processedMoney[0] = processedMoney[1];
@@ -177,8 +175,10 @@ export const useClassItems = (lessonRound: number) => {
       errors.push("최소 하나 이상의 투자 종목을 추가해주세요.");
     }
 
-    // 각 아이템의 가격 데이터 검증
-    const invalidItems = classItems.filter(item => item.money.some((price, index) => index > 0 && price <= 0));
+    // 각 아이템의 가격 데이터 검증 - null이 아니고 0보다 큰 값인지 확인
+    const invalidItems = classItems.filter(item => 
+      item.money.some((price, index) => index > 0 && (price === null || price === undefined || price <= 0))
+    );
 
     if (invalidItems.length > 0) {
       errors.push("모든 투자 종목의 가격을 입력해주세요.");

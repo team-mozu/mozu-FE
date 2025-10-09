@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
 import { useEffect } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useGetStockDetail, useStockUpdate } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";
 import { useForm, usePriceFormatter } from "@/shared/lib/hooks";
@@ -22,6 +22,7 @@ type FormState = {
 
 export const StockManagementEditPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const stockId = Number(id);
 
   const { state, onChangeInputValue, setState } = useForm<FormState>({
@@ -108,6 +109,10 @@ export const StockManagementEditPage = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate("/stock-management");
+  };
+
   return (
     <Container>
       <EditDiv
@@ -119,6 +124,7 @@ export const StockManagementEditPage = () => {
         iconSize2={20}
         iconColor2={color.white}
         onClick={editClick}
+        onCancel={handleCancel}
       />
       <StockSetting>
         <LeftContainer>

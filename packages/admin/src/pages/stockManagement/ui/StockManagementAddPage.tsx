@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
+import { useNavigate } from "react-router";
 import { useCreateStock } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";
 import { useForm, usePriceFormatter } from "@/shared/lib/hooks";
@@ -19,6 +20,7 @@ type FormState = {
 };
 
 export const StockManagementAddPage = () => {
+  const navigate = useNavigate();
   const { state, onChangeInputValue, setState } = useForm<FormState>({
     name: "",
     info: "",
@@ -79,6 +81,10 @@ export const StockManagementAddPage = () => {
     });
   };
 
+  const handleCancel = () => {
+    navigate("/stock-management");
+  };
+
   return (
     <Container>
       <EditDiv
@@ -86,6 +92,7 @@ export const StockManagementAddPage = () => {
         value1={"취소"}
         value2={"추가하기"}
         onClick={addClick}
+        onCancel={handleCancel}
       />
       <StockSetting>
         <LeftContainer>
