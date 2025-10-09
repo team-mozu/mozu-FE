@@ -13,7 +13,7 @@ export interface TableCellData {
 export interface TeamTableRow {
   teamId: string;
   teamName: string;
-  schoolName: string;
+  schoolName: string | undefined;
   isCompleted: boolean;
   cells: TableCellData[];
   totalAssets: TableCellData;
