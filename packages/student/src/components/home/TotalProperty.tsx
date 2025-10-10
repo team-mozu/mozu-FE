@@ -20,7 +20,7 @@ export const TotalProperty = ({
   cashMoney,
   valueMoney,
 }: IPropsType) => {
-  const sameValue: boolean = useUnchangedValue(totalMoney, basicMoney);
+  const sameValue: boolean = useUnchangedValue(totalMoney, basicMoney) || valueProfit === 0;
   return (
     <Wrapper>
       <TitleBox>

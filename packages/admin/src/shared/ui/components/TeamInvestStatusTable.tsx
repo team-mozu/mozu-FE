@@ -49,18 +49,10 @@ export const TeamInvestStatusTable = ({ contents }: TeamInvestStatusTableProps) 
       width: "120px",
     },
     {
-      text: "수익률",
+      text: "총 거래 가격",
       width: "260px",
     },
   ];
-
-  const renderRate = (item: DealContent) => {
-    const buyAmount = item.itemPrice * item.orderCount;
-    const rateAmount = item.totalMoney - buyAmount;
-    const ratePercent = ((rateAmount / buyAmount) * 100).toFixed(2);
-    const sign = rateAmount >= 0 ? "+" : "-";
-    return `${sign}${Math.abs(rateAmount).toLocaleString()} (${sign}${Math.abs(+ratePercent)}%)`;
-  };
 
   return (
     <Table>
@@ -121,16 +113,6 @@ export const TeamInvestStatusTable = ({ contents }: TeamInvestStatusTableProps) 
                 padding="0px 16px 0px 0px"
                 color={color.black}>
                 {item.totalMoney.toLocaleString()}
-                <RateDiv
-                  color={
-                    item.totalMoney - item.itemPrice * item.orderCount > 0
-                      ? color.red[500]
-                      : item.totalMoney - item.itemPrice * item.orderCount < 0
-                        ? color.blue[500]
-                        : color.green[600]
-                  }>
-                  {renderRate(item)}
-                </RateDiv>
               </Td>
             </tr>
           ))
@@ -148,13 +130,6 @@ export const TeamInvestStatusTable = ({ contents }: TeamInvestStatusTableProps) 
     </Table>
   );
 };
-
-const RateDiv = styled.div<{
-  color: string;
-}>`
-  font: ${font.l1};
-  color: ${props => props.color};
-`;
 
 const Table = styled.table`
   border-radius: 4px;

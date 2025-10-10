@@ -113,8 +113,8 @@ export const DegCurrentModal = ({ isOpen, setIsOpen, id }: IDegCurrentType) => {
               <TitleSection>
                 <Title>
                   {currentDegData
-                    ? `${currentDegData.degNumber}차 '${currentDegData.teamName}' 거래 현황`
-                    : "거래 현황"}
+                    ? `${currentDegData.degNumber}차 '${currentDegData.teamName}' 거래 내역`
+                    : "거래 내역"}
                 </Title>
                 <Subtitle>차수별 투자 포트폴리오</Subtitle>
               </TitleSection>

@@ -171,7 +171,7 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
   const sameValue: boolean = useUnchangedValue(
     (teamData?.totalMoney ?? 0).toLocaleString(),
     (teamData?.baseMoney ?? 0).toLocaleString(),
-  );
+  ) || formattedData.valueProfit === 0;
 
   const IsOpen = () => {
     setIsOpen(true);
