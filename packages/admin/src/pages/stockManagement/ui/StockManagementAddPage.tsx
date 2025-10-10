@@ -99,12 +99,19 @@ export const StockManagementAddPage = () => {
           <div>
             <LogoUploader
               img={state.logo instanceof File ? URL.createObjectURL(state.logo) : ""}
-              onImageChange={file =>
-                setState(prev => ({
-                  ...prev,
-                  logo: file,
-                }))
-              }
+              onImageChange={file => {
+                if (file === "DELETE") {
+                  setState(prev => ({
+                    ...prev,
+                    logo: null,
+                  }));
+                } else {
+                  setState(prev => ({
+                    ...prev,
+                    logo: file,
+                  }));
+                }
+              }}
             />
           </div>
           <div>

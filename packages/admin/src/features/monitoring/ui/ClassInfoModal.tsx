@@ -13,9 +13,10 @@ interface IClassInfoType {
   isOpen?: boolean;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   classItems: classItem[];
+  maxInvRound?: number;
 }
 
-export const ClassInfoModal = ({ isOpen, setIsOpen, classItems }: IClassInfoType) => {
+export const ClassInfoModal = ({ isOpen, setIsOpen, classItems, maxInvRound }: IClassInfoType) => {
   const outSideRef = useRef<HTMLDivElement>(null);
 
   const outSideClick = useCallback(
@@ -69,7 +70,7 @@ export const ClassInfoModal = ({ isOpen, setIsOpen, classItems }: IClassInfoType
         </Header>
 
         <ContentWrapper>
-          <InvestInfoTable classItems={classItems} />
+          <InvestInfoTable classItems={classItems} maxInvRound={maxInvRound} />
         </ContentWrapper>
 
         <FooterContainer>

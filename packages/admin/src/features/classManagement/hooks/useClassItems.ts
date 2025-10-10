@@ -27,7 +27,7 @@ export const useClassItems = (lessonRound: number) => {
    */
   const adjustMoneyArrayLength = useCallback(
     (money: (number | null)[] = []) => {
-      const requiredLength = lessonRound + 2; // 0: 시작가, 1: 현재가, 2~N: 차수별 가격
+      const requiredLength = lessonRound + 1; // 0~N-1: 1차~N차가격, N: 종료가
       const adjustedMoney = [
         ...money,
       ];
@@ -96,11 +96,6 @@ export const useClassItems = (lessonRound: number) => {
         ];
         updatedMoney[levelIndex] = value;
 
-        // 1번 인덱스(현재가)가 변경된 경우, 0번 인덱스(시작가)도 같은 값으로 설정
-        if (levelIndex === 1) {
-          updatedMoney[0] = value;
-        }
-
         return {
           ...item,
           money: updatedMoney,
@@ -144,10 +139,6 @@ export const useClassItems = (lessonRound: number) => {
   const getApiRequestData = useCallback(() => {
     return classItems.map(item => {
       const processedMoney = item.money.map(price => price ?? 0);
-      // API 전송 전에 0번 인덱스를 1번 인덱스(현재가)와 같게 설정
-      if (processedMoney.length > 1) {
-        processedMoney[0] = processedMoney[1];
-      }
 
       return {
         itemId: item.itemId,
@@ -175,9 +166,9 @@ export const useClassItems = (lessonRound: number) => {
       errors.push("최소 하나 이상의 투자 종목을 추가해주세요.");
     }
 
-    // 각 아이템의 가격 데이터 검증 - null이 아니고 0보다 큰 값인지 확인
+    // 각 아이템의 가격 데이터 검증 - 모든 인덱스(1차~N차가격 + 종료가) null이 아니고 0보다 큰 값인지 확인
     const invalidItems = classItems.filter(item => 
-      item.money.some((price, index) => index > 0 && (price === null || price === undefined || price <= 0))
+      item.money.some((price, index) => price === null || price === undefined || price <= 0)
     );
 
     if (invalidItems.length > 0) {

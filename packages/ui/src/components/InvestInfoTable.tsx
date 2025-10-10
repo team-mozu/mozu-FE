@@ -11,17 +11,23 @@ interface classItem {
   money: number[];
 }
 
-export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => {
-  const maxRound = Math.max(...classItems.map(item => item.money.length - 1));
+interface InvestInfoTableProps {
+  classItems: classItem[];
+  maxInvRound?: number;
+}
+
+export const InvestInfoTable = ({ classItems, maxInvRound }: InvestInfoTableProps) => {
+  // maxInvRound가 있으면 사용, 없으면 money 배열에서 계산
+  const actualMaxRound = maxInvRound || Math.max(...classItems.map(item => item.money.length - 1));
   const header = [
     "종목 이름",
-    "현재가",
     ...Array.from(
       {
-        length: maxRound,
+        length: actualMaxRound,
       },
       (_, i) => `${i + 1}차`,
     ),
+    "종료가",
   ];
 
   return (
@@ -32,40 +38,44 @@ export const InvestInfoTable = ({ classItems }: { classItems: classItem[] }) => 
             {header.map((data, index) => (
               <Th
                 key={data}
-                width={index === 0 ? "25%" : "12.5%"}>
+                width={index === 0 ? "25%" : `${75 / (header.length - 1)}%`}>
                 {data}
               </Th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {classItems.map(item => (
-            <tr key={item.itemId}>
-              <Td width="25%">{item.itemName}</Td>
-              <Td
-                width="12.5%"
-                alignRight>
-                {item.money[0].toLocaleString()}
-              </Td>
-              {Array.from(
-                {
-                  length: maxRound,
-                },
-                (_, idx) => {
-                  const amount = item.money[idx + 1];
-                  const isNumber = typeof amount === "number";
-                  return (
-                    <Td
-                      key={`${item.itemId}-${idx}`}
-                      width="12.5%"
-                      alignRight={isNumber}>
-                      {isNumber ? amount.toLocaleString() : "진행중.."}
-                    </Td>
-                  );
-                },
-              )}
-            </tr>
-          ))}
+          {classItems.map(item => {
+            // maxInvRound를 사용하거나 해당 아이템의 실제 차수 (종료가 제외)
+            const itemRounds = actualMaxRound;
+            return (
+              <tr key={item.itemId}>
+                <Td width="25%">{item.itemName}</Td>
+                {Array.from(
+                  {
+                    length: itemRounds,
+                  },
+                  (_, idx) => {
+                    const amount = item.money[idx];
+                    const isNumber = typeof amount === "number";
+                    return (
+                      <Td
+                        key={`${item.itemId}-${idx}`}
+                        width={`${75 / (itemRounds + 1)}%`}
+                        alignRight={isNumber}>
+                        {isNumber ? amount.toLocaleString() : "진행중.."}
+                      </Td>
+                    );
+                  },
+                )}
+                <Td
+                  width={`${75 / (itemRounds + 1)}%`}
+                  alignRight>
+                  {item.money[item.money.length - 1].toLocaleString()}
+                </Td>
+              </tr>
+            );
+          })}
         </tbody>
       </StyledTable>
     </TableWrapper>

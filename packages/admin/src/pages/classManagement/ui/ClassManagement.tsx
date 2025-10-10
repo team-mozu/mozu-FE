@@ -28,12 +28,18 @@ export const ClassManagement = () => {
   const [isModal, setIsModal] = useState(false);
   const [selectedClassId, setSelectedClassId] = useState<string>("");
 
-  // API 데이터 구조에 맞게 가공
+  // API 데이터 구조에 맞게 가공 및 최신순 정렬
   const classData: LessonGetListResponse = data ?? {
     lessons: [],
   };
-  const favorites = classData.lessons.filter(item => item.isStarred);
-  const common = classData.lessons.filter(item => !item.isStarred);
+
+  // 최신순으로 정렬 (date 필드 기준)
+  const sortedLessons = [...classData.lessons].sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+
+  const favorites = sortedLessons.filter(item => item.isStarred);
+  const common = sortedLessons.filter(item => !item.isStarred);
 
   // 즐겨찾기 여부를 저장할 state
   const [, setIsClickFavorites] = useState<boolean[]>([]);

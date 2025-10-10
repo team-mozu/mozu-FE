@@ -6,7 +6,6 @@ import { useGetClassDetail, useUpdateClass } from "@/entities/class";
 import { useGetStockList } from "@/entities/stock";
 import { ArticleTables } from "@/features/articleCRUD/ui/ArticleTables";
 import { formatPrice, useArticle } from "@/shared/lib";
-import type { ClassData } from "@/shared/types";
 import { FullPageLoader, StockTables } from "@/shared/ui";
 import {
   AssetField,
@@ -63,31 +62,24 @@ export const ClassEdit = () => {
       setClassDeg(classDetailData.maxInvRound.toString());
       setBaseMoney(classDetailData.baseMoney);
 
-      // 투자 종목 데이터 설정
+      // 투자 종목 데이터 설정 - 실제 차수에 맞게 데이터 자르기
+      const maxRound = classDetailData.maxInvRound;
+      const requiredLength = maxRound + 1; // 1차~N차 + 종료가
+
       const items = classDetailData.lessonItems.map(item => ({
         itemId: item.itemId,
         itemName: item.itemName,
-        money: item.money,
+        money: item.money.slice(0, requiredLength), // 실제 차수에 맞게 자르기
       }));
       setClassItems(items);
 
       // 스톡 테이블 데이터 설정
       const stockItems = classDetailData.lessonItems.map(item => {
-        const money = [
-          ...item.money,
-        ];
-
-        // 투자 차수에 맞춰 길이 맞춤
-        const requiredLength = parseInt(classDetailData.maxInvRound.toString());
-        while (money.length <= requiredLength + 1) {
-          money.push(0);
-        }
-
         return {
           itemId: item.itemId,
           itemCode: item.itemId,
           itemName: item.itemName,
-          money: item.money,
+          money: item.money.slice(0, requiredLength), // 실제 차수에 맞게 자르기
           stockChecked: false,
         };
       });
@@ -119,24 +111,26 @@ export const ClassEdit = () => {
 
     setClassDeg(value);
 
-    // 차수 변경 시 money 배열 업데이트
+    // 차수 변경 시 money 배열 업데이트 (새로운 구조: [1차가격, 2차가격, ..., 종료가])
     if (newDegree !== prevDegree) {
       setClassItems(prevItems =>
         prevItems.map(item => {
-          const updatedMoney = [
-            ...item.money,
-          ];
-          const endPrice = updatedMoney[prevDegree + 1];
+          const updatedMoney = [...item.money];
+          const requiredLength = newDegree + 1; // 1차~N차 + 종료가
 
-          if (newDegree > prevDegree) {
-            updatedMoney.splice(prevDegree + 1, 1);
-            for (let i = prevDegree + 1; i <= newDegree; i++) {
-              updatedMoney.splice(i, 0, 0);
+          // 배열 길이 조정
+          if (updatedMoney.length < requiredLength) {
+            // 길이가 부족하면 0 채움 (나중에 사용자가 입력)
+            while (updatedMoney.length < requiredLength) {
+              updatedMoney.push(0);
             }
-            updatedMoney[newDegree + 1] = endPrice;
-          } else {
-            updatedMoney.splice(newDegree + 1, prevDegree - newDegree, endPrice);
+          } else if (updatedMoney.length > requiredLength) {
+            // 길이가 초과하면 자름 (종료가는 유지)
+            const endPrice = updatedMoney[updatedMoney.length - 1];
+            updatedMoney.length = requiredLength;
+            updatedMoney[requiredLength - 1] = endPrice;
           }
+
           return {
             ...item,
             money: updatedMoney,
@@ -146,20 +140,22 @@ export const ClassEdit = () => {
 
       setStockData(prevData =>
         prevData.map(item => {
-          const updatedMoney = [
-            ...item.money,
-          ];
-          const endPrice = updatedMoney[prevDegree + 1];
+          const updatedMoney = [...item.money];
+          const requiredLength = newDegree + 1; // 1차~N차 + 종료가
 
-          if (newDegree > prevDegree) {
-            updatedMoney.splice(prevDegree + 1, 1);
-            for (let i = prevDegree + 1; i <= newDegree; i++) {
-              updatedMoney.splice(i, 0, 0);
+          // 배열 길이 조정
+          if (updatedMoney.length < requiredLength) {
+            // 길이가 부족하면 null로 채움 (나중에 사용자가 입력)
+            while (updatedMoney.length < requiredLength) {
+              updatedMoney.push(null);
             }
-            updatedMoney[newDegree + 1] = endPrice;
-          } else {
-            updatedMoney.splice(newDegree + 1, prevDegree - newDegree, endPrice);
+          } else if (updatedMoney.length > requiredLength) {
+            // 길이가 초과하면 자름 (종료가는 유지)
+            const endPrice = updatedMoney[updatedMoney.length - 1];
+            updatedMoney.length = requiredLength;
+            updatedMoney[requiredLength - 1] = endPrice;
           }
+
           return {
             ...item,
             money: updatedMoney,
@@ -176,17 +172,32 @@ export const ClassEdit = () => {
 
   // 투자 종목 핸들러
   const handleAddItems = (newItems: any[]) => {
+    const currentDegree = parseInt(classDeg);
+    const requiredLength = currentDegree + 1; // 1차~N차 + 종료가
+
+    const processedItems = newItems.map(item => ({
+      ...item,
+      money: item.money && item.money.length === requiredLength
+        ? item.money
+        : new Array(requiredLength).fill(null)
+    }));
+
     setClassItems(prev => [
       ...prev,
-      ...newItems,
+      ...processedItems,
     ]);
+
     const newStockData = newItems.map(item => {
       const stockItem = stockListData?.find(stock => stock.itemId === item.itemId);
+      const itemMoney = item.money && item.money.length === requiredLength
+        ? item.money
+        : new Array(requiredLength).fill(null);
+
       return {
         itemId: item.itemId,
         itemCode: item.itemId,
         itemName: stockItem ? stockItem.itemName : `Item ${item.itemId}`,
-        money: item.money || [],
+        money: itemMoney,
         stockChecked: false,
       };
     });
@@ -213,7 +224,6 @@ export const ClassEdit = () => {
               ],
               {
                 [levelIndex]: value ?? 0,
-                0: levelIndex === 1 ? (value ?? 0) : item.money[0],
               },
             ),
           }
@@ -231,7 +241,6 @@ export const ClassEdit = () => {
               ],
               {
                 [levelIndex]: value ?? 0,
-                0: levelIndex === 1 ? (value ?? 0) : item.money[0],
               },
             ),
           }
@@ -250,31 +259,21 @@ export const ClassEdit = () => {
       alert("최소 하나 이상의 투자 종목을 추가해주세요.");
       return;
     }
+    
+    // 기사 검증
+    const totalArticles = classArticles.reduce((total, group) => total + group.articles.length, 0);
+    if (totalArticles === 0) {
+      alert("최소 하나 이상의 기사를 추가해주세요.");
+      return;
+    }
 
-    const processedClassItems = classItems.map(item => {
-      const updatedMoney = [
-        ...item.money,
-      ];
-      if (updatedMoney.length > 1) {
-        updatedMoney[0] = updatedMoney[1] ?? 0;
-      }
-      return {
-        ...item,
-        money: updatedMoney,
-      };
-    });
-
-    const classData: ClassData = {
+    const classData = {
       lessonName: className,
       lessonRound: parseInt(classDeg),
       baseMoney,
-      lessonItems: processedClassItems.map(item => {
-        const moneyForRequest = [
-          ...item.money.slice(0, parseInt(classDeg) + 2),
-        ];
-        while (moneyForRequest.length < parseInt(classDeg) + 2) {
-          moneyForRequest.push(0);
-        }
+      lessonItems: classItems.map(item => {
+        // 새로운 구조: [1차가격, 2차가격, 3차가격, ..., 종료가]
+        const moneyForRequest = item.money.map(price => price ?? 0);
         return {
           itemId: item.itemId,
           money: moneyForRequest,

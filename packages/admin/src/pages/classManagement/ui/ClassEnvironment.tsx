@@ -71,6 +71,7 @@ export const ClassEnvironment = () => {
   const handleDelete = () => {
     if (id !== null) {
       deleteClass();
+      navigate("/class-management");
     }
   };
 

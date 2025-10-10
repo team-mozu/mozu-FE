@@ -74,7 +74,7 @@ export const AppLayout = () => {
   return (
     <AppContainer>
       <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
-      
+
       <Header
         isAdmin={false}
         invDeg={teamData?.curInvRound ?? 0}

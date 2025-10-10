@@ -44,24 +44,46 @@ export const useClassCreation = () => {
   );
 
   /**
+   * 기사 검증
+   */
+  const validateArticles = useCallback(() => {
+    const errors: string[] = [];
+
+    // 기사가 하나도 없는지 확인
+    const totalArticles = classArticles.reduce((total, group) => total + group.articles.length, 0);
+    
+    if (totalArticles === 0) {
+      errors.push("최소 하나 이상의 기사를 추가해주세요.");
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+    };
+  }, [classArticles]);
+
+  /**
    * 전체 폼 검증
    */
   const validateAll = useCallback(() => {
     const formValidation = validateForm();
     const itemsValidation = validateItems();
+    const articlesValidation = validateArticles();
 
     const allErrors = [
       ...formValidation.errors,
       ...itemsValidation.errors,
+      ...articlesValidation.errors,
     ];
 
     return {
-      isValid: formValidation.isValid && itemsValidation.isValid,
+      isValid: formValidation.isValid && itemsValidation.isValid && articlesValidation.isValid,
       errors: allErrors,
     };
   }, [
     validateForm,
     validateItems,
+    validateArticles,
   ]);
 
   /**

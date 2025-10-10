@@ -10,7 +10,7 @@ interface StockData {
   itemId: number;
   itemCode: number;
   itemName: string;
-  money: (number | null)[]; // [현재가, 1차, 2차, 3차, 4차] - 0번 인덱스부터 시작
+  money: (number | null)[]; // [1차가격, 2차가격, 3차가격, 4차가격, 5차가격, 종료가] - 0번 인덱스부터 시작
   stockChecked?: boolean;
 }
 
@@ -215,10 +215,11 @@ const StockTableHeader = memo(({
   onToggleAll: () => void;
 }) => {
   const columns = useMemo(() => {
-    const cols = ["현재가"];
+    const cols = [];
     for (let i = 1; i <= degree; i++) {
       cols.push(`${i}차`);
     }
+    cols.push("종료가");
     return cols;
   }, [degree]);
 
@@ -270,10 +271,11 @@ const StockTableRow = memo(({
   onMoveToNextField: (currentItemId: number, currentColumnIndex: number, direction: 'next' | 'prev') => void;
 }) => {
   const priceColumns = useMemo(() => {
-    const cols = [0]; // 현재가 (인덱스 0)
-    for (let i = 1; i <= degree; i++) {
-      cols.push(i);
+    const cols = [];
+    for (let i = 0; i < degree; i++) {
+      cols.push(i); // 0: 1차가격, 1: 2차가격, ... degree-1: N차가격
     }
+    cols.push(degree); // 마지막 인덱스: 종료가
     return cols;
   }, [degree]);
 
@@ -311,7 +313,7 @@ const StockTableRow = memo(({
       {priceColumns.map((columnIndex, displayIndex) => {
         const value = stock.money[columnIndex] ?? null;
         const inputId = `${stock.itemId}-${columnIndex}`;
-        const headerName = displayIndex === 0 ? "현재가" : `${displayIndex}차`;
+        const headerName = columnIndex === degree ? "종료가" : `${columnIndex + 1}차`;
         const placeholder = `${headerName} 입력`;
 
         return (
@@ -481,7 +483,7 @@ export const StockTables = memo(({
       if (currentColumnIndex < selectedRound) {
         nextInputId = `${currentItemId}-${currentColumnIndex + 1}`;
       }
-      // 다음 행의 첫 번째 컬럼으로 이동 (현재가)
+      // 다음 행의 첫 번째 컬럼으로 이동 (1차가격)
       else if (currentStockIndex < allStocks.length - 1) {
         const nextStock = allStocks[currentStockIndex + 1];
         nextInputId = `${nextStock.itemId}-0`;
@@ -529,7 +531,7 @@ export const StockTables = memo(({
   const handleFillRandomValues = useCallback(() => {
     const updatedData = stockData.map(stock => {
       const newMoney = [...stock.money];
-      // 현재가 (인덱스 0)와 각 차수별로 랜덤 값 생성
+      // 1차가격 (인덱스 0)부터 종료가까지 랜덤 값 생성
       for (let i = 0; i <= selectedRound; i++) {
         // 주식 가격에 맞는 현실적인 범위: 1,000원 ~ 500,000원
         const minPrice = 1000;

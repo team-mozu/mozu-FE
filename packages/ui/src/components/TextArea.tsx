@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
+import { forwardRef } from "react";
 
 interface ITextAreaType {
   placeholder: string;
@@ -7,22 +8,46 @@ interface ITextAreaType {
   height?: number;
   value?: string;
   name?: string;
+  state?: "default" | "error";
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  "aria-invalid"?: boolean;
+  "aria-describedby"?: string;
 }
 
-export const TextArea = ({ placeholder, label, height, value, onChange, name }: ITextAreaType) => {
-  return (
-    <TextAreaContainer>
-      <Label>{label}</Label>
-      <TextAreaContent
-        value={value}
-        placeholder={placeholder}
-        height={height}
-        name={name}
-        onChange={onChange}></TextAreaContent>
-    </TextAreaContainer>
-  );
-};
+export const TextArea = forwardRef<HTMLTextAreaElement, ITextAreaType>(
+  (
+    {
+      placeholder,
+      label,
+      height,
+      value,
+      onChange,
+      name,
+      state = "default",
+      "aria-invalid": ariaInvalid,
+      "aria-describedby": ariaDescribedBy,
+    },
+    ref,
+  ) => {
+    return (
+      <TextAreaContainer>
+        <Label>{label}</Label>
+        <TextAreaContent
+          ref={ref}
+          value={value}
+          placeholder={placeholder}
+          height={height}
+          name={name}
+          state={state}
+          onChange={onChange}
+          aria-invalid={ariaInvalid}
+          aria-describedby={ariaDescribedBy}></TextAreaContent>
+      </TextAreaContainer>
+    );
+  },
+);
+
+TextArea.displayName = "TextArea";
 
 const TextAreaContainer = styled.div`
   display: flex;
@@ -36,13 +61,13 @@ const Label = styled.label`
   color: ${color.zinc[800]};
 `;
 
-const TextAreaContent = styled.textarea<Pick<ITextAreaType, "height">>`
+const TextAreaContent = styled.textarea<Pick<ITextAreaType, "height" | "state">>`
   width: 100%;
   height: ${({ height }) => height}px;
   padding: 14px 16px;
   font: ${font.b2};
-  border: 1px solid ${color.zinc[200]};
-  background-color: ${color.zinc[50]};
+  border: 1px solid ${({ state }) => (state === "error" ? color.red[500] : color.zinc[200])};
+  background-color: ${({ state }) => (state === "error" ? color.red[50] : color.zinc[50])};
   border-radius: 8px;
   resize: none;
   font-family: 'Pretendard', sans-serif;
@@ -51,6 +76,6 @@ const TextAreaContent = styled.textarea<Pick<ITextAreaType, "height">>`
     font: ${font.b2};
   }
   :focus {
-    outline: 1px solid ${color.orange[300]};
+    outline: 1px solid ${({ state }) => (state === "error" ? color.red[400] : color.orange[300])};
   }
 `;

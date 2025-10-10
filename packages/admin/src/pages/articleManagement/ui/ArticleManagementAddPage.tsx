@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea, Toast } from "@mozu/ui";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useCreateArticle } from "@/entities/article";
 import { ImgContainer } from "@/features/articleCRUD/ui";
@@ -23,6 +23,9 @@ export const ArticleManagementAddPage = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const descTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const { state, onChangeInputValue, setState } = useForm<FormState>({
     articleName: "",
@@ -51,13 +54,41 @@ export const ArticleManagementAddPage = () => {
     return Object.keys(newErrors).length === 0;
   }, [state.articleName, state.articleDesc]);
 
-  const handleImageChange = useCallback((file: File | string | null) => {
-    setState(prev => ({
-      ...prev,
-      articleImage: file,
-    }));
-    // 이미지 에러가 있다면 제거
-    if (errors.articleImage && file) {
+  useEffect(() => {
+    const errorKeys = Object.keys(errors);
+    if (errorKeys.length > 0) {
+      const firstError = errorKeys[0];
+      if (firstError === "articleName" && titleInputRef.current) {
+        titleInputRef.current.focus();
+      } else if (firstError === "articleDesc" && descTextAreaRef.current) {
+        descTextAreaRef.current.focus();
+      }
+    }
+  }, [errors]);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name } = e.target;
+    onChangeInputValue(e);
+
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
+  }, [onChangeInputValue, errors]);
+
+  const handleImageChange = useCallback((file: File | string | null | "DELETE") => {
+    if (file === "DELETE") {
+      setState(prev => ({
+        ...prev,
+        articleImage: null,
+      }));
+    } else {
+      setState(prev => ({
+        ...prev,
+        articleImage: file,
+      }));
+    }
+    
+    if (errors.articleImage && (file && file !== "DELETE")) {
       setErrors(prev => ({ ...prev, articleImage: undefined }));
     }
   }, [setState, errors.articleImage]);
@@ -111,10 +142,12 @@ export const ArticleManagementAddPage = () => {
           <InputContainer>
             <InputWrapper>
               <Input
+                ref={titleInputRef}
                 value={state.articleName}
                 name="articleName"
                 type="text"
-                onChange={onChangeInputValue}
+                state={errors.articleName ? "error" : "default"}
+                onChange={handleInputChange}
                 placeholder="기사 제목을 입력해 주세요.."
                 label="기사 제목"
                 disabled={isFormDisabled}
@@ -129,9 +162,11 @@ export const ArticleManagementAddPage = () => {
             </InputWrapper>
             <InputWrapper>
               <TextArea
+                ref={descTextAreaRef}
                 value={state.articleDesc}
                 name="articleDesc"
-                onChange={onChangeInputValue}
+                state={errors.articleDesc ? "error" : "default"}
+                onChange={handleInputChange}
                 placeholder="기사 내용을 입력해 주세요.."
                 label="기사 내용"
                 height={480}

@@ -85,13 +85,20 @@ export const ArticleManagementEditPage = () => {
     }
   }, [errors.articleDesc]);
 
-  const handleImageChange = useCallback((file: File | string | null) => {
-    setDatas(prev => ({
-      ...prev,
-      articleImage: file,
-    }));
-    // 이미지 에러가 있다면 제거
-    if (errors.articleImage && file) {
+  const handleImageChange = useCallback((file: File | string | null | "DELETE") => {
+    if (file === "DELETE") {
+      setDatas(prev => ({
+        ...prev,
+        articleImage: null,
+      }));
+    } else {
+      setDatas(prev => ({
+        ...prev,
+        articleImage: file,
+      }));
+    }
+    
+    if (errors.articleImage && (file && file !== "DELETE")) {
       setErrors(prev => ({ ...prev, articleImage: undefined }));
     }
   }, [errors.articleImage]);

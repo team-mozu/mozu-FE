@@ -223,7 +223,7 @@ export const HistorySidebar = ({ isMock = false }: { isMock?: boolean }) => {
               {(teamData?.valProfit ?? 0) !== 0 ? (
                 <ProfitContainer profit={teamData?.valProfit ?? 0}>
                   {formattedData.valueProfit.toLocaleString().includes("-") ? "" : "+"}
-                  {formattedData.valueProfit.toLocaleString()}원 ({roundToFixed(parseFloat(formattedProfitNum), 2)}%)
+                  {formattedData.valueProfit.toLocaleString()}원 ({formattedProfitNum.includes("-") ? "" : "+"}{roundToFixed(parseFloat(formattedProfitNum), 2)}%)
                 </ProfitContainer>
               ) : null}
             </TotalAssetLeft>

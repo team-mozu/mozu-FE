@@ -47,7 +47,7 @@ export const ImprovedClassMonitoringPage = () => {
         Toast(`${data.curInvRound}차 투자가 시작되었습니다!`, {
           type: "info",
         });
-        
+
         // React Query 캐시 무효화로 최신 데이터 반영
         queryClient.invalidateQueries({
           queryKey: ["getClass"],
@@ -169,6 +169,7 @@ export const ImprovedClassMonitoringPage = () => {
         {isOpenClass && (
           <ClassInfoModal
             classItems={classData?.lessonItems}
+            maxInvRound={classData?.maxInvRound}
             isOpen={isOpenClass}
             setIsOpen={setIsOpenClass}
           />
