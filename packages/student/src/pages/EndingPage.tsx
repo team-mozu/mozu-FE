@@ -1,6 +1,7 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useTeamRank } from "@/apis";
+import mozuQR from "@mozu/ui/assets/common/mozuQR.png";
 
 export const EndingPage = () => {
   const { data: rankings, isLoading } = useTeamRank();
@@ -161,6 +162,33 @@ export const EndingPage = () => {
             })}
           </RankingGrid>
         </RankingSection>
+
+        {/* Survey Section */}
+        <SurveySection>
+          <SurveyCard>
+            <SurveyHeader>
+              <SurveyEmoji>📝</SurveyEmoji>
+              <SurveyTitle>수업 만족도 설문조사</SurveyTitle>
+              <SurveyEmoji>📝</SurveyEmoji>
+            </SurveyHeader>
+            
+            <SurveyContent>
+              <SurveyMessage>
+                오늘 수업은 어떠셨나요?<br />
+                여러분의 소중한 의견을 들려주세요! 🎯
+              </SurveyMessage>
+              
+              <QRContainer>
+                <QRImage src={mozuQR} alt="설문조사 QR코드" />
+                <QRText>QR코드를 스캔하여<br />설문조사에 참여해주세요!</QRText>
+              </QRContainer>
+              
+              <SurveyFooter>
+                <SurveyFooterText>설문조사는 익명으로 진행되며, 향후 수업 개선에 활용됩니다 💭</SurveyFooterText>
+              </SurveyFooter>
+            </SurveyContent>
+          </SurveyCard>
+        </SurveySection>
 
         <Footer>
           <FooterContent>
@@ -601,4 +629,132 @@ const FooterMessage = styled.p`
 const FooterEmojis = styled.div`
   font-size: 24px;
   letter-spacing: 8px;
+`;
+
+// Survey Section Styles
+const SurveySection = styled.section`
+  width: 100%;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  animation: ${slideUp} 0.8s ease-out 0.6s both;
+`;
+
+const SurveyCard = styled.div`
+  background: linear-gradient(135deg, rgba(255, 248, 235, 0.95), rgba(255, 236, 179, 0.95));
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 183, 77, 0.4);
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(255, 87, 34, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(255, 87, 34, 0.2);
+  }
+  
+  @media (max-width: 768px) {
+    margin: 0 16px;
+    padding: 24px;
+  }
+`;
+
+const SurveyHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+`;
+
+const SurveyEmoji = styled.span`
+  font-size: 28px;
+  animation: ${bounce} 2s infinite;
+`;
+
+const SurveyTitle = styled.h3`
+  font-size: 28px;
+  font-weight: 900;
+  color: #BF360C;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+`;
+
+const SurveyContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+`;
+
+const SurveyMessage = styled.p`
+  font-size: 20px;
+  font-weight: 600;
+  color: #D84315;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
+`;
+
+const QRContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  border: 2px dashed #FF7043;
+`;
+
+const QRImage = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  
+  @media (max-width: 768px) {
+    width: 120px;
+    height: 120px;
+  }
+`;
+
+const QRText = styled.p`
+  font-size: 16px;
+  font-weight: 600;
+  color: #FF7043;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+`;
+
+const SurveyFooter = styled.div`
+  text-align: center;
+  margin-top: 8px;
+`;
+
+const SurveyFooterText = styled.p`
+  font-size: 14px;
+  color: #8D6E63;
+  margin: 0;
+  font-style: italic;
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
 `;

@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, Input, Select } from "@mozu/ui";
 import type { ChangeEvent } from "react";
-import { useGetArticleList } from "@/entities/article";
 import { ArticleTables } from "@/features/articleCRUD/ui/ArticleTables";
 import { useClassCreation } from "@/features/classManagement/hooks/useClassCreation";
 import { formatPrice } from "@/shared/lib";

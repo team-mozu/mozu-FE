@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea, Toast } from "@mozu/ui";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useArticleUpdate, useGetArticleDetail } from "@/entities/article";
 import { ImgContainer } from "@/features/articleCRUD";
@@ -17,6 +17,9 @@ export const ArticleManagementEditPage = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const descTextAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const [datas, setDatas] = useState<{
     articleName: string;
@@ -97,15 +100,15 @@ export const ArticleManagementEditPage = () => {
         articleImage: file,
       }));
     }
-    
+
     if (errors.articleImage && (file && file !== "DELETE")) {
       setErrors(prev => ({ ...prev, articleImage: undefined }));
     }
   }, [errors.articleImage]);
 
   const handleCancel = useCallback(() => {
-    navigate('/article-management');
-  }, [navigate]);
+    navigate(`/article-management/${id}`);
+  }, [navigate, id]);
 
   const formData = {
     articleName: datas.articleName.trim(),
@@ -161,10 +164,12 @@ export const ArticleManagementEditPage = () => {
           <InputContainer>
             <InputWrapper>
               <Input
+                ref={titleInputRef}
                 value={datas.articleName}
                 name="articleName"
                 type="text"
                 onChange={titleChange}
+                state={errors.articleName ? "error" : "default"}
                 placeholder="기사 제목을 입력해 주세요.."
                 label="기사 제목"
                 disabled={isFormDisabled}
@@ -179,8 +184,10 @@ export const ArticleManagementEditPage = () => {
             </InputWrapper>
             <InputWrapper>
               <TextArea
+                ref={descTextAreaRef}
                 value={datas.articleDesc}
                 name="articleDesc"
+                state={errors.articleDesc ? "error" : "default"}
                 onChange={contentChange}
                 placeholder="기사 내용을 입력해 주세요.."
                 label="기사 내용"

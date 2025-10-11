@@ -36,16 +36,21 @@ const CompanyInfoSection = memo(({ info, isLoading }: { info: string; isLoading:
 ));
 
 const BalanceSheetSection = memo(
-  ({ debt, capital, isLoading }: { debt: number | null; capital: number | null; isLoading: boolean }) => (
+  ({ money, debt, capital, isLoading }: { money: number | null; debt: number | null; capital: number | null; isLoading: boolean }) => (
     <div>
       <Label>재무상태표</Label>
       {isLoading ? (
         <ContentWrapper>
           <AccountsSkeleton />
           <AccountsSkeleton />
+          <AccountsSkeleton />
         </ContentWrapper>
       ) : (
         <ContentWrapper>
+          <Accounts
+            title="자산"
+            content={money ?? 0}
+          />
           <Accounts
             title="부채"
             content={debt ?? 0}
@@ -194,20 +199,19 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
           isLoading={isLoading}
         />
         <ButtonContainer>
-          <div onClick={onClick}>
-            <Button
-              backgroundColor={color.zinc[50]}
+          <Button
+            backgroundColor={color.zinc[50]}
+            color={color.zinc[800]}
+            borderColor={color.zinc[200]}
+            hoverBackgroundColor={color.zinc[100]}
+            disabled={isLoading}
+            onClick={onClick}>
+            삭제하기
+            <Del
+              size={20}
               color={color.zinc[800]}
-              borderColor={color.zinc[200]}
-              hoverBackgroundColor={color.zinc[100]}
-              disabled={isLoading}>
-              삭제하기
-              <Del
-                size={20}
-                color={color.zinc[800]}
-              />
-            </Button>
-          </div>
+            />
+          </Button>
           <Button
             backgroundColor={color.orange[50]}
             color={color.orange[500]}
@@ -231,6 +235,7 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
         <CompanyMain>
           <Section>
             <BalanceSheetSection
+              money={datas.money}
               debt={datas.debt}
               capital={datas.capital}
               isLoading={isLoading}

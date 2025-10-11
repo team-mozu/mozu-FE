@@ -59,7 +59,7 @@ export const StudentWaitPage = () => {
   return (
     <AppContainer>
       <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
-      
+
       <Header
         isAdmin={false}
         showNav={false}
@@ -84,7 +84,7 @@ export const StudentWaitPage = () => {
               <LoadingBar>
                 <LoadingFill />
               </LoadingBar>
-              <LoadingText>시스템 준비 중</LoadingText>
+              <LoadingText>모의투자 준비중</LoadingText>
             </LoadingSection>
           </ContentArea>
 

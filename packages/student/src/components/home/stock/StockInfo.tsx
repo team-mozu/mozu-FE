@@ -68,9 +68,14 @@ export const StockInfo = () => {
             <ContentWrapper>
               <AccountsSkeleton />
               <AccountsSkeleton />
+              <AccountsSkeleton />
             </ContentWrapper>
           ) : (
             <ContentWrapper>
+              <Accounts
+                title="자산"
+                content={data?.money ?? 0}
+              />
               <Accounts
                 title="부채"
                 content={data?.debt ?? 0}

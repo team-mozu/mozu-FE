@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { Del, Modal, SelectError } from "@mozu/ui";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDeleteStock, useGetStockDetail } from "@/entities/stock";
 import { StockManagementDetail, StockSearchSideBar } from "@/features/stockCRUD";
@@ -16,6 +16,13 @@ export const StockManagementPage = () => {
   const stockDelete = useDeleteStock(stockId, () => { setIsModalOpen(false) });
   const { data: stockData } = useGetStockDetail(stockId);
 
+  // URL 파라미터로 종목이 지정된 경우 자동 선택
+  useEffect(() => {
+    if (id && stockId) {
+      setSelectedId(stockId);
+    }
+  }, [id, stockId]);
+
   const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);
   }, []);
@@ -24,6 +31,7 @@ export const StockManagementPage = () => {
     if (selectedId !== null) {
       stockDelete.mutate();
     }
+    setSelectedId(null);
   }, [
     selectedId,
     stockDelete,

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { Del, Modal, SelectError } from "@mozu/ui";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDeleteArticle } from "@/entities/article";
 import { ArticleManagementDetail, ArticleSearchSideBar } from "@/features/articleCRUD";
@@ -11,6 +11,13 @@ export const ArticleManagementPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { id } = useParams();
+
+  // URL 파라미터로 기사가 지정된 경우 자동 선택
+  useEffect(() => {
+    if (id) {
+      setSelectedId(id);
+    }
+  }, [id]);
 
   const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);

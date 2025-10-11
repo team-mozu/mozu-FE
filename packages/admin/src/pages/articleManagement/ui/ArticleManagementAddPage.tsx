@@ -23,6 +23,7 @@ export const ArticleManagementAddPage = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shouldFocusOnError, setShouldFocusOnError] = useState(false);
 
   const titleInputRef = useRef<HTMLInputElement>(null);
   const descTextAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -56,15 +57,17 @@ export const ArticleManagementAddPage = () => {
 
   useEffect(() => {
     const errorKeys = Object.keys(errors);
-    if (errorKeys.length > 0) {
+    // 폼 제출 시에만 첫 번째 에러 필드로 포커스 이동
+    if (shouldFocusOnError && errorKeys.length > 0) {
       const firstError = errorKeys[0];
       if (firstError === "articleName" && titleInputRef.current) {
         titleInputRef.current.focus();
       } else if (firstError === "articleDesc" && descTextAreaRef.current) {
         descTextAreaRef.current.focus();
       }
+      setShouldFocusOnError(false);
     }
-  }, [errors]);
+  }, [errors, shouldFocusOnError]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name } = e.target;
@@ -87,13 +90,14 @@ export const ArticleManagementAddPage = () => {
         articleImage: file,
       }));
     }
-    
+
     if (errors.articleImage && (file && file !== "DELETE")) {
       setErrors(prev => ({ ...prev, articleImage: undefined }));
     }
   }, [setState, errors.articleImage]);
 
   const handleSubmit = useCallback(() => {
+    setShouldFocusOnError(true);
     if (!validateForm()) {
       return;
     }
