@@ -179,20 +179,30 @@ const ModalContainer = styled.div`
     padding: 36px 28px 28px 28px;
   }
 
-  /* 스크롤바 스타일링 */
+  /* 깔끔한 스크롤바 스타일링 */
   &::-webkit-scrollbar {
     width: 6px;
   }
   
   &::-webkit-scrollbar-track {
-    background: ${color.zinc[100]};
+    background: ${color.zinc[50]};
     border-radius: 3px;
   }
   
   &::-webkit-scrollbar-thumb {
     background: ${color.zinc[300]};
     border-radius: 3px;
+    transition: all 0.2s ease;
   }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${color.zinc[400]};
+    transform: scale(1.05);
+  }
+  
+  /* Firefox 스크롤바 */
+  scrollbar-width: thin;
+  scrollbar-color: ${color.zinc[300]} ${color.zinc[50]};
 `;
 
 const ViewFullArticleButton = styled.button`
