@@ -2,6 +2,13 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, Star } from "@mozu/ui";
 
+// 데스크탑 반응형 브레이크포인트
+const desktopMediaQueries = {
+  small: `@media (max-width: 1366px)`,
+  medium: `@media (max-width: 1440px)`,
+  large: `@media (max-width: 1680px)`,
+};
+
 interface IClassPostType {
   title: string;
   creationDate: string;
@@ -48,7 +55,9 @@ export const ClassPost = ({ title, creationDate, starOnClick, isClick, delClick,
 
 const PostContainer = styled.div`
   cursor: pointer;
-  width: 480px;
+  width: 100%;
+  max-width: 480px;
+  min-width: 320px;
   height: 156px;
   border: 1px solid ${color.zinc[200]};
   border-radius: 8px;
@@ -56,6 +65,18 @@ const PostContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 24px;
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
+    max-width: 400px;
+    height: 140px;
+  }
+
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    max-width: 440px;
+    height: 148px;
+  }
 `;
 
 const Title = styled.div`
@@ -64,7 +85,19 @@ const Title = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  width: 336px;
+  width: 100%;
+  max-width: 336px;
+
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
+    max-width: 280px;
+    font-size: 16px;
+  }
+
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    max-width: 310px;
+  }
 `;
 
 const CreationDate = styled.div`
@@ -80,13 +113,25 @@ const TilteContainer = styled.div`
 `;
 
 const TitleIconContainer = styled.div`
-  width: 432px;
+  width: 100%;
+  max-width: 432px;
   display: flex;
   justify-content: space-between;
   align-items: start;
+
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
+    max-width: 360px;
+  }
+
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    max-width: 400px;
+  }
 `;
 
 const ContentContainer = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;

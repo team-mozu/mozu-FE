@@ -2,6 +2,13 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { CheckBox } from "@mozu/ui";
 
+// 데스크탑 반응형 브레이크포인트
+const desktopMediaQueries = {
+  small: `@media (max-width: 1366px)`,
+  medium: `@media (max-width: 1440px)`,
+  large: `@media (max-width: 1680px)`,
+};
+
 interface IArticleItemType {
   isHeader?: boolean;
   title1?: string;
@@ -35,11 +42,42 @@ const Title1 = styled.div<{
 }>`
   font: ${({ isHeader }) => (isHeader ? font.b1 : font.b2)};
   color: ${color.black};
-  width: 560px;
+  width: 100%;
+  max-width: 560px;
+  min-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
+    max-width: 400px;
+    min-width: 150px;
+  }
+
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    max-width: 480px;
+  }
 `;
 
 const Title2 = styled(Title1)`
   width: 120px;
+  max-width: 120px;
+  min-width: 80px;
+
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
+    width: 100px;
+    max-width: 100px;
+    min-width: 60px;
+  }
+
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    width: 110px;
+    max-width: 110px;
+  }
 `;
 
 const TableContent = styled.div<{

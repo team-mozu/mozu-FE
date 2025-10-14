@@ -1,0 +1,71 @@
+/* 전역 반응형 CSS */
+
+/* 기본 박스 모델 설정 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 기본 body 설정 */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* 가로 스크롤 방지 */
+  min-width: 1200px; /* 최소 너비 설정 */
+}
+
+/* 전역 반응형 설정 */
+
+/* Windows 일반 데스크탑 (1366px 이하) */
+@media (max-width: 1366px) {
+  /* 텍스트 크기 조정 */
+  body {
+    font-size: 14px;
+  }
+
+  /* 컨테이너 최소 너비 설정 */
+  .main-container {
+    min-width: 1200px;
+  }
+}
+
+/* 중형 데스크탑 (1440px 이하) */
+@media (max-width: 1440px) {
+  .main-container {
+    min-width: 1300px;
+  }
+}
+
+/* 대형 데스크탑 (1680px 이하) */
+@media (max-width: 1680px) {
+  .main-container {
+    min-width: 1400px;
+  }
+}
+
+/* 스크롤바 전역 스타일링 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Firefox 스크롤바 스타일링 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
+}

@@ -107,9 +107,7 @@ export const ClassManagement = () => {
         }
       };
     })(),
-    [
-      refetch,
-    ],
+    [], // refetch는 react-query에서 제공하는 안정적인 함수 참조이므로 의존성 불필요
   );
 
   if (apiLoading) return <FullPageLoader />;

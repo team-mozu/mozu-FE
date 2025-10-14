@@ -6,6 +6,13 @@ import { useParams } from "react-router";
 import { useDeleteStock, useGetStockDetail } from "@/entities/stock";
 import { StockManagementDetail, StockSearchSideBar } from "@/features/stockCRUD";
 
+// 데스크탑 반응형 브레이크포인트
+const desktopMediaQueries = {
+  small: `@media (max-width: 1366px)`,
+  medium: `@media (max-width: 1440px)`,
+  large: `@media (max-width: 1680px)`,
+};
+
 export const StockManagementPage = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -71,4 +78,15 @@ const Container = styled.div`
   height: calc(100vh - 64px);
   display: flex;
   flex-direction: row;
+  min-width: 0; /* flexbox 자식 요소의 너비 자동 축소 */
+
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
+    height: calc(100vh - 60px);
+  }
+
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    height: calc(100vh - 62px);
+  }
 `;

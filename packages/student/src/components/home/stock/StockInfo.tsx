@@ -5,6 +5,13 @@ import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useGetStockDetail } from "@/apis";
 
+// 데스크탑 반응형 브레이크포인트
+const desktopMediaQueries = {
+  small: `@media (max-width: 1366px)`,
+  medium: `@media (max-width: 1440px)`,
+  large: `@media (max-width: 1680px)`,
+};
+
 interface StockData {
   itemInfo: string;
   debt: number;
@@ -139,19 +146,18 @@ const Container = styled.div`
   
   overflow-y: auto;
   
-  /* 태블릿 */
-  @media (max-width: 1024px) {
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
     grid-template-columns: 1fr;
     gap: 24px;
     padding: 24px;
+    min-height: 90vh;
   }
   
-  /* 모바일 */
-  @media (max-width: 768px) {
-    padding: 16px;
-    border-radius: 12px;
-    gap: 20px;
-    min-height: calc(100vh - 40px);
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    padding: 28px;
+    gap: 28px;
   }
   
   /* 스크롤바 스타일링 */

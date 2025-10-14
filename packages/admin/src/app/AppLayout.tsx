@@ -4,6 +4,13 @@ import { getCookies } from "@mozu/util-config";
 import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
+// 데스크탑 반응형 브레이크포인트
+const desktopMediaQueries = {
+  small: `@media (max-width: 1366px)`,
+  medium: `@media (max-width: 1440px)`,
+  large: `@media (max-width: 1680px)`,
+};
+
 export const AppLayout = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -63,23 +70,24 @@ const MainContent = styled.div<{
   margin-top: 64px;
   flex: 1;
   transition: all 0.3s ease;
+  min-width: 0; /* flexbox 자식 요소의 너비 자동 축소 */
+  overflow-x: auto; /* 가로 스크롤 허용 */
 
-  /* 데스크탑 반응형 - 사이드바 너비와 헤더 높이에 맞춰 조정 */
-  @media (max-width: 1440px) {
-    margin-left: ${({ isMargin }) => (isMargin ? "260px" : "0")};
-  }
-
-  @media (max-width: 1200px) {
+  /* Windows 일반 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     margin-left: ${({ isMargin }) => (isMargin ? "240px" : "0")};
+    margin-top: 60px;
   }
 
-  @media (max-width: 1024px) {
-    margin-left: ${({ isMargin }) => (isMargin ? "220px" : "0")};
-    margin-top: 56px;
+  /* 중형 데스크탑 (1440px 이하) */
+  ${desktopMediaQueries.medium} {
+    margin-left: ${({ isMargin }) => (isMargin ? "260px" : "0")};
+    margin-top: 62px;
   }
 
-  @media (max-width: 900px) {
-    margin-left: ${({ isMargin }) => (isMargin ? "72px" : "0")};
-    margin-top: 52px;
+  /* 대형 데스크탑 (1680px 이하) */
+  ${desktopMediaQueries.large} {
+    margin-left: ${({ isMargin }) => (isMargin ? "270px" : "0")};
+    margin-top: 64px;
   }
 `;

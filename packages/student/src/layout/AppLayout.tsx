@@ -8,6 +8,13 @@ import { HistorySidebar, ItemSidebar, ItemSidebarSkeleton, SSELoadingSpinner } f
 import { useTypeSSE } from "@/hook";
 import { headerConfigMap } from "@/routes";
 
+// 데스크탑 반응형 브레이크포인트
+const desktopMediaQueries = {
+  small: `@media (max-width: 1366px)`,
+  medium: `@media (max-width: 1440px)`,
+  large: `@media (max-width: 1680px)`,
+};
+
 export const AppLayout = () => {
   const { data: teamData } = useGetTeamDetail();
   const { pathname } = useLocation();
@@ -111,6 +118,16 @@ const AppContainer = styled.div`
 const Layout = styled.div`
   margin-top: 64px;
   display: flex;
+
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
+    margin-top: 60px;
+  }
+
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    margin-top: 62px;
+  }
 `;
 
 const MainContent = styled.div<{
@@ -120,4 +137,18 @@ const MainContent = styled.div<{
   padding-right: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "463px")};
   margin-left: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "320px")};
   flex: 1;
+  min-width: 0; /* flexbox 자식 요소의 너비 자동 축소 */
+  overflow-x: auto; /* 가로 스크롤 허용 */
+
+  /* Windows 일반 데스크탑 */
+  ${desktopMediaQueries.small} {
+    padding-right: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "400px")};
+    margin-left: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "280px")};
+  }
+
+  /* 중형 데스크탑 */
+  ${desktopMediaQueries.medium} {
+    padding-right: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "430px")};
+    margin-left: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "300px")};
+  }
 `;
