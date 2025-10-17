@@ -8,7 +8,7 @@ export default defineConfig({
   ], // react-refresh 대신 사용
   server: {
     port: 3002,
-    host: "0.0.0.0", // 네트워크 접근 허용
+    host: "admin.localhost", // 네트워크 접근 허용
     cors: true, // CORS 설정
   },
   build: {

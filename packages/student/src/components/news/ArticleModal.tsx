@@ -37,19 +37,22 @@ export function ArticleModal({ article, total, current, onPrev, onNext, onClose,
   const isTruncated = description.length > MAX_CONTENT_LENGTH;
   const truncatedDescription = isTruncated ? `${description.substring(0, MAX_CONTENT_LENGTH)}...` : description;
 
-  // 스켈레톤 UI 상태 관리
-  const [isLoading, setIsLoading] = useState(false);
+  // 스켈레톤 UI 상태 관리 - 최초 로드시에만 표시
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  // 기사 데이터가 변경될 때 스켈레톤 UI 표시
-  // biome-ignore lint/correctness/useExhaustiveDependencies: 의도적으로 current를 의존성으로 추가하여 기사 전환시 스켈레톤 UI 표시
+  // 모달이 처음 열릴 때만 스켈레톤 UI 표시
   useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000); // 1초간 스켈레톤 UI 표시
+    if (isFirstLoad) {
+      setIsLoading(true);
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        setIsFirstLoad(false);
+      }, 1500); // 1.5초간 스켈레톤 UI 표시
 
-    return () => clearTimeout(timer);
-  }, [current]); // 의도적으로 current를 의존성으로 추가 (다음/이전 기사 전환시 스켈레톤 표시)
+      return () => clearTimeout(timer);
+    }
+  }, [isFirstLoad]);
 
   const handleViewFullArticle = useCallback(() => {
     if (article.articleId) {

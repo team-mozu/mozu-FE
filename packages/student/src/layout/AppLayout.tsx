@@ -8,18 +8,11 @@ import { HistorySidebar, ItemSidebar, ItemSidebarSkeleton, SSELoadingSpinner } f
 import { useTypeSSE } from "@/hook";
 import { headerConfigMap } from "@/routes";
 
-// 데스크탑 반응형 브레이크포인트
-const desktopMediaQueries = {
-  small: `@media (max-width: 1366px)`,
-  medium: `@media (max-width: 1440px)`,
-  large: `@media (max-width: 1680px)`,
-};
-
 export const AppLayout = () => {
   const { data: teamData } = useGetTeamDetail();
   const { pathname } = useLocation();
   const { isLoading } = useGetClassItem();
-  const navigator = useNavigate();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const splitedPath = pathname.split("/");
@@ -33,17 +26,30 @@ export const AppLayout = () => {
     isAdminMargin: true,
   };
 
+  // 전역 SSE 연결 관리
   const { isConnected, isConnecting } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    data => {
-      console.log("[AppLayout SSE]", data);
-    },
+    undefined,
     error => {
-      console.log("[AppLayout SSE Error]", error);
+      console.log(error);
+      Toast(`네트워크 에러 발생`, {
+        type: "error",
+      });
     },
     {
-      TEAM_SSE_CONNECTED: (data) => {
-        console.log("[AppLayout] SSE 연결 완료:", data);
+      CLASS_NEXT_INV_START: () => {
+        console.log("[AppLayout] 다음 투자 라운드 시작됨 - 팀 데이터 갱신");
+        // React Query 캐시 무효화를 통해 서버에서 최신 데이터 가져오기
+        queryClient.invalidateQueries({
+          queryKey: [
+            "team",
+          ],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [
+            "class",
+          ],
+        });
       },
       CLASS_CANCEL: async () => {
         Toast("수업이 취소되었습니다.", {
@@ -63,17 +69,7 @@ export const AppLayout = () => {
             domain,
           },
         );
-        navigator("/signin");
-      },
-      CLASS_NEXT_INV_START: () => {
-        console.log("[AppLayout] 다음 투자 라운드 시작됨 - 팀 데이터 갱신");
-        // React Query 캐시 무효화를 통해 서버에서 최신 데이터 가져오기
-        queryClient.invalidateQueries({
-          queryKey: ["team"],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["class"],
-        });
+        navigate("/signin");
       },
     },
   );
@@ -118,16 +114,6 @@ const AppContainer = styled.div`
 const Layout = styled.div`
   margin-top: 64px;
   display: flex;
-
-  /* Windows 일반 데스크탑 */
-  ${desktopMediaQueries.small} {
-    margin-top: 60px;
-  }
-
-  /* 중형 데스크탑 */
-  ${desktopMediaQueries.medium} {
-    margin-top: 62px;
-  }
 `;
 
 const MainContent = styled.div<{
@@ -137,18 +123,4 @@ const MainContent = styled.div<{
   padding-right: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "463px")};
   margin-left: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "320px")};
   flex: 1;
-  min-width: 0; /* flexbox 자식 요소의 너비 자동 축소 */
-  overflow-x: auto; /* 가로 스크롤 허용 */
-
-  /* Windows 일반 데스크탑 */
-  ${desktopMediaQueries.small} {
-    padding-right: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "400px")};
-    margin-left: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "280px")};
-  }
-
-  /* 중형 데스크탑 */
-  ${desktopMediaQueries.medium} {
-    padding-right: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "430px")};
-    margin-left: ${({ isResultPage, isEndingPage }) => (isResultPage || isEndingPage ? 0 : "300px")};
-  }
 `;

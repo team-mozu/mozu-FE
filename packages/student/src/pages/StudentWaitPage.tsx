@@ -9,7 +9,6 @@ import { type ClassNextInvStartData, type TeamSSEConnectedData, useTypeSSE } fro
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
-
   const { isConnected, isConnecting } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     undefined,
@@ -84,7 +83,7 @@ export const StudentWaitPage = () => {
               <LoadingBar>
                 <LoadingFill />
               </LoadingBar>
-              <LoadingText>모의투자 준비중</LoadingText>
+              <LoadingText>모의투자 준비중..</LoadingText>
             </LoadingSection>
           </ContentArea>
 

@@ -8,7 +8,7 @@ export default defineConfig({
   ],
   server: {
     port: 3001,
-    host: "student.localhost",
+    host: "0.0.0.0",
     cors: true,
   },
   build: {

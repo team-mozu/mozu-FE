@@ -2,8 +2,6 @@ import { getCookies } from "@mozu/util-config";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type EventType = "LESSON_SSE_CONNECTED" | "TEAM_PART_IN" | "TEAM_INV_END" | "CLASS_NEXT_INV_START";
-
 // SSE 이벤트 데이터 타입 정의 (명세 기준)
 export interface LessonSSEConnectedData {
   type: "LESSON_SSE_CONNECTED";
@@ -48,7 +46,7 @@ export const useTypeSSE = (
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(true);
-  
+
   // 콜백 함수들을 ref로 저장해서 의존성 배열 문제 해결
   const onMessageRef = useRef(onMessage);
   const onErrorRef = useRef(onError);

@@ -2,8 +2,6 @@ import { getCookies } from "@mozu/util-config";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type EventType = "TEAM_SSE_CONNECTED" | "CLASS_NEXT_INV_START" | "CLASS_CANCEL";
-
 export interface TeamSSEConnectedData {
   type: "TEAM_SSE_CONNECTED";
   message: string;
@@ -38,7 +36,7 @@ export const useTypeSSE = (
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(true);
-  
+
   // 콜백 함수들을 ref로 저장해서 의존성 배열 문제 해결
   const onMessageRef = useRef(onMessage);
   const onErrorRef = useRef(onError);
@@ -145,9 +143,9 @@ export const useTypeSSE = (
     setIsConnecting(false);
   }, []);
 
-  return { 
-    disconnect, 
-    isConnected, 
-    isConnecting 
+  return {
+    disconnect,
+    isConnected,
+    isConnecting
   };
 };

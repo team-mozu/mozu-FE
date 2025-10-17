@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
-import { useTeamRank } from "@/apis";
 import mozuQR from "@mozu/ui/assets/common/mozuQR.png";
+import { useTeamRank } from "@/apis";
 
 export const EndingPage = () => {
   const { data: rankings, isLoading } = useTeamRank();
@@ -171,18 +171,26 @@ export const EndingPage = () => {
               <SurveyTitle>수업 만족도 설문조사</SurveyTitle>
               <SurveyEmoji>📝</SurveyEmoji>
             </SurveyHeader>
-            
+
             <SurveyContent>
               <SurveyMessage>
-                오늘 수업은 어떠셨나요?<br />
+                오늘 수업은 어떠셨나요?
+                <br />
                 여러분의 소중한 의견을 들려주세요! 🎯
               </SurveyMessage>
-              
+
               <QRContainer>
-                <QRImage src={mozuQR} alt="설문조사 QR코드" />
-                <QRText>QR코드를 스캔하여<br />설문조사에 참여해주세요!</QRText>
+                <QRImage
+                  src={mozuQR}
+                  alt="설문조사 QR코드"
+                />
+                <QRText>
+                  QR코드를 스캔하여
+                  <br />
+                  설문조사에 참여해주세요!
+                </QRText>
               </QRContainer>
-              
+
               <SurveyFooter>
                 <SurveyFooterText>설문조사는 익명으로 진행되며, 향후 수업 개선에 활용됩니다 💭</SurveyFooterText>
               </SurveyFooter>
@@ -376,7 +384,7 @@ const PodiumCard = styled.div<{
     props.isMyTeam
       ? "linear-gradient(135deg, #FF8A50 0%, #FFAB91 100%)"
       : "linear-gradient(135deg, white 0%, #FFF8E1 100%)"};
-  border: ${props => props.isMyTeam ? '2px solid #FF7043' : '2px solid #FFE0B2'};
+  border: ${props => (props.isMyTeam ? "2px solid #FF7043" : "2px solid #FFE0B2")};
   border-radius: 20px;
   padding: 24px;
   text-align: center;
@@ -540,7 +548,7 @@ const RankingCard = styled.div<{
     props.isMyTeam
       ? "linear-gradient(135deg, #FF8A50 0%, #FFAB91 100%)"
       : "linear-gradient(135deg, white 0%, #FFF8E1 100%)"};
-  border: ${props => props.isMyTeam ? '2px solid #FF7043' : '1px solid #FFE0B2'};
+  border: ${props => (props.isMyTeam ? "2px solid #FF7043" : "1px solid #FFE0B2")};
   border-radius: 16px;
   padding: 20px;
   position: relative;
