@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { NewsPost } from "@/components";
+import { NewsPost } from "@/features";
 
 // 타입 정의 추가
 interface Article {

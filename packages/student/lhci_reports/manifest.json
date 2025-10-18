@@ -2,11 +2,11 @@
   {
     "url": "http://student.localhost:3001/__test__/mock-classroom",
     "isRepresentativeRun": false,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_08_05_06_12_14.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_08_05_06_12_14.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_10_18_12_45_23.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_10_18_12_45_23.json",
     "summary": {
-      "performance": 0.55,
-      "accessibility": 0.95,
+      "performance": 0.54,
+      "accessibility": 0.86,
       "best-practices": 1,
       "seo": 0.83
     }
@@ -14,11 +14,11 @@
   {
     "url": "http://student.localhost:3001/__test__/mock-news",
     "isRepresentativeRun": false,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_08_05_06_12_46.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_08_05_06_12_46.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_10_18_12_46_13.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_10_18_12_46_13.json",
     "summary": {
-      "performance": 0.54,
-      "accessibility": 0.94,
+      "performance": 0.55,
+      "accessibility": 0.88,
       "best-practices": 0.96,
       "seo": 0.83
     }
@@ -26,23 +26,23 @@
   {
     "url": "http://student.localhost:3001/__test__/mock-news/1",
     "isRepresentativeRun": false,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_08_05_06_13_17.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_08_05_06_13_17.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_10_18_12_46_33.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_10_18_12_46_33.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.87,
-      "best-practices": 0.96,
+      "accessibility": 0.8,
+      "best-practices": 1,
       "seo": 0.83
     }
   },
   {
     "url": "http://student.localhost:3001/__test__/mock-result",
     "isRepresentativeRun": false,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_08_05_06_13_32.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_08_05_06_13_32.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_10_18_12_46_58.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_10_18_12_46_58.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.94,
+      "accessibility": 0.86,
       "best-practices": 0.96,
       "seo": 0.82
     }
@@ -50,23 +50,23 @@
   {
     "url": "http://student.localhost:3001/__test__/mock-stock",
     "isRepresentativeRun": false,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_08_05_06_13_57.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_08_05_06_13_57.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_10_18_12_47_24.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_10_18_12_47_24.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.87,
-      "best-practices": 0.96,
+      "accessibility": 0.8,
+      "best-practices": 1,
       "seo": 0.75
     }
   },
   {
     "url": "http://student.localhost:3001/__test__/mock-wait",
     "isRepresentativeRun": false,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_08_05_06_14_36.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_08_05_06_14_36.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_10_18_12_48_01.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_10_18_12_48_01.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.94,
+      "accessibility": 0.86,
       "best-practices": 1,
       "seo": 0.82
     }
@@ -74,11 +74,11 @@
   {
     "url": "http://student.localhost:3001/__test__/mock-classroom",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_08_05_06_11_58.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_08_05_06_11_58.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_10_18_12_45_38.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_classroom--2025_10_18_12_45_38.json",
     "summary": {
       "performance": 0.54,
-      "accessibility": 0.95,
+      "accessibility": 0.86,
       "best-practices": 1,
       "seo": 0.83
     }
@@ -86,11 +86,11 @@
   {
     "url": "http://student.localhost:3001/__test__/mock-news",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_08_05_06_12_29.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_08_05_06_12_29.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_10_18_12_45_51.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news--2025_10_18_12_45_51.json",
     "summary": {
-      "performance": 0.52,
-      "accessibility": 0.94,
+      "performance": 0.55,
+      "accessibility": 0.88,
       "best-practices": 0.96,
       "seo": 0.83
     }
@@ -98,23 +98,23 @@
   {
     "url": "http://student.localhost:3001/__test__/mock-news/1",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_08_05_06_13_01.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_08_05_06_13_01.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_10_18_12_46_46.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_news_1--2025_10_18_12_46_46.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.87,
-      "best-practices": 0.96,
+      "accessibility": 0.8,
+      "best-practices": 1,
       "seo": 0.83
     }
   },
   {
     "url": "http://student.localhost:3001/__test__/mock-result",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_08_05_06_13_44.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_08_05_06_13_44.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_10_18_12_47_10.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_result--2025_10_18_12_47_10.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.94,
+      "accessibility": 0.86,
       "best-practices": 0.96,
       "seo": 0.82
     }
@@ -122,23 +122,23 @@
   {
     "url": "http://student.localhost:3001/__test__/mock-stock",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_08_05_06_14_10.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_08_05_06_14_10.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_10_18_12_47_36.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_stock--2025_10_18_12_47_36.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.87,
-      "best-practices": 0.96,
+      "accessibility": 0.8,
+      "best-practices": 1,
       "seo": 0.75
     }
   },
   {
     "url": "http://student.localhost:3001/__test__/mock-wait",
     "isRepresentativeRun": true,
-    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_08_05_06_14_24.html",
-    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_08_05_06_14_24.json",
+    "htmlPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_10_18_12_47_48.html",
+    "jsonPath": "/Users/jidohyun/Desktop/Backup/mozu-FE/packages/student/lhci_reports/report-test_mock_wait--2025_10_18_12_47_48.json",
     "summary": {
       "performance": 0.55,
-      "accessibility": 0.94,
+      "accessibility": 0.86,
       "best-practices": 1,
       "seo": 0.82
     }

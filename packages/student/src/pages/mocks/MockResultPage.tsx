@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import { font } from "@mozu/design-token";
 import { useState } from "react";
-import { RankModal, ResultContainer } from "@/components";
+import { RankModal } from "@/features";
+import { ResultContainer } from "@/shared";
 
 interface ModalProps {
   isOpen: boolean;
