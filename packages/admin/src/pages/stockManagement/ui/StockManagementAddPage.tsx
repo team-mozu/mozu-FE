@@ -1,3 +1,5 @@
+// HERE: 정승우 zod + react-hook-form 리펙토링 파트 (작업 후 이 주석은 지워주세요)
+
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
@@ -78,7 +80,7 @@ export const StockManagementAddPage = () => {
         newState[keys[index]] = value.toString();
         return newState;
       });
-      
+
       // 가격 입력 시 해당 필드의 에러 제거
       const keys: (keyof Omit<FormState, "logo">)[] = [
         "money",
