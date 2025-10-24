@@ -26,8 +26,8 @@ export const ClassManagement = () => {
   const [selectedClassId, setSelectedClassId] = useState<string>("");
 
   // API 데이터 구조에 맞게 가공 및 최신순 정렬
-  const classData: LessonGetListResponse = {
-    lessons: Array.isArray(data?.lessons) ? data.lessons : [],
+  const classData: LessonGetListResponse = data ?? {
+    lessons: [],
   };
 
   // 최신순으로 정렬 (date 필드 기준)
