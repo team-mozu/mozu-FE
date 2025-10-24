@@ -1,224 +1,149 @@
-// HERE: 박지연 zod + react-hook-form 리펙토링 파트 (작업 후 이 주석은 지워주세요)
-
 import styled from "@emotion/styled";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
+import { z } from "zod";
 import { useGetStockDetail, useStockUpdate } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";
-import { useForm, usePriceFormatter } from "@/shared/lib/hooks";
+import { usePriceFormatter } from "@/shared/lib/hooks";
 
-type FormState = {
-  name: string;
-  info: string;
-  logo: string | File | null | "DELETE";
-  money: string;
-  debt: string;
-  capital: string;
-  profit: string;
-  profitOG: string;
-  profitBen: string;
-  netProfit: string;
-};
+const stockFormSchema = z.object({
+  name: z.string().min(1, "회사 이름은 필수입니다.").min(1, "회사 이름은 1글자 이상이어야 합니다.").max(30, "회사 이름은 30글자 이하여야 합니다."),
+  info: z.string().min(1, "회사 정보는 필수입니다.").min(1, "회사 정보는 1글자 이상이어야 합니다.").max(10000, "회사 정보는 10000글자 이하여야 합니다."),
+  logo: z.union([
+    z.string(),
+    z.instanceof(File),
+    z.null(),
+    z.literal("DELETE"),
+  ]),
+  money: z
+    .string()
+    .min(1, "자산은 필수입니다.")
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "자산은 숫자여야 합니다.")
+    .refine(val => Number(val.replace(/,/g, "")) >= 0, "자산은 0 이상이어야 합니다."),
+  debt: z
+    .string()
+    .min(1, "부채는 필수입니다.")
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "부채는 숫자여야 합니다.")
+    .refine(val => Number(val.replace(/,/g, "")) >= 0, "부채는 0 이상이어야 합니다."),
+  capital: z
+    .string()
+    .min(1, "자본금은 필수입니다.")
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "자본금은 숫자여야 합니다.")
+    .refine(val => Number(val.replace(/,/g, "")) >= 0, "자본금은 0 이상이어야 합니다."),
+  profit: z
+    .string()
+    .min(1, "매출액은 필수입니다.")
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "매출액은 숫자여야 합니다.")
+    .refine(val => Number(val.replace(/,/g, "")) >= 0, "매출액은 0 이상이어야 합니다."),
+  profitOG: z
+    .string()
+    .min(1, "매출원가는 필수입니다.")
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "매출원가는 숫자여야 합니다.")
+    .refine(val => Number(val.replace(/,/g, "")) >= 0, "매출원가는 0 이상이어야 합니다."),
+  profitBen: z
+    .string()
+    .min(1, "매출이익은 필수입니다.")
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "매출이익은 숫자여야 합니다.")
+    .refine(val => Number(val.replace(/,/g, "")) >= 0, "매출이익은 0 이상이어야 합니다."),
+  netProfit: z
+    .string()
+    .min(1, "당기순이익은 필수입니다.")
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "당기순이익은 숫자여야 합니다.")
+    .refine(val => Number(val.replace(/,/g, "")) >= 0, "당기순이익은 0 이상이어야 합니다."),
+});
 
-type ValidationErrors = {
-  name?: string;
-  info?: string;
-  money?: string;
-  debt?: string;
-  capital?: string;
-  profit?: string;
-  profitOG?: string;
-  profitBen?: string;
-  netProfit?: string;
-};
+type StockFormData = z.infer<typeof stockFormSchema>;
 
 export const StockManagementEditPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const stockId = Number(id);
 
-  const { state, onChangeInputValue, setState } = useForm<FormState>({
-    name: "",
-    info: "",
-    logo: null,
-    money: "",
-    debt: "",
-    capital: "",
-    profit: "",
-    profitOG: "",
-    profitBen: "",
-    netProfit: "",
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<StockFormData>({
+    resolver: zodResolver(stockFormSchema),
+    defaultValues: {
+      name: "",
+      info: "",
+      logo: null,
+      money: "",
+      debt: "",
+      capital: "",
+      profit: "",
+      profitOG: "",
+      profitBen: "",
+      netProfit: "",
+    },
   });
 
   const { mutate: stockUpdate, isPending } = useStockUpdate(id);
   const { data: stockData } = useGetStockDetail(stockId);
-  const [errors, setErrors] = useState<ValidationErrors>({});
 
-  const titleInputRef = useRef<HTMLInputElement>(null);
-  const infoInputRef = useRef<HTMLTextAreaElement>(null);
-  const priceInputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  const validateForm = (): boolean => {
-    const newErrors: ValidationErrors = {};
-
-    // 필수 필드 검증
-    if (!state.name.trim()) {
-      newErrors.name = "회사 이름은 필수입니다.";
-    } else if (state.name.length < 2) {
-      newErrors.name = "회사 이름은 2글자 이상이어야 합니다.";
-    }
-
-    if (!state.info.trim()) {
-      newErrors.info = "회사 정보는 필수입니다.";
-    } else if (state.info.length < 10) {
-      newErrors.info = "회사 정보는 10글자 이상이어야 합니다.";
-    }
-
-    // 재무 데이터 검증
-    const financialFields = [
-      {
-        key: "money",
-        label: "자산",
-        value: state.money,
-      },
-      {
-        key: "debt",
-        label: "부채",
-        value: state.debt,
-      },
-      {
-        key: "capital",
-        label: "자본금",
-        value: state.capital,
-      },
-      {
-        key: "profit",
-        label: "매출액",
-        value: state.profit,
-      },
-      {
-        key: "profitOG",
-        label: "매출원가",
-        value: state.profitOG,
-      },
-      {
-        key: "profitBen",
-        label: "매출이익",
-        value: state.profitBen,
-      },
-      {
-        key: "netProfit",
-        label: "당기순이익",
-        value: state.netProfit,
-      },
-    ];
-
-    financialFields.forEach(field => {
-      const numValue = Number(field.value.toString().replace(/,/g, ""));
-      if (!field.value.toString().trim()) {
-        newErrors[field.key as keyof ValidationErrors] = `${field.label}은 필수입니다.`;
-      } else if (Number.isNaN(numValue)) {
-        newErrors[field.key as keyof ValidationErrors] = `${field.label}은 숫자여야 합니다.`;
-      } else if (numValue < 0) {
-        newErrors[field.key as keyof ValidationErrors] = `${field.label}은 0 이상이어야 합니다.`;
-      }
+  const handlePriceChange = (fieldName: keyof StockFormData) => (index: number, value: number) => {
+    setValue(fieldName, String(value), {
+      shouldValidate: true,
     });
-
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-  const handlePriceChange = (index: number, value: number) => {
-    const fieldMap = [
-      "money",
-      "debt",
-      "capital",
-      "profit",
-      "profitOG",
-      "profitBen",
-      "netProfit",
-    ];
-    setState(prev => ({
-      ...prev,
-      [fieldMap[index]]: value,
-    }));
-
-    // 가격 입력 시 해당 필드의 에러 제거
-    const fieldName = fieldMap[index] as keyof ValidationErrors;
-    if (errors[fieldName]) {
-      setErrors(prev => ({
-        ...prev,
-        [fieldName]: undefined,
-      }));
-    }
   };
 
-  const { priceChangeHandler } = usePriceFormatter([], handlePriceChange); // 수정
+  const { priceChangeHandler: moneyHandler } = usePriceFormatter([], handlePriceChange("money"));
+  const { priceChangeHandler: debtHandler } = usePriceFormatter([], handlePriceChange("debt"));
+  const { priceChangeHandler: capitalHandler } = usePriceFormatter([], handlePriceChange("capital"));
+  const { priceChangeHandler: profitHandler } = usePriceFormatter([], handlePriceChange("profit"));
+  const { priceChangeHandler: profitOGHandler } = usePriceFormatter([], handlePriceChange("profitOG"));
+  const { priceChangeHandler: profitBenHandler } = usePriceFormatter([], handlePriceChange("profitBen"));
+  const { priceChangeHandler: netProfitHandler } = usePriceFormatter([], handlePriceChange("netProfit"));
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    onChangeInputValue(e);
-    // 입력 시 해당 필드의 에러 제거
-    if (errors[e.target.name as keyof ValidationErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [e.target.name]: undefined,
-      }));
-    }
-  };
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     if (id && stockData) {
-      const newState: FormState = {
-        name: stockData.itemName || "",
-        info: stockData.itemInfo || "",
-        logo: stockData.itemLogo || null,
-        money: stockData.money ? String(stockData.money) : "",
-        debt: stockData.debt ? String(stockData.debt) : "",
-        capital: stockData.capital ? String(stockData.capital) : "",
-        profit: stockData.profit ? String(stockData.profit) : "",
-        profitOG: stockData.profitOg ? String(stockData.profitOg) : "",
-        profitBen: stockData.profitBenefit ? String(stockData.profitBenefit) : "",
-        netProfit: stockData.netProfit ? String(stockData.netProfit) : "",
-      };
-      setState(newState);
+      setValue("name", stockData.itemName || "");
+      setValue("info", stockData.itemInfo || "");
+      setValue("logo", stockData.itemLogo || null);
+      setValue("money", stockData.money ? String(stockData.money) : "");
+      setValue("debt", stockData.debt ? String(stockData.debt) : "");
+      setValue("capital", stockData.capital ? String(stockData.capital) : "");
+      setValue("profit", stockData.profit ? String(stockData.profit) : "");
+      setValue("profitOG", stockData.profitOg ? String(stockData.profitOg) : "");
+      setValue("profitBen", stockData.profitBenefit ? String(stockData.profitBenefit) : "");
+      setValue("netProfit", stockData.netProfit ? String(stockData.netProfit) : "");
     }
   }, [
     stockData,
+    id,
+    setValue,
   ]);
 
-  const editClick = () => {
-    if (!validateForm()) {
-      return;
-    }
-
+  const onSubmit = (data: StockFormData) => {
     if (id) {
-      // 로고 처리 로직
       let logoToSend: File | null | "" = null;
 
-      if (state.logo === "DELETE") {
-        // 명시적 삭제 - 빈 문자열로 서버에 전달
+      if (data.logo === "DELETE") {
         logoToSend = "";
-      } else if (state.logo instanceof File) {
-        // 새 파일 업로드
-        logoToSend = state.logo;
-      } else if (typeof state.logo === 'string') {
-        // 기존 URL - 변경없음으로 null 전달
+      } else if (data.logo instanceof File) {
+        logoToSend = data.logo;
+      } else if (typeof data.logo === "string") {
         logoToSend = null;
       }
 
       stockUpdate({
-        itemName: state.name,
-        itemInfo: state.info,
+        itemName: data.name,
+        itemInfo: data.info,
         itemLogo: logoToSend,
-        money: Number(state.money.toString().replace(/,/g, "")),
-        debt: Number(state.debt.toString().replace(/,/g, "")),
-        capital: Number(state.capital.toString().replace(/,/g, "")),
-        profit: Number(state.profit.toString().replace(/,/g, "")),
-        profitOg: Number(state.profitOG.toString().replace(/,/g, "")),
-        profitBenefit: Number(state.profitBen.toString().replace(/,/g, "")),
-        netProfit: Number(state.netProfit.toString().replace(/,/g, "")),
+        money: Number(data.money.toString().replace(/,/g, "")),
+        debt: Number(data.debt.toString().replace(/,/g, "")),
+        capital: Number(data.capital.toString().replace(/,/g, "")),
+        profit: Number(data.profit.toString().replace(/,/g, "")),
+        profitOg: Number(data.profitOG.toString().replace(/,/g, "")),
+        profitBenefit: Number(data.profitBen.toString().replace(/,/g, "")),
+        netProfit: Number(data.netProfit.toString().replace(/,/g, "")),
       });
     }
   };
@@ -226,6 +151,8 @@ export const StockManagementEditPage = () => {
   const handleCancel = () => {
     navigate(`/stock-management/${id}`);
   };
+
+  const logoValue = watch("logo");
 
   return (
     <Container>
@@ -237,7 +164,7 @@ export const StockManagementEditPage = () => {
         isIcon2={true}
         iconSize2={20}
         iconColor2={color.white}
-        onClick={editClick}
+        onClick={handleSubmit(onSubmit)}
         onCancel={handleCancel}
         disabled={isPending}
       />
@@ -245,54 +172,72 @@ export const StockManagementEditPage = () => {
         <LeftContainer>
           <div>
             <LogoUploader
-              img={typeof state.logo === "string" && state.logo !== "DELETE" ? state.logo : state.logo instanceof File ? URL.createObjectURL(state.logo) : ""}
+              img={
+                typeof logoValue === "string" && logoValue !== "DELETE"
+                  ? logoValue
+                  : logoValue instanceof File
+                    ? URL.createObjectURL(logoValue)
+                    : ""
+              }
               onImageChange={file => {
                 if (file === "DELETE") {
-                  setState(prev => ({
-                    ...prev,
-                    logo: null,
-                  }));
+                  setValue("logo", null);
                 } else {
-                  setState(prev => ({
-                    ...prev,
-                    logo: file,
-                  }));
+                  setValue("logo", file);
                 }
               }}
             />
           </div>
           <div>
-            <InputWrapper hasError={!!errors.name}>
-              <Input
-                ref={titleInputRef}
-                label={"회사 이름"}
-                placeholder={"종목 이름을 입력해 주세요.."}
-                name="name"
-                onChange={handleInputChange}
-                value={state.name}
-                state={errors.name ? "error" : "default"}
-                aria-invalid={!!errors.name}
-                aria-describedby={errors.name ? "title-error" : undefined}
-              />
-              {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
-            </InputWrapper>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <InputWrapper hasError={!!errors.name}>
+                  <Input
+                    label={"회사 이름"}
+                    placeholder={"종목 이름을 입력해 주세요.."}
+                    {...field}
+                    state={errors.name ? "error" : "default"}
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "name-error" : undefined}
+                  />
+                  {errors.name && (
+                    <ErrorMessage
+                      id="name-error"
+                      role="alert">
+                      {errors.name.message}
+                    </ErrorMessage>
+                  )}
+                </InputWrapper>
+              )}
+            />
           </div>
           <div>
-            <InputWrapper hasError={!!errors.info}>
-              <TextArea
-                ref={infoInputRef}
-                placeholder={"회사 정보를 입력해 주세요.."}
-                label={"회사 정보"}
-                name="info"
-                height={320}
-                onChange={handleInputChange}
-                state={errors.info ? "error" : "default"}
-                value={state.info}
-                aria-invalid={!!errors.info}
-                aria-describedby={errors.info ? "info-error" : undefined}
-              />
-              {errors.info && <ErrorMessage id="info-error" role="alert">{errors.info}</ErrorMessage>}
-            </InputWrapper>
+            <Controller
+              name="info"
+              control={control}
+              render={({ field }) => (
+                <InputWrapper hasError={!!errors.info}>
+                  <TextArea
+                    placeholder={"회사 정보를 입력해 주세요.."}
+                    label={"회사 정보"}
+                    height={320}
+                    {...field}
+                    state={errors.info ? "error" : "default"}
+                    aria-invalid={!!errors.info}
+                    aria-describedby={errors.info ? "info-error" : undefined}
+                  />
+                  {errors.info && (
+                    <ErrorMessage
+                      id="info-error"
+                      role="alert">
+                      {errors.info.message}
+                    </ErrorMessage>
+                  )}
+                </InputWrapper>
+              )}
+            />
           </div>
         </LeftContainer>
         <RightContainer>
@@ -300,60 +245,67 @@ export const StockManagementEditPage = () => {
           {[
             {
               label: "자산",
-              name: "money",
-              value: state.money,
+              name: "money" as const,
+              handler: moneyHandler,
             },
             {
               label: "부채",
-              name: "debt",
-              value: state.debt,
+              name: "debt" as const,
+              handler: debtHandler,
             },
             {
               label: "자본금",
-              name: "capital",
-              value: state.capital,
+              name: "capital" as const,
+              handler: capitalHandler,
             },
             {
               label: "매출액",
-              name: "profit",
-              value: state.profit,
+              name: "profit" as const,
+              handler: profitHandler,
             },
             {
               label: "매출원가",
-              name: "profitOG",
-              value: state.profitOG,
+              name: "profitOG" as const,
+              handler: profitOGHandler,
             },
             {
               label: "매출이익",
-              name: "profitBen",
-              value: state.profitBen,
+              name: "profitBen" as const,
+              handler: profitBenHandler,
             },
             {
               label: "당기순이익",
-              name: "netProfit",
-              value: state.netProfit,
+              name: "netProfit" as const,
+              handler: netProfitHandler,
             },
           ].map((item, index) => (
-            <InputWrapper key={item.name} hasError={!!errors[item.name as keyof ValidationErrors]}>
-              <Input
-                ref={(el) => {
-                  priceInputRefs.current[index] = el;
-                }}
-                label={item.label}
-                placeholder={`${item.label} 정보를 입력해 주세요.`}
-                type={"money"}
-                name={item.name}
-                value={item.value ? Number(item.value).toLocaleString("ko-KR") : ""}
-                onChange={priceChangeHandler(index)}
-                rightText="원"
-                state={errors[item.name as keyof ValidationErrors] ? "error" : "default"}
-                aria-invalid={!!errors[item.name as keyof ValidationErrors]}
-                aria-describedby={errors[item.name as keyof ValidationErrors] ? `${item.name}-error` : undefined}
-              />
-              {errors[item.name as keyof ValidationErrors] && (
-                <ErrorMessage id={`${item.name}-error`} role="alert">{errors[item.name as keyof ValidationErrors]}</ErrorMessage>
+            <Controller
+              key={item.name}
+              name={item.name}
+              control={control}
+              render={({ field }) => (
+                <InputWrapper hasError={!!errors[item.name]}>
+                  <Input
+                    label={item.label}
+                    placeholder={`${item.label} 정보를 입력해 주세요.`}
+                    type={"money"}
+                    value={field.value ? Number(field.value).toLocaleString("ko-KR") : ""}
+                    onChange={item.handler(index)}
+                    rightText="원"
+                    state={errors[item.name] ? "error" : "default"}
+                    aria-invalid={!!errors[item.name]}
+                    aria-describedby={errors[item.name] ? `${item.name}-error` : undefined}
+                  />
+                  {errors[item.name] && (
+                    <ErrorMessage
+                      id={`${item.name}-error`}
+                      role="alert">
+                      {errors[item.name]?.message}
+                    </ErrorMessage>
+                  )}
+                </InputWrapper>
               )}
-            </InputWrapper>
+            />
           ))}
         </RightContainer>
       </StockSetting>
@@ -410,7 +362,9 @@ const RightContainer = styled.div`
   }
 `;
 
-const InputWrapper = styled.div<{ hasError?: boolean }>`
+const InputWrapper = styled.div<{
+  hasError?: boolean;
+}>`
   display: flex;
   flex-direction: column;
   gap: 8px;
