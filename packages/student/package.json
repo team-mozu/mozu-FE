@@ -6,8 +6,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "NODE_ENV=development vite",
+    "dev:ip": "NODE_ENV=development vite --mode ipdev",
+    "build": "NODE_ENV=production tsc -b && vite build",
     "lhci": "rm -rf ./lhci_reports && yarn build && lhci autorun && rm -rf ./.lighthouseci"
   },
   "exports": {
