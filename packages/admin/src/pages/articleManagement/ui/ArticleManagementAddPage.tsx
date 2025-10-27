@@ -1,135 +1,87 @@
 import styled from "@emotion/styled";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea, Toast } from "@mozu/ui";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { z } from "zod";
 import { useCreateArticle } from "@/entities/article";
 import { ImgContainer } from "@/features/articleCRUD/ui";
-import { useForm } from "@/shared/lib/hooks";
 
-interface FormState {
-  articleName: string;
-  articleDesc: string;
-  articleImage: File | null | string;
-}
+const articleSchema = z.object({
+  articleName: z
+    .string()
+    .min(1, "기사 제목을 입력해주세요.")
+    .min(2, "기사 제목은 2자 이상 입력해주세요.")
+    .max(300, "기사 제목은 300자 이하로 입력해주세요."),
+  articleDesc: z
+    .string()
+    .min(1, "기사 내용을 입력해주세요.")
+    .min(10, "기사 내용은 10자 이상 입력해주세요.")
+    .max(10000, "기사 내용은 10,000자 이하로 입력해주세요."),
+  articleImage: z
+    .union([
+      z.instanceof(File),
+      z.string(),
+      z.literal(null),
+      z.literal("DELETE")
+    ])
+    .optional()
+    .refine((value) => value instanceof File || value === null || value === "DELETE", {
+      message: "기사 이미지를 선택해주세요."
+    }),
+});
 
-interface FormErrors {
-  articleName?: string;
-  articleDesc?: string;
-  articleImage?: string;
-}
+type ArticleFormData = z.infer<typeof articleSchema>;
 
 export const ArticleManagementAddPage = () => {
   const navigate = useNavigate();
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [shouldFocusOnError, setShouldFocusOnError] = useState(false);
 
-  const titleInputRef = useRef<HTMLInputElement>(null);
-  const descTextAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  const { state, onChangeInputValue, setState } = useForm<FormState>({
-    articleName: "",
-    articleDesc: "",
-    articleImage: null,
+  const methods = useForm<ArticleFormData>({
+    resolver: zodResolver(articleSchema),
+    defaultValues: {
+      articleName: "",
+      articleDesc: "",
+      articleImage: null,
+    },
   });
 
-  const { mutate: createArticle, isPending } = useCreateArticle();
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = methods;
 
-  const validateForm = useCallback((): boolean => {
-    const newErrors: FormErrors = {};
+  const { mutate: createArticle, isPending } = useCreateArticle({
+    onSuccess: (response) => {
+      Toast("기사가 성공적으로 생성되었습니다.", { type: "success" });
+      navigate(`/article-management/${response.id}`);
+    },
+    onError: (error) => {
+      Toast("기사 생성에 실패했습니다.", { type: "error" });
+      console.error("기사 생성 오류:", error);
+    },
+  });
 
-    if (!state.articleName.trim()) {
-      newErrors.articleName = "기사 제목을 입력해주세요.";
-    } else if (state.articleName.length < 2) {
-      newErrors.articleName = "기사 제목은 2자 이상 입력해주세요.";
-    }
-
-    if (!state.articleDesc.trim()) {
-      newErrors.articleDesc = "기사 내용을 입력해주세요.";
-    } else if (state.articleDesc.length < 10) {
-      newErrors.articleDesc = "기사 내용은 10자 이상 입력해주세요.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [state.articleName, state.articleDesc]);
-
-  useEffect(() => {
-    const errorKeys = Object.keys(errors);
-    // 폼 제출 시에만 첫 번째 에러 필드로 포커스 이동
-    if (shouldFocusOnError && errorKeys.length > 0) {
-      const firstError = errorKeys[0];
-      if (firstError === "articleName" && titleInputRef.current) {
-        titleInputRef.current.focus();
-      } else if (firstError === "articleDesc" && descTextAreaRef.current) {
-        descTextAreaRef.current.focus();
-      }
-      setShouldFocusOnError(false);
-    }
-  }, [errors, shouldFocusOnError]);
-
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name } = e.target;
-    onChangeInputValue(e);
-
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
-    }
-  }, [onChangeInputValue, errors]);
-
-  const handleImageChange = useCallback((file: File | string | null | "DELETE") => {
-    if (file === "DELETE") {
-      setState(prev => ({
-        ...prev,
-        articleImage: null,
-      }));
-    } else {
-      setState(prev => ({
-        ...prev,
-        articleImage: file,
-      }));
-    }
-
-    if (errors.articleImage && (file && file !== "DELETE")) {
-      setErrors(prev => ({ ...prev, articleImage: undefined }));
-    }
-  }, [setState, errors.articleImage]);
-
-  const handleSubmit = useCallback(() => {
-    setShouldFocusOnError(true);
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    const formData = {
-      articleName: state.articleName.trim(),
-      articleDesc: state.articleDesc.trim(),
-      articleImage: state.articleImage,
+  const onSubmit = (data: ArticleFormData) => {
+    const payload: {
+      articleName: string;
+      articleDesc: string;
+      articleImage?: File;
+    } = {
+      articleName: data.articleName.trim(),
+      articleDesc: data.articleDesc.trim(),
     };
 
-    createArticle(formData, {
-      onSuccess: () => {
-        setIsSubmitting(false);
-        navigate('/article-management');
-      },
-      onError: (error) => {
-        setIsSubmitting(false);
-        console.error('기사 생성 실패:', error);
-        Toast("기사 생성에 실패하였습니다.", {
-          type: "error",
-        })
-      },
-    });
-  }, [validateForm, state, createArticle, navigate]);
+    if (data.articleImage instanceof File) {
+      payload.articleImage = data.articleImage;
+    }
 
-  const handleCancel = useCallback(() => {
-    navigate('/article-management');
-  }, [navigate]);
+    createArticle(payload);
+  };
 
-  const isFormDisabled: boolean = isPending || isSubmitting;
+  const isFormDisabled = isPending || isSubmitting;
 
   return (
     <AllContainer>
@@ -139,65 +91,98 @@ export const ArticleManagementAddPage = () => {
           value2={isFormDisabled ? "추가 중..." : "추가하기"}
           title="기사 추가"
           disabled={isFormDisabled}
-          onCancel={handleCancel}
-          onClick={handleSubmit}
+          onCancel={() => navigate("/article-management")}
+          onClick={handleSubmit(onSubmit)}
         />
         <ContentContainer>
-          <InputContainer>
-            <InputWrapper>
-              <Input
-                ref={titleInputRef}
-                value={state.articleName}
-                name="articleName"
-                type="text"
-                state={errors.articleName ? "error" : "default"}
-                onChange={handleInputChange}
-                placeholder="기사 제목을 입력해 주세요.."
-                label="기사 제목"
-                disabled={isFormDisabled}
-                aria-invalid={!!errors.articleName}
-                aria-describedby={errors.articleName ? "title-error" : undefined}
-              />
-              {errors.articleName && (
-                <ErrorMessage id="title-error" role="alert">
-                  {errors.articleName}
-                </ErrorMessage>
-              )}
-            </InputWrapper>
-            <InputWrapper>
-              <TextArea
-                ref={descTextAreaRef}
-                value={state.articleDesc}
-                name="articleDesc"
-                state={errors.articleDesc ? "error" : "default"}
-                onChange={handleInputChange}
-                placeholder="기사 내용을 입력해 주세요.."
-                label="기사 내용"
-                height={480}
-                aria-invalid={!!errors.articleDesc}
-                aria-describedby={errors.articleDesc ? "desc-error" : undefined}
-              />
-              {errors.articleDesc && (
-                <ErrorMessage id="desc-error" role="alert">
-                  {errors.articleDesc}
-                </ErrorMessage>
-              )}
-            </InputWrapper>
-            <InputWrapper>
-              <ImgContainer
-                label="기사 이미지"
-                img={state.articleImage instanceof File ? URL.createObjectURL(state.articleImage) : state.articleImage || null}
-                onImageChange={handleImageChange}
-                aria-invalid={!!errors.articleImage}
-                aria-describedby={errors.articleImage ? "image-error" : undefined}
-              />
-              {errors.articleImage && (
-                <ErrorMessage id="image-error" role="alert">
-                  {errors.articleImage}
-                </ErrorMessage>
-              )}
-            </InputWrapper>
-          </InputContainer>
+          <FormProvider {...methods}>
+            <InputContainer>
+              <InputWrapper>
+                <Controller
+                  name="articleName"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="text"
+                      state={errors.articleName ? "error" : "default"}
+                      placeholder="기사 제목을 입력해 주세요.."
+                      label="기사 제목"
+                      disabled={isFormDisabled}
+                      aria-invalid={!!errors.articleName}
+                      aria-describedby={errors.articleName ? "title-error" : undefined}
+                    />
+                  )}
+                />
+                {errors.articleName && (
+                  <ErrorMessage
+                    id="title-error"
+                    role="alert">
+                    {errors.articleName.message}
+                  </ErrorMessage>
+                )}
+              </InputWrapper>
+              <InputWrapper>
+                <Controller
+                  name="articleDesc"
+                  control={control}
+                  render={({ field }) => (
+                    <TextArea
+                      {...field}
+                      state={errors.articleDesc ? "error" : "default"}
+                      placeholder="기사 내용을 입력해 주세요.."
+                      label="기사 내용"
+                      height={480}
+                      disabled={isFormDisabled}
+                      aria-invalid={!!errors.articleDesc}
+                      aria-describedby={errors.articleDesc ? "desc-error" : undefined}
+                    />
+                  )}
+                />
+                {errors.articleDesc && (
+                  <ErrorMessage
+                    id="desc-error"
+                    role="alert">
+                    {errors.articleDesc.message}
+                  </ErrorMessage>
+                )}
+              </InputWrapper>
+              <InputWrapper>
+                <Controller
+                  name="articleImage"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <ImgContainer
+                      label="기사 이미지"
+                      img={
+                        value instanceof File
+                          ? URL.createObjectURL(value)
+                          : value || null
+                      }
+                      onImageChange={(file) => {
+                        if (file === "DELETE") {
+                          onChange(null);
+                          setValue("articleImage", null);
+                          return;
+                        }
+                        onChange(file);
+                        setValue("articleImage", file);
+                      }}
+                      aria-invalid={!!errors.articleImage}
+                      aria-describedby={errors.articleImage ? "image-error" : undefined}
+                    />
+                  )}
+                />
+                {errors.articleImage && (
+                  <ErrorMessage
+                    id="image-error"
+                    role="alert">
+                    {errors.articleImage.message}
+                  </ErrorMessage>
+                )}
+              </InputWrapper>
+            </InputContainer>
+          </FormProvider>
         </ContentContainer>
       </AddContainer>
     </AllContainer>

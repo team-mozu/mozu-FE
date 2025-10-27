@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useEffect, useState } from "react";
-import { StockTable, TotalProperty } from "@/components";
-import { ArticleModal } from "@/components/news/ArticleModal";
+import { ArticleModal, StockTable } from "@/features";
+import { TotalProperty } from "@/shared";
 
 // Mock Data for UI rendering
 const mockTeamData = {

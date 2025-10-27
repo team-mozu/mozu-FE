@@ -6,6 +6,7 @@ interface ITextAreaType {
   placeholder: string;
   label?: string;
   height?: number;
+  disabled?: boolean;
   value?: string;
   name?: string;
   state?: "default" | "error";
@@ -19,6 +20,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, ITextAreaType>(
     {
       placeholder,
       label,
+      disabled,
       height,
       value,
       onChange,
@@ -39,6 +41,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, ITextAreaType>(
           height={height}
           name={name}
           state={state}
+          disabled={disabled}
           onChange={onChange}
           aria-invalid={ariaInvalid}
           aria-describedby={ariaDescribedBy}></TextAreaContent>
@@ -76,6 +79,11 @@ const TextAreaContent = styled.textarea<Pick<ITextAreaType, "height" | "state">>
     font: ${font.b2};
   }
   :focus {
-    outline: 1px solid ${({ state }) => (state === "error" ? color.red[400] : color.orange[300])};
+    outline: 1px solid ${({ state }) => (state === "error" ? color.red[500] : color.orange[300])};
+  }
+  :disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: ${color.zinc[50]};
   }
 `;

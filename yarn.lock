@@ -1103,6 +1103,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hookform/resolvers@npm:^5.2.2":
+  version: 5.2.2
+  resolution: "@hookform/resolvers@npm:5.2.2"
+  dependencies:
+    "@standard-schema/utils": "npm:^0.3.0"
+  peerDependencies:
+    react-hook-form: ^7.55.0
+  checksum: 10c0/0692cd61dcc2a70cbb27b88a37f733c39e97f555c036ba04a81bd42b0467461cfb6bafacb46c16f173672f9c8a216bd7928a2330d4e49c700d130622bf1defaf
+  languageName: node
+  linkType: hard
+
 "@inquirer/checkbox@npm:^4.2.2":
   version: 4.2.2
   resolution: "@inquirer/checkbox@npm:4.2.2"
@@ -1521,6 +1532,7 @@ __metadata:
     "@emotion/use-insertion-effect-with-fallbacks": "npm:^1.2.0"
     "@emotion/utils": "npm:^1.4.2"
     "@emotion/weak-memoize": "npm:^0.4.0"
+    "@hookform/resolvers": "npm:^5.2.2"
     "@lhci/cli": "npm:^0.15.1"
     "@mozu/design-token": "workspace:^"
     "@mozu/ui": "workspace:^"
@@ -1546,6 +1558,7 @@ __metadata:
     puppeteer: "npm:^24.15.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    react-hook-form: "npm:^7.65.0"
     react-router: "npm:^7.1.1"
     react-router-dom: "npm:^7.1.1"
     react-toastify: "npm:^11.0.5"
@@ -1553,6 +1566,7 @@ __metadata:
     scheduler: "npm:^0.25.0"
     typescript: "npm:^5.7.3"
     vite: "npm:^6.0.5"
+    zod: "npm:^4.1.12"
     zustand: "npm:^5.0.3"
   languageName: unknown
   linkType: soft
@@ -2077,6 +2091,13 @@ __metadata:
     chalk: "npm:^2.3.0"
     shell-quote: "npm:^1.6.1"
   checksum: 10c0/d42318635861c995e60c7f05538706d0d164efb1eb98e5d566fdd9bb02df67f983b3e342f303855098cc8b76a11d934665df425ac818ca34ae4713caba2a4b83
+  languageName: node
+  linkType: hard
+
+"@standard-schema/utils@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@standard-schema/utils@npm:0.3.0"
+  checksum: 10c0/6eb74cd13e52d5fc74054df51e37d947ef53f3ab9e02c085665dcca3c38c60ece8d735cebbdf18fbb13c775fbcb9becb3f53109b0e092a63f0f7389ce0993fd0
   languageName: node
   linkType: hard
 
@@ -7699,6 +7720,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hook-form@npm:^7.65.0":
+  version: 7.65.0
+  resolution: "react-hook-form@npm:7.65.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18 || ^19
+  checksum: 10c0/119afeaf33510d1ed6c12109f03d22d9e88f9eb01b8e4fb3cd8f40d5fc113cbcfc6154789d1d143151de8119bd08ffc7214d504e0e550ea28a9051ed6a30ae28
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1, react-is@npm:^16.7.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -9625,6 +9655,13 @@ __metadata:
   version: 3.25.76
   resolution: "zod@npm:3.25.76"
   checksum: 10c0/5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c
+  languageName: node
+  linkType: hard
+
+"zod@npm:^4.1.12":
+  version: 4.1.12
+  resolution: "zod@npm:4.1.12"
+  checksum: 10c0/b64c1feb19e99d77075261eaf613e0b2be4dfcd3551eff65ad8b4f2a079b61e379854d066f7d447491fcf193f45babd8095551a9d47973d30b46b6d8e2c46774
   languageName: node
   linkType: hard
 

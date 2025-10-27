@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import { ExitBtn } from "@mozu/ui";
 import { useNavigate } from "react-router-dom";
-import { NewsDetail } from "@/components";
+import { NewsDetail } from "@/features";
 
 const mockArticle = {
   articleId: 1,
