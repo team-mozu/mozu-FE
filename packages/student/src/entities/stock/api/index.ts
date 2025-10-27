@@ -2,7 +2,7 @@ import { instance } from "@mozu/util-config";
 import { useQuery } from "@tanstack/react-query";
 import type { StockDetailResponse } from "./type";
 
-const router = "/lesson/team/item";
+const router = "/lesson";
 
 export const useGetStockDetail = (stockId?: number) => {
   return useQuery({
@@ -12,7 +12,7 @@ export const useGetStockDetail = (stockId?: number) => {
       stockId,
     ],
     queryFn: async () => {
-      const { data } = await instance.get<StockDetailResponse>(`${router}/${stockId}`);
+      const { data } = await instance.get<StockDetailResponse>(`${router}/team/item/${stockId}`);
       return data;
     },
     enabled: !!stockId,

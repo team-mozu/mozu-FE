@@ -1,7 +1,8 @@
 import { Toast } from "@mozu/ui";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type UseMutationOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { createArticle, deleteArticle, updateArticle } from "../api";
+import { useMyMutation } from "@/shared/api";
+import { deleteArticle, updateArticle } from "../api";
 import type { ArticleAddRequest, ArticleAddResponse, ArticleEditRequest, ArticleEditResponse } from "../api/type";
 
 /**
@@ -10,18 +11,8 @@ import type { ArticleAddRequest, ArticleAddResponse, ArticleEditRequest, Article
  * @param {ArticleAddRequest} data - 생성할 기사 데이터
  * @returns {UseMutationResult} 기사 생성 mutation 객체
  */
-export const useCreateArticle = () => {
-  const navigate = useNavigate();
-  return useMutation({
-    mutationFn: (data: ArticleAddRequest) => createArticle(data),
-    onSuccess: (res: ArticleAddResponse) => {
-      Toast("성공적으로 생성되었습니다.", {
-        type: "success",
-      });
-      navigate(`/article-management/${res.id}`);
-    },
-  });
-};
+export const useCreateArticle = (options?: UseMutationOptions<ArticleAddResponse, Error, ArticleAddRequest, unknown>) =>
+  useMyMutation<ArticleAddResponse, ArticleAddRequest>("post", "article", "", "multipart/form-data", options);
 
 /**
  * 기사를 삭제하는 React Query Mutation 훅입니다.

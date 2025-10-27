@@ -48,10 +48,16 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
 
   const handleEndClass = () => {
     resetShownInvDegs();
-
+    queryClient.resetQueries();
     queryClient.invalidateQueries({
       queryKey: [
         "getClass",
+      ],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [
+        "stock",
+        "detail"
       ],
     });
     queryClient.invalidateQueries({
@@ -76,6 +82,12 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     queryClient.invalidateQueries({
       queryKey: [
         "getClass",
+      ],
+    });
+    queryClient.invalidateQueries({
+      queryKey: [
+        "stock",
+        "detail"
       ],
     });
     queryClient.invalidateQueries({

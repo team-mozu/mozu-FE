@@ -144,6 +144,7 @@ export const ResultPage = () => {
         onRankClick={handleOpenModal}
         endRound={endRound}
       />
+
       {isModalOpen && (
         <RankModal
           onCancle={handleCloseModal}
@@ -208,7 +209,6 @@ const ModalContainer = styled.div<{
           bottom: 50px;
           right: 50px;
         `;
-      case "center":
       default:
         return `
           top: 50%;
