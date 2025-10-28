@@ -1,6 +1,6 @@
 import { networkInterfaces } from "os";
 
-export const getLocalIPv4 = (): string => {
+export function getLocalIPv4(): string {
   const nets = networkInterfaces();
 
   for (const name of Object.keys(nets)) {
@@ -15,4 +15,4 @@ export const getLocalIPv4 = (): string => {
   }
 
   return "0.0.0.0";
-};
+}

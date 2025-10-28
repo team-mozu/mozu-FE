@@ -1,7 +1,7 @@
 import react from "@vitejs/plugin-react"; // 새로운 권장 플러그인
 import path from "path";
 import { defineConfig } from "vite";
-import { getLocalIPv4 } from "./src/shared/lib/getLocalIp";
+import { getLocalIPv4 } from "./src/shared/lib/getLocalIp.node";
 
 export default defineConfig(({ mode }) => {
   const config = {
