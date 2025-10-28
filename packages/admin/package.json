@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "vite preview --port 3002",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lhci": "rm -rf ./lhci_reports && yarn build && lhci autorun && rm -rf ./.lighthouseci"
