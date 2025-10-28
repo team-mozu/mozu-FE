@@ -3,7 +3,7 @@
   "packageManager": "yarn@4.8.1",
   "private": true,
   "scripts": {
-    "start": "node select.js",
+    "start": "concurrently \"yarn workspace @mozu/admin start\" \"yarn workspace @mozu/student start:ip\"",
     "admin": "yarn workspace @mozu/admin",
     "student": "yarn workspace @mozu/student",
     "ui": "yarn workspace @mozu/ui",
