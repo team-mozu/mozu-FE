@@ -9,6 +9,7 @@
     "ui": "yarn workspace @mozu/ui",
     "util": "yarn workspace @mozu/util-config",
     "dev": "concurrently \"yarn workspace @mozu/admin dev\" \"yarn workspace @mozu/student dev\"",
+    "dev:ip": "concurrently \"yarn workspace @mozu/admin dev\" \"yarn workspace @mozu/student dev:ip\"",
     "build": "concurrently \"yarn workspace @mozu/admin build\" \"yarn workspace @mozu/student build\"",
     "prepare": "husky install",
     "commit": "cz",
