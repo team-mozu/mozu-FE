@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=development vite",
     "dev:ip": "NODE_ENV=development vite --mode ipdev",
     "start": "NODE_ENV=production vite preview --port 3001",
-    "start:ip": "NODE_ENV=production vite preview --port 3001 --mode ipdev",
+    "start:ip": "NODE_ENV=production vite --mode ipdev",
     "build": "NODE_ENV=production tsc -b && vite build",
     "lhci": "rm -rf ./lhci_reports && yarn build && lhci autorun && rm -rf ./.lighthouseci"
   },
