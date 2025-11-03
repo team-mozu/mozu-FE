@@ -8,7 +8,13 @@
       "mode": "auto"
     }
   ],
-  "eslint.validate": ["javascript", "typescript", "javascriptreact", "html", "typescriptreact"],
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "html",
+    "typescriptreact"
+  ],
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true

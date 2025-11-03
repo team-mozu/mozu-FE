@@ -71,9 +71,7 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                 isNotBorded={index + 1 === teamInfo.length}
                 key={index}>
                 <Td isLeft>
-                  <TeamName
-                    isTeamName
-                    onClick={() => handleOpenModal(team.teamId, team.teamName)}>
+                  <TeamName isTeamName>
                     {team.teamName}
                   </TeamName>
                   {team.trade.length === invDeg && (
@@ -279,9 +277,5 @@ const Rate = styled.div<{
 const TeamName = styled.span<{
   isTeamName?: boolean;
 }>`
-  cursor: pointer;
   font: ${font.t2};
-  &:hover {
-    text-decoration: underline;
-  }
 `;

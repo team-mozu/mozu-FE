@@ -1,5 +1,5 @@
 import { Toast } from "@mozu/ui";
-import { instance, setAuthTokens, setCookies } from "@mozu/util-config";
+import { instance, setCookies } from "@mozu/util-config";
 import {
   type UseMutationOptions,
   type UseQueryOptions,
@@ -36,12 +36,16 @@ export const useStudentLogin = () => {
       }
       let redirectUrl: string;
       redirectUrl = "wait";
-      setAuthTokens(accessToken, "", "student");
+
+      setCookies("accessToken", accessToken, {
+        path: "/",
+        secure: false,
+        sameSite: "lax",
+      });
       setCookies("authority", "student", {
         path: "/",
-        secure: true,
-        sameSite: "none",
-        domain: import.meta.env.VITE_STUDENT_COOKIE_DOMAIN,
+        secure: false,
+        sameSite: "lax",
       });
 
       navigate(redirectUrl);

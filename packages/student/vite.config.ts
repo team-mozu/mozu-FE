@@ -13,12 +13,6 @@ export default defineConfig(({ mode }) => {
       host: process.env.NODE_ENV === "production" ? "0.0.0.0" : "student.localhost",
       cors: true,
     },
-    define: {
-      // 기본 환경 변수 정의
-      "import.meta.env.VITE_STUDENT_URL": JSON.stringify("http://student.localhost:3001"),
-      "import.meta.env.VITE_STUDENT_AUTH_URL": JSON.stringify("http://student.localhost:3001/signin"),
-      "import.meta.env.VITE_STUDENT_COOKIE_DOMAIN": JSON.stringify("localhost"),
-    },
     build: {
       chunkSizeWarningLimit: 3500,
       sourcemap: true,

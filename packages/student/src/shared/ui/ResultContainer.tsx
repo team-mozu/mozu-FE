@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, Del, HandCoins, Modal, Toast, Trophy } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { useTeamOrders } from "@/entities/transaction";
@@ -76,8 +76,12 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     });
   };
 
-  const handleContinue = async () => {
+  const handleContinue = () => {
     resetShownInvDegs();
+
+    navigate(`/${classId}`, {
+      replace: true,
+    });
 
     queryClient.invalidateQueries({
       queryKey: [
@@ -99,12 +103,6 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
       queryKey: [
         "getTeam",
       ],
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    navigate(`/${classId}`, {
-      replace: true,
     });
   };
 

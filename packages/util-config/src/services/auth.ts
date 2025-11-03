@@ -60,9 +60,8 @@ export const setAuthTokens = (accessToken: string, refreshToken: string | null, 
 
   const options: CookieSetOptions = {
     path: "/",
-    secure,
-    sameSite: "none", // cross-site 요청 시 필요
-    domain,
+    secure: false,
+    sameSite: "lax", // cross-site 요청 시 필요
   };
 
   setCookies("accessToken", accessToken, options);
