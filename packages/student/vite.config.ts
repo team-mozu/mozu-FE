@@ -43,6 +43,7 @@ export default defineConfig(({ mode }) => {
       ],
       force: true,
     },
+    define: {},
   };
 
   if (mode === "ipdev") {
