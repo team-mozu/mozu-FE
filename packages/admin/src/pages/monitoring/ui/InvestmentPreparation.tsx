@@ -40,12 +40,8 @@ export const InvestmentPreparation = () => {
 
   const { isConnected, isConnecting } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/lesson/sse/${id}`,
-    (data: any) => {
-      console.log(data.message);
-    },
-    (error: any) => {
-      console.log(error.message);
-    },
+    undefined,
+    undefined,
     {
       LESSON_SSE_CONNECTED: (data: LessonSSEConnectedData) => {
         console.log("SSE 연결 성공:", data.message);

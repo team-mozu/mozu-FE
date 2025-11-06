@@ -51,7 +51,7 @@ export const ClassEdit = () => {
   const [stockData, setStockData] = useState<StockData[]>([]);
 
   // ✅ 기사 Context
-  const { classArticles, resetArticles, addArticles } = useArticle();
+  const { classArticles, resetArticles, addArticles, filterArticlesByMaxDegree } = useArticle();
 
   // 클래스 데이터 로딩
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
@@ -113,6 +113,10 @@ export const ClassEdit = () => {
 
     // 차수 변경 시 money 배열 업데이트 (새로운 구조: [1차가격, 2차가격, ..., 종료가])
     if (newDegree !== prevDegree) {
+      if (newDegree < prevDegree) {
+        filterArticlesByMaxDegree(newDegree);
+      }
+
       setClassItems(prevItems =>
         prevItems.map(item => {
           const updatedMoney = [...item.money];
@@ -259,7 +263,7 @@ export const ClassEdit = () => {
       alert("최소 하나 이상의 투자 종목을 추가해주세요.");
       return;
     }
-    
+
     // 기사 검증
     const totalArticles = classArticles.reduce((total, group) => total + group.articles.length, 0);
     if (totalArticles === 0) {

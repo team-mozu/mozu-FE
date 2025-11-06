@@ -26,6 +26,7 @@ interface ArticleContextType {
   addArticles: (invDeg: number, newArticles: LessonArticle[]) => void;
   deleteArticles: (articleIds: string[], invDeg: number) => void;
   resetArticles: () => void; // 선택된 기사 초기화 함수
+  filterArticlesByMaxDegree: (maxDegree: number) => void; // 최대 차수를 초과하는 기사 제거
 }
 
 // Context 생성
@@ -75,6 +76,13 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
     setClassArticles([]);
   };
 
+  // 최대 차수를 초과하는 기사 제거
+  const filterArticlesByMaxDegree = (maxDegree: number) => {
+    setClassArticles(prev => 
+      prev.filter(group => group.invDeg <= maxDegree)
+    );
+  };
+
   return (
     <ArticleContext.Provider
       value={{
@@ -82,6 +90,7 @@ export const ArticleProvider = ({ children }: { children: ReactNode }) => {
         addArticles,
         deleteArticles,
         resetArticles,
+        filterArticlesByMaxDegree,
       }}
     >
       {children}

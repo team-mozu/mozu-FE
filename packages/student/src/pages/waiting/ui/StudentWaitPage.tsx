@@ -11,12 +11,7 @@ export const StudentWaitPage = () => {
   const { isConnected, isConnecting } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     undefined,
-    error => {
-      console.log(error);
-      Toast(`네트워크 에러 발생`, {
-        type: "error",
-      });
-    },
+    undefined,
     {
       TEAM_SSE_CONNECTED: (data: TeamSSEConnectedData) => {
         console.log(data);

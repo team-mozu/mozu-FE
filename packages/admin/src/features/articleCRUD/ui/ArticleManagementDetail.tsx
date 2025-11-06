@@ -213,7 +213,32 @@ const MainArticle = styled.div`
 `;
 
 const ArticleContainer = styled.div`
-  width: 644px;
+  width: 100%;
+  height: 100%;
   padding: 32px;
   overflow-y: auto;
+  overflow-x: hidden;
+  
+  /* 스크롤바 스타일링 */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${color.zinc[100]};
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${color.zinc[300]};
+    border-radius: 4px;
+    
+    &:hover {
+      background: ${color.zinc[400]};
+    }
+  }
+  
+  /* Firefox 스크롤바 스타일링 */
+  scrollbar-width: thin;
+  scrollbar-color: ${color.zinc[300]} ${color.zinc[100]};
 `;

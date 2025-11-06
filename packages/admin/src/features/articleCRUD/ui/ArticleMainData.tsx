@@ -18,18 +18,34 @@ export const ArticleMainData = ({ img, title, main }: IArticleMainDataType) => {
           <ArticleImg
             src={img}
             alt="기사 이미지"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
           />
         ) : (
-          <NoNewsImg />
+          <PlaceholderWrapper>
+            <NoNewsImg />
+          </PlaceholderWrapper>
         )}
       </ArticleImgContainer>
+      
       <ContentWrapper>
-        <ArticleTitle>
-          <p>{title}</p>
-        </ArticleTitle>
-        <ArticleMain>
-          {lines.map((line, index) => (line.trim() === "" ? <br key={`br-${index}`} /> : <p key={`p-${index}`}>{line}</p>))}
-        </ArticleMain>
+        {title && (
+          <ArticleTitle>{title}</ArticleTitle>
+        )}
+        
+        {main && (
+          <ArticleMain>
+            {lines.map((line, index) => 
+              line.trim() === "" ? (
+                <LineBreak key={`br-${index}`} />
+              ) : (
+                <Paragraph key={`p-${index}`}>{line}</Paragraph>
+              )
+            )}
+          </ArticleMain>
+        )}
       </ContentWrapper>
     </Container>
   );
@@ -37,43 +53,91 @@ export const ArticleMainData = ({ img, title, main }: IArticleMainDataType) => {
 
 const Container = styled.div`
   display: flex;
-  gap: 24px;
   flex-direction: column;
-  width: 580px;
+  gap: 32px;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px;
+  background: ${color.white};
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid ${color.zinc[200]};
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 `;
 
 const ArticleImg = styled.img`
   width: 100%;
-  background-color: transparent;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
 `;
 
 const ArticleImgContainer = styled.div`
+  position: relative;
   overflow: hidden;
   width: 100%;
-  height: 320px;
+  height: 280px;
   border-radius: 16px;
-  background-color: ${color.zinc[100]};
+  background: linear-gradient(135deg, ${color.zinc[50]} 0%, ${color.zinc[100]} 100%);
   border: 1px solid ${color.zinc[200]};
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const ArticleTitle = styled.div`
-  color: ${color.black};
-  font: ${font.h4};
-  width: 70%;
-  white-space: normal;
+const PlaceholderWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: ${color.zinc[50]};
+`;
+
+const ArticleTitle = styled.h1`
+  font: ${font.h3};
+  font-weight: 700;
+  color: ${color.zinc[900]};
+  line-height: 1.4;
+  margin: 0;
   word-wrap: break-word;
   word-break: keep-all;
+  
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, ${color.orange[500]}, ${color.orange[600]});
+    margin-top: 16px;
+    border-radius: 2px;
+  }
 `;
 
 const ArticleMain = styled.div`
-  p {
-    font: ${font.b2};
-    color: ${color.zinc[800]};
+  line-height: 1.8;
+  color: ${color.zinc[700]};
+`;
+
+const Paragraph = styled.p`
+  font: ${font.b1};
+  color: ${color.zinc[800]};
+  margin: 0 0 16px 0;
+  line-height: 1.7;
+  
+  &:last-child {
+    margin-bottom: 0;
   }
+`;
+
+const LineBreak = styled.div`
+  height: 8px;
 `;
