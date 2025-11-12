@@ -1,8 +1,10 @@
 import styled from "@emotion/styled";
 import { Header, SideBar } from "@mozu/ui";
 import { getCookies } from "@mozu/util-config";
+import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { PageTransition } from "@/shared/ui";
 
 // 데스크탑 반응형 브레이크포인트
 const desktopMediaQueries = {
@@ -50,7 +52,11 @@ export const AppLayout = () => {
             (pathname.split("/")[3] === "start" || pathname.split("/")[3] === "monitoring")
           )
         }>
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <PageTransition>
+            <Outlet />
+          </PageTransition>
+        </AnimatePresence>
       </MainContent>
     </AppContainer>
   );

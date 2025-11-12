@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { AnimatePresence } from "framer-motion";
 import { Header, Toast } from "@mozu/ui";
 import { removeCookiesAsync } from "@mozu/util-config";
 import { useQueryClient } from "@tanstack/react-query";
@@ -6,7 +7,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useGetClassItem } from "@/entities/class";
 import { useGetTeamDetail } from "@/entities/user";
 import { HistorySidebar, ItemSidebar, ItemSidebarSkeleton } from "@/features";
-import { SSELoadingSpinner, useTypeSSE } from "@/shared";
+import { PageTransition, SSELoadingSpinner, useTypeSSE } from "@/shared";
 import { headerConfigMap } from "./router";
 
 export const AppLayout = () => {
@@ -94,7 +95,11 @@ export const AppLayout = () => {
         <MainContent
           isResultPage={isResultPage}
           isEndingPage={isEndingPage}>
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
+          </AnimatePresence>
         </MainContent>
       </Layout>
     </AppContainer>
