@@ -33,9 +33,6 @@ export const AppLayout = () => {
     undefined,
     error => {
       console.log(error);
-      Toast(`네트워크 에러 발생`, {
-        type: "error",
-      });
     },
     {
       CLASS_NEXT_INV_START: () => {
