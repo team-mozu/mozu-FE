@@ -15,9 +15,9 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [nav, setIsNav] = useState<string>('class')
-  
+
   useEffect(() => {
-    if(pathname.includes('stock-management')) {
+    if (pathname.includes('stock-management')) {
       setIsNav('stock')
     } else if (pathname.includes('article-management')) {
       setIsNav('article')
@@ -91,6 +91,8 @@ const LogoContainer = styled.div`
 const Name = styled.div`
   font: ${font.t1};
   color: ${color.black};
+  white-space: pre-line;
+  line-height: 1.3;
 `;
 
 const RoleType = styled.div`
@@ -113,6 +115,7 @@ const ProfileContainer = styled.div`
 
 const ProfileContents = styled.div`
   display: flex;
+  width: 240px;
   flex-direction: column;
   gap: 8px;
   align-items: start;

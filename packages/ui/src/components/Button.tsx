@@ -108,10 +108,10 @@ export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     return (
-      // biome-ignore lint/a11y/useButtonType: <임시>
       <button
         ref={ref}
         id={id}
+        type="button"
         css={buttonStyles(styleProps)}
         onClick={event || onClick}
         onChange={onChange}

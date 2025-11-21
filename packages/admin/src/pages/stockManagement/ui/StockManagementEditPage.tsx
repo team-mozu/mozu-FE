@@ -2,17 +2,24 @@ import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import { z } from "zod";
 import { useGetStockDetail, useStockUpdate } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";
-import { usePriceFormatter } from "@/shared/lib/hooks";
 
 const stockFormSchema = z.object({
-  name: z.string().min(1, "회사 이름은 필수입니다.").min(1, "회사 이름은 1글자 이상이어야 합니다.").max(30, "회사 이름은 30글자 이하여야 합니다."),
-  info: z.string().min(1, "회사 정보는 필수입니다.").min(1, "회사 정보는 1글자 이상이어야 합니다.").max(10000, "회사 정보는 10000글자 이하여야 합니다."),
+  name: z
+    .string()
+    .min(1, "회사 이름은 필수입니다.")
+    .min(1, "회사 이름은 1글자 이상이어야 합니다.")
+    .max(30, "회사 이름은 30글자 이하여야 합니다."),
+  info: z
+    .string()
+    .min(1, "회사 정보는 필수입니다.")
+    .min(1, "회사 정보는 1글자 이상이어야 합니다.")
+    .max(10000, "회사 정보는 10000글자 이하여야 합니다."),
   logo: z.union([
     z.string(),
     z.instanceof(File),
@@ -46,17 +53,51 @@ const stockFormSchema = z.object({
     .refine(val => Number(val.replace(/,/g, "")) >= 0, "매출원가는 0 이상이어야 합니다."),
   profitBen: z
     .string()
-    .min(1, "매출이익은 필수입니다.")
-    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "매출이익은 숫자여야 합니다.")
-    .refine(val => Number(val.replace(/,/g, "")) >= 0, "매출이익은 0 이상이어야 합니다."),
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, "").replace(/^-/, ""))), "매출이익은 숫자여야 합니다."),
   netProfit: z
     .string()
-    .min(1, "당기순이익은 필수입니다.")
-    .refine(val => !Number.isNaN(Number(val.replace(/,/g, ""))), "당기순이익은 숫자여야 합니다.")
-    .refine(val => Number(val.replace(/,/g, "")) >= 0, "당기순이익은 0 이상이어야 합니다."),
+    .refine(val => !Number.isNaN(Number(val.replace(/,/g, "").replace(/^-/, ""))), "당기순이익은 숫자여야 합니다."),
 });
 
 type StockFormData = z.infer<typeof stockFormSchema>;
+
+const financialFields = [
+  {
+    label: "자산",
+    name: "money",
+    allowNegative: false,
+  },
+  {
+    label: "부채",
+    name: "debt",
+    allowNegative: false,
+  },
+  {
+    label: "자본금",
+    name: "capital",
+    allowNegative: false,
+  },
+  {
+    label: "매출액",
+    name: "profit",
+    allowNegative: false,
+  },
+  {
+    label: "매출원가",
+    name: "profitOG",
+    allowNegative: false,
+  },
+  {
+    label: "매출이익",
+    name: "profitBen",
+    allowNegative: true,
+  },
+  {
+    label: "당기순이익",
+    name: "netProfit",
+    allowNegative: true,
+  },
+] as const;
 
 export const StockManagementEditPage = () => {
   const { id } = useParams();
@@ -88,32 +129,85 @@ export const StockManagementEditPage = () => {
   const { mutate: stockUpdate, isPending } = useStockUpdate(id);
   const { data: stockData } = useGetStockDetail(stockId);
 
-  const handlePriceChange = (fieldName: keyof StockFormData) => (index: number, value: number) => {
-    setValue(fieldName, String(value), {
-      shouldValidate: true,
-    });
+  // 가격 포매팅 함수 (마이너스 지원)
+  const formatPrice = (value: string, allowNegative: boolean = false) => {
+    if (value === "" || value === undefined || value === null) return "";
+
+    // 마이너스 기호 분리
+    const isNegative = allowNegative && value.startsWith("-");
+    const numericValue = isNegative ? value.substring(1) : value;
+
+    const numValue = Number(numericValue.replace(/,/g, ""));
+    if (isNaN(numValue)) return isNegative ? "-" : "";
+
+    const formatted = numValue.toLocaleString();
+    return isNegative ? `-${formatted}` : formatted;
   };
 
-  const { priceChangeHandler: moneyHandler } = usePriceFormatter([], handlePriceChange("money"));
-  const { priceChangeHandler: debtHandler } = usePriceFormatter([], handlePriceChange("debt"));
-  const { priceChangeHandler: capitalHandler } = usePriceFormatter([], handlePriceChange("capital"));
-  const { priceChangeHandler: profitHandler } = usePriceFormatter([], handlePriceChange("profit"));
-  const { priceChangeHandler: profitOGHandler } = usePriceFormatter([], handlePriceChange("profitOG"));
-  const { priceChangeHandler: profitBenHandler } = usePriceFormatter([], handlePriceChange("profitBen"));
-  const { priceChangeHandler: netProfitHandler } = usePriceFormatter([], handlePriceChange("netProfit"));
+  // 가격 입력 핸들러 (개선된 버전)
+  const handlePriceChange =
+    (_: keyof StockFormData, allowNegative: boolean, onChange: (value: string) => void) =>
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const inputValue = e.target.value.replace(/,/g, "");
+
+        if (allowNegative) {
+          // 마이너스 허용 필드: 마이너스 기호는 맨 앞에만, 숫자와 마이너스만 허용
+          const hasMinus = inputValue.startsWith("-");
+          const cleanValue = inputValue.replace(/[^0-9]/g, "");
+
+          if (hasMinus && cleanValue === "") {
+            onChange("-");
+          } else if (hasMinus) {
+            onChange(`-${cleanValue}`);
+          } else {
+            onChange(cleanValue);
+          }
+        } else {
+          // 마이너스 비허용 필드: 숫자만 허용
+          const cleanValue = inputValue.replace(/[^0-9]/g, "");
+          onChange(cleanValue);
+        }
+      };
+
+  // 마이너스 토글 핸들러 (필요시 사용)
+  const toggleNegative = (
+    _: "profitBen" | "netProfit",
+    currentValue: string,
+    onChange: (value: string) => void,
+  ) => {
+    if (currentValue.startsWith("-")) {
+      // 현재 마이너스면 플러스로 변경
+      onChange(currentValue.substring(1));
+    } else if (currentValue && currentValue !== "" && currentValue !== "0") {
+      // 현재 플러스면 마이너스로 변경
+      onChange(`-${currentValue}`);
+    }
+  };
 
   useEffect(() => {
     if (id && stockData) {
+      // 숫자 필드 설정 함수 - 0인 경우도 "0"으로 설정, 마이너스 값도 처리
+      const setNumericField = (fieldName: keyof StockFormData, value: number | null | undefined) => {
+        if (value === 0) {
+          setValue(fieldName, "0");
+        } else if (value !== null && value !== undefined) {
+          // 마이너스 값인 경우 마이너스 기호 포함
+          setValue(fieldName, value < 0 ? `-${Math.abs(value)}` : String(value));
+        } else {
+          setValue(fieldName, "");
+        }
+      };
+
       setValue("name", stockData.itemName || "");
       setValue("info", stockData.itemInfo || "");
       setValue("logo", stockData.itemLogo || null);
-      setValue("money", stockData.money ? String(stockData.money) : "");
-      setValue("debt", stockData.debt ? String(stockData.debt) : "");
-      setValue("capital", stockData.capital ? String(stockData.capital) : "");
-      setValue("profit", stockData.profit ? String(stockData.profit) : "");
-      setValue("profitOG", stockData.profitOg ? String(stockData.profitOg) : "");
-      setValue("profitBen", stockData.profitBenefit ? String(stockData.profitBenefit) : "");
-      setValue("netProfit", stockData.netProfit ? String(stockData.netProfit) : "");
+      setNumericField("money", stockData.money);
+      setNumericField("debt", stockData.debt);
+      setNumericField("capital", stockData.capital);
+      setNumericField("profit", stockData.profit);
+      setNumericField("profitOG", stockData.profitOg);
+      setNumericField("profitBen", stockData.profitBenefit);
+      setNumericField("netProfit", stockData.netProfit);
     }
   }, [
     stockData,
@@ -133,23 +227,28 @@ export const StockManagementEditPage = () => {
         logoToSend = null;
       }
 
+      // 빈 문자열을 0으로 변환하는 함수 (마이너스 값 유지)
+      const transformEmptyToZero = (value: string, allowNegative: boolean = false) => {
+        if (value === "") return "0";
+        if (allowNegative && value.startsWith("-")) {
+          return value === "-" ? "0" : value;
+        }
+        return value;
+      };
+
       stockUpdate({
         itemName: data.name,
         itemInfo: data.info,
         itemLogo: logoToSend,
-        money: Number(data.money.toString().replace(/,/g, "")),
-        debt: Number(data.debt.toString().replace(/,/g, "")),
-        capital: Number(data.capital.toString().replace(/,/g, "")),
-        profit: Number(data.profit.toString().replace(/,/g, "")),
-        profitOg: Number(data.profitOG.toString().replace(/,/g, "")),
-        profitBenefit: Number(data.profitBen.toString().replace(/,/g, "")),
-        netProfit: Number(data.netProfit.toString().replace(/,/g, "")),
+        money: Number(transformEmptyToZero(data.money).replace(/,/g, "")),
+        debt: Number(transformEmptyToZero(data.debt).replace(/,/g, "")),
+        capital: Number(transformEmptyToZero(data.capital).replace(/,/g, "")),
+        profit: Number(transformEmptyToZero(data.profit).replace(/,/g, "")),
+        profitOg: Number(transformEmptyToZero(data.profitOG).replace(/,/g, "")),
+        profitBenefit: Number(transformEmptyToZero(data.profitBen, true).replace(/,/g, "")),
+        netProfit: Number(transformEmptyToZero(data.netProfit, true).replace(/,/g, "")),
       });
     }
-  };
-
-  const handleCancel = () => {
-    navigate(`/stock-management/${id}`);
   };
 
   const logoValue = watch("logo");
@@ -165,7 +264,7 @@ export const StockManagementEditPage = () => {
         iconSize2={20}
         iconColor2={color.white}
         onClick={handleSubmit(onSubmit)}
-        onCancel={handleCancel}
+        onCancel={() => navigate(`/stock-management/${id}`)}
         disabled={isPending}
       />
       <StockSetting>
@@ -242,60 +341,35 @@ export const StockManagementEditPage = () => {
         </LeftContainer>
         <RightContainer>
           <p>재무상태표 ∙ 손익계산서</p>
-          {[
-            {
-              label: "자산",
-              name: "money" as const,
-              handler: moneyHandler,
-            },
-            {
-              label: "부채",
-              name: "debt" as const,
-              handler: debtHandler,
-            },
-            {
-              label: "자본금",
-              name: "capital" as const,
-              handler: capitalHandler,
-            },
-            {
-              label: "매출액",
-              name: "profit" as const,
-              handler: profitHandler,
-            },
-            {
-              label: "매출원가",
-              name: "profitOG" as const,
-              handler: profitOGHandler,
-            },
-            {
-              label: "매출이익",
-              name: "profitBen" as const,
-              handler: profitBenHandler,
-            },
-            {
-              label: "당기순이익",
-              name: "netProfit" as const,
-              handler: netProfitHandler,
-            },
-          ].map((item, index) => (
+          {financialFields.map(item => (
             <Controller
               key={item.name}
               name={item.name}
               control={control}
               render={({ field }) => (
                 <InputWrapper hasError={!!errors[item.name]}>
-                  <Input
-                    label={item.label}
-                    placeholder={`${item.label} 정보를 입력해 주세요.`}
-                    type={"money"}
-                    value={field.value ? Number(field.value).toLocaleString("ko-KR") : ""}
-                    onChange={item.handler(index)}
-                    rightText="원"
-                    state={errors[item.name] ? "error" : "default"}
-                    aria-invalid={!!errors[item.name]}
-                    aria-describedby={errors[item.name] ? `${item.name}-error` : undefined}
-                  />
+                  <FieldContainer>
+                    <Input
+                      label={item.label}
+                      placeholder={`${item.label} 정보를 입력해 주세요.`}
+                      type={"money"}
+                      value={formatPrice(field.value, item.allowNegative)}
+                      onChange={handlePriceChange(item.name, item.allowNegative, field.onChange)}
+                      rightText="억원"
+                      state={errors[item.name] ? "error" : "default"}
+                      aria-invalid={!!errors[item.name]}
+                      aria-describedby={errors[item.name] ? `${item.name}-error` : undefined}
+                    />
+                    {item.allowNegative && (
+                      <NegativeHint
+                        isNegative={field.value.startsWith("-")}
+                        onClick={() =>
+                          toggleNegative(item.name as "profitBen" | "netProfit", field.value, field.onChange)
+                        }>
+                        {field.value.startsWith("-") ? "음수" : "양수"}
+                      </NegativeHint>
+                    )}
+                  </FieldContainer>
                   {errors[item.name] && (
                     <ErrorMessage
                       id={`${item.name}-error`}
@@ -307,6 +381,16 @@ export const StockManagementEditPage = () => {
               )}
             />
           ))}
+          <NegativeGuide>
+            <GuideTitle>음수 입력 가이드</GuideTitle>
+            <GuideText>• 매출이익과 당기순이익은 음수로 입력 가능합니다</GuideText>
+            <GuideText>
+              • 숫자 앞에 <strong>-</strong> 기호를 입력하거나
+            </GuideText>
+            <GuideText>
+              • <strong>"양수" / "음수"</strong> 버튼을 클릭하여 전환할 수 있습니다
+            </GuideText>
+          </NegativeGuide>
         </RightContainer>
       </StockSetting>
     </Container>
@@ -369,6 +453,63 @@ const InputWrapper = styled.div<{
   flex-direction: column;
   gap: 8px;
   width: 100%;
+`;
+
+const FieldContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const NegativeHint = styled.button<{
+  isNegative: boolean;
+}>`
+  position: absolute;
+  right: 40px;
+  top: 10%;
+  transform: translateY(-50%);
+  padding: 4px 8px;
+  border: 1px solid ${({ isNegative }) => (isNegative ? color.red[300] : color.green[300])};
+  border-radius: 4px;
+  background-color: ${({ isNegative }) => (isNegative ? color.red[50] : color.green[50])};
+  color: ${({ isNegative }) => (isNegative ? color.red[700] : color.green[700])};
+  font: ${font.b2};
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+
+  &:hover {
+    background-color: ${({ isNegative }) => (isNegative ? color.red[100] : color.green[100])};
+    border-color: ${({ isNegative }) => (isNegative ? color.red[400] : color.green[400])};
+  }
+`;
+
+const NegativeGuide = styled.div`
+  margin-top: 16px;
+  padding: 16px;
+  background-color: ${color.zinc[50]};
+  border: 1px solid ${color.zinc[200]};
+  border-radius: 8px;
+`;
+
+const GuideTitle = styled.div`
+  font: ${font.b2};
+  font-weight: 600;
+  color: ${color.zinc[700]};
+  margin-bottom: 8px;
+`;
+
+const GuideText = styled.div`
+  font: ${font.b2};
+  color: ${color.zinc[600]};
+  margin-bottom: 4px;
+  
+  strong {
+    color: ${color.red[600]};
+    font-weight: 600;
+  }
 `;
 
 const ErrorMessage = styled.div`

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Imglogo } from "@mozu/ui";
+import { Button, ImgLogo } from "@mozu/ui";
 import { useEffect, useRef, useState } from "react";
 
 interface ILogoType {
@@ -68,13 +68,13 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
               }}
             />
           ) : (
-            <Imglogo
+            <ImgLogo
               size={24}
               color={color.black}
             />
           )}
         </LogoContainer>
-        <ButtonContaienr>
+        <ButtonContainer>
           <Button
             backgroundColor={color.zinc[50]}
             borderColor={color.zinc[200]}
@@ -91,7 +91,7 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
             hoverBackgroundColor={color.red[600]}>
             로고 삭제
           </Button>
-        </ButtonContaienr>
+        </ButtonContainer>
         <input
           type="file"
           id="fileInput"
@@ -130,7 +130,7 @@ const LogoContainer = styled.div`
   align-items: center;
 `;
 
-const ButtonContaienr = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
   align-items: end;
   gap: 8px;

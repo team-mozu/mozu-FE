@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { useState } from "react";
+import { is } from "zod/v4/locales";
 import type { TeamInfo } from "@/app/store";
 import { roundToFixed } from "@/shared/lib";
 import { DegCurrentModal, TeamCurrentModal } from ".";
@@ -64,16 +65,14 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
         <tbody>
           {teamInfo.map((team, index) => {
             const profitNum = team.trade.at(-1)?.profitNum;
-            const isNegative = typeof profitNum === 'string' ? profitNum.includes("-") : profitNum && profitNum < 0;
+            const isNegative = typeof profitNum === "string" ? profitNum.includes("-") : profitNum && profitNum < 0;
 
             return (
               <Tr
                 isNotBorded={index + 1 === teamInfo.length}
                 key={index}>
                 <Td isLeft>
-                  <TeamName isTeamName>
-                    {team.teamName}
-                  </TeamName>
+                  <TeamName isTeamName>{team.teamName}</TeamName>
                   {team.trade.length === invDeg && (
                     <CompletedBadge>
                       투자완료{" "}
@@ -98,11 +97,12 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                   // degIndex(0, 1, 2...)를 그대로 사용하여 배열 인덱스와 매칭
                   const tradeData = team.trade[degIndex];
                   const profitNum = tradeData?.profitNum;
-                  const isNegative = tradeData === undefined
-                    ? null
-                    : typeof profitNum === 'string'
-                      ? profitNum.includes("-")
-                      : profitNum && profitNum < 0;
+                  const isNegative =
+                    tradeData === undefined
+                      ? null
+                      : typeof profitNum === "string"
+                        ? profitNum.includes("-")
+                        : profitNum && profitNum < 0;
 
                   return (
                     <Td key={degIndex}>
@@ -110,20 +110,18 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                         "진행중"
                       ) : (
                         <Rate
+                          isTotalMoney={false}
                           isNegative={isNegative}
                           onClick={() => handleOpenDegModal(team.teamId, currentDeg)}>
-                          <span>
-                            {tradeData?.totalMoney?.toLocaleString() ?? "-"}원
-                          </span>
+                          <span>{tradeData?.totalMoney?.toLocaleString() ?? "-"}원</span>
                           <span>
                             {!isNegative && "+"}
-                            {tradeData?.valMoney?.toLocaleString() ?? "0"}원
-                            ({!isNegative && "+"}
+                            {tradeData?.valMoney?.toLocaleString() ?? "0"}원 ({!isNegative && "+"}
                             {roundToFixed(
                               typeof tradeData?.profitNum === "string"
                                 ? parseFloat(tradeData?.profitNum as string)
-                                : (tradeData?.profitNum as number) ?? 0,
-                              2
+                                : ((tradeData?.profitNum as number) ?? 0),
+                              2,
                             )}
                             %)
                           </span>
@@ -136,19 +134,16 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                 <Td>
                   {team.trade.length > 0 ? (
                     <Rate
-                      isNegative={isNegative}
-                      onClick={() => handleOpenModal(team.teamId, team.teamName)}>
+                      isTotalMoney={true}
+                      isNegative={isNegative}>
                       <span>{team.trade.at(-1)?.totalMoney?.toLocaleString() ?? "0"}원</span>
                       <span>
                         {!isNegative && "+"}
-                        {team.trade.at(-1)?.valMoney?.toLocaleString() ?? "0"}원
-                        ({!isNegative && "+"}
+                        {team.trade.at(-1)?.valMoney?.toLocaleString() ?? "0"}원 ({!isNegative && "+"}
                         {(() => {
                           const lastProfitNum = team.trade.at(-1)?.profitNum;
                           const numValue =
-                            typeof lastProfitNum === "string"
-                              ? parseFloat(lastProfitNum)
-                              : lastProfitNum ?? 0;
+                            typeof lastProfitNum === "string" ? parseFloat(lastProfitNum) : (lastProfitNum ?? 0);
                           return roundToFixed(numValue, 2);
                         })()}
                         %)
@@ -253,6 +248,7 @@ const CompletedBadge = styled.span`
 `;
 
 const Rate = styled.div<{
+  isTotalMoney: boolean;
   isNegative: boolean | null | undefined;
 }>`
   display: flex;
@@ -260,7 +256,6 @@ const Rate = styled.div<{
   gap: 4px;
   align-items: end;
   width: 100%;
-  cursor: pointer;
   & > span:nth-of-type(1) {
     ${font.t1};
   }
@@ -268,14 +263,17 @@ const Rate = styled.div<{
     ${font.l1};
     color: ${({ isNegative }) => (isNegative ? color.blue[500] : color.red[500])};
   }
-
-  &:hover {
-    text-decoration: underline;
-  }
+  
+  ${({ isTotalMoney }) => !isTotalMoney && {
+    cursor: "pointer",
+    ":hover": {
+      textDecoration: "underline",
+    },
+  }};
 `;
 
 const TeamName = styled.span<{
   isTeamName?: boolean;
 }>`
-  font: ${font.t2};
+font: ${font.t2};
 `;

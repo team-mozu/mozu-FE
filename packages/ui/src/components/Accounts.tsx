@@ -13,7 +13,7 @@ export const Accounts = ({ title, content }: IAccountsType) => {
     <AccountsContainer>
       <ContentContainer>
         <Title>{title}</Title>
-        <Content>{formattedContent}원</Content>
+        <Content>{formattedContent} 억원</Content>
       </ContentContainer>
     </AccountsContainer>
   );

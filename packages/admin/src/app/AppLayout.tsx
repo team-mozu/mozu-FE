@@ -41,7 +41,7 @@ export const AppLayout = () => {
         showRound={false}
       />
       <SideBar
-        name={"대전시 진로융합원 창업마을"}
+        name={"대전진로융합교육원\n창업경영마을"}
         role={"관리자"}
         navTitle={"관리"}
       />

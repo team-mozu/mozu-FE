@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Imglogo } from "@mozu/ui";
+import { Button, ImgLogo } from "@mozu/ui";
 import { useEffect, useRef, useState } from "react";
 
 interface IImgType {
@@ -64,7 +64,7 @@ export const ImgContainer = ({ label, img, onImageChange }: IImgType) => {
         <Label>{label}</Label>
         <FakeImgContent>
           {!imgUrl ? (
-            <Imglogo />
+            <ImgLogo />
           ) : (
             <Image
               src={imgUrl}

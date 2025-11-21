@@ -11,7 +11,7 @@ export * from "./Edit";
 export * from "./Eye";
 export * from "./EyeOff";
 export * from "./HandCoins";
-export * from "./Imglogo";
+export * from "./ImgLogo";
 export * from "./Info";
 export * from "./LogOut";
 export * from "./ManagerLogo";

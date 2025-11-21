@@ -3,7 +3,7 @@ interface IImgType {
   color?: string;
 }
 
-export const Imglogo = ({ size = 24, color = "black" }: IImgType) => {
+export const ImgLogo = ({ size = 24, color = "black" }: IImgType) => {
   return (
     <svg
       width={size}
