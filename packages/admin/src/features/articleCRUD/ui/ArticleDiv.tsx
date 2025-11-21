@@ -20,7 +20,7 @@ const formatDate = (dateString: string): string => {
 
 export const ArticleDiv = ({ title, date, onClick, selected, articleNumber }: IArticleType) => {
   return (
-    <ArticleDivContiner
+    <ArticleDivContainer
       onClick={onClick}
       selected={selected}>
       <div>
@@ -28,11 +28,11 @@ export const ArticleDiv = ({ title, date, onClick, selected, articleNumber }: IA
         <ArticleTitle selected={selected}>{title}</ArticleTitle>
       </div>
       <DateDiv selected={selected}>{formatDate(date)}</DateDiv>
-    </ArticleDivContiner>
+    </ArticleDivContainer>
   );
 };
 
-const ArticleDivContiner = styled.div<{
+const ArticleDivContainer = styled.div<{
   selected: boolean;
 }>`
   width: 100%;

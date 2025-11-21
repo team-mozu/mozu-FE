@@ -21,3 +21,4 @@ export const ImgLogo = ({ size = 24, color = "black" }: IImgType) => {
     </svg>
   );
 };
+
