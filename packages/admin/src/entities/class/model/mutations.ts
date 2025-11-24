@@ -187,7 +187,7 @@ export const useNextDegree = (id?: string, onSuccessCallback?: () => void) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: () => nextDegree(id!),
     onSuccess: () => {
@@ -197,13 +197,19 @@ export const useNextDegree = (id?: string, onSuccessCallback?: () => void) => {
 
       // React Query 캐시 무효화 - 수업 및 팀 관련 데이터 새로고침
       queryClient.invalidateQueries({
-        queryKey: ["getClass"],
+        queryKey: [
+          "getClass",
+        ],
       });
       queryClient.invalidateQueries({
-        queryKey: ["getMonitoring"],
+        queryKey: [
+          "getMonitoring",
+        ],
       });
       queryClient.invalidateQueries({
-        queryKey: ["getTeam"],
+        queryKey: [
+          "getTeam",
+        ],
       });
 
       if (onSuccessCallback) {

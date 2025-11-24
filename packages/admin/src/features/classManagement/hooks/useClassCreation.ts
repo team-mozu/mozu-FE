@@ -1,3 +1,4 @@
+import { Toast } from "@mozu/ui";
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useCreateClass } from "@/entities/class";
@@ -51,7 +52,7 @@ export const useClassCreation = () => {
 
     // 기사가 하나도 없는지 확인
     const totalArticles = classArticles.reduce((total, group) => total + group.articles.length, 0);
-    
+
     if (totalArticles === 0) {
       errors.push("최소 하나 이상의 기사를 추가해주세요.");
     }
@@ -60,7 +61,9 @@ export const useClassCreation = () => {
       isValid: errors.length === 0,
       errors,
     };
-  }, [classArticles]);
+  }, [
+    classArticles,
+  ]);
 
   /**
    * 전체 폼 검증
@@ -128,7 +131,9 @@ export const useClassCreation = () => {
       },
       onError: error => {
         console.error("수업 생성 실패:", error);
-        alert("수업 생성에 실패했습니다.");
+        Toast("수업 생성에 실패했습니다.", {
+          type: "error",
+        });
       },
     });
   }, [

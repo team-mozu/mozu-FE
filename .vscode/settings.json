@@ -8,13 +8,7 @@
       "mode": "auto"
     }
   ],
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "javascriptreact",
-    "html",
-    "typescriptreact"
-  ],
+  "eslint.validate": ["javascript", "typescript", "javascriptreact", "html", "typescriptreact"],
   "search.exclude": {
     "**/.yarn": true,
     "**/.pnp.*": true
@@ -22,5 +16,6 @@
   "eslint.nodePath": ".yarn/sdks",
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "kiroAgent.configureMCP": "Disabled"
+  "kiroAgent.configureMCP": "Disabled",
+  "cSpell.words": ["datas", "mozu"]
 }

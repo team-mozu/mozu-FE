@@ -52,11 +52,15 @@ export const AppLayout = () => {
             (pathname.split("/")[3] === "start" || pathname.split("/")[3] === "monitoring")
           )
         }>
-        <AnimatePresence mode="wait">
-          <PageTransition>
-            <Outlet />
-          </PageTransition>
-        </AnimatePresence>
+        {pathname.match(/^\/stock-management\/\d+$/) || pathname.match(/^\/article-management\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/) ? (
+          <Outlet />
+        ) : (
+          <AnimatePresence mode="wait">
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
+          </AnimatePresence>
+        )}
       </MainContent>
     </AppContainer>
   );

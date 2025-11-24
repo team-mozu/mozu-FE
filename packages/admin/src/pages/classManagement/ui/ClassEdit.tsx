@@ -1,5 +1,5 @@
 import { color } from "@mozu/design-token";
-import { Button, Input, Save, Select } from "@mozu/ui";
+import { Button, Input, Save, Select, Toast } from "@mozu/ui";
 import { type ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useGetClassDetail, useUpdateClass } from "@/entities/class";
@@ -295,6 +295,9 @@ export const ClassEdit = () => {
         navigate(`/class-management/${id}`);
         resetArticles();
       },
+      onError: () => {
+        Toast("수업 수정에 실패했습니다.", { type: "error" });
+      }
     });
   };
 
