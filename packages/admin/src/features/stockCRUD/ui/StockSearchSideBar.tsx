@@ -1,28 +1,20 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { AddButton, Input, Search } from "@mozu/ui";
-import { type Dispatch, memo, type SetStateAction, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { memo, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGetStockList } from "@/entities/stock";
 import { FullPageLoader } from "@/shared/ui";
 import { StockDiv } from "./StockDiv";
 
-interface StockSearchSideBarProps {
-  setSelectedId: Dispatch<SetStateAction<number | null>>;
-  selectedId: number | null;
-}
-
-export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSearchSideBarProps) => {
-  const { id } = useParams<{
-    classId: string;
-    id: string;
-  }>();
+export const StockSearchSideBar = memo(() => {
   const [datas, setDatas] = useState<
     {
       itemId: number;
       itemName: string;
     }[]
   >([]);
+  const [internalSelectedId, setInternalSelectedId] = useState<number | null>(null);
   const { data: stockData, isLoading } = useGetStockList();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
@@ -34,6 +26,26 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
       String(item.itemId).includes(searchText),
   );
 
+  // URL 변경 감지 및 선택 상태 동기화
+  useEffect(() => {
+    const updateSelectedFromURL = () => {
+      const currentPath = window.location.pathname;
+      const idMatch = currentPath.match(/\/stock-management\/(\d+)/);
+      const currentId = idMatch ? Number(idMatch[1]) : null;
+      setInternalSelectedId(currentId);
+    };
+
+    // 초기 설정
+    updateSelectedFromURL();
+
+    // URL 변경 감지
+    window.addEventListener('popstate', updateSelectedFromURL);
+
+    return () => {
+      window.removeEventListener('popstate', updateSelectedFromURL);
+    };
+  }, []);
+
   useEffect(() => {
     if (!stockData) return;
 
@@ -43,18 +55,15 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
     })).reverse(); // 리스트 역순으로 정렬
     setDatas(mappedData);
 
-    if (!id && mappedData.length > 0) {
+    // 초기 데이터 로드 시 맨 처음 아이템으로 리다이렉트
+    const currentPath = window.location.pathname;
+    const hasId = currentPath.match(/\/stock-management\/(\d+)/);
+    if (!hasId && mappedData.length > 0) {
       navigate(`/stock-management/${mappedData[0].itemId}`, {
         replace: true,
       });
-      setSelectedId(mappedData[0].itemId);
     }
-  }, [
-    stockData,
-    id,
-    navigate,
-    setSelectedId,
-  ]);
+  }, [stockData, navigate]);
 
   if (isLoading) return <FullPageLoader />;
 
@@ -79,12 +88,12 @@ export const StockSearchSideBar = memo(({ setSelectedId, selectedId }: StockSear
               key={data.itemId}
               name={data.itemName}
               number={index + 1}
-              selected={selectedId === data.itemId}
+              selected={internalSelectedId === data.itemId}
               onClick={() => {
-                setSelectedId(data.itemId);
-                navigate(`/stock-management/${data.itemId}`, {
-                  replace: true,
-                });
+                if (internalSelectedId !== data.itemId) {
+                  setInternalSelectedId(data.itemId);
+                  navigate(`/stock-management/${data.itemId}`, { replace: false });
+                }
               }}
             />
           )) :

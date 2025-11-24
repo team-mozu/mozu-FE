@@ -1,21 +1,13 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { AddButton, Input, Search } from "@mozu/ui";
-import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { memo, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGetArticleList } from "@/entities/article";
 import { FullPageLoader } from "@/shared/ui";
 import { ArticleDiv } from "./ArticleDiv";
 
-interface ArticleSearchSideBarProps {
-  setSelectedId: Dispatch<SetStateAction<string | null>>;
-  selectedId: string | null;
-}
-
-export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearchSideBarProps) => {
-  const { id } = useParams<{
-    id: string;
-  }>();
+export const ArticleSearchSideBar = memo(() => {
   const [datas, setDatas] = useState<
     {
       id: string;
@@ -23,6 +15,7 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
       createdAt: string;
     }[]
   >([]);
+  const [internalSelectedId, setInternalSelectedId] = useState<string | null>(null);
   const { data: articleData, isLoading } = useGetArticleList();
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
@@ -47,6 +40,25 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
   ]);
 
   useEffect(() => {
+    const updateSelectedFromURL = () => {
+      const currentPath = window.location.pathname;
+      const idMatch = currentPath.match(/\/article-management\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/);
+      const currentId = idMatch ? String(idMatch[1]) : null;
+      setInternalSelectedId(currentId);
+    };
+
+    // 초기 설정
+    updateSelectedFromURL();
+
+    // URL 변경 감지
+    window.addEventListener('popstate', updateSelectedFromURL);
+
+    return () => {
+      window.removeEventListener('popstate', updateSelectedFromURL);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!articles) return;
 
     const mappedData = articles.map(({ id, articleName, createdAt }) => ({
@@ -54,20 +66,16 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
       articleName,
       createdAt,
     }));
-
     setDatas(mappedData);
-    if (!id && mappedData.length > 0) {
+
+    const currentPath = window.location.pathname;
+    const hasId = currentPath.match(/\/article-management\/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/);
+    if (!hasId && mappedData.length > 0) {
       navigate(`/article-management/${mappedData[0].id}`, {
         replace: true,
       });
-      setSelectedId(mappedData[0].id);
     }
-  }, [
-    articles,
-    id,
-    navigate,
-    setSelectedId,
-  ]);
+  }, [articles, navigate]);
 
   if (isLoading) return <FullPageLoader />;
 
@@ -80,12 +88,7 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
         <Input
           placeholder="기사 검색.."
           fullWidth={true}
-          startIcon={
-            <Search
-              color={color.zinc[400]}
-              size={20}
-            />
-          }
+          startIcon={<Search color={color.zinc[400]} size={20} />}
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
         />
@@ -95,15 +98,15 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
           filteredDatas.map((data, index) => (
             <ArticleDiv
               key={data.id}
-              articleNumber={index + 1}
               title={data.articleName}
               date={data.createdAt}
-              selected={selectedId === data.id}
+              articleNumber={index + 1}
+              selected={internalSelectedId === data.id}
               onClick={() => {
-                setSelectedId(data.id);
-                navigate(`/article-management/${data.id}`, {
-                  replace: true,
-                });
+                if (internalSelectedId !== data.id) {
+                  setInternalSelectedId(data.id);
+                  navigate(`/article-management/${data.id}`, { replace: false });
+                }
               }}
             />
           ))
@@ -117,7 +120,7 @@ export const ArticleSearchSideBar = ({ setSelectedId, selectedId }: ArticleSearc
       />
     </SideBarContainer>
   );
-};
+});
 
 const SideBarContainer = styled.div`
   min-width: 490px;

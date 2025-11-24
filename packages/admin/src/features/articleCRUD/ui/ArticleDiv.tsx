@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
+import { memo } from "react";
 
 interface IArticleType {
   title: string;
@@ -9,6 +10,7 @@ interface IArticleType {
   articleNumber: number;
 }
 
+// TODO: util 라이브러리로 수정
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString('ko-KR', {
@@ -18,7 +20,7 @@ const formatDate = (dateString: string): string => {
   }).replace(/\./g, '/').replace(/\s/g, '').slice(0, -1);
 };
 
-export const ArticleDiv = ({ title, date, onClick, selected, articleNumber }: IArticleType) => {
+export const ArticleDiv = memo(({ title, date, onClick, selected, articleNumber }: IArticleType) => {
   return (
     <ArticleDivContainer
       onClick={onClick}
@@ -30,7 +32,7 @@ export const ArticleDiv = ({ title, date, onClick, selected, articleNumber }: IA
       <DateDiv selected={selected}>{formatDate(date)}</DateDiv>
     </ArticleDivContainer>
   );
-};
+});
 
 const ArticleDivContainer = styled.div<{
   selected: boolean;

@@ -84,144 +84,127 @@ export const ArticleManagementAddPage = () => {
   const isFormDisabled = isPending || isSubmitting;
 
   return (
-    <AllContainer>
-      <AddContainer>
-        <EditDiv
-          value1="취소"
-          value2={isFormDisabled ? "추가 중..." : "추가하기"}
-          title="기사 추가"
-          disabled={isFormDisabled}
-          onCancel={() => navigate("/article-management")}
-          onClick={handleSubmit(onSubmit)}
-        />
-        <ContentContainer>
-          <FormProvider {...methods}>
-            <InputContainer>
-              <InputWrapper>
-                <Controller
-                  name="articleName"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="text"
-                      state={errors.articleName ? "error" : "default"}
-                      placeholder="기사 제목을 입력해 주세요.."
-                      label="기사 제목"
-                      disabled={isFormDisabled}
-                      aria-invalid={!!errors.articleName}
-                      aria-describedby={errors.articleName ? "title-error" : undefined}
-                    />
-                  )}
+    <Container>
+      <EditDiv
+        value1="취소"
+        value2={isFormDisabled ? "추가 중..." : "추가하기"}
+        title="기사 추가"
+        disabled={isFormDisabled}
+        onCancel={() => navigate("/article-management")}
+        onClick={handleSubmit(onSubmit)}
+      />
+      <FormContainer>
+        <FormProvider {...methods}>
+          <InputWrapper>
+            <Controller
+              name="articleName"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="text"
+                  state={errors.articleName ? "error" : "default"}
+                  placeholder="기사 제목을 입력해 주세요.."
+                  label="기사 제목"
+                  disabled={isFormDisabled}
+                  aria-invalid={!!errors.articleName}
+                  aria-describedby={errors.articleName ? "title-error" : undefined}
                 />
-                {errors.articleName && (
-                  <ErrorMessage
-                    id="title-error"
-                    role="alert">
-                    {errors.articleName.message}
-                  </ErrorMessage>
-                )}
-              </InputWrapper>
-              <InputWrapper>
-                <Controller
-                  name="articleDesc"
-                  control={control}
-                  render={({ field }) => (
-                    <TextArea
-                      {...field}
-                      state={errors.articleDesc ? "error" : "default"}
-                      placeholder="기사 내용을 입력해 주세요.."
-                      label="기사 내용"
-                      height={480}
-                      disabled={isFormDisabled}
-                      aria-invalid={!!errors.articleDesc}
-                      aria-describedby={errors.articleDesc ? "desc-error" : undefined}
-                    />
-                  )}
+              )}
+            />
+            {errors.articleName && (
+              <ErrorMessage
+                id="title-error"
+                role="alert">
+                {errors.articleName.message}
+              </ErrorMessage>
+            )}
+          </InputWrapper>
+          <InputWrapper>
+            <Controller
+              name="articleDesc"
+              control={control}
+              render={({ field }) => (
+                <TextArea
+                  {...field}
+                  state={errors.articleDesc ? "error" : "default"}
+                  placeholder="기사 내용을 입력해 주세요.."
+                  label="기사 내용"
+                  height={480}
+                  disabled={isFormDisabled}
+                  aria-invalid={!!errors.articleDesc}
+                  aria-describedby={errors.articleDesc ? "desc-error" : undefined}
                 />
-                {errors.articleDesc && (
-                  <ErrorMessage
-                    id="desc-error"
-                    role="alert">
-                    {errors.articleDesc.message}
-                  </ErrorMessage>
-                )}
-              </InputWrapper>
-              <InputWrapper>
-                <Controller
-                  name="articleImage"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <ImgContainer
-                      label="기사 이미지"
-                      img={
-                        value instanceof File
-                          ? URL.createObjectURL(value)
-                          : value || null
-                      }
-                      onImageChange={(file) => {
-                        if (file === "DELETE") {
-                          onChange(null);
-                          setValue("articleImage", null);
-                          return;
-                        }
-                        onChange(file);
-                        setValue("articleImage", file);
-                      }}
-                      aria-invalid={!!errors.articleImage}
-                      aria-describedby={errors.articleImage ? "image-error" : undefined}
-                    />
-                  )}
+              )}
+            />
+            {errors.articleDesc && (
+              <ErrorMessage
+                id="desc-error"
+                role="alert">
+                {errors.articleDesc.message}
+              </ErrorMessage>
+            )}
+          </InputWrapper>
+          <InputWrapper>
+            <Controller
+              name="articleImage"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <ImgContainer
+                  label="기사 이미지"
+                  img={
+                    value instanceof File
+                      ? URL.createObjectURL(value)
+                      : value || null
+                  }
+                  onImageChange={(file) => {
+                    if (file === "DELETE") {
+                      onChange(null);
+                      setValue("articleImage", null);
+                      return;
+                    }
+                    onChange(file);
+                    setValue("articleImage", file);
+                  }}
+                  aria-invalid={!!errors.articleImage}
+                  aria-describedby={errors.articleImage ? "image-error" : undefined}
                 />
-                {errors.articleImage && (
-                  <ErrorMessage
-                    id="image-error"
-                    role="alert">
-                    {errors.articleImage.message}
-                  </ErrorMessage>
-                )}
-              </InputWrapper>
-            </InputContainer>
-          </FormProvider>
-        </ContentContainer>
-      </AddContainer>
-    </AllContainer>
+              )}
+            />
+            {errors.articleImage && (
+              <ErrorMessage
+                id="image-error"
+                role="alert">
+                {errors.articleImage.message}
+              </ErrorMessage>
+            )}
+          </InputWrapper>
+        </FormProvider>
+      </FormContainer>
+    </Container>
   );
 };
 
-const AllContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const Container = styled.div`
+  width: 100%;
   padding: 40px;
-  width: 100%;
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-`;
-
-const AddContainer = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 100%;
 `;
 
-const ContentContainer = styled.div`
+const FormContainer = styled.div`
   width: 100%;
-  height: fit-content;
-  border: 1px solid ${color.zinc[200]};
+  height: 100%;
   background-color: ${color.white};
-  border-radius: 16px;
+  border-radius: 1rem;
+  border: 1px solid ${color.zinc[200]};
   padding: 24px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 40px;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: hidden;
 `;
 
 const InputWrapper = styled.div`

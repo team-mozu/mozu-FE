@@ -150,111 +150,94 @@ export const ArticleManagementEditPage = () => {
   const isFormDisabled: boolean = isPending || isSubmitting;
 
   return (
-    <AllContainer>
-      <AddContainer>
-        <EditDiv
-          value1="취소"
-          value2={isFormDisabled ? "수정 중..." : "수정하기"}
-          title="기사 수정"
-          disabled={isFormDisabled}
-          onCancel={handleCancel}
-          onClick={handleSubmit}
-        />
-        <ContentContainer>
-          <InputContainer>
-            <InputWrapper>
-              <Input
-                ref={titleInputRef}
-                value={datas.articleName}
-                name="articleName"
-                type="text"
-                onChange={titleChange}
-                state={errors.articleName ? "error" : "default"}
-                placeholder="기사 제목을 입력해 주세요.."
-                label="기사 제목"
-                disabled={isFormDisabled}
-                aria-invalid={!!errors.articleName}
-                aria-describedby={errors.articleName ? "title-error" : undefined}
-              />
-              {errors.articleName && (
-                <ErrorMessage id="title-error" role="alert">
-                  {errors.articleName}
-                </ErrorMessage>
-              )}
-            </InputWrapper>
-            <InputWrapper>
-              <TextArea
-                ref={descTextAreaRef}
-                value={datas.articleDesc}
-                name="articleDesc"
-                state={errors.articleDesc ? "error" : "default"}
-                onChange={contentChange}
-                placeholder="기사 내용을 입력해 주세요.."
-                label="기사 내용"
-                height={480}
-                aria-invalid={!!errors.articleDesc}
-                aria-describedby={errors.articleDesc ? "desc-error" : undefined}
-              />
-              {errors.articleDesc && (
-                <ErrorMessage id="desc-error" role="alert">
-                  {errors.articleDesc}
-                </ErrorMessage>
-              )}
-            </InputWrapper>
-            <InputWrapper>
-              <ImgContainer
-                label="기사 이미지"
-                img={datas.articleImage instanceof File ? URL.createObjectURL(datas.articleImage) : (typeof datas.articleImage === "string" && datas.articleImage !== "DELETE") ? datas.articleImage : null}
-                onImageChange={handleImageChange}
-                aria-invalid={!!errors.articleImage}
-                aria-describedby={errors.articleImage ? "image-error" : undefined}
-              />
-              {errors.articleImage && (
-                <ErrorMessage id="image-error" role="alert">
-                  {errors.articleImage}
-                </ErrorMessage>
-              )}
-            </InputWrapper>
-          </InputContainer>
-        </ContentContainer>
-      </AddContainer>
-    </AllContainer>
+    <Container>
+      <EditDiv
+        value1="취소"
+        value2={isFormDisabled ? "수정 중..." : "수정하기"}
+        title="기사 수정"
+        disabled={isFormDisabled}
+        onCancel={handleCancel}
+        onClick={handleSubmit}
+      />
+      <FormContainer>
+        <InputWrapper>
+          <Input
+            ref={titleInputRef}
+            value={datas.articleName}
+            name="articleName"
+            type="text"
+            onChange={titleChange}
+            state={errors.articleName ? "error" : "default"}
+            placeholder="기사 제목을 입력해 주세요.."
+            label="기사 제목"
+            disabled={isFormDisabled}
+            aria-invalid={!!errors.articleName}
+            aria-describedby={errors.articleName ? "title-error" : undefined}
+          />
+          {errors.articleName && (
+            <ErrorMessage id="title-error" role="alert">
+              {errors.articleName}
+            </ErrorMessage>
+          )}
+        </InputWrapper>
+        <InputWrapper>
+          <TextArea
+            ref={descTextAreaRef}
+            value={datas.articleDesc}
+            name="articleDesc"
+            state={errors.articleDesc ? "error" : "default"}
+            onChange={contentChange}
+            placeholder="기사 내용을 입력해 주세요.."
+            label="기사 내용"
+            height={480}
+            aria-invalid={!!errors.articleDesc}
+            aria-describedby={errors.articleDesc ? "desc-error" : undefined}
+          />
+          {errors.articleDesc && (
+            <ErrorMessage id="desc-error" role="alert">
+              {errors.articleDesc}
+            </ErrorMessage>
+          )}
+        </InputWrapper>
+        <InputWrapper>
+          <ImgContainer
+            label="기사 이미지"
+            img={datas.articleImage instanceof File ? URL.createObjectURL(datas.articleImage) : (typeof datas.articleImage === "string" && datas.articleImage !== "DELETE") ? datas.articleImage : null}
+            onImageChange={handleImageChange}
+            aria-invalid={!!errors.articleImage}
+            aria-describedby={errors.articleImage ? "image-error" : undefined}
+          />
+          {errors.articleImage && (
+            <ErrorMessage id="image-error" role="alert">
+              {errors.articleImage}
+            </ErrorMessage>
+          )}
+        </InputWrapper>
+      </FormContainer>
+    </Container>
   );
 };
 
-const AllContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const Container = styled.div`
+  width: 100%;
   padding: 40px;
-  width: 100%;
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-`;
-
-const AddContainer = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 100%;
 `;
 
-const ContentContainer = styled.div`
+const FormContainer = styled.div`
   width: 100%;
-  height: fit-content;
-  border: 1px solid ${color.zinc[200]};
+  height: 100%;
   background-color: ${color.white};
-  border-radius: 16px;
+  border-radius: 1rem;
+  border: 1px solid ${color.zinc[200]};
   padding: 24px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 40px;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: hidden;
 `;
 
 const InputWrapper = styled.div`

@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import { z } from "zod";
@@ -398,6 +398,7 @@ export const StockManagementEditPage = () => {
 };
 
 const Container = styled.div`
+  width: 100%;
   padding: 40px;
   height: 100%;
   display: flex;

@@ -4,7 +4,7 @@ import { Del, Modal, SelectError } from "@mozu/ui";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDeleteArticle } from "@/entities/article";
-import { ArticleManagementDetail, ArticleSearchSideBar } from "@/features/articleCRUD";
+import { ArticleManagementDetail } from "@/features/articleCRUD";
 
 export const ArticleManagementPage = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -50,20 +50,7 @@ export const ArticleManagementPage = () => {
           onSuccessClick={handleDelete}
         />
       )}
-      <Container>
-        <ArticleSearchSideBar
-          setSelectedId={setSelectedId}
-          selectedId={selectedId}
-        />
-        {selectedId ? <ArticleManagementDetail onClick={handleDetailClick} /> : <SelectError isStock={false} />}
-      </Container>
+      {selectedId ? <ArticleManagementDetail onClick={handleDetailClick} /> : <SelectError isStock={false} />}
     </>
   );
 };
-
-const Container = styled.div`
-  width: 100%;
-  height: calc(100vh - 64px);
-  display: flex;
-  flex-direction: row;
-`;

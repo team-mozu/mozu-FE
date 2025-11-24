@@ -7,7 +7,6 @@ import { useNavigate } from "react-router";
 import { z } from "zod";
 import { useCreateStock } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";
-import { usePriceFormatter } from "@/shared/lib/hooks";
 
 const stockFormSchema = z.object({
   name: z
@@ -64,13 +63,13 @@ const stockFormSchema = z.object({
 type StockFormData = z.infer<typeof stockFormSchema>;
 
 const financialFields = [
-  { label: "자산", name: "money" },
-  { label: "부채", name: "debt" },
-  { label: "자본금", name: "capital" },
-  { label: "매출액", name: "profit" },
-  { label: "매출원가", name: "profitOG" },
-  { label: "매출이익", name: "profitBen" },
-  { label: "당기순이익", name: "netProfit" },
+  { label: "자산", name: "money", allowNegative: false },
+  { label: "부채", name: "debt", allowNegative: false },
+  { label: "자본금", name: "capital", allowNegative: false },
+  { label: "매출액", name: "profit", allowNegative: false },
+  { label: "매출원가", name: "profitOG", allowNegative: false },
+  { label: "매출이익", name: "profitBen", allowNegative: true },
+  { label: "당기순이익", name: "netProfit", allowNegative: true },
 ] as const;
 
 export const StockManagementAddPage = () => {
@@ -103,28 +102,58 @@ export const StockManagementAddPage = () => {
   const values = watch();
 
   // 가격 포매팅 함수
-  const formatPrice = (value: string) => {
+  const formatPrice = (value: string, allowNegative: boolean = false) => {
     if (value === "" || value === undefined || value === null) return "";
-    const numValue = Number(value.replace(/,/g, ""));
-    if (isNaN(numValue)) return "";
-    return numValue.toLocaleString();
+
+    // 마이너스 기호 분리
+    const isNegative = allowNegative && value.startsWith("-");
+    const numericValue = isNegative ? value.substring(1) : value;
+
+    const numValue = Number(numericValue.replace(/,/g, ""));
+    if (Number.isNaN(numValue)) return isNegative ? "-" : "";
+
+    const formatted = numValue.toLocaleString();
+    return isNegative ? `-${formatted}` : formatted;
+  };
+
+  const toggleNegative = (
+    _: "profitBen" | "netProfit",
+    currentValue: string,
+    onChange: (value: string) => void,
+  ) => {
+    if (currentValue.startsWith("-")) {
+      // 현재 마이너스면 플러스로 변경
+      onChange(currentValue.substring(1));
+    } else if (currentValue && currentValue !== "" && currentValue !== "0") {
+      // 현재 플러스면 마이너스로 변경
+      onChange(`-${currentValue}`);
+    }
   };
 
   // 가격 입력 핸들러
-  const handlePriceChange = (fieldName: keyof StockFormData, onChange: (value: string) => void) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = e.target.value;
-      // 매출과 당기순이익은 마이너스 허용, 다른 필드는 양수만
-      if (fieldName === "profit" || fieldName === "netProfit") {
-        // 마이너스, 숫자만 허용 (마이너스는 맨 앞에만)
-        const cleanValue = inputValue.replace(/[^0-9-]/g, "").replace(/(?!^)-/g, "");
-        onChange(cleanValue);
-      } else {
-        // 숫자만 허용
-        const cleanValue = inputValue.replace(/[^0-9]/g, "");
-        onChange(cleanValue);
-      }
-    };
+  const handlePriceChange =
+    (_: keyof StockFormData, allowNegative: boolean, onChange: (value: string) => void) =>
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const inputValue = e.target.value.replace(/,/g, "");
+
+        if (allowNegative) {
+          // 마이너스 허용 필드: 마이너스 기호는 맨 앞에만, 숫자와 마이너스만 허용
+          const hasMinus = inputValue.startsWith("-");
+          const cleanValue = inputValue.replace(/[^0-9]/g, "");
+
+          if (hasMinus && cleanValue === "") {
+            onChange("-");
+          } else if (hasMinus) {
+            onChange(`-${cleanValue}`);
+          } else {
+            onChange(cleanValue);
+          }
+        } else {
+          // 마이너스 비허용 필드: 숫자만 허용
+          const cleanValue = inputValue.replace(/[^0-9]/g, "");
+          onChange(cleanValue);
+        }
+      };
 
   const onSubmit = (data: StockFormData) => {
     // 빈 문자열을 0으로 변환하여 전송
@@ -151,8 +180,12 @@ export const StockManagementAddPage = () => {
         title={"종목 추가"}
         value1={"취소"}
         value2={isPending ? "저장 중..." : "추가하기"}
-        onCancel={() => navigate("/stock-management")}
+        type2={"saveImg"}
+        isIcon2={true}
+        iconSize2={20}
+        iconColor2={color.white}
         onClick={handleSubmit(onSubmit)}
+        onCancel={() => navigate("/stock-management")}
         disabled={isPending}
       />
       <StockSetting>
@@ -170,9 +203,9 @@ export const StockManagementAddPage = () => {
               render={({ field }) => (
                 <InputWrapper hasError={!!errors.name}>
                   <Input
+                    {...field}
                     label={"회사 이름"}
                     placeholder={"종목 이름을 입력해 주세요.."}
-                    {...field}
                     state={errors.name ? "error" : "default"}
                     aria-invalid={!!errors.name}
                     aria-describedby={errors.name ? "name-error" : undefined}
@@ -218,42 +251,35 @@ export const StockManagementAddPage = () => {
 
         <RightContainer>
           <p>재무상태표 ∙ 손익계산서</p>
-          {financialFields.map((item, index) => (
+          {financialFields.map(item => (
             <Controller
               key={item.name}
               name={item.name}
               control={control}
               render={({ field }) => (
                 <InputWrapper hasError={!!errors[item.name]}>
-                  <InputWithToggle>
+                  <FieldContainer>
                     <Input
                       label={item.label}
                       placeholder={`${item.label} 정보를 입력해 주세요.`}
                       type={"money"}
-                      value={formatPrice(field.value)}
-                      onChange={handlePriceChange(item.name, field.onChange)}
+                      value={formatPrice(field.value, item.allowNegative)}
+                      onChange={handlePriceChange(item.name, item.allowNegative, field.onChange)}
                       rightText="억원"
                       state={errors[item.name] ? "error" : "default"}
                       aria-invalid={!!errors[item.name]}
                       aria-describedby={errors[item.name] ? `${item.name}-error` : undefined}
                     />
-                    {(item.name === "profit" || item.name === "netProfit") && (
-                      <ToggleButton
-                        type="button"
-                        onClick={() => {
-                          const currentValue = field.value;
-                          if (currentValue.startsWith("-")) {
-                            field.onChange(currentValue.substring(1));
-                          } else if (currentValue !== "" && currentValue !== "0") {
-                            field.onChange(`-${currentValue}`);
-                          }
-                        }}
+                    {item.allowNegative && (
+                      <NegativeHint
                         isNegative={field.value.startsWith("-")}
-                      >
-                        {field.value.startsWith("-") ? "+" : "−"}
-                      </ToggleButton>
+                        onClick={() =>
+                          toggleNegative(item.name as "profitBen" | "netProfit", field.value, field.onChange)
+                        }>
+                        {field.value.startsWith("-") ? "음수" : "양수"}
+                      </NegativeHint>
                     )}
-                  </InputWithToggle>
+                  </FieldContainer>
                   {errors[item.name] && (
                     <ErrorMessage
                       id={`${item.name}-error`}
@@ -265,6 +291,16 @@ export const StockManagementAddPage = () => {
               )}
             />
           ))}
+          <NegativeGuide>
+            <GuideTitle>음수 입력 가이드</GuideTitle>
+            <GuideText>• 매출이익과 당기순이익은 음수로 입력 가능합니다</GuideText>
+            <GuideText>
+              • 숫자 앞에 <strong>-</strong> 기호를 입력하거나
+            </GuideText>
+            <GuideText>
+              • <strong>"양수" / "음수"</strong> 버튼을 클릭하여 전환할 수 있습니다
+            </GuideText>
+          </NegativeGuide>
         </RightContainer>
       </StockSetting>
     </Container>
@@ -272,6 +308,7 @@ export const StockManagementAddPage = () => {
 };
 
 const Container = styled.div`
+  width: 100%;
   padding: 40px;
   height: 100%;
   display: flex;
@@ -329,38 +366,60 @@ const InputWrapper = styled.div<{
   width: 100%;
 `;
 
-const InputWithToggle = styled.div`
+const FieldContainer = styled.div`
   position: relative;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   gap: 8px;
 `;
 
-const ToggleButton = styled.button<{
+const NegativeHint = styled.button<{
   isNegative: boolean;
 }>`
-  width: 32px;
-  height: 32px;
-  border: 1px solid ${color.zinc[300]};
-  border-radius: 6px;
-  background-color: ${({ isNegative }) => isNegative ? color.red[50] : color.zinc[50]};
-  color: ${({ isNegative }) => isNegative ? color.red[600] : color.zinc[600]};
-  font-size: 16px;
-  font-weight: 600;
+  position: absolute;
+  right: 40px;
+  top: 10%;
+  transform: translateY(-50%);
+  padding: 4px 8px;
+  border: 1px solid ${({ isNegative }) => (isNegative ? color.red[300] : color.green[300])};
+  border-radius: 4px;
+  background-color: ${({ isNegative }) => (isNegative ? color.red[50] : color.green[50])};
+  color: ${({ isNegative }) => (isNegative ? color.red[700] : color.green[700])};
+  font: ${font.b2};
+  font-weight: 500;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: all 0.2s ease;
-  margin-bottom: 8px;
+  z-index: 2;
 
   &:hover {
-    background-color: ${({ isNegative }) => isNegative ? color.red[100] : color.zinc[100]};
-    border-color: ${({ isNegative }) => isNegative ? color.red[400] : color.zinc[400]};
+    background-color: ${({ isNegative }) => (isNegative ? color.red[100] : color.green[100])};
+    border-color: ${({ isNegative }) => (isNegative ? color.red[400] : color.green[400])};
   }
+`;
 
-  &:active {
-    transform: scale(0.95);
+const NegativeGuide = styled.div`
+  margin-top: 16px;
+  padding: 16px;
+  background-color: ${color.zinc[50]};
+  border: 1px solid ${color.zinc[200]};
+  border-radius: 8px;
+`;
+
+const GuideTitle = styled.div`
+  font: ${font.b2};
+  font-weight: 600;
+  color: ${color.zinc[700]};
+  margin-bottom: 8px;
+`;
+
+const GuideText = styled.div`
+  font: ${font.b2};
+  color: ${color.zinc[600]};
+  margin-bottom: 4px;
+
+  strong {
+    color: ${color.red[600]};
+    font-weight: 600;
   }
 `;
 

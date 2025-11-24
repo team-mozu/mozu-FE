@@ -9,6 +9,7 @@ export const protectedRoutes = [
     children: [
       {
         path: "stock-management",
+        element: <pages.StockManagementLayout />,
         children: [
           {
             index: true,
@@ -16,16 +17,11 @@ export const protectedRoutes = [
           },
           {
             path: ":id",
-            children: [
-              {
-                index: true,
-                element: <pages.StockManagementPage />,
-              },
-              {
-                path: "edit",
-                element: <pages.StockManagementEditPage />,
-              },
-            ],
+            element: <pages.StockManagementPage />,
+          },
+          {
+            path: ":id/edit",
+            element: <pages.StockManagementEditPage />,
           },
           {
             path: "add",
@@ -35,6 +31,7 @@ export const protectedRoutes = [
       },
       {
         path: "article-management",
+        element: <pages.ArticleManagementLayout />,
         children: [
           {
             index: true,
@@ -42,16 +39,11 @@ export const protectedRoutes = [
           },
           {
             path: ":id",
-            children: [
-              {
-                index: true,
-                element: <pages.ArticleManagementPage />,
-              },
-              {
-                path: "edit",
-                element: <pages.ArticleManagementEditPage />,
-              },
-            ],
+            element: <pages.ArticleManagementPage />,
+          },
+          {
+            path: ":id/edit",
+            element: <pages.ArticleManagementEditPage />,
           },
           {
             path: "add",
