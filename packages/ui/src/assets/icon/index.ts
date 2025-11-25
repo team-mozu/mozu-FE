@@ -27,4 +27,6 @@ export * from "./StockNoLogo";
 export * from "./Trophy";
 export * from "./Users";
 export * from "./Warning";
-export const noImgIcon = "./noImgIcon";
+
+import noImgIconSvg from "./noImgIcon.svg";
+export const noImgIcon = noImgIconSvg;
