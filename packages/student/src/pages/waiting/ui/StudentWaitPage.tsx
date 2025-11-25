@@ -8,10 +8,19 @@ import { type ClassNextInvStartData, SSELoadingSpinner, type TeamSSEConnectedDat
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
-  const { isConnected, isConnecting } = useTypeSSE(
+  const { isConnecting, isReconnecting, retryCount } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     undefined,
-    undefined,
+    (error, isInitialConnection) => {
+      if (isInitialConnection) {
+        console.error("SSE 초기 연결 실패:", error);
+        Toast("서버 연결에 실패했습니다. 로그인 페이지로 이동합니다.", {
+          type: "error",
+        });
+      } else {
+        console.log("SSE 연결 일시적 끊김, 재연결 시도 중...");
+      }
+    },
     {
       TEAM_SSE_CONNECTED: (data: TeamSSEConnectedData) => {
         console.log(data);
@@ -51,7 +60,11 @@ export const StudentWaitPage = () => {
 
   return (
     <AppContainer>
-      <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
+      {/* 재연결 시도 중일 때만 SSELoadingSpinner 표시 */}
+      <SSELoadingSpinner
+        isVisible={isReconnecting}
+        retryCount={retryCount}
+      />
 
       <Header
         isAdmin={false}
@@ -69,16 +82,42 @@ export const StudentWaitPage = () => {
 
           <ContentArea>
             <TextDiv>
-              <p>모의투자 시작을 기다리는중...</p>
-              <span>2025년도 모의투자</span>
+              <p>
+                {isReconnecting
+                  ? "연결 재시도 중..."
+                  : "모의투자 시작을 기다리는중..."
+                }
+              </p>
+              <span>
+                {isReconnecting
+                  ? `${retryCount}번째 재연결 시도 중`
+                  : "2025년도 모의투자"
+                }
+              </span>
             </TextDiv>
 
-            <LoadingSection>
-              <LoadingBar>
-                <LoadingFill />
-              </LoadingBar>
-              <LoadingText>모의투자 준비중..</LoadingText>
-            </LoadingSection>
+            {/* 재연결 중이 아닐 때만 로딩 바 표시 */}
+            {!isReconnecting && (
+              <LoadingSection>
+                <LoadingBar>
+                  <LoadingFill />
+                </LoadingBar>
+                <LoadingText>
+                  {isConnecting ? "연결 중.." : "모의투자 준비중.."}
+                </LoadingText>
+              </LoadingSection>
+            )}
+
+            {/* 재연결 중일 때는 재연결 상태 표시 */}
+            {isReconnecting && (
+              <ReconnectInfo>
+                <ReconnectSpinner />
+                <ReconnectText>
+                  일시적으로 연결이 끊겼습니다. <br />
+                  자동으로 재연결을 시도합니다...
+                </ReconnectText>
+              </ReconnectInfo>
+            )}
           </ContentArea>
 
           <InfoBox>
@@ -86,7 +125,10 @@ export const StudentWaitPage = () => {
               size={18}
               color={color.orange[600]}
             />
-            모의투자가 시작되면 자동으로 투자 페이지로 넘어가요.
+            {isReconnecting
+              ? "연결이 복구되면 자동으로 모의투자 대기 상태로 돌아가요."
+              : "모의투자가 시작되면 자동으로 투자 페이지로 넘어가요."
+            }
           </InfoBox>
         </MainSection>
 
@@ -115,7 +157,26 @@ export const StudentWaitPage = () => {
   );
 };
 
-// 애니메이션
+// 새로 추가된 애니메이션
+const reconnectSpin = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
+const pulseWarning = keyframes`
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+`;
+
+// 기존 애니메이션 유지
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -303,6 +364,38 @@ const LoadingText = styled.div`
   font-weight: 500;
 `;
 
+// 재연결 관련 새로운 스타일 컴포넌트
+const ReconnectInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: ${color.orange[50]};
+  border: 1px solid ${color.orange[200]};
+  border-radius: 20px;
+  width: 100%;
+  max-width: 300px;
+  animation: ${pulseWarning} 2s ease-in-out infinite;
+`;
+
+const ReconnectSpinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 3px solid ${color.orange[200]};
+  border-top: 3px solid ${color.orange[600]};
+  border-radius: 50%;
+  animation: ${reconnectSpin} 1s linear infinite;
+`;
+
+const ReconnectText = styled.div`
+  font: ${font.b2};
+  color: ${color.orange[700]};
+  text-align: center;
+  line-height: 1.4;
+  font-weight: 500;
+`;
+
 const InfoBox = styled.p`
   font: ${font.b1};
   color: ${color.zinc[700]};
@@ -351,39 +444,4 @@ const CircleElement = styled.div<{
   ${props => props.bottom && `bottom: ${props.bottom};`}
   ${props => props.left && `left: ${props.left};`}
   ${props => props.right && `right: ${props.right};`}
-`;
-
-// 반응형 디자인
-const MediaQuery = `
-  @media (max-width: 768px) {
-    ${MainSection} {
-      padding: 48px 32px;
-      gap: 40px;
-      margin: 0 16px;
-    }
-    
-    ${IconDiv} {
-      width: 80px;
-      height: 80px;
-    }
-    
-    ${TextDiv} > p {
-      font-size: 28px;
-    }
-    
-    ${InfoBox} {
-      font-size: 14px;
-      padding: 16px 20px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    ${MainSection} {
-      padding: 40px 24px;
-    }
-    
-    ${Container} {
-      padding: 20px 16px;
-    }
-  }
 `;

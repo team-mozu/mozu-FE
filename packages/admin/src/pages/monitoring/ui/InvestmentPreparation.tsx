@@ -38,10 +38,19 @@ export const InvestmentPreparation = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const { isConnected, isConnecting } = useTypeSSE(
+  const { isReconnecting, retryCount } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/lesson/sse/${id}`,
     undefined,
-    undefined,
+    (error, isInitialConnection) => {
+      if (isInitialConnection) {
+        console.error("SSE 초기 연결 오류:", error);
+        Toast("서버 연결에 실패했습니다. 수업 관리 페이지로 이동합니다.", {
+          type: "error"
+        });
+      } else {
+        console.error("SSE 연결 일시적 끊김, 재연결 시도 중...");
+      }
+    },
     {
       LESSON_SSE_CONNECTED: (data: LessonSSEConnectedData) => {
         console.log("SSE 연결 성공:", data.message);
@@ -112,7 +121,7 @@ export const InvestmentPreparation = () => {
 
   return (
     <>
-      <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
+      <SSELoadingSpinner isVisible={isReconnecting} retryCount={retryCount} />
       {isModalOpen && (
         <Modal
           mainTitle={"수업을 취소하실 건가요?"}

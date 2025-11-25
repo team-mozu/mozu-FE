@@ -14,20 +14,25 @@ import { FullPageLoader, SSELoadingSpinner } from "@/shared/ui";
 export const ImprovedClassMonitoringPage = () => {
   const [isOpenArticle, setIsOpenArticle] = useState(false);
   const [isOpenClass, setIsOpenClass] = useState(false);
-  const [isCancleModalOpen, setIsCancleModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isEndModalOpen, setIsEndModalOpen] = useState(false);
 
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { isConnected, isConnecting } = useTypeSSE(
+  const { isReconnecting, retryCount } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/lesson/sse/${id}`,
-    (data: any) => {
-      console.log("[Admin SSE]", data);
-    },
-    (error: any) => {
-      console.log("[Admin SSE Error]", error);
+    undefined,
+    (error, isInitialConnection) => {
+      if (isInitialConnection) {
+        console.error("SSE 초기 연결 실패:", error);
+        Toast("서버 연결에 실패했습니다. 수업 관리 페이지로 이동합니다.", {
+          type: "error",
+        });
+      } else {
+        console.log("SSE 연결 일시적 끊김, 재연결 시도 중...");
+      }
     },
     {
       TEAM_INV_END: (data) => {
@@ -67,7 +72,7 @@ export const ImprovedClassMonitoringPage = () => {
 
   const endClass = useEndClass(id, () => {
     setIsEndModalOpen(false);
-    setIsCancleModalOpen(false);
+    setIsCancelModalOpen(false);
     Toast("수업을 성공적으로 종료했습니다.", {
       type: "success",
     });
@@ -76,7 +81,7 @@ export const ImprovedClassMonitoringPage = () => {
 
   const stopClass = useEndClass(id, () => {
     setIsEndModalOpen(false);
-    setIsCancleModalOpen(false);
+    setIsCancelModalOpen(false);
     Toast("수업을 성공적으로 중단했습니다.", {
       type: "success",
     });
@@ -111,7 +116,7 @@ export const ImprovedClassMonitoringPage = () => {
   const openModal = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { id } = e.currentTarget;
     if (id === "cancel") {
-      setIsCancleModalOpen(true);
+      setIsCancelModalOpen(true);
     } else if (id === "end") {
       setIsEndModalOpen(true);
     } else {
@@ -123,8 +128,8 @@ export const ImprovedClassMonitoringPage = () => {
 
   return (
     <>
-      <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
-      {isCancleModalOpen && (
+      <SSELoadingSpinner isVisible={isReconnecting} retryCount={retryCount} />
+      {isCancelModalOpen && (
         <Modal
           mainTitle="모의투자 취소"
           subTitle="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
@@ -135,8 +140,8 @@ export const ImprovedClassMonitoringPage = () => {
               color={color.red[400]}
             />
           }
-          isOpen={isCancleModalOpen}
-          setIsOpen={setIsCancleModalOpen}
+          isOpen={isCancelModalOpen}
+          setIsOpen={setIsCancelModalOpen}
           isPending={stopClass.isPending}
           successBtnChildren={"확인"}
         />

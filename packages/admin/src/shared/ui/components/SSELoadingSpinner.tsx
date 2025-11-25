@@ -4,9 +4,10 @@ import { color, font } from "@mozu/design-token";
 
 interface SSELoadingSpinnerProps {
   isVisible: boolean;
+  retryCount: number;
 }
 
-export const SSELoadingSpinner = ({ isVisible }: SSELoadingSpinnerProps) => {
+export const SSELoadingSpinner = ({ isVisible, retryCount }: SSELoadingSpinnerProps) => {
   if (!isVisible) return null;
 
   return (
@@ -16,7 +17,7 @@ export const SSELoadingSpinner = ({ isVisible }: SSELoadingSpinnerProps) => {
           <Spinner />
         </SpinnerContainer>
         <LoadingText>서버 연결 중...</LoadingText>
-        <SubText>실시간 모니터링 연결을 설정하고 있습니다.</SubText>
+        <SubText>실시간 모니터링 연결을 설정하고 있습니다. (재시도 시도 횟수 {retryCount}회...)</SubText>
       </LoadingContent>
     </LoadingOverlay>
   );

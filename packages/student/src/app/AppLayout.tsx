@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import { AnimatePresence } from "framer-motion";
 import { Header, Toast } from "@mozu/ui";
 import { removeCookiesAsync } from "@mozu/util-config";
 import { useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence } from "framer-motion";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useGetClassItem } from "@/entities/class";
 import { useGetTeamDetail } from "@/entities/user";
@@ -28,26 +28,29 @@ export const AppLayout = () => {
     isAdminMargin: true,
   };
 
-  // 전역 SSE 연결 관리
-  const { isConnected, isConnecting } = useTypeSSE(
+  // 전역 SSE 연결 관리 - 수정된 훅 사용
+  const { isReconnecting } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
     undefined,
-    error => {
-      console.log(error);
+    (error, isInitialConnection) => {
+      // 에러 타입에 따라 다른 처리
+      if (isInitialConnection) {
+        console.error("[AppLayout] SSE 초기 연결 실패:", error);
+        // 초기 연결 실패 시 별도 처리 (훅에서 이미 리다이렉트 처리)
+      } else {
+        console.log("[AppLayout] SSE 연결 일시적 끊김, 재연결 시도 중...", error);
+        // 재연결 중에는 별도 Toast 없이 Spinner로 표시
+      }
     },
     {
       CLASS_NEXT_INV_START: () => {
         console.log("[AppLayout] 다음 투자 라운드 시작됨 - 팀 데이터 갱신");
         // React Query 캐시 무효화를 통해 서버에서 최신 데이터 가져오기
         queryClient.invalidateQueries({
-          queryKey: [
-            "team",
-          ],
+          queryKey: ["team"],
         });
         queryClient.invalidateQueries({
-          queryKey: [
-            "class",
-          ],
+          queryKey: ["class"],
         });
       },
       CLASS_CANCEL: async () => {
@@ -57,10 +60,7 @@ export const AppLayout = () => {
 
         const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
         await removeCookiesAsync(
-          [
-            "accessToken",
-            "authority",
-          ],
+          ["accessToken", "authority"],
           {
             path: "/",
             secure: true,
@@ -75,7 +75,11 @@ export const AppLayout = () => {
 
   return (
     <AppContainer>
-      <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
+      {/* 재연결 시도 중일 때만 SSELoadingSpinner 표시 */}
+      <SSELoadingSpinner
+        isVisible={isReconnecting}
+        retryCount={0} // AppLayout에서는 retryCount를 사용하지 않거나 필요시 전달
+      />
 
       <Header
         isAdmin={false}

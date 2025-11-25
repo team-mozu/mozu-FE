@@ -30,7 +30,7 @@ const ItemContent = memo(({
   onClick,
   isUp,
 }: IItemContentType) => {
-  const [imgSrc, setImgSrc] = useState<string>(itemLogo);
+  const [imgSrc, setImgSrc] = useState<string>(itemLogo ?? "");
   const [hasErrored, setHasErrored] = useState(false);
 
   // profitMoney와 profitNum이 유효한 값인지 확인 (0%도 표시)

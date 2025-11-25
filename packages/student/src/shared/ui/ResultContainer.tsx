@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, Del, HandCoins, Modal, Toast, Trophy } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { useTeamOrders } from "@/entities/transaction";
@@ -106,13 +106,18 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     });
   };
 
-  const { isConnected, isConnecting } = useTypeSSE(
+  const { isReconnecting, retryCount } = useTypeSSE(
     `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    data => {
-      console.log(data);
-    },
-    error => {
-      console.log(error);
+    undefined,
+    (error, isInitialConnection) => {
+      if (isInitialConnection) {
+        console.error("SSE 초기 연결 실패:", error);
+        Toast("서버 연결에 실패했습니다. 로그인 페이지로 이동합니다.", {
+          type: "error",
+        });
+      } else {
+        console.log("SSE 연결 일시적 끊김, 재연결 시도 중...");
+      }
     },
     {
       TEAM_SSE_CONNECTED: data => {
@@ -129,7 +134,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
 
   return (
     <>
-      <SSELoadingSpinner isVisible={isConnecting && !isConnected} />
+      <SSELoadingSpinner isVisible={isReconnecting} retryCount={retryCount} />
 
       {isOpenModal && (
         <Modal

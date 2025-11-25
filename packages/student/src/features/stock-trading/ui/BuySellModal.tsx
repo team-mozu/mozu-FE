@@ -25,7 +25,6 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   const { data: stockData } = useGetStockDetail(ItemId ?? 0);
   const { data: holdItemData } = useGetHoldItems();
   const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
-  const [cashMoney, setCashMoney] = useLocalStorage<number>("cashMoney", 0);
   const outSideRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -54,28 +53,60 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     teamData?.cashMoney,
   ]);
 
+  // 수정: 서버 데이터를 기준으로 매수/매도 가능 수량 계산
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   const maxQuantity = useMemo(() => {
-    if (!stockData || !stockData.nowMoney || !holdItemData) return 0;
+    if (!stockData || !stockData.nowMoney || !holdItemData || !teamData) return 0;
 
     if (modalType === "매수") {
-      return stockData.nowMoney > 0 ? Math.floor(cashMoney / stockData.nowMoney) : 0;
+      // 서버의 실제 현금으로 계산
+      const availableCash = teamData.cashMoney;
+      return stockData.nowMoney > 0 ? Math.floor(availableCash / stockData.nowMoney) : 0;
     } else if (modalType === "매도") {
+      // 서버의 실제 보유 주식 수량으로 계산
       const holding = holdItemData.find(item => item.itemId === stockData.itemId);
-      return holding?.quantity || 0;
+      const serverHoldingQuantity = holding?.quantity || 0;
+
+      // 로컬에서 이미 매도 주문한 수량 계산
+      const currentRound = teamData.curInvRound ?? 1;
+      const alreadySoldQuantity = tradeData
+        .filter(trade =>
+          trade.itemId === stockData.itemId &&
+          trade.orderType === "SELL" &&
+          trade.invCount === currentRound
+        )
+        .reduce((sum, trade) => sum + trade.orderCount, 0);
+
+      // 실제로 매도 가능한 수량 = 서버 보유 수량 - 이미 매도 주문한 수량
+      return Math.max(0, serverHoldingQuantity - alreadySoldQuantity);
     }
     return 0;
   }, [
-    cashMoney,
+    teamData?.cashMoney,
     stockData?.nowMoney,
     modalType,
     holdItemData,
     stockData?.itemId,
+    teamData?.curInvRound,
+    tradeData,
   ]);
 
-  if (!stockData || !holdItemData || stockData.nowMoney === undefined) {
+  // 수정: 실제 매수 가능 현금 계산
+  const availableCash = useMemo(() => {
+    if (!teamData) return 0;
+
+    const currentRound = teamData.curInvRound ?? 1;
+    const alreadyBoughtAmount = tradeData
+      .filter(trade => trade.orderType === "BUY" && trade.invCount === currentRound)
+      .reduce((sum, trade) => sum + trade.totalMoney, 0);
+
+    return teamData.cashMoney - alreadyBoughtAmount;
+  }, [teamData, tradeData]);
+
+  if (!stockData || !holdItemData || stockData.nowMoney === undefined || !teamData) {
     return null;
   }
+
   const nowMoney = stockData!.nowMoney;
   const totalAmount = (numericQuantity * nowMoney).toLocaleString("ko-KR") + "원";
 
@@ -92,18 +123,37 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       return;
     }
 
-    if (modalType === "매수" && numericQuantity * stockData?.nowMoney > cashMoney) {
-      Toast("보유하고 있는 현금보다 많이 매수할 수 없습니다", {
-        type: "error",
-      });
-      return;
+    // 수정: 서버 데이터 기준으로 유효성 검사
+    if (modalType === "매수") {
+      const currentRound = teamData.curInvRound ?? 1;
+      const alreadyBoughtAmount = tradeData
+        .filter(trade => trade.orderType === "BUY" && trade.invCount === currentRound)
+        .reduce((sum, trade) => sum + trade.totalMoney, 0);
+
+      const totalCost = numericQuantity * stockData.nowMoney;
+
+      if (totalCost > (teamData.cashMoney - alreadyBoughtAmount)) {
+        Toast("보유하고 있는 현금보다 많이 매수할 수 없습니다", {
+          type: "error",
+        });
+        return;
+      }
     }
 
     if (modalType === "매도") {
       const holding = holdItemData.find(item => item.itemId === itemIdNum);
-      const holdingCount = holding?.quantity || 0;
+      const serverHoldingQuantity = holding?.quantity || 0;
 
-      if (numericQuantity > holdingCount) {
+      const currentRound = teamData.curInvRound ?? 1;
+      const alreadySoldQuantity = tradeData
+        .filter(trade =>
+          trade.itemId === itemIdNum &&
+          trade.orderType === "SELL" &&
+          trade.invCount === currentRound
+        )
+        .reduce((sum, trade) => sum + trade.orderCount, 0);
+
+      if (numericQuantity > (serverHoldingQuantity - alreadySoldQuantity)) {
         Toast("보유하고 있는 종목의 수량보다 많이 매도할 수 없습니다", {
           type: "error",
         });
@@ -150,11 +200,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
         ];
       }
 
-      const totalTradeMoney = numericQuantity * stockData.nowMoney;
-      const updatedCashMoney = modalType === "매수" ? cashMoney - totalTradeMoney : cashMoney + totalTradeMoney;
-
-      setCashMoney(updatedCashMoney);
-
+      // 수정: 로컬 cashMoney 업데이트 제거 (서버 데이터를 신뢰)
       setTradeData(updatedTradeData);
       Toast(`거래가 성공적으로 완료되었습니다.`, {
         type: "success",
@@ -185,7 +231,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     setQuantity(maxQuantity.toString());
   };
 
-  // UI 데이터
+  // UI 데이터 수정
   const footerData = [
     {
       text: `${modalType}가능 수량`,
@@ -200,6 +246,14 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       value: totalAmount,
     },
   ];
+
+  // 매수 모드일 때 사용 가능한 현금 표시
+  if (modalType === "매수") {
+    footerData.unshift({
+      text: "사용 가능 현금",
+      value: `${availableCash.toLocaleString()}원`,
+    });
+  }
 
   const isBuyMode = modalType === "매수";
   const themeColor = isBuyMode ? color.red[500] : color.blue[500];
@@ -296,12 +350,12 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
               {footerData.map((data, index) => (
                 <InfoRow
                   key={index}
-                  isTotal={index === 2}>
+                  isTotal={index === footerData.length - 1}>
                   <InfoLabel>{data.text}</InfoLabel>
                   <InfoValue
-                    isTotal={index === 2}
+                    isTotal={index === footerData.length - 1}
                     themeColor={themeColor}>
-                    {index === 2 ? totalAmount : data.value}
+                    {data.value}
                   </InfoValue>
                 </InfoRow>
               ))}
@@ -330,12 +384,6 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     </AnimatePresence>
   );
 };
-
-// 애니메이션 키프레임
-const shimmer = keyframes`
-  0% { background-position: -200px 0; }
-  100% { background-position: calc(200px + 100%) 0; }
-`;
 
 const pulse = keyframes`
   0%, 100% { opacity: 1; }
