@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import type { AuthResponse, StudentLoginProps, TeamDeatilResponse, TeamEndProps, TeamResultResponse } from "./type";
+import type { AuthResponse, StudentLoginProps, TeamDetailResponse, TeamEndProps, TeamResultResponse } from "./type";
 
 const router = "/team";
 
@@ -71,14 +71,14 @@ export const useStudentLogin = () => {
   });
 };
 
-export const useGetTeamDetail = (options?: UseQueryOptions<TeamDeatilResponse, AxiosError>) => {
-  return useQuery<TeamDeatilResponse, AxiosError>({
+export const useGetTeamDetail = (options?: UseQueryOptions<TeamDetailResponse, AxiosError>) => {
+  return useQuery<TeamDetailResponse, AxiosError>({
     queryKey: [
       "team",
       "detail",
     ],
     queryFn: async () => {
-      const { data } = await instance.get<TeamDeatilResponse>(`${router}/detail`);
+      const { data } = await instance.get<TeamDetailResponse>(`${router}/detail`);
       return data;
     },
     staleTime: 1000,

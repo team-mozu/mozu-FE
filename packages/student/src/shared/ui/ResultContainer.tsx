@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Del, HandCoins, Modal, Toast, Trophy } from "@mozu/ui";
+import { Button, Del, HandCoins, Modal, Trophy } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { useTeamOrders } from "@/entities/transaction";
 import { useGetTeamDetail, useTeamResult } from "@/entities/user";
 import { resetShownInvDegs } from "@/pages/home/ui/HomePage";
-import { useTypeSSE } from "@/shared";
+import { useSSE } from "@/shared/contexts";
 import { roundToFixed } from "../lib";
 import { AssetChange } from "./AssetChange";
 import { History } from "./History";
@@ -79,6 +79,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
   const handleContinue = () => {
     resetShownInvDegs();
 
+    setIsWait(true);
     navigate(`/${classId}`, {
       replace: true,
     });
@@ -106,31 +107,20 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
     });
   };
 
-  const { isReconnecting, retryCount } = useTypeSSE(
-    `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    undefined,
-    (error, isInitialConnection) => {
-      if (isInitialConnection) {
-        console.error("SSE 초기 연결 실패:", error);
-        Toast("서버 연결에 실패했습니다. 로그인 페이지로 이동합니다.", {
-          type: "error",
-        });
-      } else {
-        console.log("SSE 연결 일시적 끊김, 재연결 시도 중...");
-      }
-    },
-    {
-      TEAM_SSE_CONNECTED: data => {
-        console.log("[ResultContainer] SSE 연결 완료:", data);
-      },
-      CLASS_NEXT_INV_START: () => {
-        Toast("다음 투자가 시작되었습니다", {
-          type: "info",
-        });
-        setIsWait(false);
-      },
-    },
-  );
+  // SSE Context에서 상태 가져오기
+  const { isReconnecting, retryCount, lastData, clearLastData } = useSSE();
+
+  // 투자 시작 이벤트 처리 - 결과 페이지에서는 상태만 변경
+  useEffect(() => {
+    if (lastData?.type === "CLASS_NEXT_INV_START" && lastData.lessonId && teamResult && lastData.curInvRound === teamResult.invRound) {
+      console.log("🔍 [DEBUG] 결과 페이지에서 투자 시작 이벤트 처리:", lastData);
+      console.log("🔍 [DEBUG] 현재 완료된 차수:", teamResult.invRound, "다음 투자 차수:", lastData.curInvRound);
+
+      setIsWait(false);
+      // 처리 완료 후 이벤트 데이터를 초기화하여 중복 처리 방지
+      clearLastData();
+    }
+  }, [lastData, teamResult, clearLastData]);
 
   return (
     <>
@@ -210,6 +200,16 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                 totalMoney={teamResult?.totalMoney ?? 0}
               />
               <Sub>
+                <MoneyBreakdown>
+                  <label>투자중인 금액</label>
+                  <p>{teamResult?.investingMoney?.toLocaleString() ?? "0"}원</p>
+                </MoneyBreakdown>
+
+                <MoneyBreakdown>
+                  <label>주문 가능 금액</label>
+                  <p>{teamResult?.availableMoney?.toLocaleString() ?? "0"}원</p>
+                </MoneyBreakdown>
+
                 <Proceeds isPositive={isValueProfitPositive}>
                   <label>수익금</label>
                   <p>
@@ -225,6 +225,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                     {profitNumStr}
                   </p>
                 </Return>
+
 
                 <TotalDeal>
                   <label>총 거래 횟수</label>
@@ -419,6 +420,18 @@ const Return = styled.div<ValueStyleProps>`
   > p {
     font: ${font.t3};
     color: ${({ isPositive }) => (isPositive ? color.red[500] : color.blue[500])}; // 🔥 조건부 색상
+  }
+`;
+
+const MoneyBreakdown = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font: ${font.b2};
+  color: ${color.zinc[600]};
+  > p {
+    font: ${font.t3};
+    color: ${color.orange[600]};
   }
 `;
 

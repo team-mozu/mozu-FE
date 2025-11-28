@@ -60,6 +60,7 @@ export const useTypeSSE = (
   const eventHandlersRef = useRef(eventHandlers);
   const retryCountRef = useRef(retryCount);
   const isConnectedRef = useRef(isConnected);
+  const lastEventIdRef = useRef<string | null>(null);
 
   // 최신 콜백들을 ref에 업데이트
   useEffect(() => {
@@ -93,13 +94,21 @@ export const useTypeSSE = (
     }
 
     console.log("[Admin SSE] 연결 시도 중...");
+
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    if (lastEventIdRef.current) {
+      console.log(`[SSE] 재연결 시도: Last-Event-ID ${lastEventIdRef.current} 전송`);
+      headers["Last-Event-ID"] = lastEventIdRef.current;
+    }
+
     setIsConnecting(true);
     setIsReconnecting(false);
 
     const eventSource = new EventSourcePolyfill(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: headers,
       heartbeatTimeout: 1000 * 60 * 30,
     });
 
@@ -133,6 +142,9 @@ export const useTypeSSE = (
 
     eventSource.onmessage = e => {
       try {
+        if (e.lastEventId) {
+          lastEventIdRef.current = e.lastEventId;
+        }
         const parsed = JSON.parse(e.data);
         onMessageRef.current?.(parsed);
       } catch (err) {
@@ -162,6 +174,9 @@ export const useTypeSSE = (
         if (eventType !== "LESSON_SSE_CONNECTED") {
           eventSource.addEventListener(eventType, (e: any) => {
             try {
+              if (e.lastEventId) {
+                lastEventIdRef.current = e.lastEventId;
+              }
               const eventData = JSON.parse(e.data);
               console.log(`[Admin SSE] ${eventType} 수신:`, eventData);
               handler?.(eventData);

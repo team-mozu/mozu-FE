@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Check } from "@mozu/ui";
 import { useState } from "react";
-import { is } from "zod/v4/locales";
 import type { TeamInfo } from "@/app/store";
 import { roundToFixed } from "@/shared/lib";
 import { DegCurrentModal, TeamCurrentModal } from ".";
@@ -56,7 +55,9 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
             {tableHeaders.map((tableHead, index) => (
               <Th
                 key={index}
-                isLeft={index === 0}>
+                isLeft={index === 0}
+                isTotal={index === tableHeaders.length - 1}
+                columnCount={tableHeaders.length}>
                 {tableHead}
               </Th>
             ))}
@@ -71,8 +72,12 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
               <Tr
                 isNotBorded={index + 1 === teamInfo.length}
                 key={index}>
-                <Td isLeft>
-                  <TeamName isTeamName>{team.teamName}</TeamName>
+                <Td isLeft columnCount={tableHeaders.length}>
+                  <TeamName
+                    isTeamName
+                    onClick={() => handleOpenModal(team.teamId, team.teamName)}>
+                    {team.teamName}
+                  </TeamName>
                   {team.trade.length === invDeg && (
                     <CompletedBadge>
                       투자완료{" "}
@@ -86,15 +91,12 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                 {Array.from({
                   length: maxInvDeg,
                 }).map((_, degIndex) => {
-                  const currentDeg = degIndex + 1; // 1차, 2차, 3차...
+                  const currentDeg = degIndex + 1;
 
                   if (currentDeg > invDeg) {
-                    return <Td key={degIndex} />;
+                    return <Td key={degIndex} columnCount={tableHeaders.length} />;
                   }
 
-                  // 현재가는 0번째 인덱스, 1차 투자는 1번째 인덱스...
-                  // 하지만 테이블 헤더는 "1차 투자", "2차 투자"로 표시되므로
-                  // degIndex(0, 1, 2...)를 그대로 사용하여 배열 인덱스와 매칭
                   const tradeData = team.trade[degIndex];
                   const profitNum = tradeData?.profitNum;
                   const isNegative =
@@ -105,7 +107,7 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                         : profitNum && profitNum < 0;
 
                   return (
-                    <Td key={degIndex}>
+                    <Td key={degIndex} columnCount={tableHeaders.length}>
                       {tradeData === undefined ? (
                         "진행중"
                       ) : (
@@ -113,8 +115,8 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                           isTotalMoney={false}
                           isNegative={isNegative}
                           onClick={() => handleOpenDegModal(team.teamId, currentDeg)}>
-                          <span>{tradeData?.totalMoney?.toLocaleString() ?? "-"}원</span>
-                          <span>
+                          <AmountText>{tradeData?.totalMoney?.toLocaleString() ?? "-"}원</AmountText>
+                          <ProfitText isNegative={isNegative}>
                             {!isNegative && "+"}
                             {tradeData?.valMoney?.toLocaleString() ?? "0"}원 ({!isNegative && "+"}
                             {roundToFixed(
@@ -124,20 +126,20 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                               2,
                             )}
                             %)
-                          </span>
+                          </ProfitText>
                         </Rate>
                       )}
                     </Td>
                   );
                 })}
                 {/* 총자산 컬럼 */}
-                <Td>
+                <Td isTotal columnCount={tableHeaders.length}>
                   {team.trade.length > 0 ? (
                     <Rate
                       isTotalMoney={true}
                       isNegative={isNegative}>
-                      <span>{team.trade.at(-1)?.totalMoney?.toLocaleString() ?? "0"}원</span>
-                      <span>
+                      <AmountText>{team.trade.at(-1)?.totalMoney?.toLocaleString() ?? "0"}원</AmountText>
+                      <ProfitText isNegative={isNegative}>
                         {!isNegative && "+"}
                         {team.trade.at(-1)?.valMoney?.toLocaleString() ?? "0"}원 ({!isNegative && "+"}
                         {(() => {
@@ -147,7 +149,7 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                           return roundToFixed(numValue, 2);
                         })()}
                         %)
-                      </span>
+                      </ProfitText>
                     </Rate>
                   ) : (
                     "진행중"
@@ -198,11 +200,18 @@ const Tr = styled.tr<{
   background-color: ${({ isHeader }) => isHeader && `${color.orange[50]}`};
 `;
 
+// 수정: 팀명 30%, 나머지 컬럼들 70% 균등 분배
 const Th = styled.th<{
   isNotBorded?: boolean;
   isLeft?: boolean;
+  isTotal?: boolean;
+  columnCount: number;
 }>`
-  flex: ${({ isLeft }) => (isLeft ? "1" : "0 0 11.11%")};
+  flex: ${({ isLeft, columnCount }) => {
+    if (isLeft) return "0 0 30%"; // 팀명 컬럼 30% 고정
+    // 나머지 컬럼들: 70%를 (columnCount - 1)개로 균등 분배
+    return `0 0 ${70 / (columnCount - 1)}%`;
+  }};
   border-right: 1px solid ${color.zinc[200]};
   padding: 16px;
   display: flex;
@@ -218,9 +227,14 @@ const Th = styled.th<{
 const Td = styled.td<{
   isNotBorded?: boolean;
   isLeft?: boolean;
-  isTeamName?: boolean;
+  isTotal?: boolean;
+  columnCount: number;
 }>`
-  flex: ${({ isLeft }) => (isLeft ? "1" : "0 0 11.11%")};
+  flex: ${({ isLeft, columnCount }) => {
+    if (isLeft) return "0 0 30%"; // 팀명 컬럼 30% 고정
+    // 나머지 컬럼들: 70%를 (columnCount - 1)개로 균등 분배
+    return `0 0 ${70 / (columnCount - 1)}%`;
+  }};
   border-right: 1px solid ${color.zinc[200]};
   padding: 16px;
   display: flex;
@@ -228,7 +242,6 @@ const Td = styled.td<{
   align-items: center;
   gap: 6px;
   ${font.t4};
-  ${({ isTeamName }) => isTeamName && "cursor: pointer"};
   
   &:last-child {
     border-right: none;
@@ -256,13 +269,7 @@ const Rate = styled.div<{
   gap: 4px;
   align-items: end;
   width: 100%;
-  & > span:nth-of-type(1) {
-    ${font.t1};
-  }
-  & > span:nth-of-type(2) {
-    ${font.l1};
-    color: ${({ isNegative }) => (isNegative ? color.blue[500] : color.red[500])};
-  }
+  min-width: 0; // flex 컨테이너 내에서 줄어들 수 있도록
   
   ${({ isTotalMoney }) => !isTotalMoney && {
     cursor: "pointer",
@@ -272,8 +279,36 @@ const Rate = styled.div<{
   }};
 `;
 
+const AmountText = styled.span`
+  ${font.t1};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+`;
+
+const ProfitText = styled.span<{
+  isNegative: boolean | null | undefined;
+}>`
+  ${font.l1};
+  color: ${({ isNegative }) => (isNegative ? color.blue[500] : color.red[500])};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+`;
+
 const TeamName = styled.span<{
   isTeamName?: boolean;
 }>`
-font: ${font.t2};
+  font: ${font.t2};
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  
+  &:hover {
+    text-decoration: underline;
+  }
 `;

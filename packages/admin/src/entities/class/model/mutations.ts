@@ -1,7 +1,16 @@
 import { Toast } from "@mozu/ui";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createLesson, deleteLesson, endLesson, nextDegree, startLesson, toggleStar, updateLesson } from "../api";
+import {
+  createLesson,
+  deleteLesson,
+  endLesson,
+  nextDegree,
+  startDegree,
+  startLesson,
+  toggleStar,
+  updateLesson,
+} from "../api";
 import type {
   LessonCreateRequest,
   LessonCreateResponse,
@@ -221,6 +230,57 @@ export const useNextDegree = (id?: string, onSuccessCallback?: () => void) => {
     },
     onError: () => {
       Toast("수업 진행에 실패했습니다.", {
+        type: "error",
+      });
+    },
+  });
+};
+
+/**
+ * 수업을 시작하는 React Query Mutation 훅입니다.
+ * 성공 시 성공 토스트를 표시하고 모니터링 페이지로 이동하거나 콜백을 실행합니다.
+ * @param {string} id - 시작할 수업의 ID (UUID)
+ * @param {Function} [onSuccessCallback] - 시작 성공 시 실행될 콜백 함수
+ * @returns {UseMutationResult} 수업 시작 mutation 객체
+ */
+export const useStartDegree = (id?: string, onSuccessCallback?: () => void) => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => startDegree(id!),
+    onSuccess: () => {
+      Toast(`수업이 시작되었습니다.`, {
+        type: "success",
+      });
+
+      // React Query 캐시 무효화 - 수업 및 팀 관련 데이터 새로고침
+      queryClient.invalidateQueries({
+        queryKey: [
+          "getClass",
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "getMonitoring",
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "getTeam",
+        ],
+      });
+
+      if (onSuccessCallback) {
+        onSuccessCallback();
+      } else {
+        const newPath = pathname.replace(/\/start$/, "/monitoring");
+        navigate(newPath);
+      }
+    },
+    onError: () => {
+      Toast("수업 시작에 실패했습니다.", {
         type: "error",
       });
     },

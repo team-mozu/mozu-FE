@@ -16,13 +16,28 @@ export interface ClassNextInvStartData {
   schoolName: string;
 }
 
+export interface ClassStartData {
+  lessonId: string;
+  curInvRound: number;
+  teamId: string;
+  teamName: string;
+  schoolName: string;
+}
+
 export interface ClassCancelData {
   classId: string;
   teamId: string;
 }
 
+export interface TeamPartInData {
+  teamId: string;
+  teamName: string;
+  schoolName: string;
+}
+
 export type EventHandlers = {
   TEAM_SSE_CONNECTED?: (data: TeamSSEConnectedData) => void;
+  CLASS_START?: (data: ClassStartData) => void;
   CLASS_NEXT_INV_START?: (data: ClassNextInvStartData) => void;
   CLASS_CANCEL?: (data: ClassCancelData) => void;
 };
@@ -38,6 +53,7 @@ export const useTypeSSE = (
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(true);
   const [isReconnecting, setIsReconnecting] = useState(false);
@@ -49,6 +65,7 @@ export const useTypeSSE = (
   const eventHandlersRef = useRef(eventHandlers);
   const retryCountRef = useRef(retryCount);
   const isConnectedRef = useRef(isConnected);
+  const lastEventIdRef = useRef<string | null>(null);
 
   // 최신 값들을 ref에 업데이트
   useEffect(() => {
@@ -86,13 +103,16 @@ export const useTypeSSE = (
     }
 
     console.log("[SSE] 연결 시도 중...");
+
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${token}`,
+    };
+
     setIsConnecting(true);
     setIsReconnecting(false);
 
     const eventSource = new EventSourcePolyfill(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: headers,
       heartbeatTimeout: 1000 * 60 * 30, // 30분
     });
 
@@ -131,6 +151,9 @@ export const useTypeSSE = (
 
     eventSource.onmessage = e => {
       try {
+        if (e.lastEventId) {
+          lastEventIdRef.current = e.lastEventId;
+        }
         const parsed = JSON.parse(e.data);
         onMessageRef.current?.(parsed);
       } catch (err) {
@@ -162,6 +185,9 @@ export const useTypeSSE = (
         if (eventType !== "TEAM_SSE_CONNECTED") {
           eventSource.addEventListener(eventType, (e: any) => {
             try {
+              if (e.lastEventId) {
+                lastEventIdRef.current = e.lastEventId;
+              }
               const eventData = JSON.parse(e.data);
               console.log(`[SSE] ${eventType} 수신:`, eventData);
               handler?.(eventData);

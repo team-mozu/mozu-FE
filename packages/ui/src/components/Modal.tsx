@@ -154,7 +154,8 @@ export const Modal = ({
                 onClick={handleCancelClick}
                 hoverBackgroundColor={color.zinc[50]}
                 hoverBorderColor={color.zinc[300]}
-                hoverColor={color.zinc[900]}>
+                hoverColor={color.zinc[900]}
+                disabled={isPending}>
                 취소
               </Button>
               <Button

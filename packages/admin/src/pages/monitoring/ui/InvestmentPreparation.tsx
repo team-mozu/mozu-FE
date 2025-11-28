@@ -4,9 +4,9 @@ import { Button, Del, Modal, Toast, WarningMsg } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useTeamStore } from "@/app/store";
-import { useEndClass as useClassStop, useGetClassDetail, useNextDegree } from "@/entities/class";
+import { useEndClass as useClassStop, useGetClassDetail, useStartDegree } from "@/entities/class";
 import { ParticipationContainer } from "@/features/monitoring";
-import { type LessonSSEConnectedData, type TeamPartInData, useTypeSSE } from "@/shared/lib/hooks";
+import { useSSE } from "@/shared/lib/contexts";
 import { SSELoadingSpinner } from "@/shared/ui";
 
 export const InvestmentPreparation = () => {
@@ -23,7 +23,7 @@ export const InvestmentPreparation = () => {
     teams: [],
   });
 
-  const nextDegree = useNextDegree(id, () => {
+  const nextDegree = useStartDegree(id, () => {
     setIsSubmitting(false);
     navigate(`/class-management/${id}/monitoring`);
   });
@@ -38,61 +38,71 @@ export const InvestmentPreparation = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const { isReconnecting, retryCount } = useTypeSSE(
-    `${import.meta.env.VITE_SERVER_URL}/lesson/sse/${id}`,
-    undefined,
-    (error, isInitialConnection) => {
-      if (isInitialConnection) {
-        console.error("SSE 초기 연결 오류:", error);
-        Toast("서버 연결에 실패했습니다. 수업 관리 페이지로 이동합니다.", {
-          type: "error"
-        });
-      } else {
-        console.error("SSE 연결 일시적 끊김, 재연결 시도 중...");
-      }
-    },
-    {
-      LESSON_SSE_CONNECTED: (data: LessonSSEConnectedData) => {
-        console.log("SSE 연결 성공:", data.message);
-      },
-      TEAM_PART_IN: (data: TeamPartInData) => {
-        console.log("참여팀:", data.teamName, "학교:", data.schoolName);
-        setDatas(prev => {
-          const updatedData = {
-            ...prev,
-            teams: [
-              ...(prev?.teams || []),
-              {
-                title: data.teamName,
-                school: data.schoolName,
-              },
-            ],
-          };
-          console.log("업데이트된 데이터:", updatedData);
-          return updatedData;
-        });
-        setTeamInfo({
-          teamId: data.teamId,
-          teamName: data.teamName,
-          schoolName: data.schoolName,
+  const { isReconnecting, retryCount, lastData } = useSSE();
+
+  // SSE 이벤트 처리
+  useEffect(() => {
+    if (!lastData) return;
+
+    console.log("🔍 [DEBUG] SSE 이벤트 수신:", lastData);
+
+    switch (lastData.type) {
+      case "LESSON_SSE_CONNECTED":
+        console.log("SSE 연결 성공:", lastData.message);
+        break;
+
+      case "TEAM_PART_IN": {
+        if (!lastData.teamId || !lastData.teamName || !lastData.schoolName) {
+          console.error("TEAM_PART_IN 이벤트에 필수 데이터가 누락됨:", lastData);
+          return;
+        }
+
+        // 팀 데이터 업데이트
+        setDatas(prev => ({
+          ...prev,
+          teams: [
+            ...(prev?.teams || []),
+            {
+              title: lastData.teamName || "",
+              school: lastData.schoolName || "",
+            },
+          ],
+        }));
+
+        // 팀 정보 저장
+        const teamInfo = {
+          teamId: lastData.teamId,
+          teamName: lastData.teamName,
+          schoolName: lastData.schoolName,
           trade: [],
-        });
-        Toast(`${data.teamName}이 참가했습니다`, {
+        };
+
+        console.log("🔍 [DEBUG] 팀 정보 저장:", teamInfo);
+        setTeamInfo(teamInfo);
+
+        Toast(`${lastData.teamName}이 참가했습니다`, {
           type: "success",
         });
-      },
-      TEAM_INV_END: () => {
+        break;
+      }
+
+      case "TEAM_INV_END":
         Toast("팀 투자가 종료되었습니다", {
           type: "info",
         });
-      },
-    },
-  );
+        break;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
+      default:
+        console.log("🔍 [DEBUG] 알 수 없는 이벤트 타입:", lastData.type);
+    }
+  }, [lastData, setTeamInfo]);
+
+  // 컴포넌트 마운트 시 팀 정보 초기화
   useEffect(() => {
     clearTeamInfo();
-  }, []);
+  }, [
+    clearTeamInfo,
+  ]);
 
   const handleNext = () => {
     if (id) {
@@ -121,7 +131,10 @@ export const InvestmentPreparation = () => {
 
   return (
     <>
-      <SSELoadingSpinner isVisible={isReconnecting} retryCount={retryCount} />
+      <SSELoadingSpinner
+        isVisible={isReconnecting}
+        retryCount={retryCount}
+      />
       {isModalOpen && (
         <Modal
           mainTitle={"수업을 취소하실 건가요?"}

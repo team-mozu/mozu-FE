@@ -84,7 +84,7 @@ export const SignInPage = () => {
   const handleChange = (field: "lessonNum" | "schoolName" | "teamName") => (e: React.ChangeEvent<HTMLInputElement>) => {
     let value: string | number = e.target.value;
     if (field === "lessonNum") {
-      value = value.replace(/\D/g, "").slice(0, 7);
+      value = value.replace(/\D/g, "").slice(0, 4);
     }
     onChangeInputValue({
       target: {

@@ -2,13 +2,14 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, Del, Modal, Toast } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Tooltip } from "react-tooltip";
 import { useTeamStore } from "@/app/store";
 import { useEndClass } from "@/entities/class";
 import { ArticleInfoModal, ClassInfoModal, ImprovedTeamInfoTable } from "@/features/monitoring";
-import { useInvestmentProgress, useTypeSSE } from "@/shared/lib/hooks";
+import { useSSE } from "@/shared/lib/contexts";
+import { useInvestmentProgress } from "@/shared/lib/hooks";
 import { FullPageLoader, SSELoadingSpinner } from "@/shared/ui";
 
 export const ImprovedClassMonitoringPage = () => {
@@ -21,54 +22,14 @@ export const ImprovedClassMonitoringPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { isReconnecting, retryCount } = useTypeSSE(
-    `${import.meta.env.VITE_SERVER_URL}/lesson/sse/${id}`,
-    undefined,
-    (error, isInitialConnection) => {
-      if (isInitialConnection) {
-        console.error("SSE 초기 연결 실패:", error);
-        Toast("서버 연결에 실패했습니다. 수업 관리 페이지로 이동합니다.", {
-          type: "error",
-        });
-      } else {
-        console.log("SSE 연결 일시적 끊김, 재연결 시도 중...");
-      }
-    },
-    {
-      TEAM_INV_END: (data) => {
-        console.log("[Admin SSE] TEAM_INV_END:", data);
-        Toast(`${data.teamName}팀의 투자가 종료되었습니다!`, {
-          type: "success",
-        });
-
-        appendTrade(data.teamId, {
-          totalMoney: data.totalMoney,
-          valMoney: data.valuationMoney,
-          profitNum: data.profitNum,
-        });
-      },
-      CLASS_NEXT_INV_START: (data) => {
-        console.log("[Admin SSE] CLASS_NEXT_INV_START:", data);
-        Toast(`${data.curInvRound}차 투자가 시작되었습니다!`, {
-          type: "info",
-        });
-
-        // React Query 캐시 무효화로 최신 데이터 반영
-        queryClient.invalidateQueries({
-          queryKey: ["getClass"],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ["getMonitoring"],
-        });
-      },
-    }
-  );
-
   const { teamInfoMap, appendTrade } = useTeamStore();
   const teamInfo = Object.values(teamInfoMap);
 
   const { classData, currentInvDeg, isLoading, isLastDegree, isProgressing, progressToNextDegree } =
     useInvestmentProgress(id ?? "");
+
+  // SSE 상태 사용
+  const { isReconnecting, retryCount, lastData } = useSSE();
 
   const endClass = useEndClass(id, () => {
     setIsEndModalOpen(false);
@@ -88,6 +49,59 @@ export const ImprovedClassMonitoringPage = () => {
     navigate(`/class-management/${id}`);
   });
 
+  // SSE 이벤트 처리
+  useEffect(() => {
+    if (!lastData) return;
+
+    console.log("🔍 [DEBUG] 모니터링 페이지 SSE 이벤트:", lastData);
+
+    switch (lastData.type) {
+      case "TEAM_INV_END":
+        if (!lastData.teamId || !lastData.teamName) {
+          console.error("TEAM_INV_END 이벤트에 필수 데이터가 누락됨:", lastData);
+          return;
+        }
+
+        console.log("🔍 [DEBUG] 팀 투자 종료:", {
+          teamId: lastData.teamId,
+          teamName: lastData.teamName,
+          totalMoney: lastData.totalMoney,
+          valuationMoney: lastData.valuationMoney,
+          profitNum: lastData.profitNum,
+        });
+
+        Toast(`${lastData.teamName}팀의 투자가 종료되었습니다!`, {
+          type: "success",
+        });
+
+        appendTrade(lastData.teamId, {
+          totalMoney: lastData.totalMoney as number,
+          valMoney: lastData.valuationMoney as number,
+          profitNum: lastData.profitNum as string,
+        });
+        break;
+
+      case "CLASS_NEXT_INV_START":
+        console.log("🔍 [DEBUG] 다음 차수 투자 시작:", lastData);
+
+        Toast(`${lastData.curInvRound}차 투자가 시작되었습니다!`, {
+          type: "info",
+        });
+
+        // React Query 캐시 무효화로 최신 데이터 반영
+        queryClient.invalidateQueries({
+          queryKey: ["getClass"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["getMonitoring"],
+        });
+        break;
+
+      default:
+        console.log("🔍 [DEBUG] 알 수 없는 이벤트 타입:", lastData.type);
+    }
+  }, [lastData, appendTrade, queryClient]);
+
   // 모든 팀이 현재 차수 투자를 완료했는지 확인
   const isAllTeamsCompleted = teamInfo.every(team => (team.trade?.length ?? 0) >= currentInvDeg);
 
@@ -98,8 +112,6 @@ export const ImprovedClassMonitoringPage = () => {
   const classInfoClick = () => {
     setIsOpenClass(true);
   };
-
-  // SSE 관련 코드 제거됨
 
   const handleStopClass = () => {
     if (id) {
@@ -128,7 +140,10 @@ export const ImprovedClassMonitoringPage = () => {
 
   return (
     <>
-      <SSELoadingSpinner isVisible={isReconnecting} retryCount={retryCount} />
+      <SSELoadingSpinner
+        isVisible={isReconnecting}
+        retryCount={retryCount}
+      />
       {isCancelModalOpen && (
         <Modal
           mainTitle="모의투자 취소"

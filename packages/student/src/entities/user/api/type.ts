@@ -8,7 +8,7 @@ export interface StudentLoginProps {
   teamName: string;
 }
 
-export type TeamDeatilResponse = {
+export type TeamDetailResponse = {
   id: string;
   teamName: string;
   baseMoney: number;
@@ -43,4 +43,6 @@ export type TeamResultResponse = {
   valProfit: number;
   profitNum: string;
   orderCount: number;
+  investingMoney: number; // 투자중인 금액 (매입한 주식 총액)
+  availableMoney: number; // 주문 가능 금액 (보유 현금)
 };

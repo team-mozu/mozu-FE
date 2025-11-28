@@ -153,7 +153,7 @@ export const ArticleManagementEditPage = () => {
     <Container>
       <EditDiv
         value1="취소"
-        value2={isFormDisabled ? "수정 중..." : "수정하기"}
+        value2={isFormDisabled ? "저장 중..." : "저장하기"}
         title="기사 수정"
         disabled={isFormDisabled}
         onCancel={handleCancel}

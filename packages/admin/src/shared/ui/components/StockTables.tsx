@@ -1,9 +1,17 @@
 import styled from "@emotion/styled";
 import { color, font, Skeleton } from "@mozu/design-token";
-import { Button, CheckBox } from "@mozu/ui";
+import { Button, CheckBox, Toast } from "@mozu/ui";
 import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AddInvestItemModal } from "@/features/stockCRUD";
 import { formatPrice } from "@/shared/lib";
+import {
+  convertExcelToStockData,
+  downloadExcelWithStockData,
+  type ExcelStockData,
+  parseExcelFile,
+  validateExcelFile,
+  validateStockDataForExport,
+} from "@/shared/lib/utils";
 
 // Types
 interface StockData {
@@ -44,7 +52,9 @@ const useTableLoading = (isApiLoading?: boolean) => {
       }, SKELETON_DELAY);
       return () => clearTimeout(timer);
     }
-  }, [isApiLoading]);
+  }, [
+    isApiLoading,
+  ]);
 
   return isLoading;
 };
@@ -60,7 +70,10 @@ const useStockSelection = () => {
     setCheckedStockIds(prev =>
       prev.includes(id)
         ? prev.filter(itemId => itemId !== id)
-        : [...prev, id]
+        : [
+          ...prev,
+          id,
+        ],
     );
   }, []);
 
@@ -82,22 +95,33 @@ const useStockData = (initialData: StockData[]) => {
 
   useEffect(() => {
     setStockData(initialData);
-  }, [initialData]);
+  }, [
+    initialData,
+  ]);
 
   const updateStockPrice = useCallback((itemId: number, levelIndex: number, value: number | null) => {
     setStockData(prev =>
       prev.map(item => {
         if (item.itemId === itemId) {
-          const newMoney = [...item.money];
+          const newMoney = [
+            ...item.money,
+          ];
           newMoney[levelIndex] = value;
-          return { ...item, money: newMoney };
+          return {
+            ...item,
+            money: newMoney,
+          };
         }
         return item;
-      })
+      }),
     );
   }, []);
 
-  return { stockData, setStockData, updateStockPrice };
+  return {
+    stockData,
+    setStockData,
+    updateStockPrice,
+  };
 };
 
 // Price Input Component
@@ -108,257 +132,302 @@ interface PriceInputProps {
   onEnterPress?: () => void;
 }
 
-const PriceInput = memo(forwardRef<HTMLInputElement, PriceInputProps>(({
-  value,
-  onChange,
-  placeholder,
-  onEnterPress
-}, ref) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [localValue, setLocalValue] = useState(
-    value == null ? "" : value.toString().replace(/,/g, "")
-  );
+const PriceInput = memo(
+  forwardRef<HTMLInputElement, PriceInputProps>(({ value, onChange, placeholder, onEnterPress }, ref) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const [localValue, setLocalValue] = useState(value == null ? "" : value.toString().replace(/,/g, ""));
 
-  const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    setIsFocused(true);
-    setLocalValue(value == null ? "" : value.toString().replace(/,/g, ""));
-    // 포커스 시 모든 텍스트 선택
-    setTimeout(() => {
-      e.target.select();
-    }, 0);
-  }, [value]);
+    const handleFocus = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        setIsFocused(true);
+        setLocalValue(value == null ? "" : value.toString().replace(/,/g, ""));
+        // 포커스 시 모든 텍스트 선택
+        setTimeout(() => {
+          e.target.select();
+        }, 0);
+      },
+      [
+        value,
+      ],
+    );
 
-  const handleBlur = useCallback(() => {
-    setIsFocused(false);
-    if (localValue === "") {
-      onChange(null);
-    } else {
-      const numericValue = Math.min(Number(localValue.replace(/[^0-9]/g, "")) || 0, MAX_PRICE_VALUE);
-      onChange(numericValue);
-    }
-  }, [localValue, onChange]);
-
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/[^\d]/g, "");
-    // 최대값 체크
-    if (Number(inputValue) <= MAX_PRICE_VALUE) {
-      setLocalValue(inputValue);
-    }
-  }, []);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Enter 키를 누르면 현재 값 저장 후 다음 필드로 이동
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleBlur(); // 현재 값 저장
-      if (onEnterPress) {
-        setTimeout(() => onEnterPress(), 0);
+    const handleBlur = useCallback(() => {
+      setIsFocused(false);
+      if (localValue === "") {
+        onChange(null);
+      } else {
+        const numericValue = Math.min(Number(localValue.replace(/[^0-9]/g, "")) || 0, MAX_PRICE_VALUE);
+        onChange(numericValue);
       }
-    }
-    // Ctrl+A로 전체 선택
-    else if (e.key === "a" && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      (e.target as HTMLInputElement).select();
-    }
-    // 숫자, 백스페이스, 삭제, 화살표 키, Tab 키만 허용
-    else if (!/[0-9]/.test(e.key) &&
-      !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"].includes(e.key) &&
-      !e.ctrlKey && !e.metaKey) {
-      e.preventDefault();
-    }
-  }, [onEnterPress, handleBlur]);
+    }, [
+      localValue,
+      onChange,
+    ]);
 
-  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const pastedText = e.clipboardData.getData('text');
-    const numbersOnly = pastedText.replace(/[^0-9]/g, '');
-    if (numbersOnly === "" || Number(numbersOnly) <= MAX_PRICE_VALUE) {
-      setLocalValue(numbersOnly);
-      // 붙여넣기 후 자동으로 값 업데이트
-      setTimeout(() => {
-        if (numbersOnly === "") {
-          onChange(null);
-        } else {
-          onChange(Number(numbersOnly));
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      const inputValue = e.target.value.replace(/[^\d]/g, "");
+      // 최대값 체크
+      if (Number(inputValue) <= MAX_PRICE_VALUE) {
+        setLocalValue(inputValue);
+      }
+    }, []);
+
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Enter 키를 누르면 현재 값 저장 후 다음 필드로 이동
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleBlur(); // 현재 값 저장
+          if (onEnterPress) {
+            setTimeout(() => onEnterPress(), 0);
+          }
         }
-      }, 0);
-    }
-  }, [onChange]);
+        // Ctrl+A로 전체 선택
+        else if (e.key === "a" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          (e.target as HTMLInputElement).select();
+        }
+        // 숫자, 백스페이스, 삭제, 화살표 키, Tab 키만 허용
+        else if (
+          !/[0-9]/.test(e.key) &&
+          ![
+            "Backspace",
+            "Delete",
+            "ArrowLeft",
+            "ArrowRight",
+            "Tab",
+            "Home",
+            "End",
+          ].includes(e.key) &&
+          !e.ctrlKey &&
+          !e.metaKey
+        ) {
+          e.preventDefault();
+        }
+      },
+      [
+        onEnterPress,
+        handleBlur,
+      ],
+    );
 
-  return (
-    <PriceInputStyle
-      ref={ref}
-      type="text"
-      value={isFocused ? localValue : value == null ? "" : formatPrice(value)}
-      onChange={handleChange}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
-      onPaste={handlePaste}
-      placeholder={placeholder || ""}
-      inputMode="numeric"
-      autoComplete="off"
-    />
-  );
-}));
+    const handlePaste = useCallback(
+      (e: React.ClipboardEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const pastedText = e.clipboardData.getData("text");
+        const numbersOnly = pastedText.replace(/[^0-9]/g, "");
+        if (numbersOnly === "" || Number(numbersOnly) <= MAX_PRICE_VALUE) {
+          setLocalValue(numbersOnly);
+          // 붙여넣기 후 자동으로 값 업데이트
+          setTimeout(() => {
+            if (numbersOnly === "") {
+              onChange(null);
+            } else {
+              onChange(Number(numbersOnly));
+            }
+          }, 0);
+        }
+      },
+      [
+        onChange,
+      ],
+    );
+
+    return (
+      <PriceInputStyle
+        ref={ref}
+        type="text"
+        value={isFocused ? localValue : value == null ? "" : formatPrice(value)}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        placeholder={placeholder || ""}
+        inputMode="numeric"
+        autoComplete="off"
+      />
+    );
+  }),
+);
 
 // Table Row Components
-const StockTableHeader = memo(({
-  isEdit,
-  degree,
-  allChecked,
-  onToggleAll,
-}: {
-  isEdit: boolean;
-  degree: number;
-  allChecked: boolean;
-  onToggleAll: () => void;
-}) => {
-  const columns = useMemo(() => {
-    const cols = [];
-    for (let i = 1; i <= degree; i++) {
-      cols.push(`${i}차`);
-    }
-    cols.push("종료가");
-    return cols;
-  }, [degree]);
+const StockTableHeader = memo(
+  ({
+    isEdit,
+    degree,
+    allChecked,
+    onToggleAll,
+  }: {
+    isEdit: boolean;
+    degree: number;
+    allChecked: boolean;
+    onToggleAll: () => void;
+  }) => {
+    const columns = useMemo(() => {
+      const cols = [];
+      for (let i = 1; i <= degree; i++) {
+        cols.push(`${i}차`);
+      }
+      cols.push("종료가");
+      return cols;
+    }, [
+      degree,
+    ]);
 
-  return (
-    <Thead>
+    return (
+      <Thead>
+        <tr>
+          {isEdit && (
+            <Th width="52px">
+              <CheckBoxWrapper>
+                <CheckBox
+                  onChange={onToggleAll}
+                  checked={allChecked}
+                  id="stock-header-checkbox"
+                />
+              </CheckBoxWrapper>
+            </Th>
+          )}
+          <Th width="120px">종목 코드</Th>
+          <Th width="300px">종목 이름</Th>
+          {columns.map(header => (
+            <Th
+              key={header}
+              width="140px">
+              {header}
+            </Th>
+          ))}
+        </tr>
+      </Thead>
+    );
+  },
+);
+
+const StockTableRow = memo(
+  ({
+    stock,
+    isEdit,
+    isLoading,
+    degree,
+    onToggle,
+    onPriceChange,
+    inputRefs,
+    onCellClick,
+    onMoveToNextField,
+  }: {
+    stock: DisplayStockData;
+    isEdit: boolean;
+    isLoading: boolean;
+    degree: number;
+    onToggle: (id: number) => void;
+    onPriceChange: (itemId: number, levelIndex: number, value: number | null) => void;
+    inputRefs: React.MutableRefObject<{
+      [key: string]: HTMLInputElement | null;
+    }>;
+    onCellClick: (inputId: string, event: React.MouseEvent) => void;
+    onMoveToNextField: (currentItemId: number, currentColumnIndex: number, direction: "next" | "prev") => void;
+  }) => {
+    const priceColumns = useMemo(() => {
+      const cols = [];
+      for (let i = 0; i < degree; i++) {
+        cols.push(i); // 0: 1차가격, 1: 2차가격, ... degree-1: N차가격
+      }
+      cols.push(degree); // 마지막 인덱스: 종료가
+      return cols;
+    }, [
+      degree,
+    ]);
+
+    const handleEnterPress = useCallback(
+      (itemId: number, columnIndex: number) => {
+        onMoveToNextField(itemId, columnIndex, "next");
+      },
+      [
+        onMoveToNextField,
+      ],
+    );
+
+    return (
       <tr>
         {isEdit && (
-          <Th width="52px">
+          <Td width="52px">
             <CheckBoxWrapper>
               <CheckBox
-                onChange={onToggleAll}
-                checked={allChecked}
-                id="stock-header-checkbox"
+                checked={stock.checked}
+                onChange={() => onToggle(stock.itemId)}
+                id={`stock-row-${stock.itemId}`}
               />
             </CheckBoxWrapper>
-          </Th>
-        )}
-        <Th width="120px">종목 코드</Th>
-        <Th width="300px">종목 이름</Th>
-        {columns.map((header) => (
-          <Th key={header} width="140px">
-            {header}
-          </Th>
-        ))}
-      </tr>
-    </Thead>
-  );
-});
-
-const StockTableRow = memo(({
-  stock,
-  isEdit,
-  isLoading,
-  degree,
-  onToggle,
-  onPriceChange,
-  inputRefs,
-  onCellClick,
-  onMoveToNextField,
-}: {
-  stock: DisplayStockData;
-  isEdit: boolean;
-  isLoading: boolean;
-  degree: number;
-  onToggle: (id: number) => void;
-  onPriceChange: (itemId: number, levelIndex: number, value: number | null) => void;
-  inputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement | null }>;
-  onCellClick: (inputId: string, event: React.MouseEvent) => void;
-  onMoveToNextField: (currentItemId: number, currentColumnIndex: number, direction: 'next' | 'prev') => void;
-}) => {
-  const priceColumns = useMemo(() => {
-    const cols = [];
-    for (let i = 0; i < degree; i++) {
-      cols.push(i); // 0: 1차가격, 1: 2차가격, ... degree-1: N차가격
-    }
-    cols.push(degree); // 마지막 인덱스: 종료가
-    return cols;
-  }, [degree]);
-
-  const handleEnterPress = useCallback((itemId: number, columnIndex: number) => {
-    onMoveToNextField(itemId, columnIndex, 'next');
-  }, [onMoveToNextField]);
-
-  return (
-    <tr>
-      {isEdit && (
-        <Td width="52px">
-          <CheckBoxWrapper>
-            <CheckBox
-              checked={stock.checked}
-              onChange={() => onToggle(stock.itemId)}
-              id={`stock-row-${stock.itemId}`}
-            />
-          </CheckBoxWrapper>
-        </Td>
-      )}
-      <Td width="120px">
-        {isLoading ? (
-          <SkeletonText>{stock.itemCode}</SkeletonText>
-        ) : (
-          stock.itemCode || <EmptyValueText>-</EmptyValueText>
-        )}
-      </Td>
-      <Td width="300px">
-        {isLoading ? (
-          <SkeletonText>{stock.itemName}</SkeletonText>
-        ) : (
-          stock.itemName || <EmptyValueText>-</EmptyValueText>
-        )}
-      </Td>
-      {priceColumns.map((columnIndex, displayIndex) => {
-        const value = stock.money[columnIndex] ?? null;
-        const inputId = `${stock.itemId}-${columnIndex}`;
-        const headerName = columnIndex === degree ? "종료가" : `${columnIndex + 1}차`;
-        const placeholder = `${headerName} 입력`;
-
-        return (
-          <Td
-            key={columnIndex}
-            width="140px"
-            align="right"
-            clickable={isEdit}
-            onClick={e => isEdit ? onCellClick(inputId, e) : undefined}
-            onDoubleClick={e => {
-              if (isEdit) {
-                e.preventDefault();
-                const inputElement = inputRefs.current[inputId];
-                if (inputElement) {
-                  inputElement.focus();
-                  setTimeout(() => inputElement.select(), 0);
-                }
-              }
-            }}
-          >
-            {isEdit ? (
-              <PriceInput
-                ref={el => { inputRefs.current[inputId] = el; }}
-                value={value}
-                onChange={newValue => onPriceChange(stock.itemId, columnIndex, newValue)}
-                placeholder={placeholder}
-                onEnterPress={() => handleEnterPress(stock.itemId, columnIndex)}
-              />
-            ) : isLoading ? (
-              <SkeletonText>{value === null ? placeholder : formatPrice(value)}</SkeletonText>
-            ) : value === null ? (
-              <EmptyValueText>{placeholder}</EmptyValueText>
-            ) : (
-              formatPrice(value)
-            )}
           </Td>
-        );
-      })}
-    </tr>
-  );
-});
+        )}
+        <Td width="120px">
+          {isLoading ? (
+            <SkeletonText>{stock.itemCode}</SkeletonText>
+          ) : (
+            stock.itemCode || <EmptyValueText>-</EmptyValueText>
+          )}
+        </Td>
+        <Td width="300px">
+          {isLoading ? (
+            <SkeletonText>{stock.itemName}</SkeletonText>
+          ) : (
+            stock.itemName || <EmptyValueText>-</EmptyValueText>
+          )}
+        </Td>
+        {priceColumns.map((columnIndex, displayIndex) => {
+          const value = stock.money[columnIndex] ?? null;
+          const inputId = `${stock.itemId}-${columnIndex}`;
+          const headerName = columnIndex === degree ? "종료가" : `${columnIndex + 1}차`;
+          const placeholder = `${headerName} 입력`;
+
+          return (
+            <Td
+              key={columnIndex}
+              width="140px"
+              align="right"
+              clickable={isEdit}
+              onClick={e => (isEdit ? onCellClick(inputId, e) : undefined)}
+              onDoubleClick={e => {
+                if (isEdit) {
+                  e.preventDefault();
+                  const inputElement = inputRefs.current[inputId];
+                  if (inputElement) {
+                    inputElement.focus();
+                    setTimeout(() => inputElement.select(), 0);
+                  }
+                }
+              }}>
+              {isEdit ? (
+                <PriceInput
+                  ref={el => {
+                    inputRefs.current[inputId] = el;
+                  }}
+                  value={value}
+                  onChange={newValue => onPriceChange(stock.itemId, columnIndex, newValue)}
+                  placeholder={placeholder}
+                  onEnterPress={() => handleEnterPress(stock.itemId, columnIndex)}
+                />
+              ) : isLoading ? (
+                <SkeletonText>{value === null ? placeholder : formatPrice(value)}</SkeletonText>
+              ) : value === null ? (
+                <EmptyValueText>{placeholder}</EmptyValueText>
+              ) : (
+                formatPrice(value)
+              )}
+            </Td>
+          );
+        })}
+      </tr>
+    );
+  },
+);
 
 const EmptyState = memo(({ colSpan }: { colSpan: number }) => (
   <tr>
-    <Td colSpan={colSpan} align="center">
+    <Td
+      colSpan={colSpan}
+      align="center">
       <EmptyStateContainer>
         <EmptyStateText>투자 종목을 추가해 주세요.</EmptyStateText>
       </EmptyStateContainer>
@@ -368,7 +437,9 @@ const EmptyState = memo(({ colSpan }: { colSpan: number }) => (
 
 const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () => void }) => (
   <tr>
-    <PlusTd colSpan={colSpan} onClick={onClick}>
+    <PlusTd
+      colSpan={colSpan}
+      onClick={onClick}>
       <PlusField>
         <PlusIcon>+</PlusIcon>
         추가하기
@@ -377,242 +448,440 @@ const AddRowButton = memo(({ colSpan, onClick }: { colSpan: number; onClick: () 
   </tr>
 ));
 
-const TableControls = memo(({
-  hasCheckedItems,
-  hasStockData,
-  onDeleteSelected,
-  onFillRandomValues,
-  isEdit,
-}: {
-  hasCheckedItems: boolean;
-  hasStockData: boolean;
-  onDeleteSelected: () => void;
-  onFillRandomValues: () => void;
-  isEdit: boolean;
-}) => (
-  <DeleteButtonContainer>
-    <TableTitle>투자 종목</TableTitle>
-    {isEdit && (
-      <ButtonGroup>
-        <Button
-          backgroundColor={color.orange[50]}
-          borderColor={color.orange[200]}
-          color={color.orange[700]}
-          hoverBackgroundColor={color.orange[100]}
-          onClick={onFillRandomValues}
-          disabled={!hasStockData}
-        >
-          랜덤 값 채우기
-        </Button>
-        <Button
-          backgroundColor={color.zinc[50]}
-          borderColor={color.zinc[200]}
-          hoverBackgroundColor={color.zinc[100]}
-          onClick={onDeleteSelected}
-          disabled={!hasCheckedItems}
-        >
-          선택항목 삭제하기
-        </Button>
-      </ButtonGroup>
-    )}
-  </DeleteButtonContainer>
-));
+const TableControls = memo(
+  ({
+    hasCheckedItems,
+    hasStockData,
+    canExportExcel,
+    onDeleteSelected,
+    onFillRandomValues,
+    onExcelUpload,
+    onDownloadTemplate,
+    isEdit,
+  }: {
+    hasCheckedItems: boolean;
+    hasStockData: boolean;
+    canExportExcel: boolean;
+    onDeleteSelected: () => void;
+    onFillRandomValues: () => void;
+    onExcelUpload: (file: File) => void;
+    onDownloadTemplate: () => void;
+    isEdit: boolean;
+  }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileUpload = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+          onExcelUpload(file);
+          // 파일 입력 초기화 (같은 파일을 다시 선택할 수 있도록)
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        }
+      },
+      [
+        onExcelUpload,
+      ],
+    );
+
+    const handleUploadClick = useCallback(() => {
+      fileInputRef.current?.click();
+    }, []);
+
+    return (
+      <DeleteButtonContainer>
+        <TableTitle>투자 종목</TableTitle>
+        {isEdit && (
+          <ButtonGroup>
+            <Button
+              backgroundColor={color.blue[50]}
+              borderColor={color.blue[200]}
+              color={color.blue[700]}
+              hoverBackgroundColor={color.blue[100]}
+              onClick={onDownloadTemplate}
+              disabled={!canExportExcel}>
+              엑셀 내보내기
+            </Button>
+            <Button
+              backgroundColor={color.green[50]}
+              borderColor={color.green[200]}
+              color={color.green[700]}
+              hoverBackgroundColor={color.green[100]}
+              onClick={handleUploadClick}>
+              엑셀 가져오기
+            </Button>
+            <Button
+              backgroundColor={color.orange[50]}
+              borderColor={color.orange[200]}
+              color={color.orange[700]}
+              hoverBackgroundColor={color.orange[100]}
+              onClick={onFillRandomValues}
+              disabled={!hasStockData}>
+              랜덤 값 채우기
+            </Button>
+            <Button
+              backgroundColor={color.zinc[50]}
+              borderColor={color.zinc[200]}
+              hoverBackgroundColor={color.zinc[100]}
+              onClick={onDeleteSelected}
+              disabled={!hasCheckedItems}>
+              선택항목 삭제하기
+            </Button>
+            <HiddenFileInput
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleFileUpload}
+            />
+          </ButtonGroup>
+        )}
+      </DeleteButtonContainer>
+    );
+  },
+);
 
 // Main Component
-export const StockTables = memo(({
-  degree,
-  isEdit = true,
-  data = [],
-  onPriceChange,
-  onDeleteItems,
-  onAddItems,
-  isApiLoading,
-}: StockTablesProps) => {
-  const selectedRound = parseInt(degree, 10);
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
+export const StockTables = memo(
+  ({ degree, isEdit = true, data = [], onPriceChange, onDeleteItems, onAddItems, isApiLoading }: StockTablesProps) => {
+    const selectedRound = parseInt(degree, 10);
+    const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
-  const isLoading = useTableLoading(isApiLoading);
-  const { stockData, setStockData, updateStockPrice } = useStockData(data);
-  const { checkedStockIds, resetSelection, toggleStock, toggleAll } = useStockSelection();
+    const isLoading = useTableLoading(isApiLoading);
+    const { stockData, setStockData, updateStockPrice } = useStockData(data);
+    const { checkedStockIds, resetSelection, toggleStock, toggleAll } = useStockSelection();
 
-  const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+    const inputRefs = useRef<{
+      [key: string]: HTMLInputElement | null;
+    }>({});
 
-  // Computed values
-  const displayData = useMemo<DisplayStockData[]>(() => {
-    return stockData.map(stock => ({
-      ...stock,
-      checked: checkedStockIds.includes(stock.itemId),
-    }));
-  }, [stockData, checkedStockIds]);
+    // Computed values
+    const displayData = useMemo<DisplayStockData[]>(() => {
+      return stockData.map(stock => ({
+        ...stock,
+        checked: checkedStockIds.includes(stock.itemId),
+      }));
+    }, [
+      stockData,
+      checkedStockIds,
+    ]);
 
-  const hasCheckedItems = checkedStockIds.length > 0;
-  const hasStockData = stockData.length > 0;
-  const isAllChecked = stockData.length > 0 && checkedStockIds.length === stockData.length;
-  const colSpan = (isEdit ? 1 : 0) + 3 + selectedRound; // checkbox + code + name + price columns
+    const hasCheckedItems = checkedStockIds.length > 0;
+    const hasStockData = stockData.length > 0;
+    const isAllChecked = stockData.length > 0 && checkedStockIds.length === stockData.length;
+    const colSpan = (isEdit ? 1 : 0) + 3 + selectedRound; // checkbox + code + name + price columns
 
-  // Event handlers
-  const handleToggleAll = useCallback(() => {
-    toggleAll(stockData.map(stock => stock.itemId));
-  }, [toggleAll, stockData]);
+    // 엑셀 내보내기 가능 여부 확인
+    const canExportExcel = useMemo(() => {
+      const validation = validateStockDataForExport(stockData, selectedRound);
+      return validation.isValid;
+    }, [stockData, selectedRound]);
 
-  const handleDeleteSelected = useCallback(() => {
-    if (!hasCheckedItems || !onDeleteItems) return;
-    onDeleteItems(checkedStockIds);
-    setStockData(prev => prev.filter(item => !checkedStockIds.includes(item.itemId)));
-    resetSelection();
-  }, [hasCheckedItems, onDeleteItems, checkedStockIds, setStockData, resetSelection]);
+    // Event handlers
+    const handleToggleAll = useCallback(() => {
+      toggleAll(stockData.map(stock => stock.itemId));
+    }, [
+      toggleAll,
+      stockData,
+    ]);
 
-  const handlePriceChange = useCallback((itemId: number, levelIndex: number, value: number | null) => {
-    updateStockPrice(itemId, levelIndex, value);
-    if (onPriceChange) {
-      onPriceChange(itemId, levelIndex, value);
-    }
-  }, [updateStockPrice, onPriceChange]);
+    const handleDeleteSelected = useCallback(() => {
+      if (!hasCheckedItems || !onDeleteItems) return;
+      onDeleteItems(checkedStockIds);
+      setStockData(prev => prev.filter(item => !checkedStockIds.includes(item.itemId)));
+      resetSelection();
+    }, [
+      hasCheckedItems,
+      onDeleteItems,
+      checkedStockIds,
+      setStockData,
+      resetSelection,
+    ]);
 
-  // 키보드 내비게이션을 위한 필드 이동 함수
-  const handleMoveToNextField = useCallback((currentItemId: number, currentColumnIndex: number, direction: 'next' | 'prev') => {
-    const allStocks = displayData;
-    const currentStockIndex = allStocks.findIndex(stock => stock.itemId === currentItemId);
-
-    if (currentStockIndex === -1) return;
-
-    let nextInputId: string | null = null;
-
-    if (direction === 'next') {
-      // 같은 행에서 다음 컬럼으로 이동
-      if (currentColumnIndex < selectedRound) {
-        nextInputId = `${currentItemId}-${currentColumnIndex + 1}`;
-      }
-      // 다음 행의 첫 번째 컬럼으로 이동 (1차가격)
-      else if (currentStockIndex < allStocks.length - 1) {
-        const nextStock = allStocks[currentStockIndex + 1];
-        nextInputId = `${nextStock.itemId}-0`;
-      }
-    } else if (direction === 'prev') {
-      // 같은 행에서 이전 컬럼으로 이동
-      if (currentColumnIndex > 0) {
-        nextInputId = `${currentItemId}-${currentColumnIndex - 1}`;
-      }
-      // 이전 행의 마지막 컬럼으로 이동
-      else if (currentStockIndex > 0) {
-        const prevStock = allStocks[currentStockIndex - 1];
-        nextInputId = `${prevStock.itemId}-${selectedRound}`;
-      }
-    }
-
-    if (nextInputId && inputRefs.current[nextInputId]) {
-      setTimeout(() => {
-        inputRefs.current[nextInputId]?.focus();
-      }, 0);
-    }
-  }, [displayData, selectedRound]);
-
-  const handleCellClick = useCallback((inputId: string, event: React.MouseEvent) => {
-    if ((event.target as HTMLElement).closest('input[type="checkbox"]')) {
-      return;
-    }
-    const inputElement = inputRefs.current[inputId];
-    if (inputElement) {
-      inputElement.focus();
-    }
-  }, []);
-
-  const handleOpenAddModal = useCallback(() => setShowAddModal(true), []);
-  const handleCloseAddModal = useCallback(() => setShowAddModal(false), []);
-
-  const handleAddItems = useCallback((newItems: StockData[]) => {
-    if (onAddItems) {
-      onAddItems(newItems);
-    }
-    setShowAddModal(false);
-  }, [onAddItems]);
-
-  // 랜덤 값 채우기 함수
-  const handleFillRandomValues = useCallback(() => {
-    const updatedData = stockData.map(stock => {
-      const newMoney = [...stock.money];
-      // 1차가격 (인덱스 0)부터 종료가까지 랜덤 값 생성
-      for (let i = 0; i <= selectedRound; i++) {
-        // 주식 가격에 맞는 현실적인 범위: 1,000원 ~ 500,000원
-        const minPrice = 1000;
-        const maxPrice = 500000;
-        // 100원 단위로 반올림
-        const randomValue = Math.floor(Math.random() * (maxPrice - minPrice) / 100) * 100 + minPrice;
-        newMoney[i] = randomValue;
-      }
-      return { ...stock, money: newMoney };
-    });
-
-    setStockData(updatedData);
-
-    // 상위 컴포넌트에도 변경사항 전달
-    if (onPriceChange) {
-      updatedData.forEach(stock => {
-        for (let i = 0; i <= selectedRound; i++) {
-          onPriceChange(stock.itemId, i, stock.money[i]);
+    const handlePriceChange = useCallback(
+      (itemId: number, levelIndex: number, value: number | null) => {
+        updateStockPrice(itemId, levelIndex, value);
+        if (onPriceChange) {
+          onPriceChange(itemId, levelIndex, value);
         }
+      },
+      [
+        updateStockPrice,
+        onPriceChange,
+      ],
+    );
+
+    // 키보드 내비게이션을 위한 필드 이동 함수
+    const handleMoveToNextField = useCallback(
+      (currentItemId: number, currentColumnIndex: number, direction: "next" | "prev") => {
+        const allStocks = displayData;
+        const currentStockIndex = allStocks.findIndex(stock => stock.itemId === currentItemId);
+
+        if (currentStockIndex === -1) return;
+
+        let nextInputId: string | null = null;
+
+        if (direction === "next") {
+          // 같은 행에서 다음 컬럼으로 이동
+          if (currentColumnIndex < selectedRound) {
+            nextInputId = `${currentItemId}-${currentColumnIndex + 1}`;
+          }
+          // 다음 행의 첫 번째 컬럼으로 이동 (1차가격)
+          else if (currentStockIndex < allStocks.length - 1) {
+            const nextStock = allStocks[currentStockIndex + 1];
+            nextInputId = `${nextStock.itemId}-0`;
+          }
+        } else if (direction === "prev") {
+          // 같은 행에서 이전 컬럼으로 이동
+          if (currentColumnIndex > 0) {
+            nextInputId = `${currentItemId}-${currentColumnIndex - 1}`;
+          }
+          // 이전 행의 마지막 컬럼으로 이동
+          else if (currentStockIndex > 0) {
+            const prevStock = allStocks[currentStockIndex - 1];
+            nextInputId = `${prevStock.itemId}-${selectedRound}`;
+          }
+        }
+
+        if (nextInputId && inputRefs.current[nextInputId]) {
+          setTimeout(() => {
+            inputRefs.current[nextInputId]?.focus();
+          }, 0);
+        }
+      },
+      [
+        displayData,
+        selectedRound,
+      ],
+    );
+
+    const handleCellClick = useCallback((inputId: string, event: React.MouseEvent) => {
+      if ((event.target as HTMLElement).closest('input[type="checkbox"]')) {
+        return;
+      }
+      const inputElement = inputRefs.current[inputId];
+      if (inputElement) {
+        inputElement.focus();
+      }
+    }, []);
+
+    const handleOpenAddModal = useCallback(() => setShowAddModal(true), []);
+    const handleCloseAddModal = useCallback(() => setShowAddModal(false), []);
+
+    const handleAddItems = useCallback(
+      (newItems: StockData[]) => {
+        if (onAddItems) {
+          onAddItems(newItems);
+        }
+        setShowAddModal(false);
+      },
+      [
+        onAddItems,
+      ],
+    );
+
+    // 랜덤 값 채우기 함수
+    const handleFillRandomValues = useCallback(() => {
+      const updatedData = stockData.map(stock => {
+        const newMoney = [
+          ...stock.money,
+        ];
+        // 1차가격 (인덱스 0)부터 종료가까지 랜덤 값 생성
+        for (let i = 0; i <= selectedRound; i++) {
+          // 주식 가격에 맞는 현실적인 범위: 1,000원 ~ 500,000원
+          const minPrice = 1000;
+          const maxPrice = 500000;
+          // 100원 단위로 반올림
+          const randomValue = Math.floor((Math.random() * (maxPrice - minPrice)) / 100) * 100 + minPrice;
+          newMoney[i] = randomValue;
+        }
+        return {
+          ...stock,
+          money: newMoney,
+        };
       });
-    }
-  }, [stockData, selectedRound, setStockData, onPriceChange]);
 
-  return (
-    <TableContainer>
-      <TableControls
-        hasCheckedItems={hasCheckedItems}
-        hasStockData={hasStockData}
-        onDeleteSelected={handleDeleteSelected}
-        onFillRandomValues={handleFillRandomValues}
-        isEdit={isEdit}
-      />
+      setStockData(updatedData);
 
-      <Table>
-        <StockTableHeader
+      // 상위 컴포넌트에도 변경사항 전달
+      if (onPriceChange) {
+        updatedData.forEach(stock => {
+          for (let i = 0; i <= selectedRound; i++) {
+            onPriceChange(stock.itemId, i, stock.money[i]);
+          }
+        });
+      }
+    }, [
+      stockData,
+      selectedRound,
+      setStockData,
+      onPriceChange,
+    ]);
+
+
+    // 엑셀 파일 업로드 처리
+    const handleExcelUpload = useCallback(
+      async (file: File) => {
+        // 파일 유효성 검사
+        const validationError = validateExcelFile(file);
+        if (validationError) {
+          Toast(validationError, {
+            type: "error",
+          });
+          return;
+        }
+
+        try {
+          Toast("엑셀 파일을 처리 중입니다...", {
+            type: "info",
+          });
+
+          const { stocks, errors } = await parseExcelFile(file, selectedRound);
+
+          if (errors.length > 0) {
+            console.warn("엑셀 파싱 중 경고:", errors);
+            Toast(`경고: ${errors.slice(0, 3).join(", ")}${errors.length > 3 ? ` 외 ${errors.length - 3}개` : ""}`, {
+              type: "warning",
+            });
+          }
+
+          if (stocks.length === 0) {
+            Toast("유효한 주식 데이터를 찾을 수 없습니다.", {
+              type: "error",
+            });
+            return;
+          }
+
+          // 엑셀 데이터를 StockData로 변환 (차수 매칭 포함)
+          const convertedData = convertExcelToStockData(stocks, selectedRound);
+
+          // 기존 데이터에 추가 (덮어쓰기 원할 경우 setStockData(convertedData)로 변경)
+          const newData = [
+            ...stockData,
+            ...convertedData,
+          ];
+          setStockData(newData);
+
+          // 상위 컴포넌트에 새 아이템 추가 알림
+          if (onAddItems) {
+            onAddItems(
+              convertedData.map(item => ({
+                itemId: item.itemCode,
+                money: item.money,
+              })),
+            );
+          }
+
+          Toast(`${stocks.length}개의 종목이 추가되었습니다.`, {
+            type: "success",
+          });
+        } catch (error) {
+          console.error("엑셀 업로드 오류:", error);
+          Toast("엑셀 파일 처리 중 오류가 발생했습니다.", {
+            type: "error",
+          });
+        }
+      },
+      [
+        selectedRound,
+        stockData,
+        setStockData,
+        onAddItems,
+      ],
+    );
+
+    // 엑셀 데이터 내보내기 (실제 테이블 데이터 사용)
+    const handleDownloadExcel = useCallback(() => {
+      try {
+        // 데이터 검증
+        const validation = validateStockDataForExport(stockData, selectedRound);
+        if (!validation.isValid) {
+          Toast(`엑셀 내보내기 불가: ${validation.errors.join(', ')}`, {
+            type: "error",
+          });
+          return;
+        }
+
+        downloadExcelWithStockData(stockData, selectedRound);
+        Toast(`${stockData.length}개 종목의 데이터가 엑셀로 내보내기되었습니다.`, {
+          type: "success",
+        });
+      } catch (error) {
+        console.error("엑셀 내보내기 오류:", error);
+        Toast("엑셀 내보내기 중 오류가 발생했습니다.", {
+          type: "error",
+        });
+      }
+    }, [
+      stockData,
+      selectedRound,
+    ]);
+
+    return (
+      <TableContainer>
+        <TableControls
+          hasCheckedItems={hasCheckedItems}
+          hasStockData={hasStockData}
+          canExportExcel={canExportExcel}
+          onDeleteSelected={handleDeleteSelected}
+          onFillRandomValues={handleFillRandomValues}
+          onExcelUpload={handleExcelUpload}
+          onDownloadTemplate={handleDownloadExcel}
           isEdit={isEdit}
-          degree={selectedRound}
-          allChecked={isAllChecked}
-          onToggleAll={handleToggleAll}
         />
 
-        <Tbody>
-          {displayData.length > 0 ? (
-            displayData.map(stock => (
-              <StockTableRow
-                key={stock.itemId}
-                stock={stock}
-                isEdit={isEdit}
-                isLoading={isLoading}
-                degree={selectedRound}
-                onToggle={toggleStock}
-                onPriceChange={handlePriceChange}
-                inputRefs={inputRefs}
-                onCellClick={handleCellClick}
-                onMoveToNextField={handleMoveToNextField}
+        <Table>
+          <StockTableHeader
+            isEdit={isEdit}
+            degree={selectedRound}
+            allChecked={isAllChecked}
+            onToggleAll={handleToggleAll}
+          />
+
+          <Tbody>
+            {displayData.length > 0 ? (
+              displayData.map(stock => (
+                <StockTableRow
+                  key={stock.itemId}
+                  stock={stock}
+                  isEdit={isEdit}
+                  isLoading={isLoading}
+                  degree={selectedRound}
+                  onToggle={toggleStock}
+                  onPriceChange={handlePriceChange}
+                  inputRefs={inputRefs}
+                  onCellClick={handleCellClick}
+                  onMoveToNextField={handleMoveToNextField}
+                />
+              ))
+            ) : (
+              <EmptyState colSpan={colSpan} />
+            )}
+
+            {isEdit && (
+              <AddRowButton
+                colSpan={colSpan}
+                onClick={handleOpenAddModal}
               />
-            ))
-          ) : (
-            <EmptyState colSpan={colSpan} />
-          )}
+            )}
+          </Tbody>
+        </Table>
 
-          {isEdit && (
-            <AddRowButton
-              colSpan={colSpan}
-              onClick={handleOpenAddModal}
-            />
-          )}
-        </Tbody>
-      </Table>
-
-      {showAddModal && (
-        <AddInvestItemModal
-          close={handleCloseAddModal}
-          onItemsSelected={handleAddItems}
-          selectedDegree={selectedRound}
-          existingItems={stockData.map(item => ({ id: item.itemId }))}
-        />
-      )}
-    </TableContainer>
-  );
-});
+        {showAddModal && (
+          <AddInvestItemModal
+            close={handleCloseAddModal}
+            onItemsSelected={handleAddItems}
+            selectedDegree={selectedRound}
+            existingItems={stockData.map(item => ({
+              id: item.itemId,
+            }))}
+          />
+        )}
+      </TableContainer>
+    );
+  },
+);
 
 // Styled Components
 const TableTitle = styled.div`
@@ -884,4 +1153,8 @@ const PlusTd = styled(Td)`
   &:hover {
     background-color: ${color.zinc[100]};
   }
+`;
+
+const HiddenFileInput = styled.input`
+  display: none;
 `;

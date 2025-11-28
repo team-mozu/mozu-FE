@@ -2,61 +2,30 @@ import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Header, Info, Toast, Users } from "@mozu/ui";
-import { removeCookiesAsync } from "@mozu/util-config";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { type ClassNextInvStartData, SSELoadingSpinner, type TeamSSEConnectedData, useTypeSSE } from "@/shared";
+import { SSELoadingSpinner } from "@/shared";
+import { useSSE } from "@/shared/contexts/SSEContext";
 
 export const StudentWaitPage = () => {
   const navigate = useNavigate();
-  const { isConnecting, isReconnecting, retryCount } = useTypeSSE(
-    `${import.meta.env.VITE_SERVER_URL}/team/sse`,
-    undefined,
-    (error, isInitialConnection) => {
-      if (isInitialConnection) {
-        console.error("SSE 초기 연결 실패:", error);
-        Toast("서버 연결에 실패했습니다. 로그인 페이지로 이동합니다.", {
-          type: "error",
-        });
-      } else {
-        console.log("SSE 연결 일시적 끊김, 재연결 시도 중...");
-      }
-    },
-    {
-      TEAM_SSE_CONNECTED: (data: TeamSSEConnectedData) => {
-        console.log(data);
-        Toast("모의투자 시작을 기다리는중..", {
-          type: "info",
-        });
-      },
-      CLASS_NEXT_INV_START: (data: ClassNextInvStartData) => {
-        localStorage.removeItem("trade");
-        Toast("투자가 시작되었습니다", {
-          type: "info",
-        });
-        navigate(`/${data.lessonId}`);
-      },
-      CLASS_CANCEL: async () => {
-        Toast("수업이 취소되었습니다.", {
-          type: "error",
-        });
+  const { isConnecting, isReconnecting, retryCount, lastData } = useSSE();
 
-        const domain = import.meta.env.VITE_STUDENT_COOKIE_DOMAIN;
-        await removeCookiesAsync(
-          [
-            "accessToken",
-            "authority",
-          ],
-          {
-            path: "/",
-            secure: true,
-            sameSite: "none",
-            domain,
-          },
-        );
-        navigate("/signin");
-      },
-    },
-  );
+  // SSE 이벤트 처리
+  useEffect(() => {
+    if (lastData?.type === "TEAM_SSE_CONNECTED") {
+      Toast("모의투자 시작을 기다리는중..", {
+        type: "info",
+      });
+    } else if (lastData?.type === "CLASS_START") {
+      // 수업 시작 또는 다음 차수 투자 시작 시 모두 페이지 이동
+      const targetPath = `/${lastData.lessonId}`;
+      navigate(targetPath);
+    }
+  }, [
+    lastData,
+    navigate,
+  ]);
 
   return (
     <AppContainer>
@@ -82,18 +51,8 @@ export const StudentWaitPage = () => {
 
           <ContentArea>
             <TextDiv>
-              <p>
-                {isReconnecting
-                  ? "연결 재시도 중..."
-                  : "모의투자 시작을 기다리는중..."
-                }
-              </p>
-              <span>
-                {isReconnecting
-                  ? `${retryCount}번째 재연결 시도 중`
-                  : "2025년도 모의투자"
-                }
-              </span>
+              <p>{isReconnecting ? "연결 재시도 중..." : "모의투자 시작을 기다리는중..."}</p>
+              <span>{isReconnecting ? `${retryCount}번째 재연결 시도 중` : "2025년도 모의투자"}</span>
             </TextDiv>
 
             {/* 재연결 중이 아닐 때만 로딩 바 표시 */}
@@ -102,9 +61,7 @@ export const StudentWaitPage = () => {
                 <LoadingBar>
                   <LoadingFill />
                 </LoadingBar>
-                <LoadingText>
-                  {isConnecting ? "연결 중.." : "모의투자 준비중.."}
-                </LoadingText>
+                <LoadingText>{isConnecting ? "연결 중.." : "모의투자 준비중.."}</LoadingText>
               </LoadingSection>
             )}
 
@@ -127,8 +84,7 @@ export const StudentWaitPage = () => {
             />
             {isReconnecting
               ? "연결이 복구되면 자동으로 모의투자 대기 상태로 돌아가요."
-              : "모의투자가 시작되면 자동으로 투자 페이지로 넘어가요."
-            }
+              : "모의투자가 시작되면 자동으로 투자 페이지로 넘어가요."}
           </InfoBox>
         </MainSection>
 

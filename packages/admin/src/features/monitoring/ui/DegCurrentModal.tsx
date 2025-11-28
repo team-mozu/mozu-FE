@@ -29,7 +29,7 @@ interface IDegCurrentType {
 }
 
 export const DegCurrentModal = ({ isOpen, setIsOpen, id }: IDegCurrentType) => {
-  const { data: degData } = useGetCurrent(id ?? "");
+  const { data: degData, isLoading, isFetching } = useGetCurrent(id ?? "");
   const { teamInfoMap } = useTeamStore();
   const backgroundRef = useRef<HTMLDivElement>(null);
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
@@ -134,7 +134,26 @@ export const DegCurrentModal = ({ isOpen, setIsOpen, id }: IDegCurrentType) => {
               </CloseButton>
             </TitleContainer>
 
-            {degDataList.length > 0 && (
+            {/* 로딩 중일 때 스켈레톤 탭 */}
+            {(isLoading || isFetching) && (
+              <TabContainer>
+                <TabSkeleton>
+                  <SkeletonBox width="20px" height="18px" />
+                  <SkeletonBox width="14px" height="14px" />
+                </TabSkeleton>
+                <TabSkeleton>
+                  <SkeletonBox width="20px" height="18px" />
+                  <SkeletonBox width="14px" height="14px" />
+                </TabSkeleton>
+                <TabSkeleton>
+                  <SkeletonBox width="20px" height="18px" />
+                  <SkeletonBox width="14px" height="14px" />
+                </TabSkeleton>
+              </TabContainer>
+            )}
+
+            {/* 데이터가 있을 때 실제 탭 */}
+            {!isLoading && !isFetching && degDataList.length > 0 && (
               <TabContainer>
                 {degDataList.map((degData, index) => (
                   <TabButton
@@ -150,31 +169,83 @@ export const DegCurrentModal = ({ isOpen, setIsOpen, id }: IDegCurrentType) => {
             )}
 
             <TableContainer>
-              <TeamInvestStatusTable contents={currentDeals} />
+              {/* 로딩 중일 때 스켈레톤 테이블 */}
+              {(isLoading || isFetching) ? (
+                <TableSkeleton>
+                  {/* 테이블 헤더 스켈레톤 */}
+                  <TableSkeletonHeader>
+                    <SkeletonBox width="80px" height="20px" />
+                    <SkeletonBox width="120px" height="20px" />
+                    <SkeletonBox width="100px" height="20px" />
+                    <SkeletonBox width="80px" height="20px" />
+                    <SkeletonBox width="100px" height="20px" />
+                    <SkeletonBox width="90px" height="20px" />
+                  </TableSkeletonHeader>
+
+                  {/* 테이블 로우 스켈레톤 */}
+                  {Array.from({ length: 8 }).map((_, index) => (
+                    <TableSkeletonRow key={index}>
+                      <SkeletonBox width="60px" height="16px" />
+                      <SkeletonBox width="100px" height="16px" />
+                      <SkeletonBox width="80px" height="16px" />
+                      <SkeletonBox width="60px" height="16px" />
+                      <SkeletonBox width="90px" height="16px" />
+                      <SkeletonBox width="70px" height="16px" />
+                    </TableSkeletonRow>
+                  ))}
+                </TableSkeleton>
+              ) : degDataList.length > 0 ? (
+                <TeamInvestStatusTable contents={currentDeals} />
+              ) : (
+                <NoDataContainer>
+                  <NoDataIcon>📊</NoDataIcon>
+                  <NoDataTitle>거래 내역이 없습니다</NoDataTitle>
+                  <NoDataDescription>아직 투자 거래가 진행되지 않았습니다.</NoDataDescription>
+                </NoDataContainer>
+              )}
             </TableContainer>
 
             <FooterContainer>
-              <FooterStats>
-                <StatItem>
-                  <StatLabel>총 거래 건수</StatLabel>
-                  <StatValue>{currentDeals.length}건</StatValue>
-                </StatItem>
-                <StatDivider />
-                <StatItem>
-                  <StatLabel>차수</StatLabel>
-                  <StatValue>{currentDegData?.degNumber}차</StatValue>
-                </StatItem>
-                <StatDivider />
-                <StatItem>
-                  <StatLabel>현재 시각</StatLabel>
-                  <StatValue>
-                    {new Date().toLocaleTimeString("ko-KR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </StatValue>
-                </StatItem>
-              </FooterStats>
+              {(isLoading || isFetching) ? (
+                <FooterStats>
+                  <StatItem>
+                    <StatLabel>총 거래 건수</StatLabel>
+                    <SkeletonBox width="40px" height="20px" />
+                  </StatItem>
+                  <StatDivider />
+                  <StatItem>
+                    <StatLabel>차수</StatLabel>
+                    <SkeletonBox width="30px" height="20px" />
+                  </StatItem>
+                  <StatDivider />
+                  <StatItem>
+                    <StatLabel>현재 시각</StatLabel>
+                    <SkeletonBox width="60px" height="20px" />
+                  </StatItem>
+                </FooterStats>
+              ) : (
+                <FooterStats>
+                  <StatItem>
+                    <StatLabel>총 거래 건수</StatLabel>
+                    <StatValue>{currentDeals.length}건</StatValue>
+                  </StatItem>
+                  <StatDivider />
+                  <StatItem>
+                    <StatLabel>차수</StatLabel>
+                    <StatValue>{currentDegData?.degNumber || 0}차</StatValue>
+                  </StatItem>
+                  <StatDivider />
+                  <StatItem>
+                    <StatLabel>현재 시각</StatLabel>
+                    <StatValue>
+                      {new Date().toLocaleTimeString("ko-KR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </StatValue>
+                  </StatItem>
+                </FooterStats>
+              )}
 
               <FooterActions>
                 <ActionButton
@@ -482,5 +553,122 @@ const ActionButton = styled.button<{
   
   &:active {
     transform: translateY(0);
+  }
+`;
+
+// 스켈레톤 컴포넌트들
+const TabSkeleton = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 24px;
+  background: ${color.zinc[50]};
+  border-radius: 12px 12px 0 0;
+  min-width: 80px;
+  justify-content: center;
+`;
+
+const TableSkeleton = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: ${color.white};
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+`;
+
+const TableSkeletonHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 2fr 1.5fr 1fr 1.5fr 1.2fr;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 20px;
+  background: ${color.zinc[50]};
+  border-radius: 12px;
+  border-bottom: 2px solid ${color.zinc[100]};
+`;
+
+const TableSkeletonRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 2fr 1.5fr 1fr 1.5fr 1.2fr;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 20px;
+  background: ${color.white};
+  border-bottom: 1px solid ${color.zinc[100]};
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+// NoData 컴포넌트들
+const NoDataContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: ${color.white};
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 48px 24px;
+`;
+
+const NoDataIcon = styled.div`
+  font-size: 48px;
+  margin-bottom: 8px;
+  opacity: 0.6;
+`;
+
+const NoDataTitle = styled.h3`
+  font: ${font.t3};
+  color: ${color.zinc[700]};
+  margin: 0;
+  font-weight: 600;
+`;
+
+const NoDataDescription = styled.p`
+  font: ${font.b2};
+  color: ${color.zinc[500]};
+  margin: 0;
+  text-align: center;
+  line-height: 1.5;
+`;
+
+// 커스텀 스켈레톤 컴포넌트
+const SkeletonBox = styled.div<{ width: string; height: string }>`
+  width: ${props => props.width};
+  height: ${props => props.height};
+  background-color: ${color.zinc[100]};
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+
+  @keyframes skeleton-shimmer {
+    0% {
+      background-color: ${color.zinc[100]};
+    }
+    50% {
+      background-color: ${color.zinc[200]};
+    }
+    100% {
+      background-color: ${color.zinc[100]};
+    }
+  }
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    animation: skeleton-shimmer 1.5s infinite ease-in-out;
   }
 `;

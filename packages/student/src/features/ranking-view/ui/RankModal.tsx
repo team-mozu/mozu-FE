@@ -5,19 +5,18 @@ import { useTeamRank } from "@/entities/transaction";
 import { useGetTeamDetail, useTeamResult } from "@/entities/user/api";
 
 interface IRankModal {
-  onCancle: () => void;
+  onCancel: () => void;
   endRound?: number;
 }
 
-export const RankModal = ({ onCancle, endRound }: IRankModal) => {
+export const RankModal = ({ onCancel, endRound }: IRankModal) => {
   const { data: rankData } = useTeamRank();
   const { data: teamResult } = useTeamResult();
-  const { data: teamDetail } = useGetTeamDetail();
 
   console.log(teamResult?.invRound, endRound);
 
   return (
-    <ModalBackdrop onClick={onCancle}>
+    <ModalBackdrop onClick={onCancel}>
       <Container onClick={e => e.stopPropagation()}>
         <Header>
           <IconDiv>
@@ -51,7 +50,7 @@ export const RankModal = ({ onCancle, endRound }: IRankModal) => {
         </RankingContainer>
 
         <ButtonDiv>
-          <Button onClick={onCancle}>닫기</Button>
+          <Button onClick={onCancel}>닫기</Button>
         </ButtonDiv>
       </Container>
     </ModalBackdrop>

@@ -104,7 +104,8 @@ export const CreateClass = () => {
             borderColor={color.zinc[200]}
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
-            onClick={handleCancel}>
+            onClick={handleCancel}
+            disabled={isPending}>
             취소
           </Button>
           <Button

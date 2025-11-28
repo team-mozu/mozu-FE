@@ -93,7 +93,7 @@ export const MockResultPage = () => {
       />
       {isModalOpen && (
         <RankModal
-          onCancle={handleCloseModal}
+          onCancel={handleCloseModal}
           endRound={mockEndRound}
         />
       )}

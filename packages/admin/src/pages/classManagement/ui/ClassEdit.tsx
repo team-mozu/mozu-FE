@@ -41,7 +41,7 @@ export const ClassEdit = () => {
   // API 호출
   const { data: classDetailData, isLoading } = useGetClassDetail(id ?? "");
   const { data: stockListData } = useGetStockList();
-  const { mutate: editClass } = useUpdateClass(id ?? "");
+  const { mutate: editClass, isPending } = useUpdateClass(id ?? "");
 
   // 상태 관리
   const [className, setClassName] = useState<string>("");
@@ -329,7 +329,8 @@ export const ClassEdit = () => {
             color={color.zinc[800]}
             hoverBackgroundColor={color.zinc[100]}
             hoverBorderColor={color.zinc[100]}
-            onClick={cancelClick}>
+            onClick={cancelClick}
+            disabled={isPending}>
             취소
           </Button>
           <Button
@@ -338,8 +339,9 @@ export const ClassEdit = () => {
             color={color.white}
             hoverBackgroundColor={color.orange[400]}
             hoverBorderColor={color.orange[400]}
-            onClick={handleSubmit}>
-            저장하기
+            onClick={handleSubmit}
+            disabled={isPending}>
+            {isPending ? "저장 중..." : "저장하기"}
             <Save
               size={20}
               color="white"

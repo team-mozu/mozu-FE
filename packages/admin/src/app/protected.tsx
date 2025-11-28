@@ -1,3 +1,4 @@
+import { SSEProvider } from "@/shared/lib/contexts";
 import { AppLayout } from "./AppLayout";
 import * as pages from "./router/lazyPages";
 
@@ -71,11 +72,19 @@ export const protectedRoutes = [
               },
               {
                 path: "start",
-                element: <pages.InvestmentPreparation />,
+                element: (
+                  <SSEProvider>
+                    <pages.InvestmentPreparation />
+                  </SSEProvider>
+                ),
               },
               {
                 path: "monitoring",
-                element: <pages.ImprovedClassMonitoringPage />,
+                element: (
+                  <SSEProvider>
+                    <pages.ImprovedClassMonitoringPage />
+                  </SSEProvider>
+                ),
               },
             ],
           },

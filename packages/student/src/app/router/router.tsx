@@ -1,76 +1,81 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { AppLayout, MockAppLayout, ProtectedRoute } from "@/app";
+import { AppLayout, MockAppLayout, ProtectedRoute, SSEProtectedRoute } from "@/app";
 import * as _ from "@/pages";
 import { StockGraph, StockInfo } from "../../features";
 
 export const Router = createBrowserRouter([
   {
-    path: "/signin",
+    element: <SSEProtectedRoute />, // 🔥 최상위에서 SSE 관리 (토큰 있을 때만 연결)
     children: [
       {
-        index: true,
-        element: <_.SignInPage />,
-      },
-      {
-        path: "wait",
-        element: <_.StudentWaitPage />,
-      },
-    ],
-  },
-  {
-    element: <ProtectedRoute />,
-    children: [
-      {
-        path: "/:classId",
-        element: <AppLayout />,
+        path: "/signin",
         children: [
           {
             index: true,
-            element: <_.HomePage />,
+            element: <_.SignInPage />,
           },
           {
-            path: "stock/:stockId",
-            element: <_.StockPage />,
+            path: "wait",
+            element: <_.StudentWaitPage />,
+          },
+        ],
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "/:classId",
+            element: <AppLayout />,
             children: [
               {
                 index: true,
-                element: (
-                  <Navigate
-                    to="stock-info"
-                    replace
-                  />
-                ),
+                element: <_.HomePage />,
               },
               {
-                path: "price-info",
-                element: <StockGraph />,
+                path: "stock/:stockId",
+                element: <_.StockPage />,
+                children: [
+                  {
+                    index: true,
+                    element: (
+                      <Navigate
+                        to="stock-info"
+                        replace
+                      />
+                    ),
+                  },
+                  {
+                    path: "price-info",
+                    element: <StockGraph />,
+                  },
+                  {
+                    path: "stock-info",
+                    element: <StockInfo />,
+                  },
+                ],
               },
               {
-                path: "stock-info",
-                element: <StockInfo />,
+                path: "news",
+                children: [
+                  {
+                    index: true,
+                    element: <_.NewsPage />,
+                  },
+                  {
+                    path: ":newsId",
+                    element: <_.NewsDetailPage />,
+                  },
+                ],
+              },
+              {
+                path: "result",
+                element: <_.ResultPage />,
+              },
+              {
+                path: "ending",
+                element: <_.EndingPage />,
               },
             ],
-          },
-          {
-            path: "news",
-            children: [
-              {
-                index: true,
-                element: <_.NewsPage />,
-              },
-              {
-                path: ":newsId",
-                element: <_.NewsDetailPage />,
-              },
-            ],
-          },
-          {
-            path: "result",
-            element: <_.ResultPage />,
-          },
-          {
-            path: "ending",
-            element: <_.EndingPage />,
           },
         ],
       },

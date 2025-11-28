@@ -91,6 +91,15 @@ export const nextDegree = async (id: string) => {
 };
 
 /**
+ * 수업을 시작하는 API 함수입니다.
+ * @param {string} id - 시작할 수업의 ID (UUID)
+ * @returns {Promise<void>} 수업 시작 완료 응답
+ */
+export const startDegree = async (id: string) => {
+  return await instance.patch(`${router}/start-investment/${id}`);
+};
+
+/**
  * 진행 중인 수업을 종료하는 API 함수입니다.
  * @param {string} id - 종료할 수업의 ID (UUID)
  * @returns {Promise<void>} 수업 종료 완료 응답

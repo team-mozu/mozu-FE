@@ -25,6 +25,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   const { data: stockData } = useGetStockDetail(ItemId ?? 0);
   const { data: holdItemData } = useGetHoldItems();
   const [tradeData, setTradeData] = useLocalStorage<TeamEndProps>("trade", []);
+  const [cashMoney, setCashMoney] = useLocalStorage<number>("cashMoney", 0); // cashMoney 상태 추가
   const outSideRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -32,26 +33,27 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
   const [quantity, setQuantity] = useState<string>("0");
   const numericQuantity = Number(quantity.replace(/[^0-9]/g, "")) || 0;
 
+  // teamData가 변경되면 cashMoney 초기화
+  useEffect(() => {
+    if (teamData?.cashMoney && cashMoney === 0) {
+      setCashMoney(teamData.cashMoney);
+    }
+  }, [teamData, cashMoney, setCashMoney]);
+
   useEffect(() => {
     if (isOpen) {
-      // Focus the input after the modal's entry animation (300ms)
       const timerId = setTimeout(() => {
         inputRef.current?.focus();
       }, 300);
       return () => clearTimeout(timerId);
     }
-  }, [
-    isOpen,
-  ]);
+  }, [isOpen]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
   useEffect(() => {
     const newQuantity = maxQuantity > 0 ? "0" : "0";
     setQuantity(newQuantity);
-  }, [
-    stockData?.nowMoney,
-    teamData?.cashMoney,
-  ]);
+  }, [stockData?.nowMoney, teamData?.cashMoney]);
 
   // 수정: 서버 데이터를 기준으로 매수/매도 가능 수량 계산
   // biome-ignore lint/correctness/useExhaustiveDependencies: <임시>
@@ -59,9 +61,8 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     if (!stockData || !stockData.nowMoney || !holdItemData || !teamData) return 0;
 
     if (modalType === "매수") {
-      // 서버의 실제 현금으로 계산
-      const availableCash = teamData.cashMoney;
-      return stockData.nowMoney > 0 ? Math.floor(availableCash / stockData.nowMoney) : 0;
+      // 로컬 cashMoney 사용 (매수/매도 반영된 현금)
+      return stockData.nowMoney > 0 ? Math.floor(cashMoney / stockData.nowMoney) : 0;
     } else if (modalType === "매도") {
       // 서버의 실제 보유 주식 수량으로 계산
       const holding = holdItemData.find(item => item.itemId === stockData.itemId);
@@ -82,7 +83,7 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     }
     return 0;
   }, [
-    teamData?.cashMoney,
+    cashMoney, // cashMoney 사용
     stockData?.nowMoney,
     modalType,
     holdItemData,
@@ -91,17 +92,10 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     tradeData,
   ]);
 
-  // 수정: 실제 매수 가능 현금 계산
+  // 수정: 실제 매수 가능 현금 계산 (로컬 cashMoney 사용)
   const availableCash = useMemo(() => {
-    if (!teamData) return 0;
-
-    const currentRound = teamData.curInvRound ?? 1;
-    const alreadyBoughtAmount = tradeData
-      .filter(trade => trade.orderType === "BUY" && trade.invCount === currentRound)
-      .reduce((sum, trade) => sum + trade.totalMoney, 0);
-
-    return teamData.cashMoney - alreadyBoughtAmount;
-  }, [teamData, tradeData]);
+    return cashMoney;
+  }, [cashMoney]);
 
   if (!stockData || !holdItemData || stockData.nowMoney === undefined || !teamData) {
     return null;
@@ -123,16 +117,11 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
       return;
     }
 
-    // 수정: 서버 데이터 기준으로 유효성 검사
+    // 수정: 로컬 cashMoney 기준으로 유효성 검사
     if (modalType === "매수") {
-      const currentRound = teamData.curInvRound ?? 1;
-      const alreadyBoughtAmount = tradeData
-        .filter(trade => trade.orderType === "BUY" && trade.invCount === currentRound)
-        .reduce((sum, trade) => sum + trade.totalMoney, 0);
-
       const totalCost = numericQuantity * stockData.nowMoney;
 
-      if (totalCost > (teamData.cashMoney - alreadyBoughtAmount)) {
+      if (totalCost > cashMoney) {
         Toast("보유하고 있는 현금보다 많이 매수할 수 없습니다", {
           type: "error",
         });
@@ -189,19 +178,26 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
           totalMoney: tradeData[existingIndex].totalMoney + newTradeItem.totalMoney,
         };
 
-        updatedTradeData = [
-          ...tradeData,
-        ];
+        updatedTradeData = [...tradeData];
         updatedTradeData[existingIndex] = mergedItem;
       } else {
-        updatedTradeData = [
-          ...tradeData,
-          newTradeItem,
-        ];
+        updatedTradeData = [...tradeData, newTradeItem];
       }
 
-      // 수정: 로컬 cashMoney 업데이트 제거 (서버 데이터를 신뢰)
+      // 🔥 중요: cashMoney 업데이트 로직 추가
+      const totalTradeMoney = numericQuantity * stockData.nowMoney;
+      let updatedCashMoney = cashMoney;
+
+      if (modalType === "매수") {
+        updatedCashMoney = cashMoney - totalTradeMoney;
+      } else if (modalType === "매도") {
+        updatedCashMoney = cashMoney + totalTradeMoney;
+      }
+
+      // cashMoney와 tradeData를 함께 업데이트
+      setCashMoney(updatedCashMoney);
       setTradeData(updatedTradeData);
+
       Toast(`거래가 성공적으로 완료되었습니다.`, {
         type: "success",
       });
@@ -271,49 +267,23 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
     <AnimatePresence>
       <MotionBackdrop
         ref={outSideRef}
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 1,
-        }}
-        exit={{
-          opacity: 0,
-        }}
-        onClick={onClose}>
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+      >
         <MotionModalContainer
           onClick={e => e.stopPropagation()}
-          initial={{
-            scale: 0.9,
-            opacity: 0,
-            y: 20,
-          }}
-          animate={{
-            scale: 1,
-            opacity: 1,
-            y: 0,
-          }}
-          exit={{
-            scale: 0.9,
-            opacity: 0,
-            y: 20,
-          }}
-          transition={{
-            duration: 0.3,
-            ease: [
-              0.25,
-              0.46,
-              0.45,
-              0.94,
-            ],
-          }}>
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 20 }}
+          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
           <CloseButton onClick={onClose}>
             <CloseIcon>✕</CloseIcon>
           </CloseButton>
 
-          <HeaderSection
-            themeColor={themeColor}
-            themeLightColor={themeLightColor}>
+          <HeaderSection themeColor={themeColor} themeLightColor={themeLightColor}>
             <HeaderGradient themeGradient={themeGradient} />
             <HeaderContent>
               <StockName>{stockData.itemName}</StockName>
@@ -340,7 +310,8 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
                 <MaxButton
                   onClick={handleMaxQuantity}
                   disabled={maxQuantity === 0}
-                  themeColor={themeColor}>
+                  themeColor={themeColor}
+                >
                   최대
                 </MaxButton>
               </QuantityInputWrapper>
@@ -348,13 +319,9 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
 
             <InfoSection>
               {footerData.map((data, index) => (
-                <InfoRow
-                  key={index}
-                  isTotal={index === footerData.length - 1}>
+                <InfoRow key={index} isTotal={index === footerData.length - 1}>
                   <InfoLabel>{data.text}</InfoLabel>
-                  <InfoValue
-                    isTotal={index === footerData.length - 1}
-                    themeColor={themeColor}>
+                  <InfoValue isTotal={index === footerData.length - 1} themeColor={themeColor}>
                     {data.value}
                   </InfoValue>
                 </InfoRow>
@@ -373,7 +340,8 @@ export const BuySellModal = ({ modalType, onClose, isOpen }: IPropsType) => {
                 disabled={numericQuantity === 0}
                 onClick={handleConfirm}
                 themeGradient={themeGradient}
-                isBuy={isBuyMode}>
+                isBuy={isBuyMode}
+              >
                 <ButtonIcon>{isBuyMode ? "💰" : "📊"}</ButtonIcon>
                 {modalType}하기
               </ConfirmButton>

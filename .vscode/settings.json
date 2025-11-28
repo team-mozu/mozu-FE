@@ -17,5 +17,5 @@
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "kiroAgent.configureMCP": "Disabled",
-  "cSpell.words": ["datas", "mozu"]
+  "cSpell.words": ["datas", "Degs", "mozu"]
 }

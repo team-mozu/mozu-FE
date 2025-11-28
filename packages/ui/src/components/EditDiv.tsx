@@ -62,6 +62,7 @@ export const EditDiv: React.FC<IEditType> = ({
           color={color.zinc[800]}
           borderColor={color.zinc[200]}
           type={type1}
+          disabled={disabled}
           iconSize={iconSize1}
           iconColor={iconColor1}
           isIcon={isIcon1}
