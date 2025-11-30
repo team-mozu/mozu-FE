@@ -46,8 +46,8 @@ export const TradingDetailModal = ({ isOpen, onClose }: Props) => {
                   <Tr $isHeader>
                     <Th>종목명</Th>
                     <Th>보유주식수</Th>
-                    <Th>평균단가</Th>
                     <Th>현재가</Th>
+                    <Th>총 매입금액</Th>
                     <Th>평가금액</Th>
                     <Th>평가손익</Th>
                     <Th>수익률</Th>
@@ -66,10 +66,10 @@ export const TradingDetailModal = ({ isOpen, onClose }: Props) => {
                           <Quantity>{item.holdingQuantity.toLocaleString()}주</Quantity>
                         </Td>
                         <Td $isNumber>
-                          <Price>{item.averagePrice.toLocaleString()}원</Price>
+                          <Price>{item.currentPrice.toLocaleString()}원</Price>
                         </Td>
                         <Td $isNumber>
-                          <Price>{item.currentPrice.toLocaleString()}원</Price>
+                          <Price>{item.purchasePrice.toLocaleString()}원</Price>
                         </Td>
                         <Td $isNumber>
                           <Amount>{item.valuationAmount.toLocaleString()}원</Amount>
@@ -135,7 +135,7 @@ const ModalContainer = styled.div`
   width: 1000px;
   overflow: hidden;
   animation: modalSlideIn 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  
+
 `;
 
 // Modal Header

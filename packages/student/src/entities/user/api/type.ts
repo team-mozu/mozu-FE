@@ -51,7 +51,7 @@ export type TradingDetailResponse = {
   itemId: number;
   itemName: string;
   holdingQuantity: number; // 보유 주식수
-  averagePrice: number; // 평균단가
+  purchasePrice: number; // 평균단가
   currentPrice: number; // 현재가
   valuationAmount: number; // 평가금액 (보유 주식수 × 현재가)
   profitLoss: number; // 평가손익 (평가금액 - 매입금액)
