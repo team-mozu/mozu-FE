@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import type { AuthResponse, StudentLoginProps, TeamDetailResponse, TeamEndProps, TeamResultResponse } from "./type";
+import type { AuthResponse, StudentLoginProps, TeamDetailResponse, TeamEndProps, TeamResultResponse, TradingDetailResponse } from "./type";
 
 const router = "/team";
 
@@ -112,6 +112,20 @@ export const useTeamResult = (options?: UseQueryOptions<TeamResultResponse, Axio
     ],
     queryFn: async () => {
       const { data } = await instance.get<TeamResultResponse>(`${router}/result`);
+      return data;
+    },
+    ...options,
+  });
+};
+
+export const useTradingDetail = (options?: UseQueryOptions<TradingDetailResponse[], AxiosError>) => {
+  return useQuery<TradingDetailResponse[], AxiosError>({
+    queryKey: [
+      "team",
+      "trading-detail",
+    ],
+    queryFn: async () => {
+      const { data } = await instance.get<TradingDetailResponse[]>(`${router}/trading-detail`);
       return data;
     },
     ...options,

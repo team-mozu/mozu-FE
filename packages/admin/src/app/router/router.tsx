@@ -9,4 +9,6 @@ export const Router = createBrowserRouter([
     children: protectedRoutes,
   },
   ...publicRoutes,
-]);
+], {
+  basename: "/admin", // nginx에서 /admin 경로로 호스팅할 때 필요
+});

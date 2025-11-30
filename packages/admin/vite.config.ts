@@ -3,6 +3,7 @@ import path from "path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  base: "/admin/",
   plugins: [
     react(),
   ], // react-refresh 대신 사용

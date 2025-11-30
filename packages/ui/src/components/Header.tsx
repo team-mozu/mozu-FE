@@ -244,7 +244,7 @@ const NavContainer = styled.nav`
 const Nav = styled.div<{
   isActive: boolean;
 }>`
-  font: ${font.t1};
+  font: ${font.h4};
   color: ${({ isActive }) => (isActive ? color.zinc[800] : color.zinc[500])};
   padding: 10px 16px;
   display: flex;

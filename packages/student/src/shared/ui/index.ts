@@ -6,3 +6,4 @@ export * from "./PageTransition";
 export * from "./ResultContainer";
 export * from "./SSELoadingSpinner";
 export * from "./TotalProperty";
+export * from "./TradingDetailModal";

@@ -11,6 +11,8 @@
     "dev": "concurrently \"yarn workspace @mozu/admin dev\" \"yarn workspace @mozu/student dev\"",
     "dev:ip": "concurrently \"yarn workspace @mozu/admin dev\" \"yarn workspace @mozu/student start:ip\"",
     "build": "concurrently \"yarn workspace @mozu/admin build\" \"yarn workspace @mozu/student build\"",
+    "build:dev": "concurrently \"yarn workspace @mozu/admin build:dev\" \"yarn workspace @mozu/student build:dev\"",
+    "build:prod": "concurrently \"yarn workspace @mozu/admin build:prod\" \"yarn workspace @mozu/student build:prod\"",
     "prepare": "husky install",
     "commit": "cz",
     "new-branch": "sh ./scripts/new-branch.sh"

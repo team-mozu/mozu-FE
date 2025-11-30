@@ -2,12 +2,16 @@
   "name": "@mozu/admin",
   "private": true,
   "version": "0.0.0",
-  "main": "index.js",
   "type": "module",
+  "homepage": "/admin/",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "start": "vite preview --port 3002",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:dev": "NODE_ENV=development tsc -b && vite build --mode development",
+    "build:prod": "NODE_ENV=production tsc -b && vite build --mode production",
     "lhci": "rm -rf ./lhci_reports && yarn build && lhci autorun && rm -rf ./.lighthouseci"
   },
   "dependencies": {

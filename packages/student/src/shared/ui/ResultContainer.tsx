@@ -14,6 +14,7 @@ import { AssetChange } from "./AssetChange";
 import { History } from "./History";
 import { NthDeal } from "./NthDeal";
 import { SSELoadingSpinner } from "./SSELoadingSpinner";
+import { TradingDetailModal } from "./TradingDetailModal";
 
 interface ValueStyleProps {
   isPositive?: boolean;
@@ -27,6 +28,7 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
   const { data: teamDetail } = useGetTeamDetail();
   const [isWait, setIsWait] = useState(true);
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isTradingDetailOpen, setIsTradingDetailOpen] = useState(false);
   const navigate = useNavigate();
   const { classId } = useParams<{
     classId: string;
@@ -45,6 +47,21 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
 
   const isValueProfitPositive = valueProfitNum >= 0;
   const isProfitNumPositive = profitNumNum >= 0;
+
+  // 투자중인 금액 손익 계산
+  const currentStockValue = (teamResult?.totalMoney ?? 0) - (teamResult?.availableMoney ?? 0);
+  const originalInvestment = teamResult?.investingMoney ?? 0;
+  const stockProfit = currentStockValue - originalInvestment;
+  const stockProfitRate = teamResult?.profitNum;
+  const isStockProfitPositive = stockProfit >= 0;
+
+  const handleTradingDetailClick = () => {
+    setIsTradingDetailOpen(true);
+  };
+
+  const handleTradingDetailClose = () => {
+    setIsTradingDetailOpen(false);
+  };
 
   const handleEndClass = () => {
     resetShownInvDegs();
@@ -191,6 +208,11 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                     />
                   );
                 })}
+            <DetailButtonContainer>
+              <DetailButton onClick={handleTradingDetailClick}>
+                상세보기
+              </DetailButton>
+            </DetailButtonContainer>
           </Transaction>
           <RightContainer>
             <Result>
@@ -200,10 +222,15 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                 totalMoney={teamResult?.totalMoney ?? 0}
               />
               <Sub>
-                <MoneyBreakdown>
-                  <label>투자중인 금액</label>
-                  <p>{teamResult?.investingMoney?.toLocaleString() ?? "0"}원</p>
-                </MoneyBreakdown>
+                <StockInvestment isPositive={isStockProfitPositive}>
+                  <label>투자중인 금액 (현재가치)</label>
+                  <div>
+                    <MainAmount>{currentStockValue.toLocaleString()}원</MainAmount>
+                    <ProfitInfo isPositive={isStockProfitPositive}>
+                      {isStockProfitPositive ? "+" : ""}{stockProfit.toLocaleString()}원 ({isStockProfitPositive}{stockProfitRate})
+                    </ProfitInfo>
+                  </div>
+                </StockInvestment>
 
                 <MoneyBreakdown>
                   <label>주문 가능 금액</label>
@@ -302,6 +329,12 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
           opacity={1}
           delayShow={300}
           delayHide={100}
+        />
+
+        {/* 거래내역 상세 모달 */}
+        <TradingDetailModal
+          isOpen={isTradingDetailOpen}
+          onClose={handleTradingDetailClose}
         />
       </Container>
     </>
@@ -433,6 +466,56 @@ const MoneyBreakdown = styled.div`
     font: ${font.t3};
     color: ${color.orange[600]};
   }
+`;
+
+const StockInvestment = styled.div<{ isPositive: boolean }>`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font: ${font.b2};
+  color: ${color.zinc[600]};
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+`;
+
+const MainAmount = styled.span`
+  font: ${font.t3};
+  color: ${color.orange[600]};
+`;
+
+const DetailButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+  margin-top: auto;
+`;
+
+const DetailButton = styled.button`
+  padding: 8px 16px;
+  background-color: ${color.orange[100]};
+  color: ${color.orange[700]};
+  border: 1px solid ${color.orange[300]};
+  border-radius: 8px;
+  font: ${font.b2};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+
+  &:hover {
+    background-color: ${color.orange[200]};
+    border-color: ${color.orange[400]};
+  }
+`;
+
+const ProfitInfo = styled.span<{ isPositive: boolean }>`
+  font: ${font.l1};
+  color: ${({ isPositive }) => (isPositive ? color.red[500] : color.blue[500])};
 `;
 
 const TotalDeal = styled.div`
