@@ -27,7 +27,12 @@ export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "�
   const handleImageError = () => {
     if (!hasErrored) {
       setHasErrored(true);
-      setImgSrc(noImgIcon);
+
+      const img = new Image();
+      img.src = noImgIcon;
+      img.onload = () => {
+        setImgSrc(noImgIcon);
+      }
     }
   };
 
@@ -45,6 +50,7 @@ export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "�
           <LogoImgDiv />
         ) : (
           <Logo
+            key={imgSrc}
             src={imgSrc}
             onError={handleImageError}
           />

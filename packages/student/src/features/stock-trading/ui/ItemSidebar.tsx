@@ -42,7 +42,12 @@ const ItemContent = memo(({
   const handleImageError = () => {
     if (!hasErrored) {
       setHasErrored(true);
-      setImgSrc(noImgIcon);
+
+      const img = new Image();
+      img.src = noImgIcon;
+      img.onload = () => {
+        setImgSrc(noImgIcon);
+      }
     }
   };
 
@@ -50,6 +55,7 @@ const ItemContent = memo(({
     <ItemContainer onClick={onClick}>
       <LogoContainer>
         <Logo
+          key={imgSrc}
           src={imgSrc}
           alt={itemName}
           onError={handleImageError}
@@ -211,7 +217,7 @@ const SideBarContainer = styled.div`
   left: 0;
   border-right: 1px solid ${color.zinc[200]};
   width: clamp(240px, 25vw, 320px);
-  height: 100vh;
+  height: calc(100vh - 64px);
   background-color: ${color.white};
   padding: 1.5rem 0;
   display: flex;
