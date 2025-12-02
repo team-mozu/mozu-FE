@@ -87,8 +87,32 @@ export const SSEProvider = ({ children }: SSEProviderProps) => {
 
 export const useSSE = () => {
   const context = useContext(SSEContext);
+
+  // SSEProvider가 없을 때 기본값 반환 (에러 대신)
   if (!context) {
-    throw new Error("useSSE must be used within a SSEProvider");
+    // 개발 환경에서만 경고 출력
+    if (import.meta.env.DEV) {
+      console.warn("useSSE is being used outside of SSEProvider. Returning default values.");
+    }
+
+    return {
+      isConnected: false,
+      isConnecting: false,
+      isReconnecting: false,
+      retryCount: 0,
+      lastData: null,
+      disconnect: () => {
+        if (import.meta.env.DEV) {
+          console.warn("SSE disconnect called but no SSEProvider is available.");
+        }
+      },
+      clearLastData: () => {
+        if (import.meta.env.DEV) {
+          console.warn("SSE clearLastData called but no SSEProvider is available.");
+        }
+      },
+    };
   }
+
   return context;
 };

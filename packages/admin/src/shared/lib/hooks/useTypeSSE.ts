@@ -77,6 +77,9 @@ export const useTypeSSE = (
     const currentRetryCount = retryCountRef.current;
     console.log(`[SSE] 재연결 시도 중... (시도 ${currentRetryCount + 1})`);
 
+    // 재연결 시도 상태 설정
+    setIsReconnecting(true);
+
     const delay = Math.min(1000 * 2 ** currentRetryCount, 30000);
 
     reconnectTimeoutRef.current = setTimeout(() => {
