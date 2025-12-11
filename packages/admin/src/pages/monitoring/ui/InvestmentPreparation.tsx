@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Del, Modal, Toast, WarningMsg } from "@mozu/ui";
+import { Button, Modal, SvgIcon, Toast, WarningMsg } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useTeamStore } from "@/app/store";
@@ -95,7 +95,10 @@ export const InvestmentPreparation = () => {
       default:
         console.log("🔍 [DEBUG] 알 수 없는 이벤트 타입:", lastData.type);
     }
-  }, [lastData, setTeamInfo]);
+  }, [
+    lastData,
+    setTeamInfo,
+  ]);
 
   // 컴포넌트 마운트 시 팀 정보 초기화
   useEffect(() => {
@@ -141,7 +144,8 @@ export const InvestmentPreparation = () => {
           subTitle="취소하면 복구가 불가능합니다."
           onSuccessClick={handleCancel}
           icon={
-            <Del
+            <SvgIcon
+              name="del"
               size={24}
               color={color.red[400]}
             />

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { ArrowRight } from "@mozu/ui";
+import { SvgIcon } from "@mozu/ui";
 
 interface IProp {
   baseMoney: number;
@@ -14,7 +14,8 @@ export const AssetChange = ({ baseMoney = 0, totalMoney = 0 }: IProp) => {
         <label>초기 자산</label>
         <p>{baseMoney.toLocaleString() ?? "0"}</p>
       </Beginning>
-      <ArrowRight
+      <SvgIcon
+        name="arrow-right"
         size={24}
         color={color.black}
       />

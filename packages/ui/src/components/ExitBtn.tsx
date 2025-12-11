@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { ArrowLeft } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 export const ExitBtn = () => {
   return (
     <Btn>
-      <ArrowLeft color={color.zinc[800]}></ArrowLeft>
+      <SvgIcon name="arrow-left" color={color.zinc[800]}></SvgIcon>
     </Btn>
   );
 };

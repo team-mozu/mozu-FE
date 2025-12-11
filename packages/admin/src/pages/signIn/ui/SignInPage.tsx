@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Input, LogoWithText, Toast } from "@mozu/ui";
+import { Input, SvgIcon, Toast } from "@mozu/ui";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAdminLogin } from "@/entities/organ";
@@ -34,9 +34,9 @@ export const SignInPage = () => {
   return (
     <Container>
       <LogoWrapper>
-        <LogoWithText
-          width={74}
-          height={28}
+        <SvgIcon
+          name="logo-with-text"
+          size={72}
         />
         모의주식투자
       </LogoWrapper>

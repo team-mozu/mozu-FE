@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, ClassIcon, InvestInfoTable } from "@mozu/ui";
+import { Button, InvestInfoTable, SvgIcon } from "@mozu/ui";
 import { useCallback, useEffect, useRef } from "react";
 
 interface classItem {
@@ -58,7 +58,8 @@ export const ClassInfoModal = ({ isOpen, setIsOpen, classItems, maxInvRound }: I
       <ModalContainer>
         <Header>
           <IconWrapper>
-            <ClassIcon
+            <SvgIcon
+              name="class-icon"
               size={28}
               color={color.zinc[800]}
             />
@@ -70,7 +71,10 @@ export const ClassInfoModal = ({ isOpen, setIsOpen, classItems, maxInvRound }: I
         </Header>
 
         <ContentWrapper>
-          <InvestInfoTable classItems={classItems} maxInvRound={maxInvRound} />
+          <InvestInfoTable
+            classItems={classItems}
+            maxInvRound={maxInvRound}
+          />
         </ContentWrapper>
 
         <FooterContainer>

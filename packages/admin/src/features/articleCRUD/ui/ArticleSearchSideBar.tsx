@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { AddButton, Input, Search } from "@mozu/ui";
+import { AddButton, Input, SvgIcon } from "@mozu/ui";
 import { memo, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetArticleList } from "@/entities/article";
@@ -88,7 +88,7 @@ export const ArticleSearchSideBar = memo(() => {
         <Input
           placeholder="기사 검색.."
           fullWidth={true}
-          startIcon={<Search color={color.zinc[400]} size={20} />}
+          startIcon={<SvgIcon name="search" color={color.zinc[400]} size={20} />}
           value={searchText}
           onChange={e => setSearchText(e.target.value)}
         />

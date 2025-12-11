@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Plus } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 interface IAddButtonType {
   text: string;
@@ -12,7 +12,8 @@ export const AddButton = ({ text, onClick }: IAddButtonType) => {
     <AddButtonContainer onClick={onClick}>
       <Text>{text}</Text>
       <LogoContainer>
-        <Plus
+        <SvgIcon
+          name="plus"
           size={20}
           color={color.white}
         />

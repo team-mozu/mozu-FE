@@ -1,6 +1,6 @@
 import { color } from "@mozu/design-token";
 import { useState } from "react";
-import { Button, Check, Del, Modal } from "@/components";
+import { Button, Modal, SvgIcon } from "@/components";
 
 export default {
   "Delete Modal": () => {
@@ -21,7 +21,13 @@ export default {
           <Modal
             mainTitle={"현재 선택된 기사를\n 삭제하실건가요?"}
             subTitle="삭제하면 복구가 불가능합니다."
-            icon={<Del size={24} color={color.red[500]} />}
+            icon={
+              <SvgIcon
+                name="del"
+                size={24}
+                color={color.red[500]}
+              />
+            }
             type="delete"
             successBtnChildren="삭제하기"
             isOpen={isOpen}
@@ -53,7 +59,13 @@ export default {
             isPending={isPending}
             mainTitle="투자를 완료하실 건가요?"
             subTitle="투자를 완료하면 주문을 변경할 수 없어요."
-            icon={<Check size={24} color={color.orange[500]}/>}
+            icon={
+              <SvgIcon
+                name="check"
+                size={24}
+                color={color.orange[500]}
+              />
+            }
             type="complete"
             successBtnChildren="투자 완료하기"
             isOpen={isOpen}

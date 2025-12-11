@@ -1,5 +1,5 @@
 import { color } from "@mozu/design-token";
-import { Button, Input, Save, Select, Toast } from "@mozu/ui";
+import { Button, Input, Select, SvgIcon, Toast } from "@mozu/ui";
 import { type ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useGetClassDetail, useUpdateClass } from "@/entities/class";
@@ -119,7 +119,9 @@ export const ClassEdit = () => {
 
       setClassItems(prevItems =>
         prevItems.map(item => {
-          const updatedMoney = [...item.money];
+          const updatedMoney = [
+            ...item.money,
+          ];
           const requiredLength = newDegree + 1; // 1차~N차 + 종료가
 
           // 배열 길이 조정
@@ -144,7 +146,9 @@ export const ClassEdit = () => {
 
       setStockData(prevData =>
         prevData.map(item => {
-          const updatedMoney = [...item.money];
+          const updatedMoney = [
+            ...item.money,
+          ];
           const requiredLength = newDegree + 1; // 1차~N차 + 종료가
 
           // 배열 길이 조정
@@ -181,9 +185,7 @@ export const ClassEdit = () => {
 
     const processedItems = newItems.map(item => ({
       ...item,
-      money: item.money && item.money.length === requiredLength
-        ? item.money
-        : new Array(requiredLength).fill(null)
+      money: item.money && item.money.length === requiredLength ? item.money : new Array(requiredLength).fill(null),
     }));
 
     setClassItems(prev => [
@@ -193,9 +195,8 @@ export const ClassEdit = () => {
 
     const newStockData = newItems.map(item => {
       const stockItem = stockListData?.find(stock => stock.itemId === item.itemId);
-      const itemMoney = item.money && item.money.length === requiredLength
-        ? item.money
-        : new Array(requiredLength).fill(null);
+      const itemMoney =
+        item.money && item.money.length === requiredLength ? item.money : new Array(requiredLength).fill(null);
 
       return {
         itemId: item.itemId,
@@ -296,8 +297,10 @@ export const ClassEdit = () => {
         resetArticles();
       },
       onError: () => {
-        Toast("수업 수정에 실패했습니다.", { type: "error" });
-      }
+        Toast("수업 수정에 실패했습니다.", {
+          type: "error",
+        });
+      },
     });
   };
 
@@ -308,7 +311,9 @@ export const ClassEdit = () => {
         investmentRound: group.invDeg,
         articles: group.articles, // 이미 Article[] 형태
       })),
-    [classArticles],
+    [
+      classArticles,
+    ],
   );
 
   if (isLoading) return <FullPageLoader />;
@@ -342,7 +347,8 @@ export const ClassEdit = () => {
             onClick={handleSubmit}
             disabled={isPending}>
             {isPending ? "저장 중..." : "저장하기"}
-            <Save
+            <SvgIcon
+              name="save"
               size={20}
               color="white"
             />

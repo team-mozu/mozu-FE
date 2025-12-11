@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Suspense } from "react";
 import CreateDOM from "react-dom/client";
 import App from "./app/App";
+import 'virtual:svg-icons-register';
 
 const root = CreateDOM.createRoot(document.getElementById("root") as HTMLElement);
 

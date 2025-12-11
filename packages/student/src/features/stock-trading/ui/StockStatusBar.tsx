@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, noImgIcon } from "@mozu/ui";
+import { Button, SvgIcon } from "@mozu/ui";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetStockDetail } from "@/entities/stock";
@@ -11,7 +11,6 @@ export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "�
   const ItemId = stockId ? parseInt(stockId) : null;
   const { data, isLoading } = useGetStockDetail(ItemId ?? 0);
 
-  const [imgSrc, setImgSrc] = useState(data?.itemLogo ?? "");
   const [hasErrored, setHasErrored] = useState(false);
 
   // 새로 추가한 로직
@@ -25,35 +24,31 @@ export const StockStatusBar = ({ openModal }: { openModal: (type: "매수" | "�
   const priceColor = isZeroPercent ? color.zinc[500] : isUp ? color.red[500] : color.blue[500];
 
   const handleImageError = () => {
-    if (!hasErrored) {
-      setHasErrored(true);
-
-      const img = new Image();
-      img.src = noImgIcon;
-      img.onload = () => {
-        setImgSrc(noImgIcon);
-      }
-    }
+    setHasErrored(true);
   };
 
-  // 데이터가 변경될 때 이미지 소스 업데이트
+  // 데이터가 변경될 때 에러 상태 리셋
   useEffect(() => {
-    if (data?.itemLogo && data.itemLogo !== imgSrc && !hasErrored) {
-      setImgSrc(data.itemLogo);
+    if (data?.itemLogo) {
+      setHasErrored(false);
     }
-  }, [data?.itemLogo, imgSrc, hasErrored]);
+  }, [data?.itemLogo]);
 
   return (
     <Wrapper>
       <Stock>
         {isLoading ? (
           <LogoImgDiv />
-        ) : (
+        ) : data?.itemLogo && !hasErrored ? (
           <Logo
-            key={imgSrc}
-            src={imgSrc}
+            src={data.itemLogo}
+            alt={data.itemName}
             onError={handleImageError}
           />
+        ) : (
+          <LogoFallback>
+            <SvgIcon name="stock-no-logo" size={32} color="#9CA3AF" />
+          </LogoFallback>
         )}
         {isLoading ? (
           <TitleDiv />
@@ -112,6 +107,17 @@ const Logo = styled.img`
   width: 64px;
   height: 64px;
   object-fit: cover;
+`;
+
+const LogoFallback = styled.div`
+  border: 1px solid ${color.zinc[200]};
+  border-radius: 12px;
+  width: 64px;
+  height: 64px;
+  background-color: ${color.zinc[50]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Stock = styled.div`

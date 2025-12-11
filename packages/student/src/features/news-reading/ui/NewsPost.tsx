@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { noImg, noImgIcon } from "@mozu/ui";
+import { SvgIcon } from "@mozu/ui";
 import { useCallback, useState } from "react";
 
 interface INewsPostType {
@@ -10,14 +10,13 @@ interface INewsPostType {
   onClick?: () => void;
 }
 
-export const NewsPost = ({ imgUrl = noImg, title, content, onClick }: INewsPostType) => {
+export const NewsPost = ({ imgUrl, title, content, onClick }: INewsPostType) => {
   const [imageError, setImageError] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
 
-  const handleImageError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+  const handleImageError = useCallback(() => {
     setImageError(true);
     setIsImageLoading(false);
-    e.currentTarget.src = noImgIcon;
   }, []);
 
   const handleImageLoad = useCallback(() => {
@@ -51,14 +50,20 @@ export const NewsPost = ({ imgUrl = noImg, title, content, onClick }: INewsPostT
       aria-label={`뉴스 기사: ${title}`}>
       <ImageContainer>
         {isImageLoading && <ImageSkeleton />}
-        <NewsImg
-          src={imgUrl || noImgIcon}
-          alt={title}
-          hasImage={!!imgUrl && !imageError}
-          onError={handleImageError}
-          onLoad={handleImageLoad}
-          loading="lazy"
-        />
+        {imgUrl && !imageError ? (
+          <NewsImg
+            src={imgUrl}
+            alt={title}
+            hasImage={true}
+            onError={handleImageError}
+            onLoad={handleImageLoad}
+            loading="lazy"
+          />
+        ) : (
+          <NoImageContainer>
+            <SvgIcon name="no-img-icon" size={40} color="#9CA3AF" />
+          </NoImageContainer>
+        )}
       </ImageContainer>
 
       <ContentContainer>
@@ -158,6 +163,23 @@ const NewsImg = styled.img<{
   background-color: ${color.zinc[50]};
   object-fit: cover;
   transition: opacity 0.3s ease;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 300px;
+    height: 169px;
+  }
+`;
+
+const NoImageContainer = styled.div`
+  width: 160px;
+  height: 90px;
+  border-radius: 12px;
+  border: 1px solid ${color.zinc[200]};
+  background-color: ${color.zinc[50]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media (max-width: 768px) {
     width: 100%;

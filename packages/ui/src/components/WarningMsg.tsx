@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Warning } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 interface IWarningMsgType {
   message: string;
@@ -9,7 +9,7 @@ interface IWarningMsgType {
 export const WarningMsg = ({ message }: IWarningMsgType) => {
   return (
     <MsgContainer>
-      <Warning />
+      <SvgIcon name="info" size={20} color={color.orange[600]} />
       <Msg>{message}</Msg>
     </MsgContainer>
   );

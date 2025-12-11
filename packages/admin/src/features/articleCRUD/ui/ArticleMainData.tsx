@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { NoNewsImg } from "@mozu/ui";
+import { SvgIcon } from "@mozu/ui";
 
 interface IArticleMainDataType {
   img?: string | null | undefined;
@@ -25,19 +25,19 @@ export const ArticleMainData = ({ img, title, main }: IArticleMainDataType) => {
           />
         ) : (
           <PlaceholderWrapper>
-            <NoNewsImg />
+            <SvgIcon name="no-news-img" />
           </PlaceholderWrapper>
         )}
       </ArticleImgContainer>
-      
+
       <ContentWrapper>
         {title && (
           <ArticleTitle>{title}</ArticleTitle>
         )}
-        
+
         {main && (
           <ArticleMain>
-            {lines.map((line, index) => 
+            {lines.map((line, index) =>
               line.trim() === "" ? (
                 <LineBreak key={`br-${index}`} />
               ) : (

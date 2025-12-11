@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Header, Info, Toast, Users } from "@mozu/ui";
+import { Header, SvgIcon, Toast } from "@mozu/ui";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SSELoadingSpinner } from "@/shared";
@@ -43,7 +43,8 @@ export const StudentWaitPage = () => {
       <Container>
         <MainSection>
           <IconDiv>
-            <Users
+            <SvgIcon
+              name="users"
               size={32}
               color="white"
             />
@@ -78,7 +79,8 @@ export const StudentWaitPage = () => {
           </ContentArea>
 
           <InfoBox>
-            <Info
+            <SvgIcon
+              name="info"
               size={18}
               color={color.orange[600]}
             />

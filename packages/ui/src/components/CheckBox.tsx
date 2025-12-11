@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
 import type { InputHTMLAttributes } from "react";
-import { Check } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {
 }
@@ -16,7 +16,9 @@ export const CheckBox = ({ checked, id, ...rest }: IProps) => {
         {...rest}
       />
       <StyledCheckbox checked={checked}>
-        {checked && <Check />}
+        {checked &&
+          <SvgIcon
+            name="check" />}
       </StyledCheckbox>
     </CheckboxLabel>
   );

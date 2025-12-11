@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { noImgIcon } from "@mozu/ui";
+import { SvgIcon } from "@mozu/ui";
+import { useEffect, useState } from "react";
 
 // 데스크탑 반응형 브레이크포인트
 const desktopMediaQueries = {
@@ -16,15 +17,25 @@ interface IArticleMainDataType {
 }
 
 export const NewsDetail = ({ img, title, main }: IArticleMainDataType) => {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, []);
+
   return (
     <Container>
-      <ArticleImg
-        src={img}
-        alt="기사 이미지"
-        onError={e => {
-          e.currentTarget.src = noImgIcon;
-        }}
-      />
+      {!img || hasError ? (
+        <ImagePlaceholder>
+          <SvgIcon name="no-img-icon" size={48} color={color.zinc[400]} />
+        </ImagePlaceholder>
+      ) : (
+        <ArticleImg
+          src={img}
+          alt="기사 이미지"
+          onError={() => setHasError(true)} // 5. 에러 발생 시 상태 변경
+        />
+      )}
 
       <ContentWrapper>
         <ArticleTitle>
@@ -37,6 +48,16 @@ export const NewsDetail = ({ img, title, main }: IArticleMainDataType) => {
     </Container>
   );
 };
+
+const ImagePlaceholder = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 320px;
+  background-color: ${color.zinc[100]};
+  border-radius: 8px;
+`;
 
 const Container = styled.div`
   display: flex;

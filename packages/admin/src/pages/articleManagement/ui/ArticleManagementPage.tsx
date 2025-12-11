@@ -1,6 +1,5 @@
-import styled from "@emotion/styled";
 import { color } from "@mozu/design-token";
-import { Del, Modal, SelectError } from "@mozu/ui";
+import { Modal, SelectError, SvgIcon } from "@mozu/ui";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDeleteArticle } from "@/entities/article";
@@ -17,7 +16,9 @@ export const ArticleManagementPage = () => {
     if (id) {
       setSelectedId(id);
     }
-  }, [id]);
+  }, [
+    id,
+  ]);
 
   const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);
@@ -42,7 +43,8 @@ export const ArticleManagementPage = () => {
           setIsOpen={setIsModalOpen}
           isPending={isPending}
           icon={
-            <Del
+            <SvgIcon
+              name="del"
               size={24}
               color={color.red[400]}
             />
