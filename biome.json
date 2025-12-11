@@ -61,6 +61,6 @@
     }
   },
   "files": {
-    "includes": ["**/*", "!.pnp.cjs", "!.pnp.loader.mjs"]
+    "includes": ["**/*", "!.pnp.cjs", "!.pnp.loader.mjs", "!**/dist"]
   }
 }

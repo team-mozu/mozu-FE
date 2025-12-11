@@ -1,6 +1,6 @@
 {
   "name": "mozu-fe",
-  "packageManager": "yarn@4.8.1",
+  "packageManager": "yarn@4.12.0",
   "private": true,
   "scripts": {
     "start": "concurrently \"yarn workspace @mozu/admin start\" \"yarn workspace @mozu/student start:ip\"",
@@ -14,6 +14,7 @@
     "build:dev": "concurrently \"yarn workspace @mozu/admin build:dev\" \"yarn workspace @mozu/student build:dev\"",
     "build:prod": "concurrently \"yarn workspace @mozu/admin build:prod\" \"yarn workspace @mozu/student build:prod\"",
     "prepare": "husky install",
+    "format": "biome format",
     "commit": "cz",
     "new-branch": "sh ./scripts/new-branch.sh"
   },
