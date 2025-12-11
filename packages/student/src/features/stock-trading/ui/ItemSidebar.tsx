@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { noImgIcon } from "@mozu/ui";
+import { SvgIcon } from "@mozu/ui";
 import { memo, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetClassItem } from "@/entities/class";
@@ -30,7 +30,6 @@ const ItemContent = memo(({
   onClick,
   isUp,
 }: IItemContentType) => {
-  const [imgSrc, setImgSrc] = useState<string>(itemLogo ?? "");
   const [hasErrored, setHasErrored] = useState(false);
 
   // profitMoney와 profitNum이 유효한 값인지 확인 (0%도 표시)
@@ -40,26 +39,23 @@ const ItemContent = memo(({
   const isZeroPercent = profitMoney === 0 && profitNum === "0.00%";
 
   const handleImageError = () => {
-    if (!hasErrored) {
-      setHasErrored(true);
-
-      const img = new Image();
-      img.src = noImgIcon;
-      img.onload = () => {
-        setImgSrc(noImgIcon);
-      }
-    }
+    setHasErrored(true);
   };
 
   return (
     <ItemContainer onClick={onClick}>
       <LogoContainer>
-        <Logo
-          key={imgSrc}
-          src={imgSrc}
-          alt={itemName}
-          onError={handleImageError}
-        />
+        {itemLogo && !hasErrored ? (
+          <Logo
+            src={itemLogo}
+            alt={itemName}
+            onError={handleImageError}
+          />
+        ) : (
+          <LogoFallback>
+            <SvgIcon name="stock-no-logo" size={20} color="#9CA3AF" />
+          </LogoFallback>
+        )}
         <ItemTitleContainer>
           <ItemTitle>{itemName}</ItemTitle>
           <ItemCode>{itemId}</ItemCode>
@@ -201,6 +197,18 @@ const Percent = styled.div<IPercentProps>`
 `;
 
 const Logo = styled.img`
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid ${color.zinc[200]};
+  background-color: ${color.zinc[50]};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+`;
+
+const LogoFallback = styled.div`
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 50%;

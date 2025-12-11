@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import type { ReactNode } from "react";
-import { ArticleIcon, ClassIcon, StockIcon } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 interface INavType {
   children?: ReactNode;
@@ -14,9 +14,9 @@ export const NavBtn = ({ children, isColor, type, onClick }: INavType) => {
   const getIconColor = () => (isColor ? color.orange[600] : color.zinc[500]);
 
   const buttonIconType = {
-    classIcon: <ClassIcon color={getIconColor()} />,
-    stockIcon: <StockIcon color={getIconColor()} />,
-    articleIcon: <ArticleIcon color={getIconColor()} />,
+    classIcon: <SvgIcon name="class-icon" color={getIconColor()} />,
+    stockIcon: <SvgIcon name="stock-icon" color={getIconColor()} />,
+    articleIcon: <SvgIcon name="article-icon" color={getIconColor()} />,
   };
 
   return (

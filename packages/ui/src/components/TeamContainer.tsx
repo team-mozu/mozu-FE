@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Dot } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 interface ITeamType {
   title: string;
@@ -11,7 +11,7 @@ export const TeamContainer = ({ title, school }: ITeamType) => {
   return (
     <TeamContent>
       <ContentContainer>
-        <Dot />
+        <SvgIcon name="dot" size={8} color={color.orange[600]} />
         <TitleContainer>
           <Title>{title}</Title>
           <School>{school}</School>

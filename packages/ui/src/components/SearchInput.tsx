@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { type ChangeEvent, useState } from "react"; // useState import
-import { Search } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 interface ISearchInputType {
   inputText: string;
@@ -13,8 +13,9 @@ export const SearchInput = ({ inputText, value, onChange }: ISearchInputType) =>
   const [isFocused, setIsFocused] = useState(false); // focus 상태 관리
 
   return (
-    <SearchInputContaniner isFocused={isFocused}>
-      <Search
+    <SearchInputContainer isFocused={isFocused}>
+      <SvgIcon
+        name="search"
         size={20}
         color={color.zinc[400]}
       />
@@ -28,11 +29,11 @@ export const SearchInput = ({ inputText, value, onChange }: ISearchInputType) =>
           onChange(e.target.value);
         }}
       />
-    </SearchInputContaniner>
+    </SearchInputContainer>
   );
 };
 
-const SearchInputContaniner = styled.div<{
+const SearchInputContainer = styled.div<{
   isFocused: boolean;
 }>`
   // isFocused prop 타입 정의

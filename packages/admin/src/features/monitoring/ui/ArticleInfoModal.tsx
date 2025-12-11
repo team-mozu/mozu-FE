@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { ArticleIcon, Button } from "@mozu/ui";
+import { Button, SvgIcon } from "@mozu/ui";
 import { useEffect, useRef, useState } from "react";
 import { useGetArticleDetail } from "@/entities/article";
 
@@ -84,8 +84,10 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, lessonArticles }: IArticle
   useEffect(() => {
     if (lessonArticles && lessonArticles.length > 0) {
       // investmentRound 순으로 정렬
-      const sortedArticles = [...lessonArticles].sort((a, b) => a.investmentRound - b.investmentRound);
-      
+      const sortedArticles = [
+        ...lessonArticles,
+      ].sort((a, b) => a.investmentRound - b.investmentRound);
+
       const formatted = sortedArticles.map((item, index) => ({
         isClicked: index === 0,
         articleContent: item.articles,
@@ -130,7 +132,8 @@ export const ArticleInfoModal = ({ isOpen, setIsOpen, lessonArticles }: IArticle
         <ModalContainer>
           <Header>
             <IconWrapper>
-              <ArticleIcon
+              <SvgIcon
+                name="article-icon"
                 size={28}
                 color={color.zinc[800]}
               />

@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, RankingDiv, Trophy } from "@mozu/ui";
+import { Button, RankingDiv, SvgIcon } from "@mozu/ui";
 import { useTeamRank } from "@/entities/transaction";
-import { useGetTeamDetail, useTeamResult } from "@/entities/user/api";
+import { useTeamResult } from "@/entities/user/api";
 
 interface IRankModal {
   onCancel: () => void;
@@ -20,7 +20,8 @@ export const RankModal = ({ onCancel, endRound }: IRankModal) => {
       <Container onClick={e => e.stopPropagation()}>
         <Header>
           <IconDiv>
-            <Trophy
+            <SvgIcon
+              name="trophy"
               size={24}
               color={color.orange[500]}
             />

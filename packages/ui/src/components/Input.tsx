@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { forwardRef, useState } from "react";
-import { Eye, EyeOff } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 import {
   baseInputStyles,
   endIconStyles,
@@ -182,12 +182,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               // biome-ignore lint/a11y/noStaticElementInteractions: <임시>
               // biome-ignore lint/a11y/useKeyWithClickEvents: <임시>
               <span
-                css={endIconStyles}
-                onClick={() => setShowPassword(prev => !prev)}
-                style={{
-                  cursor: "pointer",
-                }}>
-                {showPassword ? <EyeOff /> : <Eye />}
+                css={css`
+                  ${endIconStyles}
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  pointer-events: auto;
+
+                  & > svg {
+                    pointer-events: none;
+                  }
+                `}
+                onClick={() => setShowPassword(prev => !prev)}>
+                <SvgIcon name={showPassword ? "eye" : "eye-off"} />
               </span>
             ) : (
               endIcon && <span css={endIconStyles}>{endIcon}</span>

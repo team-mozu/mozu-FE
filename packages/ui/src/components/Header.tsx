@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { LogoWithText } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 interface IHeaderProps {
   isAdmin: boolean;
@@ -52,9 +52,9 @@ export const Header = ({ isAdmin, invDeg }: IHeaderProps) => {
           navigate(isAdmin ? "/class-management" : `/${classId}`);
         }}>
         <ResponsiveLogo>
-          <LogoWithText
-            width={74}
-            height={28}
+          <SvgIcon
+            name="logo-with-text"
+            size={72}
           />
         </ResponsiveLogo>
         <MozuTitle>모의주식투자</MozuTitle>

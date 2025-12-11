@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Header, Info, Users } from "@mozu/ui";
+import { Header, SvgIcon } from "@mozu/ui";
 
 export const MockStudentWaitPage = () => {
   return (
@@ -14,7 +14,8 @@ export const MockStudentWaitPage = () => {
       <Container>
         <MainSection>
           <IconDiv>
-            <Users
+            <SvgIcon
+              name="users"
               size={32}
               color="white"
             />
@@ -35,7 +36,8 @@ export const MockStudentWaitPage = () => {
           </ContentArea>
 
           <InfoBox>
-            <Info
+            <SvgIcon
+              name="info"
               size={18}
               color={color.orange[600]}
             />

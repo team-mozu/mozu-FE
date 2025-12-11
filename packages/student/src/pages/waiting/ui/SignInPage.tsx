@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Input, LogoWithText } from "@mozu/ui";
+import { Input, SvgIcon } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { type StudentLoginProps, useStudentLogin } from "@/entities/user";
@@ -100,9 +100,9 @@ export const SignInPage = () => {
   return (
     <Container>
       <LogoWrapper>
-        <LogoWithText
-          width={74}
-          height={28}
+        <SvgIcon
+          name="logo-with-text"
+          size={72}
         />
         모의주식투자
       </LogoWrapper>

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, CheckBox, Input, Search } from "@mozu/ui";
+import { Button, CheckBox, Input, SvgIcon } from "@mozu/ui";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetStockList } from "@/entities/stock";
@@ -142,7 +142,8 @@ export const AddInvestItemModal = ({
           <SearchInput
             placeholder="종목명이나 코드로 검색"
             startIcon={
-              <Search
+              <SvgIcon
+                name="search"
                 color={color.zinc[400]}
                 size={20}
               />

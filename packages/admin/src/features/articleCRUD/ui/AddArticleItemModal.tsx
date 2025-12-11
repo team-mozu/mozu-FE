@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, CheckBox, Input, Search } from "@mozu/ui";
+import { Button, CheckBox, Input, SvgIcon } from "@mozu/ui";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetArticleList } from "@/entities/article";
@@ -171,7 +171,8 @@ export const AddArticleItemModal = ({ close, onArticlesSelected, existingArticle
           <SearchInput
             placeholder="기사 제목이나 ID로 검색"
             startIcon={
-              <Search
+              <SvgIcon
+                name="search"
                 color={color.zinc[400]}
                 size={20}
               />

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Check } from "@mozu/ui";
+import { SvgIcon } from "@mozu/ui";
 import { useState } from "react";
 import type { TeamInfo } from "@/app/store";
 import { roundToFixed } from "@/shared/lib";
@@ -70,7 +70,7 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
 
             return (
               <Tr
-                isNotBorded={index + 1 === teamInfo.length}
+                isNotBoarded={index + 1 === teamInfo.length}
                 key={index}>
                 <Td isLeft columnCount={tableHeaders.length}>
                   <TeamName
@@ -81,7 +81,8 @@ export const ImprovedTeamInfoTable = ({ teamInfo, invDeg, maxInvDeg }: Props) =>
                   {team.trade.length === invDeg && (
                     <CompletedBadge>
                       투자완료{" "}
-                      <Check
+                      <SvgIcon
+                        name="check"
                         size={18}
                         color={color.green[500]}
                       />
@@ -190,13 +191,13 @@ const Table = styled.table`
 `;
 
 const Tr = styled.tr<{
-  isNotBorded?: boolean;
+  isNotBoarded?: boolean;
   isHeader?: boolean;
 }>`
   width: 100%;
   height: 72px;
   display: flex;
-  border-bottom: ${({ isNotBorded }) => (isNotBorded ? "none" : `1px solid ${color.zinc[200]}`)};
+  border-bottom: ${({ isNotBoarded }) => (isNotBoarded ? "none" : `1px solid ${color.zinc[200]}`)};
   background-color: ${({ isHeader }) => isHeader && `${color.orange[50]}`};
 `;
 

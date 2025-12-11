@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Del, HandCoins, Modal, Trophy } from "@mozu/ui";
+import { Button, Modal, SvgIcon } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -150,7 +150,8 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
           successBtnChildren="마치기"
           onSuccessClick={handleEndClass}
           icon={
-            <Del
+            <SvgIcon
+              name="del"
               size={24}
               color={color.red[400]}
             />
@@ -163,7 +164,8 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
       <Container>
         <Title>
           <Logo>
-            <HandCoins
+            <SvgIcon
+              name="hand-coins"
               size={24}
               color={color.orange[500]}
             />
@@ -270,7 +272,8 @@ export const ResultContainer = ({ onRankClick, endRound }: ValueStyleProps) => {
                 hoverBackgroundColor={color.orange[100]}
                 hoverBorderColor={color.orange[300]}>
                 {teamResult?.invRound === endRound ? "최종 랭킹 보기" : "현재 랭킹 보기"}
-                <Trophy
+                <SvgIcon
+                  name="trophy"
                   size={24}
                   color={color.orange[500]}
                 />

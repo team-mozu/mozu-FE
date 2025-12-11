@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font, Skeleton } from "@mozu/design-token";
-import { Accounts, AccountsSkeleton, Button, CompanySkeleton, Del, Edit, StockNoLogo } from "@mozu/ui";
+import { Accounts, AccountsSkeleton, Button, CompanySkeleton, SvgIcon } from "@mozu/ui";
 import { memo, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useGetStockDetail } from "@/entities/stock";
@@ -21,7 +21,7 @@ const LogoSection = memo(({ logo, name, isLoading }: { logo?: string | null; nam
           alt="로고"
         />
       ) : (
-        <StockNoLogo />
+        <SvgIcon name="stock-no-logo" />
       )}
     </Logo>
     <Text>{isLoading ? <TitleDiv>{name}</TitleDiv> : <Title>{name}</Title>}</Text>
@@ -207,7 +207,8 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
             disabled={isLoading}
             onClick={onClick}>
             삭제하기
-            <Del
+            <SvgIcon
+              name="del"
               size={20}
               color={color.zinc[800]}
             />
@@ -220,7 +221,8 @@ export const StockManagementDetail = memo(({ onClick }: IStockManagementDetailPr
             onClick={() => navigate(`/stock-management/${id}/edit`)}
             disabled={isLoading}>
             수정하기
-            <Edit
+            <SvgIcon
+              name="edit"
               size={20}
               color={color.orange[500]}
             />

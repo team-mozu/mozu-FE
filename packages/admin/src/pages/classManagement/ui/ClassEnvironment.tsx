@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font, Skeleton } from "@mozu/design-token";
-import { ArrowLeft, Button, Del, Edit, Modal, Play } from "@mozu/ui";
+import { Button, Modal, SvgIcon } from "@mozu/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useDeleteClass, useGetClassDetail, useStartClass } from "@/entities/class";
@@ -36,7 +36,7 @@ export const ClassEnvironment = () => {
     classData,
   ]);
 
-  const { mutate: startClass } = useStartClass(id ?? '');
+  const { mutate: startClass } = useStartClass(id ?? "");
   const { mutate: deleteClass, isPending } = useDeleteClass(id, () => setIsModal(false));
 
   // 상태 관리
@@ -146,7 +146,8 @@ export const ClassEnvironment = () => {
           subTitle="삭제하면 복구가 불가능합니다."
           onSuccessClick={handleDelete}
           icon={
-            <Del
+            <SvgIcon
+              name="del"
               size={24}
               color={color.red[400]}
             />
@@ -160,7 +161,7 @@ export const ClassEnvironment = () => {
         <Head>
           <Container>
             <BackBtn onClick={() => navigate("/class-management")}>
-              <ArrowLeft />
+              <SvgIcon name="arrow-left" />
             </BackBtn>
             <TextBox>
               {isLoading ? <H2Div>{classData?.name}</H2Div> : <h2>{classData?.name || "정보 없음"}</h2>}
@@ -177,7 +178,7 @@ export const ClassEnvironment = () => {
               onClick={handleStartClass}
               disabled={isLoading || isStarting}>
               모의주식투자 시작하기
-              <Play />
+              <SvgIcon name="start" />
             </Button>
           </div>
         </Head>
@@ -207,7 +208,8 @@ export const ClassEnvironment = () => {
                 onClick={openDeleteModal}
                 disabled={isLoading}>
                 삭제하기
-                <Del
+                <SvgIcon
+                  name="del"
                   color="black"
                   size={20}
                 />
@@ -221,7 +223,8 @@ export const ClassEnvironment = () => {
                 onClick={() => navigate(`/class-management/${id}/edit`)}
                 disabled={isLoading}>
                 수정하기
-                <Edit
+                <SvgIcon
+                  name="edit"
                   color={color.orange[500]}
                   size={20}
                 />

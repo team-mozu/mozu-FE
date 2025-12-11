@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { ChevronDown } from ".";
+import { SvgIcon } from "./SvgIcon";
 
 interface ISelectProps {
   data: string[];
@@ -61,7 +61,8 @@ export const Select = forwardRef<HTMLDivElement, ISelectProps>(
         <SelectHeader>
           <SelectedValue>{value}</SelectedValue>
           <ChevronWrapper show={showOptions}>
-            <ChevronDown
+            <SvgIcon
+              name="chevron-down"
               size={20}
               color={color.black}
             />

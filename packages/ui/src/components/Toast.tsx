@@ -1,6 +1,6 @@
 import { color } from "@mozu/design-token";
 import { Flip, type ToastOptions, type TypeOptions, toast } from "react-toastify";
-import { Check, Info, Warning } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 export interface IToastProps extends ToastOptions {
   type: Exclude<TypeOptions, "default">;
@@ -25,16 +25,16 @@ const ToastType = {
     style: {
       backgroundColor: color.green[500],
     },
-    icon: <Check size={24} />,
+    icon: <SvgIcon name="check" size={24} />,
   },
   error: {
     style: {
       backgroundColor: color.red[500],
     },
     icon: (
-      <Warning
-        width={24}
-        height={24}
+      <SvgIcon
+        name="warning"
+        size={24}
         color={color.white}
       />
     ),
@@ -44,7 +44,8 @@ const ToastType = {
       backgroundColor: color.black,
     },
     icon: (
-      <Info
+      <SvgIcon
+        name="info"
         color={color.white}
         size={24}
       />
@@ -55,9 +56,10 @@ const ToastType = {
       backgroundColor: color.orange[500],
     },
     icon: (
-      <Warning
-        width={24}
-        height={24}
+      <SvgIcon
+        name="warning"
+        color={color.white}
+        size={24}
       />
     ),
   },

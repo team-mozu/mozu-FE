@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Del, Modal, Toast } from "@mozu/ui";
+import { Button, Modal, SvgIcon, Toast } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -90,17 +90,25 @@ export const ImprovedClassMonitoringPage = () => {
 
         // React Query 캐시 무효화로 최신 데이터 반영
         queryClient.invalidateQueries({
-          queryKey: ["getClass"],
+          queryKey: [
+            "getClass",
+          ],
         });
         queryClient.invalidateQueries({
-          queryKey: ["getMonitoring"],
+          queryKey: [
+            "getMonitoring",
+          ],
         });
         break;
 
       default:
         console.log("🔍 [DEBUG] 알 수 없는 이벤트 타입:", lastData.type);
     }
-  }, [lastData, appendTrade, queryClient]);
+  }, [
+    lastData,
+    appendTrade,
+    queryClient,
+  ]);
 
   // 모든 팀이 현재 차수 투자를 완료했는지 확인
   const isAllTeamsCompleted = teamInfo.every(team => (team.trade?.length ?? 0) >= currentInvDeg);
@@ -150,7 +158,8 @@ export const ImprovedClassMonitoringPage = () => {
           subTitle="모의투자를 취소하시겠습니까? 취소 후 투자 데이터는 삭제됩니다."
           onSuccessClick={handleStopClass}
           icon={
-            <Del
+            <SvgIcon
+              name="del"
               size={24}
               color={color.red[400]}
             />
@@ -167,7 +176,8 @@ export const ImprovedClassMonitoringPage = () => {
           subTitle="모의투자를 종료하시겠습니까? 종료 후 투자 데이터는 삭제됩니다."
           onSuccessClick={handleEndClass}
           icon={
-            <Del
+            <SvgIcon
+              name="del"
               size={24}
               color={color.red[400]}
             />

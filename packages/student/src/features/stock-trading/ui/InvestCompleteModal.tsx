@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Check, Toast } from "@mozu/ui";
+import { SvgIcon, Toast } from "@mozu/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { memo, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,7 +15,8 @@ interface IInvestCompleteType {
 // 메모이제이션된 아이콘 컴포넌트
 const CheckIcon = memo(() => (
   <CheckIconContainer>
-    <Check
+    <SvgIcon
+      name="check"
       color={color.orange[500]}
       size={28}
     />

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, Star } from "@mozu/ui";
+import { Button, SvgIcon } from "@mozu/ui";
 
 // 데스크탑 반응형 브레이크포인트
 const desktopMediaQueries = {
@@ -23,19 +23,28 @@ export const ClassPost = ({ title, creationDate, starOnClick, isClick, delClick,
     <PostContainer onClick={onClick}>
       <ContentContainer>
         <TitleIconContainer>
-          <TilteContainer>
+          <TitleContainer>
             <Title>{title}</Title>
             <CreationDate>생성일자 | {creationDate}</CreationDate>
-          </TilteContainer>
-          <Star
-            size={20}
+          </TitleContainer>
+          <div
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               starOnClick?.(e);
-            }}
-            strokeColor={isClick ? color.yellow[400] : color.zinc[600]}
-            fillColor={isClick ? color.yellow[400] : "none"}
-          />
+            }}>
+            {isClick ? (
+              <SvgIcon
+                name="fill-star"
+                size={20}
+              />
+            ) : (
+              <SvgIcon
+                name="star"
+                size={20}
+              />
+            )}
+          </div>
+
         </TitleIconContainer>
         <Button
           backgroundColor={color.zinc[50]}
@@ -105,7 +114,7 @@ const CreationDate = styled.div`
   color: ${color.zinc[500]};
 `;
 
-const TilteContainer = styled.div`
+const TitleContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: start;

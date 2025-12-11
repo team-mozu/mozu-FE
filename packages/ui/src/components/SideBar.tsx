@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ManagerLogo } from "../assets";
 import { NavBtn } from "./NavBtn";
+import { SvgIcon } from "./SvgIcon";
 
 interface ISideBarType {
   name?: string;
@@ -14,15 +14,15 @@ interface ISideBarType {
 export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [nav, setIsNav] = useState<string>('class')
+  const [nav, setIsNav] = useState<string>("class");
 
   useEffect(() => {
-    if (pathname.includes('stock-management')) {
-      setIsNav('stock')
-    } else if (pathname.includes('article-management')) {
-      setIsNav('article')
+    if (pathname.includes("stock-management")) {
+      setIsNav("stock");
+    } else if (pathname.includes("article-management")) {
+      setIsNav("article");
     } else {
-      setIsNav('class')
+      setIsNav("class");
     }
   }, [
     pathname,
@@ -38,7 +38,7 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
     <SideBarContainer>
       <ProfileContainer>
         <LogoContainer>
-          <ManagerLogo />
+          <SvgIcon name="manager-logo" />
         </LogoContainer>
         <ProfileContents>
           <Name>{name}</Name>

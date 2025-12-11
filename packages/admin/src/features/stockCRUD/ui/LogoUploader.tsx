@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Button, ImgLogo } from "@mozu/ui";
+import { Button, SvgIcon } from "@mozu/ui";
 import { useEffect, useRef, useState } from "react";
 
 interface ILogoType {
@@ -68,7 +68,8 @@ export const LogoUploader = ({ img, onImageChange }: ILogoType) => {
               }}
             />
           ) : (
-            <ImgLogo
+            <SvgIcon
+              name="img-logo"
               size={24}
               color={color.black}
             />

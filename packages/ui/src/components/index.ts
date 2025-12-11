@@ -1,4 +1,3 @@
-export * from "../assets";
 export * from "./Accounts";
 export * from "./AccountsSkeleton";
 export * from "./AddButton";
@@ -22,6 +21,7 @@ export * from "./Select";
 export * from "./SelectError";
 export * from "./SideBar";
 export * from "./Spinner";
+export * from "./SvgIcon";
 export * from "./styles";
 export * from "./TeamContainer";
 export * from "./TextArea";

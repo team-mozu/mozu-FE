@@ -1,9 +1,16 @@
 import react from "@vitejs/plugin-react"; // 새로운 권장 플러그인
 import path from "path";
 import { defineConfig } from "vite";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 export default defineConfig({
   plugins: [
+    createSvgIconsPlugin({
+      iconDirs: [
+        path.resolve(process.cwd(), "../ui/src/assets/icon"),
+      ],
+      symbolId: "icon-[dir]-[name]",
+    }),
     react(),
   ], // react-refresh 대신 사용
   server: {

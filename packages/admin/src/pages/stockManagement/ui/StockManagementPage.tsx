@@ -1,5 +1,5 @@
 import { color } from "@mozu/design-token";
-import { Del, Modal, SelectError } from "@mozu/ui";
+import { Modal, SelectError, SvgIcon } from "@mozu/ui";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDeleteStock, useGetStockDetail } from "@/entities/stock";
@@ -12,7 +12,9 @@ export const StockManagementPage = () => {
   const { id } = useParams();
   const stockId = Number(id);
 
-  const stockDelete = useDeleteStock(stockId, () => { setIsModalOpen(false) });
+  const stockDelete = useDeleteStock(stockId, () => {
+    setIsModalOpen(false);
+  });
   const { data: stockData } = useGetStockDetail(stockId);
 
   // URL 파라미터로 종목이 지정된 경우 자동 선택
@@ -20,7 +22,9 @@ export const StockManagementPage = () => {
     if (stockId) {
       setSelectedId(stockId);
     }
-  }, [stockId]);
+  }, [
+    stockId,
+  ]);
 
   const handleDetailClick = useCallback(() => {
     setIsModalOpen(true);
@@ -44,7 +48,8 @@ export const StockManagementPage = () => {
           subTitle={"삭제하면 복구가 불가능합니다."}
           onSuccessClick={handleDelete}
           icon={
-            <Del
+            <SvgIcon
+              name="del"
               size={24}
               color={color.red[400]}
             />

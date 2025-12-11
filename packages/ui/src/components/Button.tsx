@@ -1,6 +1,6 @@
 import { forwardRef, memo } from "react";
 import type { ButtonProps, ButtonType } from "@/components/types";
-import { ArticleIcon, Cancel, ClassIcon, Del, Edit, LogOut, Plus, Save, Start, Trophy } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 import { buttonStyles } from "./styles";
 
 export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(
@@ -32,61 +32,71 @@ export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const buttonIconType: Record<ButtonType, JSX.Element> = {
       startImg: (
-        <Start
+        <SvgIcon
+          name="start"
           size={iconSize}
           color={iconColor}
         />
       ),
       delImg: (
-        <Del
+        <SvgIcon
+          name="del"
           size={iconSize}
           color={iconColor}
         />
       ),
       editImg: (
-        <Edit
+        <SvgIcon
+          name="edit"
           size={iconSize}
           color={iconColor}
         />
       ),
       plusImg: (
-        <Plus
+        <SvgIcon
+          name="plus"
           size={iconSize}
           color={iconColor}
         />
       ),
       saveImg: (
-        <Save
+        <SvgIcon
+          name="save"
           size={iconSize}
           color={iconColor}
         />
       ),
       cancelImg: (
-        <Cancel
+        <SvgIcon
+          name="cancel"
           size={iconSize}
           color={iconColor}
         />
       ),
       logOutImg: (
-        <LogOut
+        <SvgIcon
+          name="log-out"
           size={iconSize}
           color={iconColor}
         />
       ),
       articleImg: (
-        <ArticleIcon
+        <SvgIcon
+          name="article-icon"
           size={iconSize}
           color={iconColor}
         />
       ),
       classImg: (
-        <ClassIcon
+        <SvgIcon
+          name="class-icon"
           size={iconSize}
           color={iconColor}
         />
       ),
       rankingImg: (
-        <Trophy
+        <SvgIcon
+          name="trophy"
           size={iconSize}
           color={iconColor}
         />

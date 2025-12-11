@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
-import { Info } from "../assets";
+import { SvgIcon } from "./SvgIcon";
 
 interface IProp {
   isStock: boolean;
@@ -10,7 +10,8 @@ export const SelectError = ({ isStock }: IProp) => {
   return (
     <Container>
       <IconContainer>
-        <Info
+        <SvgIcon
+          name="info"
           size={32}
           color={color.orange[500]}
         />
