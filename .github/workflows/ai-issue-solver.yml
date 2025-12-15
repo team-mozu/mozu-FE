@@ -23,21 +23,19 @@ jobs:
           node-version: "20"
           cache: "yarn"
 
-      - name: Install Dependencies
-        run: |
-          yarn install
-          yarn add @google/generative-ai simple-git glob
-
       - name: Configure Git
         run: |
           git config --global user.name "Gemini Bot"
           git config --global user.email "gemini-bot@google.com"
 
-      - name: Run AI Solver Script
+      - name: Install & Run AI Solver
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
-        run: node .scripts/solve_issue.js
+        run: |
+          npm install @google/generative-ai simple-git glob --no-save
+
+          node .scripts/solve_issue.js
