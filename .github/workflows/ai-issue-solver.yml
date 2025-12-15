@@ -28,18 +28,18 @@ jobs:
           git config --global user.name "Gemini Bot"
           git config --global user.email "gemini-bot@google.com"
 
-          - name: Prepare and Run AI Solver
-          env:
-            GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            ISSUE_NUMBER: ${{ github.event.issue.number }}
-            ISSUE_TITLE: ${{ github.event.issue.title }}
-            ISSUE_BODY: ${{ github.event.issue.body }}
-          run: |
-            mkdir -p .bot_deps
-            cd .bot_deps
-            npm init -y
-            npm install @google/generative-ai simple-git glob
-            cd ..
-            export NODE_PATH=$(pwd)/.bot_deps/node_modules
-            node .scripts/solve_issue.js
+      - name: Prepare and Run AI Solver
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          mkdir -p .bot_deps
+          cd .bot_deps
+          npm init -y
+          npm install @google/generative-ai simple-git glob
+          cd ..
+          export NODE_PATH=$(pwd)/.bot_deps/node_modules
+          node .scripts/solve_issue.js
