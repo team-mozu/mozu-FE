@@ -1,0 +1,340 @@
+@!@!@STARTMSG 2262:0 @!@!@
+TLC2 Version 2.16 of 31 December 2020 (rev: cdddf55)
+@!@!@ENDMSG 2262 @!@!@
+@!@!@STARTMSG 2187:0 @!@!@
+Running breadth-first search Model-Checking with fp 35 and seed 9147765550127521255 with 1 worker on 10 cores with 7282MB heap and 64MB offheap memory [pid: 69742] (Mac OS X 26.1 aarch64, Homebrew 17.0.17 x86_64, MSBDiskFPSet, DiskStateQueue).
+@!@!@ENDMSG 2187 @!@!@
+@!@!@STARTMSG 2220:0 @!@!@
+Starting SANY...
+@!@!@ENDMSG 2220 @!@!@
+Parsing file /Users/jidohyun/Desktop/Backup/mozu-FE/specs/TradeModel.tla
+Parsing file /private/var/folders/z7/sczxfdj10ds73_wwt14dffqm0000gn/T/Naturals.tla
+Parsing file /private/var/folders/z7/sczxfdj10ds73_wwt14dffqm0000gn/T/Sequences.tla
+Parsing file /private/var/folders/z7/sczxfdj10ds73_wwt14dffqm0000gn/T/TLC.tla
+Parsing file /private/var/folders/z7/sczxfdj10ds73_wwt14dffqm0000gn/T/FiniteSets.tla
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module TradeModel
+@!@!@STARTMSG 2219:0 @!@!@
+SANY finished.
+@!@!@ENDMSG 2219 @!@!@
+@!@!@STARTMSG 2185:0 @!@!@
+Starting... (2025-12-15 15:08:40)
+@!@!@ENDMSG 2185 @!@!@
+@!@!@STARTMSG 2189:0 @!@!@
+Computing initial states...
+@!@!@ENDMSG 2189 @!@!@
+@!@!@STARTMSG 2190:0 @!@!@
+Finished computing initial states: 2 distinct states generated at 2025-12-15 15:08:46.
+@!@!@ENDMSG 2190 @!@!@
+@!@!@STARTMSG 2193:0 @!@!@
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 3.0E-15
+@!@!@ENDMSG 2193 @!@!@
+@!@!@STARTMSG 2201:0 @!@!@
+The coverage statistics at 2025-12-15 15:08:46
+@!@!@ENDMSG 2201 @!@!@
+@!@!@STARTMSG 2773:0 @!@!@
+<Init line 21, col 1 to line 21, col 4 of module TradeModel>: 2:2
+@!@!@ENDMSG 2773 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 22, col 8 to line 22, col 30 of module TradeModel: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 23, col 8 to line 23, col 40 of module TradeModel: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 24, col 8 to line 24, col 25 of module TradeModel: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 26, col 8 to line 26, col 53 of module TradeModel: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  |line 26, col 24 to line 26, col 53 of module TradeModel: 1:2
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Buy line 66, col 1 to line 66, col 22 of module TradeModel (76 5 79 56)>: 34:36
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 52, col 8 to line 52, col 40 of module TradeModel: 222
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 52, col 9 to line 52, col 40 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 42, col 5 to line 44, col 47 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 43, col 9 to line 44, col 47 of module TradeModel: 230
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 42, col 14 to line 42, col 32 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 52, col 26 to line 52, col 32 of module TradeModel: 168
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 53, col 8 to line 53, col 38 of module TradeModel: 36
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 53, col 9 to line 53, col 24 of module TradeModel: 86
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 53, col 30 to line 53, col 38 of module TradeModel: 86
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 54, col 8 to line 54, col 19 of module TradeModel: 36
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 76, col 15 to line 76, col 21 of module TradeModel: 168
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 76, col 24 to line 76, col 31 of module TradeModel: 86
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 76, col 34 to line 76, col 38 of module TradeModel: 86
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 77, col 8 to line 77, col 36 of module TradeModel: 36
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 78, col 8 to line 78, col 51 of module TradeModel: 36
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 79, col 8 to line 79, col 56 of module TradeModel: 36
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Sell line 81, col 1 to line 81, col 23 of module TradeModel (91 5 94 56)>: 50:50
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 60, col 8 to line 60, col 41 of module TradeModel: 236
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 60, col 9 to line 60, col 41 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 42, col 5 to line 44, col 47 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 43, col 9 to line 44, col 47 of module TradeModel: 272
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 42, col 14 to line 42, col 32 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 60, col 26 to line 60, col 32 of module TradeModel: 168
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 61, col 8 to line 61, col 28 of module TradeModel: 50
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 61, col 8 to line 61, col 15 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 61, col 20 to line 61, col 28 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 58, col 22 to line 58, col 52 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 58, col 22 to line 58, col 38 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 58, col 42 to line 58, col 52 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 57, col 24 to line 57, col 49 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 47, col 5 to line 47, col 46 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 32, col 5 to line 39, col 17 of module TradeModel: 322
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 32, col 8 to line 32, col 26 of module TradeModel: 322
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 35, col 21 to line 35, col 63 of module TradeModel: 204
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||||line 35, col 31 to line 35, col 36 of module TradeModel: 204
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||||line 35, col 39 to line 35, col 45 of module TradeModel: 104
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||||line 35, col 48 to line 35, col 51 of module TradeModel: 104
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||||line 35, col 54 to line 35, col 62 of module TradeModel: 204
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 34, col 24 to line 34, col 36 of module TradeModel: 204
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||||line 37, col 9 to line 39, col 17 of module TradeModel: 204
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 47, col 15 to line 47, col 25 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 47, col 28 to line 47, col 34 of module TradeModel: 100
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 57, col 42 to line 57, col 48 of module TradeModel: 100
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 62, col 8 to line 62, col 19 of module TradeModel: 50
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 91, col 16 to line 91, col 22 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 91, col 25 to line 91, col 32 of module TradeModel: 118
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 92, col 8 to line 92, col 39 of module TradeModel: 50
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 93, col 8 to line 93, col 51 of module TradeModel: 50
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 94, col 8 to line 94, col 56 of module TradeModel: 50
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<UpdateStockPrices line 96, col 1 to line 96, col 17 of module TradeModel>: 84:372
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 97, col 8 to line 97, col 54 of module TradeModel: 372
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  |line 97, col 25 to line 97, col 54 of module TradeModel: 186:372
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 98, col 8 to line 98, col 67 of module TradeModel: 372
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<EndRound line 100, col 1 to line 100, col 8 of module TradeModel (107 5 111 43)>: 16:22
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 107, col 8 to line 107, col 31 of module TradeModel: 22
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 107, col 8 to line 107, col 19 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 107, col 23 to line 107, col 31 of module TradeModel: 186
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 108, col 8 to line 108, col 39 of module TradeModel: 22
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 109, col 8 to line 109, col 30 of module TradeModel: 22
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 110, col 8 to line 110, col 26 of module TradeModel: 22
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 111, col 8 to line 111, col 43 of module TradeModel: 22
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2774:0 @!@!@
+<NoNegativeBalance line 125, col 1 to line 125, col 17 of module TradeModel>
+@!@!@ENDMSG 2774 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 125, col 22 to line 125, col 35 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2774:0 @!@!@
+<NoNegativeHoldings line 127, col 1 to line 127, col 18 of module TradeModel>
+@!@!@ENDMSG 2774 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 127, col 23 to line 127, col 58 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2774:0 @!@!@
+<SellLimitCheck line 129, col 1 to line 129, col 14 of module TradeModel>
+@!@!@ENDMSG 2774 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 130, col 5 to line 130, col 59 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 130, col 25 to line 130, col 59 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 130, col 25 to line 130, col 44 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 47, col 5 to line 47, col 46 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 32, col 5 to line 39, col 17 of module TradeModel: 530
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 32, col 8 to line 32, col 26 of module TradeModel: 530
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 35, col 21 to line 35, col 63 of module TradeModel: 342
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 35, col 31 to line 35, col 36 of module TradeModel: 342
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 35, col 39 to line 35, col 45 of module TradeModel: 172
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 35, col 48 to line 35, col 51 of module TradeModel: 172
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 35, col 54 to line 35, col 62 of module TradeModel: 342
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 34, col 24 to line 34, col 36 of module TradeModel: 342
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 37, col 9 to line 39, col 17 of module TradeModel: 342
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 37, col 12 to line 37, col 63 of module TradeModel: 342
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 38, col 14 to line 38, col 38 of module TradeModel: 204
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||||line 39, col 14 to line 39, col 17 of module TradeModel: 138
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 47, col 15 to line 47, col 25 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 47, col 28 to line 47, col 34 of module TradeModel: 170
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 130, col 43 to line 130, col 43 of module TradeModel: 170
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 130, col 49 to line 130, col 59 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 130, col 14 to line 130, col 21 of module TradeModel: 188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2202:0 @!@!@
+End of statistics.
+@!@!@ENDMSG 2202 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(12) at 2025-12-15 15:08:46: 482 states generated (3,853 s/min), 186 distinct states found (1,487 ds/min), 0 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2199:0 @!@!@
+482 states generated, 186 distinct states found, 0 states left on queue.
+@!@!@ENDMSG 2199 @!@!@
+@!@!@STARTMSG 2194:0 @!@!@
+The depth of the complete state graph search is 12.
+@!@!@ENDMSG 2194 @!@!@
+@!@!@STARTMSG 2268:0 @!@!@
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 3 and the 95th percentile is 2).
+@!@!@ENDMSG 2268 @!@!@
+@!@!@STARTMSG 2186:0 @!@!@
+Finished in 7515ms at (2025-12-15 15:08:46)
+@!@!@ENDMSG 2186 @!@!@
