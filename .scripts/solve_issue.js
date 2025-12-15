@@ -8,7 +8,7 @@ const { execSync } = require("child_process");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-pro-latest",
+  model: "gemini-1.5-pro",
 });
 const git = simpleGit();
 
