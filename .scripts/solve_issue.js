@@ -167,9 +167,12 @@ ${changedFilePaths.map(f => `- \`${f}\``).join("\n")}
 Please review the changes carefully before merging.
     `;
 
-    execSync(`gh pr create --title "fix: ${issueTitle}" --body "${prBody}" --head ${branchName} --base main`, {
-      stdio: "inherit",
-    });
+    execSync(
+      `gh pr create --title "fix: ${issueTitle}" --body "${prBody}" --head ${branchName} --base main --label "🤖 ai-fix"`,
+      {
+        stdio: "inherit",
+      },
+    );
     console.log("✅ PR Created successfully!");
   } catch (e) {
     console.error("⚠️ Failed to create PR (It might already exist or gh CLI error):", e.message);
