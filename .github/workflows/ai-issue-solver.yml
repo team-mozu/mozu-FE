@@ -23,7 +23,7 @@ jobs:
           node-version: "20"
 
       - name: Install Dependencies
-        run: npm install @google/generative-ai simple-git glob
+        run: yarn add @google/generative-ai simple-git glob
 
       - name: Configure Git
         run: |
