@@ -21,9 +21,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "yarn"
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: |
+          yarn install
+          yarn add @google/generative-ai simple-git glob
 
       - name: Configure Git
         run: |
