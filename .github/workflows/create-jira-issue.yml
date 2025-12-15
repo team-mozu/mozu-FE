@@ -5,12 +5,13 @@ on:
     types: [opened]
   push:
     branches-ignore:
-      - '**'
+      - "**"
 
 jobs:
   create-jira-issue:
     name: Create Jira Issue + Branch
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.issue.labels.*.name, '🤖 ai-fix') }}
 
     steps:
       - name: Login to Jira
