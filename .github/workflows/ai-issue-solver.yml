@@ -1,0 +1,39 @@
+name: AI Issue Solver (Gemini)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+jobs:
+  solve-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: yarn add @google/generative-ai simple-git glob
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Gemini Bot"
+          git config --global user.email "gemini-bot@google.com"
+
+      - name: Run AI Solver Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Repository Secret에 등록 필요
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: node .github/.scripts/solve_issue.js

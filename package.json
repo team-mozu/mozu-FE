@@ -26,9 +26,12 @@
   "dependencies": {
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
+    "@google/generative-ai": "^0.24.1",
     "dotenv": "^16.4.7",
+    "glob": "^13.0.0",
     "inquirer": "^12.3.0",
-    "react-spinners": "^0.17.0"
+    "react-spinners": "^0.17.0",
+    "simple-git": "^3.30.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
