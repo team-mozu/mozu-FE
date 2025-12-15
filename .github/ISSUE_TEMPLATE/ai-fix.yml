@@ -1,0 +1,50 @@
+name: 🤖 AI Auto Fix Request
+description: Gemini에게 코드 수정이나 기능 추가를 요청합니다.
+title: "[AI] "
+labels: ["🤖 ai-fix"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🤖 AI 작업 요청서
+        작성된 내용을 바탕으로 AI가 코드를 분석하고 수정을 진행합니다.
+        최대한 구체적으로 적어줄수록 결과물이 좋아집니다.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 📝 요청 사항 (Requirement)
+      description: 해결해야 할 버그나 구현해야 할 기능을 상세히 적어주세요.
+      placeholder: "예: 헤더 컴포넌트의 배경색을 모바일에서는 흰색, 데스크탑에서는 투명하게 변경해줘."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ 기대 결과 (Expected Behavior)
+      description: 작업이 완료되었을 때 어떻게 동작해야 하는지 설명해주세요.
+      placeholder: "예: 모바일 화면(768px 이하)에서 스크롤 시 헤더 배경이 흰색으로 변해야 함."
+    validations:
+      required: true
+
+  - type: input
+    id: related-files
+    attributes:
+      label: 📂 관련 파일 (Optional)
+      description: AI가 참고해야 할 파일 위치를 안다면 적어주세요. (탐색 정확도가 올라갑니다)
+      placeholder: "예: src/components/Header.tsx, src/styles/global.css"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: task-type
+    attributes:
+      label: 작업 유형
+      options:
+        - 🐛 버그 수정 (Bug Fix)
+        - ✨ 기능 추가 (New Feature)
+        - ♻️ 리팩토링 (Refactoring)
+        - 📝 문서 수정 (Docs)
+    validations:
+      required: true
