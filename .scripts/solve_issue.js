@@ -6,7 +6,6 @@ const { glob } = require("glob");
 const { execSync } = require("child_process");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 const model = genAI.getGenerativeModel({
   model: "gemini-2.5-flash",
 });
@@ -22,11 +21,9 @@ const IGNORE_PATTERNS = [
   "**/*.png",
   "**/*.jpg",
   "**/*.ico",
+  "**/*.svg",
 ];
 
-// --- 헬퍼 함수 ---
-
-// 1. 프로젝트 파일 구조를 문자열로 가져오기 (Context Window 절약을 위해 파일명만)
 async function getFileTree() {
   const files = await glob("**/*", {
     ignore: IGNORE_PATTERNS,
@@ -35,15 +32,31 @@ async function getFileTree() {
   return files.join("\n");
 }
 
-// 2. Gemini 응답에서 JSON만 추출하기 (Markdown 코드 블록 제거)
+// [수정 2] 긴 코드 생성 시 JSON 깨짐 방지를 위한 커스텀 파서
+function parseFileResponse(text) {
+  const files = {};
+  // 정규식으로 --- START_FILE: 경로 --- 와 --- END_FILE --- 사이의 내용을 추출
+  const regex = /--- START_FILE: (.+?) ---\n([\s\S]*?)\n--- END_FILE ---/g;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    const filePath = match[1].trim();
+    const content = match[2];
+    files[filePath] = content;
+  }
+  return files;
+}
+
+// 1단계(파일 목록)는 단순하므로 JSON 파싱 유지
 function extractJson(text) {
   try {
     const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```([\s\S]*?)```/);
     const jsonString = jsonMatch ? jsonMatch[1] : text;
     return JSON.parse(jsonString);
   } catch (e) {
-    console.error("Failed to parse JSON from AI response:", text);
-    throw new Error("AI output was not valid JSON");
+    console.warn("JSON parsing failed in analysis phase. Trying raw fallback if applicable.");
+    return {
+      files: [],
+    };
   }
 }
 
@@ -80,12 +93,25 @@ async function main() {
     Return ONLY a JSON object with a key "files" containing an array of file paths.
     
     Example:
+    \`\`\`json
     { "files": ["src/components/Button.tsx", "src/utils/api.ts"] }
+    \`\`\`
   `;
 
   const analyzeResult = await model.generateContent(analyzePrompt);
   const analyzeResponse = analyzeResult.response.text();
-  const targetFiles = extractJson(analyzeResponse).files;
+
+  let targetFiles = [];
+  try {
+    targetFiles = extractJson(analyzeResponse).files || [];
+  } catch (e) {
+    console.error("Failed to parse target files from AI response.");
+  }
+
+  if (targetFiles.length === 0) {
+    console.log("⚠️ No specific files identified. Exiting.");
+    return;
+  }
 
   console.log(`🎯 AI identified target files: ${targetFiles.join(", ")}`);
 
@@ -93,7 +119,7 @@ async function main() {
   for (const filePath of targetFiles) {
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, "utf-8");
-      fileContext += `\n--- START OF FILE: ${filePath} ---\n${content}\n--- END OF FILE: ${filePath} ---\n`;
+      fileContext += `\nFile: ${filePath}\n\`\`\`\n${content}\n\`\`\`\n`;
     } else {
       console.warn(`⚠️ File not found (AI hallucination?): ${filePath}`);
     }
@@ -101,6 +127,7 @@ async function main() {
 
   console.log("✏️ Requesting code fixes from Gemini...");
 
+  // [수정 3] 프롬프트에서 JSON 대신 구분자 포맷 요청
   const codingPrompt = `
     You are an expert developer. Fix the issue based on the provided file contents.
 
@@ -114,20 +141,25 @@ async function main() {
     [Instructions]
     1. Modify the code to resolve the issue.
     2. Ensure the code is production-ready and follows the existing style.
-    3. Return ONLY a JSON object where keys are file paths and values are the NEW full content of the file.
+    3. IMPORTANT: Use the following format for your response. Do NOT use JSON.
     
-    Example Response:
-    \`\`\`json
-    {
-      "src/components/Button.tsx": "import React from 'react'; ... (full updated code)",
-      "src/utils/api.ts": "export const fetchData = ... (full updated code)"
-    }
-    \`\`\`
+    Format:
+    --- START_FILE: path/to/file ---
+    (Put the FULL updated file content here)
+    --- END_FILE ---
+
+    Example:
+    --- START_FILE: src/App.tsx ---
+    import React from 'react';
+    export const App = () => <div>Hello</div>;
+    --- END_FILE ---
   `;
 
   const codingResult = await model.generateContent(codingPrompt);
   const codingResponse = codingResult.response.text();
-  const modifiedFiles = extractJson(codingResponse);
+
+  // 변경된 파서 사용
+  const modifiedFiles = parseFileResponse(codingResponse);
 
   console.log("💾 Writing changes to disk...");
 
@@ -139,13 +171,15 @@ async function main() {
         recursive: true,
       });
 
-    fs.writeFileSync(filePath, newContent);
+    // trim()으로 앞뒤 공백 제거하여 깔끔하게 저장
+    fs.writeFileSync(filePath, newContent.trim());
     changedFilePaths.push(filePath);
     console.log(`  - Updated: ${filePath}`);
   }
 
   if (changedFilePaths.length === 0) {
-    console.log("🚫 No files were modified by AI. Exiting.");
+    console.log("🚫 No files were modified by AI. (Parsing failed or no output).");
+    console.log("Debug AI Response:\n", codingResponse);
     return;
   }
 
@@ -159,69 +193,50 @@ async function main() {
     const prBody = `
 # 🤖 AI Auto-Fix
 
-> **Automatically generated by Gemini 2.5 Pro**
+> **Automatically generated by Gemini 1.5 Flash**
 
 ## 📋 Summary
-
 This PR was created to automatically resolve the following issue:
-
 **Closes #${issueNumber}**
 
 ### 📌 Issue Details
 - **Title:** ${issueTitle}
-- **Description:** ${issueBody.split('\n')[0] || 'See issue for details'}
+- **Description:** ${issueBody.split("\n")[0] || "See issue for details"}
 
 ---
 
 ## 📝 Changes Made
-
 <details>
 <summary><b>${changedFilePaths.length} file(s) modified</b> (click to expand)</summary>
 
 ${changedFilePaths.map(f => `- \`${f}\``).join("\n")}
-
 </details>
 
 ---
 
 ## ✅ Review Checklist
-
-Before merging this PR, please verify:
-
 - [ ] The code changes correctly address the issue
 - [ ] No unintended side effects are introduced
-- [ ] Code follows the project's style guidelines
 - [ ] Tests pass (if applicable)
-- [ ] Documentation is updated (if needed)
 
 ---
-
-## 🔍 Testing
-
-Please test the changes in the following areas:
-- Verify the functionality related to the issue
-- Check for any regression in related features
-
----
-
-## 💡 Additional Notes
-
-- This PR was automatically generated using AI
-- Human review is strongly recommended before merging
-- If changes need refinement, feel free to commit additional fixes to this branch
-
----
-
-<sub>🤖 Generated with ❤️ by Gemini AI | [Learn more about AI-assisted development]</sub>
+<sub>🤖 Generated with ❤️ by Gemini AI</sub>
     `;
 
+    // [수정 4] PR 본문을 파일로 저장하여 쉘 명령어 에러 방지
+    const prBodyPath = "pr_body.md";
+    fs.writeFileSync(prBodyPath, prBody);
+
     execSync(
-      `gh pr create --title "fix: ${issueTitle}" --body "${prBody}" --head ${branchName} --base main --label "🤖 ai-fix"`,
+      `gh pr create --title "fix: ${issueTitle}" --body-file "${prBodyPath}" --head ${branchName} --base main --label "ai-fix"`,
       {
         stdio: "inherit",
       },
     );
     console.log("✅ PR Created successfully!");
+
+    // 임시 파일 삭제
+    fs.unlinkSync(prBodyPath);
   } catch (e) {
     console.error("⚠️ Failed to create PR (It might already exist or gh CLI error):", e.message);
   }
