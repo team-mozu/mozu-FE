@@ -228,7 +228,7 @@ ${changedFilePaths.map(f => `- \`${f}\``).join("\n")}
     fs.writeFileSync(prBodyPath, prBody);
 
     execSync(
-      `gh pr create --title "fix: ${issueTitle}" --body-file "${prBodyPath}" --head ${branchName} --base main --label "ai-fix"`,
+      `gh pr create --title "fix: ${issueTitle}" --body-file "${prBodyPath}" --head ${branchName} --base main --label "🤖 ai-fix"`,
       {
         stdio: "inherit",
       },
