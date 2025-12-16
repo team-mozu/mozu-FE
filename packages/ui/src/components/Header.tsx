@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { SvgIcon } from "./SvgIcon";
 import { desktopMediaQueries } from "../styles/breakpoints"; // Import desktopMediaQueries
+import { SvgIcon } from "./SvgIcon";
 
 interface IHeaderProps {
   isAdmin: boolean;
@@ -136,20 +136,15 @@ const HeaderContainer = styled.header<{
     height: 60px; /* Slightly reduced height for smaller desktop screens */
   }
 
-  /*
-   * NOTE: Original media queries for `max-width: 1200px`, `1024px`, `900px` are removed.
-   * As `body { min-width: 1200px; }` is defined in `global.css`,
-   * these media queries would not be active on desktop screens below 1200px.
-   * This adjustment aligns the Header's responsiveness with the global minimum width
-   * and the defined desktop breakpoints for a desktop-centric experience.
-   */
 `;
 
-const LogoContainer = styled.div<{ isClick: boolean }>`
+const LogoContainer = styled.div<{
+  isClick: boolean;
+}>`
   display: flex;
   gap: 12px;
   align-items: center;
-  cursor: ${({ isClick }) => isClick ? `default` : `pointer`};
+  cursor: ${({ isClick }) => (isClick ? `default` : `pointer`)};
 
   /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
   ${desktopMediaQueries.small} {

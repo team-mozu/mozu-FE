@@ -201,7 +201,13 @@ This PR was created to automatically resolve the following issue:
 
 ### 📌 Issue Details
 - **Title:** ${issueTitle}
-- **Description:** ${issueBody.split("\n")[0] || "See issue for details"}
+
+<details>
+<summary><b>📄 Issue Description</b> (Click to expand)</summary>
+
+${issueBody}
+
+</details>
 
 ---
 
@@ -221,9 +227,9 @@ ${changedFilePaths.map(f => `- \`${f}\``).join("\n")}
 
 ---
 <sub>🤖 Generated with ❤️ by Gemini AI</sub>
-    `;
+      `;
 
-    // [수정 4] PR 본문을 파일로 저장하여 쉘 명령어 에러 방지
+    // PR 본문을 파일로 저장 (이스케이프 문제 방지)
     const prBodyPath = "pr_body.md";
     fs.writeFileSync(prBodyPath, prBody);
 
