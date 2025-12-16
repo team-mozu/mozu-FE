@@ -3,12 +3,13 @@ import { color, font } from "@mozu/design-token";
 import { useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { SvgIcon } from "./SvgIcon";
+import { desktopMediaQueries } from "../styles/breakpoints"; // Import desktopMediaQueries
 
 interface IHeaderProps {
   isAdmin: boolean;
   invDeg?: number;
-  showNav: boolean;
-  showRound: boolean;
+  showNav: boolean; // This prop is defined but not used in the Header component logic
+  showRound: boolean; // This prop is defined but not used in the Header component logic
   isMargin?: boolean;
 }
 
@@ -120,32 +121,28 @@ const HeaderContainer = styled.header<{
   box-shadow: 0 2px 4px rgba(93, 93, 93, 0.1);
   transition: all 0.3s ease;
 
-  /* 데스크탑 반응형 - 사이드바 너비 변화에 맞춰 조정 */
-  @media (max-width: 1440px) {
+  /* 데스크탑 반응형 - 중형 데스크탑 (1440px 이하, desktopBreakpoints.medium) */
+  ${desktopMediaQueries.medium} {
     width: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "calc(100% - 260px)" : "100%")};
     margin-left: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "260px" : "0")};
     padding: 0 32px;
   }
 
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하, desktopBreakpoints.small) */
+  ${desktopMediaQueries.small} {
     width: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "calc(100% - 240px)" : "100%")};
     margin-left: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "240px" : "0")};
     padding: 0 24px;
+    height: 60px; /* Slightly reduced height for smaller desktop screens */
   }
 
-  @media (max-width: 1024px) {
-    width: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "calc(100% - 220px)" : "100%")};
-    margin-left: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "220px" : "0")};
-    padding: 0 20px;
-    height: 56px;
-  }
-
-  @media (max-width: 900px) {
-    width: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "calc(100% - 72px)" : "100%")};
-    margin-left: ${({ isAdmin, isMargin }) => (isAdmin && isMargin ? "72px" : "0")};
-    padding: 0 16px;
-    height: 52px;
-  }
+  /*
+   * NOTE: Original media queries for `max-width: 1200px`, `1024px`, `900px` are removed.
+   * As `body { min-width: 1200px; }` is defined in `global.css`,
+   * these media queries would not be active on desktop screens below 1200px.
+   * This adjustment aligns the Header's responsiveness with the global minimum width
+   * and the defined desktop breakpoints for a desktop-centric experience.
+   */
 `;
 
 const LogoContainer = styled.div<{ isClick: boolean }>`
@@ -154,17 +151,9 @@ const LogoContainer = styled.div<{ isClick: boolean }>`
   align-items: center;
   cursor: ${({ isClick }) => isClick ? `default` : `pointer`};
 
-  /* 데스크탑 반응형 - 작은 화면에서 간격 조정 */
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     gap: 10px;
-  }
-
-  @media (max-width: 1024px) {
-    gap: 8px;
-  }
-
-  @media (max-width: 900px) {
-    gap: 6px;
   }
 `;
 
@@ -172,29 +161,16 @@ const ResponsiveLogo = styled.div`
   display: flex;
   align-items: center;
 
-  /* 데스크탑 반응형 - 작은 화면에서 로고 크기 조정 */
+  /* 데스크탑 반응형 - 로고 크기 조정 */
   & > svg {
     transition: all 0.3s ease;
   }
 
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     & > svg {
       width: 66px !important;
       height: 25px !important;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    & > svg {
-      width: 58px !important;
-      height: 22px !important;
-    }
-  }
-
-  @media (max-width: 900px) {
-    & > svg {
-      width: 50px !important;
-      height: 19px !important;
     }
   }
 `;
@@ -203,18 +179,9 @@ const MozuTitle = styled.div`
   font: ${font.b1};
   color: ${color.zinc[500]};
 
-  /* 데스크탑 반응형 - 작은 화면에서 폰트 크기 조정 */
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     font: ${font.b2};
-  }
-
-  @media (max-width: 1024px) {
-    font: ${font.l1};
-  }
-
-  /* 매우 작은 화면에서 타이틀 숨기기 */
-  @media (max-width: 900px) {
-    display: none;
   }
 `;
 
@@ -226,18 +193,9 @@ const NavContainer = styled.nav`
   gap: 8px;
   align-items: center;
 
-  /* 데스크탑 반응형 - 작은 화면에서 간격 조정 */
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     gap: 4px;
-  }
-
-  @media (max-width: 1024px) {
-    gap: 2px;
-  }
-
-  /* 매우 작은 화면에서 내비게이션 숨기기 */
-  @media (max-width: 900px) {
-    display: none;
   }
 `;
 
@@ -261,15 +219,10 @@ const Nav = styled.div<{
     }
   `}
 
-  /* 데스크탑 반응형 - 작은 화면에서 패딩 조정 */
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     font: ${font.b2};
     padding: 8px 12px;
-  }
-
-  @media (max-width: 1024px) {
-    font: ${font.l1};
-    padding: 6px 10px;
   }
 `;
 
@@ -284,25 +237,11 @@ const InvestmentRoundContainer = styled.div`
     justify-content: center;
   }
 
-  /* 데스크탑 반응형 - 작은 화면에서 간격 조정 */
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     gap: 32px;
     > div {
       gap: 6px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    gap: 24px;
-    > div {
-      gap: 4px;
-    }
-  }
-
-  @media (max-width: 900px) {
-    gap: 16px;
-    > div {
-      gap: 2px;
     }
   }
 `;
@@ -311,18 +250,9 @@ const InvestmentRoundExplain = styled.div`
   font: ${font.b2};
   color: ${color.zinc[600]};
 
-  /* 데스크탑 반응형 - 작은 화면에서 폰트 크기 조정 */
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     font: ${font.l1};
-  }
-
-  @media (max-width: 1024px) {
-    font: ${font.l2};
-  }
-
-  /* 매우 작은 화면에서 숨기기 */
-  @media (max-width: 900px) {
-    display: none;
   }
 `;
 
@@ -330,17 +260,9 @@ const InvestmentRoundContent = styled.div`
   font: ${font.t2};
   color: ${color.orange[500]};
 
-  /* 데스크탑 반응형 - 작은 화면에서 폰트 크기 조정 */
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     font: ${font.t3};
-  }
-
-  @media (max-width: 1024px) {
-    font: ${font.t4};
-  }
-
-  @media (max-width: 900px) {
-    font: ${font.b1};
   }
 `;
 
@@ -354,16 +276,8 @@ const SchoolTag = styled.a`
     color: ${color.zinc[700]};
   }
 
-  /* 데스크탑 반응형 - 작은 화면에서 폰트 크기 조정 */
-  @media (max-width: 1200px) {
+  /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
+  ${desktopMediaQueries.small} {
     font: ${font.b2};
-  }
-
-  @media (max-width: 1024px) {
-    font: ${font.l1};
-  }
-
-  @media (max-width: 900px) {
-    font: ${font.l2};
   }
 `;
