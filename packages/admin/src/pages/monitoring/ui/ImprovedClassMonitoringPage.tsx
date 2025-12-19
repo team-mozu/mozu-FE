@@ -5,10 +5,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Tooltip } from "react-tooltip";
-import { useTeamStore } from "@/app/store";
+import { useTeamStore } from "@/app";
 import { useEndClass } from "@/entities/class";
 import { ArticleInfoModal, ClassInfoModal, ImprovedTeamInfoTable } from "@/features/monitoring";
-import { useSSE } from "@/shared/lib/contexts";
+import { useSSE } from "@/shared/lib/contexts/SSEContext";
 import { useInvestmentProgress } from "@/shared/lib/hooks";
 import { FullPageLoader, SSELoadingSpinner } from "@/shared/ui";
 

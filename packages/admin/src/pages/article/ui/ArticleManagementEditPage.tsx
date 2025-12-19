@@ -3,7 +3,7 @@ import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea, Toast } from "@mozu/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useArticleUpdate, useGetArticleDetail } from "@/entities/article";
+import { useGetArticleDetail, useUpdateArticle } from "@/entities/article";
 import { ImgContainer } from "@/features/articleCRUD";
 
 interface FormErrors {
@@ -45,7 +45,9 @@ export const ArticleManagementEditPage = () => {
       });
       setOriginalImage(originalImg);
     }
-  }, [articleData]);
+  }, [
+    articleData,
+  ]);
 
   const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
@@ -64,51 +66,81 @@ export const ArticleManagementEditPage = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [datas.articleName, datas.articleDesc]);
+  }, [
+    datas.articleName,
+    datas.articleDesc,
+  ]);
 
-  const titleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setDatas(prev => ({
-      ...prev,
-      articleName: e.target.value,
-    }));
-    // 에러가 있다면 제거
-    if (errors.articleName && e.target.value.trim()) {
-      setErrors(prev => ({ ...prev, articleName: undefined }));
-    }
-  }, [errors.articleName]);
-
-  const contentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDatas(prev => ({
-      ...prev,
-      articleDesc: e.target.value,
-    }));
-    // 에러가 있다면 제거
-    if (errors.articleDesc && e.target.value.trim()) {
-      setErrors(prev => ({ ...prev, articleDesc: undefined }));
-    }
-  }, [errors.articleDesc]);
-
-  const handleImageChange = useCallback((file: File | string | null | "DELETE") => {
-    if (file === "DELETE") {
+  const titleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       setDatas(prev => ({
         ...prev,
-        articleImage: null,
+        articleName: e.target.value,
       }));
-    } else {
+      // 에러가 있다면 제거
+      if (errors.articleName && e.target.value.trim()) {
+        setErrors(prev => ({
+          ...prev,
+          articleName: undefined,
+        }));
+      }
+    },
+    [
+      errors.articleName,
+    ],
+  );
+
+  const contentChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setDatas(prev => ({
         ...prev,
-        articleImage: file,
+        articleDesc: e.target.value,
       }));
-    }
+      // 에러가 있다면 제거
+      if (errors.articleDesc && e.target.value.trim()) {
+        setErrors(prev => ({
+          ...prev,
+          articleDesc: undefined,
+        }));
+      }
+    },
+    [
+      errors.articleDesc,
+    ],
+  );
 
-    if (errors.articleImage && (file && file !== "DELETE")) {
-      setErrors(prev => ({ ...prev, articleImage: undefined }));
-    }
-  }, [errors.articleImage]);
+  const handleImageChange = useCallback(
+    (file: File | string | null | "DELETE") => {
+      if (file === "DELETE") {
+        setDatas(prev => ({
+          ...prev,
+          articleImage: null,
+        }));
+      } else {
+        setDatas(prev => ({
+          ...prev,
+          articleImage: file,
+        }));
+      }
+
+      if (errors.articleImage && file && file !== "DELETE") {
+        setErrors(prev => ({
+          ...prev,
+          articleImage: undefined,
+        }));
+      }
+    },
+    [
+      errors.articleImage,
+    ],
+  );
 
   const handleCancel = useCallback(() => {
     navigate(`/article-management/${id}`);
-  }, [navigate, id]);
+  }, [
+    navigate,
+    id,
+  ]);
 
   const formData = {
     articleName: datas.articleName.trim(),
@@ -124,7 +156,7 @@ export const ArticleManagementEditPage = () => {
     })(),
   };
 
-  const { mutate: updateArticle, isPending } = useArticleUpdate(id, formData);
+  const { mutate: updateArticle, isPending } = useUpdateArticle(id, formData);
 
   const handleSubmit = useCallback(() => {
     if (!validateForm()) {
@@ -137,15 +169,18 @@ export const ArticleManagementEditPage = () => {
       onSuccess: () => {
         setIsSubmitting(false);
       },
-      onError: (error) => {
+      onError: error => {
         setIsSubmitting(false);
-        console.error('기사 수정 실패:', error);
+        console.error("기사 수정 실패:", error);
         Toast("기사 수정에 실패하였습니다.", {
           type: "error",
         });
       },
     });
-  }, [validateForm, updateArticle]);
+  }, [
+    validateForm,
+    updateArticle,
+  ]);
 
   const isFormDisabled: boolean = isPending || isSubmitting;
 
@@ -175,7 +210,9 @@ export const ArticleManagementEditPage = () => {
             aria-describedby={errors.articleName ? "title-error" : undefined}
           />
           {errors.articleName && (
-            <ErrorMessage id="title-error" role="alert">
+            <ErrorMessage
+              id="title-error"
+              role="alert">
               {errors.articleName}
             </ErrorMessage>
           )}
@@ -194,7 +231,9 @@ export const ArticleManagementEditPage = () => {
             aria-describedby={errors.articleDesc ? "desc-error" : undefined}
           />
           {errors.articleDesc && (
-            <ErrorMessage id="desc-error" role="alert">
+            <ErrorMessage
+              id="desc-error"
+              role="alert">
               {errors.articleDesc}
             </ErrorMessage>
           )}
@@ -202,13 +241,21 @@ export const ArticleManagementEditPage = () => {
         <InputWrapper>
           <ImgContainer
             label="기사 이미지"
-            img={datas.articleImage instanceof File ? URL.createObjectURL(datas.articleImage) : (typeof datas.articleImage === "string" && datas.articleImage !== "DELETE") ? datas.articleImage : null}
+            img={
+              datas.articleImage instanceof File
+                ? URL.createObjectURL(datas.articleImage)
+                : typeof datas.articleImage === "string" && datas.articleImage !== "DELETE"
+                  ? datas.articleImage
+                  : null
+            }
             onImageChange={handleImageChange}
             aria-invalid={!!errors.articleImage}
             aria-describedby={errors.articleImage ? "image-error" : undefined}
           />
           {errors.articleImage && (
-            <ErrorMessage id="image-error" role="alert">
+            <ErrorMessage
+              id="image-error"
+              role="alert">
               {errors.articleImage}
             </ErrorMessage>
           )}
