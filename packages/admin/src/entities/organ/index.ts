@@ -1,2 +1,2 @@
-export * from "./api";
-export * from "./model";
+export { useAdminLogin } from "./model/mutations";
+export { useGetOrganId } from "./model/queries";

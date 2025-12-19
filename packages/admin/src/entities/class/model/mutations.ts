@@ -118,11 +118,11 @@ export const useStartClass = (id?: string) => {
  * @param {string} id - 즐겨찾기를 변경할 수업의 ID (UUID)
  * @returns {UseMutationResult} 즐겨찾기 토글 mutation 객체
  */
-export const useStarClass = (id?: string) => {
+export const useStarClass = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => toggleStar(id!),
-    onMutate: async () => {
+    mutationFn: (id: string) => toggleStar(id),
+    onMutate: async (id: string) => {
       await queryClient.cancelQueries({
         queryKey: [
           "getClass",

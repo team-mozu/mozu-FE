@@ -50,7 +50,7 @@ export const useDeleteArticle = (id?: string, onSuccessCallback?: () => void) =>
  * @param {ArticleEditRequest} data - 수정할 기사 데이터
  * @returns {UseMutationResult} 기사 수정 mutation 객체
  */
-export const useArticleUpdate = (id?: string, data?: ArticleEditRequest) => {
+export const useUpdateArticle = (id?: string, data?: ArticleEditRequest) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
