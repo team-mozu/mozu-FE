@@ -38,6 +38,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@types/node": "^22.10.5",
+    "@yh-kim/eslint-plugin-fsd": "^0.1.11",
     "commitizen": "^4.3.1",
     "concurrently": "^9.2.0",
     "corepack": "^0.34.0",
