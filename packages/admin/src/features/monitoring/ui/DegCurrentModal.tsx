@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTeamStore } from "@/app/store";
+import { useTeamStore } from "@/app";
 import { useGetCurrent } from "@/entities/monitoring";
 import { TeamInvestStatusTable } from "@/shared/ui";
 
