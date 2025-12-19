@@ -1,11 +1,8 @@
 import { useCallback, useState } from "react";
-import { useTeamStore } from "@/app/store";
 import { useGetClassDetail, useNextDegree } from "@/entities/class";
-import { queryClient } from "@/shared/lib";
 
 export const useInvestmentProgress = (classId: string) => {
   const [optimisticCurInvDeg, setOptimisticCurInvDeg] = useState<number | null>(null);
-  const { clearTeamInfo } = useTeamStore();
 
   const { data: classData, isLoading, isFetching } = useGetClassDetail(classId);
 
@@ -17,24 +14,21 @@ export const useInvestmentProgress = (classId: string) => {
     serverCurInvDeg: classData?.curInvRound,
     currentInvDeg,
     isLoading,
-    isFetching
+    isFetching,
   });
 
-  const { mutate: nextDegree, isPending: isNextDegreePending } = useNextDegree(
-    classId,
-    () => {
-      console.log("✅ nextDegree success callback");
-      // 캐시 무효화는 useNextDegree 내부에서 이미 처리됨
-      // optimistic state 즉시 초기화
-      console.log("🔄 Resetting optimistic state");
-      setOptimisticCurInvDeg(null);
-    }
-  );
+  const { mutate: nextDegree, isPending: isNextDegreePending } = useNextDegree(classId, () => {
+    console.log("✅ nextDegree success callback");
+    // 캐시 무효화는 useNextDegree 내부에서 이미 처리됨
+    // optimistic state 즉시 초기화
+    console.log("🔄 Resetting optimistic state");
+    setOptimisticCurInvDeg(null);
+  });
 
   const progressToNextDegree = useCallback(() => {
     console.log("🚀 progressToNextDegree called:", {
       currentInvDeg,
-      willSetTo: currentInvDeg + 1
+      willSetTo: currentInvDeg + 1,
     });
 
     if (!classData) return;
@@ -44,12 +38,13 @@ export const useInvestmentProgress = (classId: string) => {
 
     // API call
     nextDegree();
-  }, [classData, currentInvDeg, nextDegree]);
+  }, [
+    classData,
+    currentInvDeg,
+    nextDegree,
+  ]);
 
-  const canProgressToNext = Boolean(
-    classData &&
-    currentInvDeg < classData.maxInvRound
-  );
+  const canProgressToNext = Boolean(classData && currentInvDeg < classData.maxInvRound);
 
   const isLastDegree = currentInvDeg === classData?.maxInvRound;
 
