@@ -1,19 +1,13 @@
 import { Suspense } from "react";
 import { RouterProvider } from "react-router-dom";
-import { withProviders } from "@/app/providers/widthProviders";
-import { ArticleProvider } from "@/shared/lib/contexts/ArticleContext";
-import { StyledProvider } from "@/shared/StyledProvider";
-import { Router } from "./router/router";
+import { withProviders } from "./providers/withProviders";
+import { Router } from "./routes/router";
 
 function App() {
   return (
-    <StyledProvider>
-      <ArticleProvider>
-        <Suspense fallback={<div>로딩중...</div>}>
-          <RouterProvider router={Router} />
-        </Suspense>
-      </ArticleProvider>
-    </StyledProvider>
+    <Suspense fallback={<div>로딩중...</div>}>
+      <RouterProvider router={Router} />
+    </Suspense>
   );
 }
 

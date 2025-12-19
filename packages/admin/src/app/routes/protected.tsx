@@ -1,9 +1,8 @@
-import { SSEProvider } from "@/shared/lib/contexts";
-import { AppLayout } from "./AppLayout";
-import * as pages from "./router/lazyPages";
+import { SSEProvider } from "@/shared/lib/contexts/SSEContext";
+import { AppLayout } from "../layouts";
+import * as pages from "./lazyPages";
 
 export const protectedRoutes = [
-  //인증이 필요한 페이지들
   {
     path: "/",
     element: <AppLayout />,
