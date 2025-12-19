@@ -1,7 +1,7 @@
+import type { AxiosInstance } from "axios";
 import type { CookieSetOptions } from "universal-cookie";
-import { ADMIN_COOKIE_DOMAIN, COOKIE_DOMAIN, STUDENT_COOKIE_DOMAIN } from "../env";
+import { ADMIN_COOKIE_DOMAIN, STUDENT_COOKIE_DOMAIN } from "../env";
 import { getCookies, removeCookies, setCookies } from "../utils/cookies";
-import { instance } from "./apiClient";
 
 const REFRESH_API_PATH = "/organ/token/reissue";
 
@@ -14,10 +14,11 @@ interface IRefreshResponse {
 
 /**
  * Access Token과 Refresh Token을 사용하여 새 토큰을 발급받습니다.
+ * @param instance Axios 인스턴스
  * @param refreshToken 리프레시 토큰
  * @returns API 응답 데이터 (새 Access Token 포함)
  */
-export const reIssueToken = async (refreshToken: string) => {
+export const reIssueToken = async (instance: AxiosInstance, refreshToken: string) => {
   try {
     const response = await instance.patch<IRefreshResponse>(
       REFRESH_API_PATH,
@@ -55,9 +56,6 @@ export const reIssueToken = async (refreshToken: string) => {
  * @param userType 사용자 타입 ('student' | 'admin')
  */
 export const setAuthTokens = (accessToken: string, refreshToken: string | null, userType: "student" | "admin") => {
-  const secure = COOKIE_DOMAIN !== "localhost";
-  const domain = userType === "student" ? STUDENT_COOKIE_DOMAIN : ADMIN_COOKIE_DOMAIN;
-
   const options: CookieSetOptions = {
     path: "/",
     secure: false,

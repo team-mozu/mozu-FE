@@ -117,10 +117,10 @@ instance.interceptors.response.use(
     if (!refreshToken || !userType) {
       isRefreshing = false;
       removeAuthTokens();
-      
+
       // SSE 연결 해제는 각 앱에서 개별적으로 처리
-      console.log('[API Client] No token, SSE disconnection handled by app');
-      
+      console.log("[API Client] No token, SSE disconnection handled by app");
+
       console.log("No refresh token or user type, redirecting to signin");
       // 테스트 환경이 아닐 때만 로그인 페이지로 리디렉션
       if (!window.location.pathname.includes("__test__")) {
@@ -131,12 +131,12 @@ instance.interceptors.response.use(
     }
 
     try {
-      const { accessToken: newAccessToken } = await reIssueToken(refreshToken);
+      const { accessToken: newAccessToken } = await reIssueToken(instance, refreshToken);
 
       setAuthTokens(newAccessToken, refreshToken, userType);
 
       // SSE 토큰 갱신은 각 앱에서 개별적으로 처리
-      console.log('[API Client] Token refreshed, SSE token update handled by app');
+      console.log("[API Client] Token refreshed, SSE token update handled by app");
 
       // 대기열에 있던 모든 요청을 새로운 토큰으로 재실행
       processQueue(null, newAccessToken);
@@ -151,7 +151,7 @@ instance.interceptors.response.use(
       removeAuthTokens();
 
       // SSE 연결 해제는 각 앱에서 개별적으로 처리
-      console.log('[API Client] Token refresh failed, SSE disconnection handled by app');
+      console.log("[API Client] Token refresh failed, SSE disconnection handled by app");
 
       Toast("세션이 만료되었습니다. 다시 로그인해주세요.", {
         type: "error",
