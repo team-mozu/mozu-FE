@@ -15,5 +15,5 @@ export const ClassEnvironment = lazy(() => import("@/pages/class/ui/ClassEnviron
 export const ClassEdit = lazy(() => import("@/pages/class/ui/ClassEdit").then(module => ({ default: module.ClassEdit })));
 export const CreateClass = lazy(() => import("@/pages/class/ui/ClassCreate").then(module => ({ default: module.CreateClass })));
 
-export const InvestmentPreparation = lazy(() => import("@/pages/monitoring/ui/ImprovedClassMonitoringPage").then(module => ({ default: module.InvestmentPreparation })));
+export const InvestmentPreparation = lazy(() => import("@/pages/monitoring/ui/InvestmentPreparation").then(module => ({ default: module.InvestmentPreparation })));
 export const ImprovedClassMonitoringPage = lazy(() => import("@/pages/monitoring/ui/ImprovedClassMonitoringPage").then(module => ({ default: module.ImprovedClassMonitoringPage })));

@@ -45,7 +45,7 @@ export const ClassCard = ({
             backgroundColor={color.zinc[50]}
             color={color.zinc[800]}
             borderColor={color.zinc[200]}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               onDeleteClick();
             }}

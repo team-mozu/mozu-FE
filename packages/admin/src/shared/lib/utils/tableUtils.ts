@@ -1,4 +1,4 @@
-import type { TeamInfo } from "@/app/store";
+import type { TeamInfo } from "@/app/store/teamStore";
 
 export interface TableCellData {
   type: "empty" | "progress" | "completed";
