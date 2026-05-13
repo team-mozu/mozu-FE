@@ -68,6 +68,10 @@ export const setAuthTokens = (accessToken: string, refreshToken: string | null, 
   if (userType === "admin" && refreshToken) {
     setCookies("refreshToken", refreshToken, options);
   }
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("mozu-access-token-changed", { detail: { accessToken } }));
+  }
 };
 
 /**

@@ -43,7 +43,7 @@ export const useTypeSSE = (
   onError?: (error: any, isInitialFailure: boolean) => void,
   eventHandlers?: EventHandlers,
 ) => {
-  const token = getCookies<string>("accessToken");
+  const [token, setToken] = useState<string | undefined>(() => getCookies<string>("accessToken"));
   const navigate = useNavigate();
   const { id } = useParams();
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
@@ -53,6 +53,16 @@ export const useTypeSSE = (
   const [isConnecting, setIsConnecting] = useState(true);
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+
+  useEffect(() => {
+    const handleTokenChange = (e: Event) => {
+      const next = (e as CustomEvent<{ accessToken: string }>).detail?.accessToken
+        ?? getCookies<string>("accessToken");
+      setToken(prev => (prev === next ? prev : next));
+    };
+    window.addEventListener("mozu-access-token-changed", handleTokenChange);
+    return () => window.removeEventListener("mozu-access-token-changed", handleTokenChange);
+  }, []);
 
   // 콜백 함수들을 ref로 저장해서 의존성 배열 문제 해결
   const onMessageRef = useRef(onMessage);
@@ -77,11 +87,18 @@ export const useTypeSSE = (
     const currentRetryCount = retryCountRef.current;
     console.log(`[SSE] 재연결 시도 중... (시도 ${currentRetryCount + 1})`);
 
-    // 재연결 시도 상태 설정
     setIsReconnecting(true);
+
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
 
     const delay = Math.min(1000 * 2 ** currentRetryCount, 30000);
 
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+    }
     reconnectTimeoutRef.current = setTimeout(() => {
       setRetryCount(prev => prev + 1);
     }, delay);
@@ -199,6 +216,7 @@ export const useTypeSSE = (
     attemptReconnect,
     navigate,
     id,
+    retryCount,
   ]);
 
   useEffect(() => {

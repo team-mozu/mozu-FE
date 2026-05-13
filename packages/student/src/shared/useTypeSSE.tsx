@@ -48,7 +48,7 @@ export const useTypeSSE = (
   onError?: (error: any, isInitialConnection: boolean) => void,
   eventHandlers?: EventHandlers,
 ) => {
-  const token = getCookies<string>("accessToken");
+  const [token, setToken] = useState<string | undefined>(() => getCookies<string>("accessToken"));
   const navigate = useNavigate();
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -58,6 +58,16 @@ export const useTypeSSE = (
   const [isConnecting, setIsConnecting] = useState(true);
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+
+  useEffect(() => {
+    const handleTokenChange = (e: Event) => {
+      const next = (e as CustomEvent<{ accessToken: string }>).detail?.accessToken
+        ?? getCookies<string>("accessToken");
+      setToken(prev => (prev === next ? prev : next));
+    };
+    window.addEventListener("mozu-access-token-changed", handleTokenChange);
+    return () => window.removeEventListener("mozu-access-token-changed", handleTokenChange);
+  }, []);
 
   // 콜백 함수들과 상태를 ref로 저장
   const onMessageRef = useRef(onMessage);
@@ -76,7 +86,6 @@ export const useTypeSSE = (
     isConnectedRef.current = isConnected;
   });
 
-  // 재연결 시도 함수 - useCallback에서 의존성 제거
   const attemptReconnect = useCallback(() => {
     if (!url || !token) return;
 
@@ -84,16 +93,23 @@ export const useTypeSSE = (
     console.log(`[SSE] 재연결 시도 중... (시도 ${currentRetryCount + 1})`);
     setIsReconnecting(true);
 
-    // 지수 백오프: 1초, 2초, 4초, 8초, 16초, 최대 30초
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+
     const delay = Math.min(1000 * 2 ** currentRetryCount, 30000);
 
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+    }
     reconnectTimeoutRef.current = setTimeout(() => {
       setRetryCount(prev => prev + 1);
     }, delay);
   }, [
     url,
     token,
-  ]); // retryCount 제거
+  ]);
 
   // 연결 설정 함수 - 안정적인 의존성만 사용
   const setupConnection = useCallback(() => {
@@ -107,6 +123,11 @@ export const useTypeSSE = (
     const headers: Record<string, string> = {
       Authorization: `Bearer ${token}`,
     };
+
+    if (lastEventIdRef.current) {
+      console.log(`[SSE] 재연결 시도: Last-Event-ID ${lastEventIdRef.current} 전송`);
+      headers["Last-Event-ID"] = lastEventIdRef.current;
+    }
 
     setIsConnecting(true);
     setIsReconnecting(false);
@@ -206,7 +227,8 @@ export const useTypeSSE = (
     token,
     attemptReconnect,
     navigate,
-  ]); // 안정적인 의존성만 유지
+    retryCount,
+  ]);
 
   // 메인 useEffect - setupConnection만 의존성으로 사용
   useEffect(() => {
