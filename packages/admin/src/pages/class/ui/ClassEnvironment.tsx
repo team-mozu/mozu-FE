@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font, Skeleton } from "@mozu/design-token";
 import { Button, Modal, SvgIcon } from "@mozu/ui";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDeleteClass, useGetClassDetail, useStartClass } from "@/entities/class";
 import { ArticleTables } from "@/features/articleCRUD/ui/ArticleTables";
 import { formatPrice } from "@/shared/lib";

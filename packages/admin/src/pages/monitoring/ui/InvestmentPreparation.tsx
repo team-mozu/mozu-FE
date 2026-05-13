@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Button, Modal, SvgIcon, Toast, WarningMsg } from "@mozu/ui";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTeamStore } from "@/app";
 import { useEndClass as useClassStop, useGetClassDetail, useStartDegree } from "@/entities/class";
 import { ParticipationContainer } from "@/features/monitoring";

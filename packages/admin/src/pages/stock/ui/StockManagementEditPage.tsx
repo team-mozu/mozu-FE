@@ -4,7 +4,7 @@ import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { useGetStockDetail, useStockUpdate } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";

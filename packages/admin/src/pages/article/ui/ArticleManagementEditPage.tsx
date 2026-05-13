@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea, Toast } from "@mozu/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetArticleDetail, useUpdateArticle } from "@/entities/article";
 import { ImgContainer } from "@/features/articleCRUD";
 

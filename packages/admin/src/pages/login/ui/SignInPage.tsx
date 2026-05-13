@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { color, font } from "@mozu/design-token";
 import { Input, SvgIcon, Toast } from "@mozu/ui";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAdminLogin } from "@/entities/organ";
 import { isTruthValues } from "@/shared/lib";
 import { useForm } from "@/shared/lib/hooks";
@@ -14,10 +14,13 @@ export const SignInPage = () => {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const inFlightRef = useRef(false);
 
   const { mutate: adminLogin, isPending: isAdminLoginLoading } = useAdminLogin();
 
   const handleLogin = () => {
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
     adminLogin(state, {
       onSuccess: () => {
         navigate("/class-management");
@@ -27,6 +30,9 @@ export const SignInPage = () => {
         Toast("기관코드 혹은 비밀번호를 다시 확인해주세요.", {
           type: "error",
         });
+      },
+      onSettled: () => {
+        inFlightRef.current = false;
       },
     });
   };
@@ -40,28 +46,30 @@ export const SignInPage = () => {
         />
         모의주식투자
       </LogoWrapper>
-      <SigninContainer>
+      <SigninContainer
+        as="form"
+        onSubmit={e => {
+          e.preventDefault();
+          if (
+            isAdminLoginLoading ||
+            !isTruthValues([
+              state.code,
+              state.password,
+            ])
+          )
+            return;
+          handleLogin();
+        }}>
         <p>관리자 로그인</p>
-        {/** biome-ignore lint/a11y/noStaticElementInteractions: <임시> */}
-        <div
-          onKeyDown={e => {
-            if (
-              e.key === "Enter" &&
-              isTruthValues([
-                state.code,
-                state.password,
-              ]) &&
-              !isAdminLoginLoading
-            ) {
-              handleLogin();
-            }
-          }}>
+        <Fields>
           <Input
             placeholder="기관 코드를 입력해 주세요.."
             type="text"
             label="기관 코드"
             value={state.code ?? ""}
             name="code"
+            autoComplete="username"
+            autoFocus
             onChange={e => {
               onChangeInputValue(e);
               setErrorMessage("");
@@ -75,17 +83,17 @@ export const SignInPage = () => {
             label="비밀번호"
             name="password"
             value={state.password ?? ""}
+            autoComplete="current-password"
             onChange={e => {
               onChangeInputValue(e);
               setErrorMessage("");
             }}
             required={true}
           />
-          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        </div>
+          {errorMessage && <ErrorMessage role="alert">{errorMessage}</ErrorMessage>}
+        </Fields>
         <LoginButton
           type="submit"
-          onClick={handleLogin}
           disabled={
             !isTruthValues([
               state.code,
@@ -136,11 +144,12 @@ const SigninContainer = styled.div`
     font: ${font.t1};
     color: ${color.black};
   }
-  > div {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
+`;
+
+const Fields = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const LoginButton = styled.button`

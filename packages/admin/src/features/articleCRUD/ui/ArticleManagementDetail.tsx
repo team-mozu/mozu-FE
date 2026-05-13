@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font, Skeleton } from "@mozu/design-token";
 import { Button } from "@mozu/ui";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetArticleDetail } from "@/entities/article";
 import { FullPageLoader } from "@/shared/ui";
 import { ArticleMainData } from "./ArticleMainData";

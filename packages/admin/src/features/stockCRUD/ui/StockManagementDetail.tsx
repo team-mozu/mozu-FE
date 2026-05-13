@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { color, font, Skeleton } from "@mozu/design-token";
 import { Accounts, AccountsSkeleton, Button, CompanySkeleton, SvgIcon } from "@mozu/ui";
 import { memo, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetStockDetail } from "@/entities/stock";
 import { FullPageLoader } from "@/shared/ui";
 

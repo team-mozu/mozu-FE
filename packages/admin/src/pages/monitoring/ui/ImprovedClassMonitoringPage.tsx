@@ -3,7 +3,7 @@ import { color, font } from "@mozu/design-token";
 import { Button, Modal, SvgIcon, Toast } from "@mozu/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { useTeamStore } from "@/app";
 import { useEndClass } from "@/entities/class";

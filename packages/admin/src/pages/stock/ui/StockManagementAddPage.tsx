@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { color, font } from "@mozu/design-token";
 import { EditDiv, Input, TextArea } from "@mozu/ui";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useCreateStock } from "@/entities/stock";
 import { LogoUploader } from "@/features/stockCRUD/ui";

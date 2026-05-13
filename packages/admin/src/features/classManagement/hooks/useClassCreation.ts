@@ -1,6 +1,6 @@
 import { Toast } from "@mozu/ui";
 import { useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useCreateClass } from "@/entities/class";
 import type { LessonCreateRequest } from "@/entities/class/api/type";
 import { useArticle } from "@/shared/lib";

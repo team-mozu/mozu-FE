@@ -1,7 +1,7 @@
 import { color } from "@mozu/design-token";
 import { Button, Input, Select, SvgIcon, Toast } from "@mozu/ui";
 import { type ChangeEvent, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetClassDetail, useUpdateClass } from "@/entities/class";
 import { useGetStockList } from "@/entities/stock";
 import { ArticleTables } from "@/features/articleCRUD/ui/ArticleTables";

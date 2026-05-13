@@ -1,7 +1,7 @@
 import { color } from "@mozu/design-token";
 import { Modal, SelectError, SvgIcon } from "@mozu/ui";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import { useDeleteStock, useGetStockDetail } from "@/entities/stock";
 import { StockManagementDetail } from "@/features/stockCRUD";
 

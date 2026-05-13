@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { forwardRef, useState } from "react";
+import { forwardRef, useId, useState } from "react";
 import { SvgIcon } from "./SvgIcon";
 import {
   baseInputStyles,
@@ -108,6 +108,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     ref,
   ) => {
     const [showPassword, setShowPassword] = useState(false);
+    const reactId = useId();
+    const inputId = (rest as { id?: string }).id ?? `input-${reactId}`;
+    const errorId = `${inputId}-error`;
+    const helperId = `${inputId}-helper`;
 
     const inputStyles = css`
     ${baseInputStyles}
@@ -129,11 +133,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         css={wrapperStyles}
         className={className}>
         {label && (
-          // biome-ignore lint/a11y/noLabelWithoutControl: <임시>
-          <label css={labelStyles}>
+          <label
+            css={labelStyles}
+            htmlFor={inputId}>
             {label}
             {required && (
               <span
+                aria-hidden="true"
                 style={{
                   color: "#ef4444",
                 }}>
@@ -158,6 +164,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
             <input
               ref={ref}
+              id={inputId}
               css={inputStyles}
               type={type === "password" ? (showPassword ? "text" : "password") : type === "money" ? "text" : type}
               placeholder={placeholder}
@@ -171,6 +178,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               maxLength={maxLength}
               minLength={minLength}
               required={required}
+              aria-invalid={state === "error" || !!errorMessage || undefined}
+              aria-describedby={errorMessage ? errorId : helperText ? helperId : undefined}
               onChange={onChange}
               onFocus={onFocus}
               onBlur={onBlur}
@@ -179,9 +188,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             />
 
             {type === "password" ? (
-              // biome-ignore lint/a11y/noStaticElementInteractions: <임시>
-              // biome-ignore lint/a11y/useKeyWithClickEvents: <임시>
-              <span
+              <button
+                type="button"
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
+                aria-pressed={showPassword}
+                aria-controls={inputId}
                 css={css`
                   ${endIconStyles}
                   cursor: pointer;
@@ -189,6 +200,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                   align-items: center;
                   justify-content: center;
                   pointer-events: auto;
+                  background: transparent;
+                  border: none;
+                  padding: 0;
+                  color: inherit;
 
                   & > svg {
                     pointer-events: none;
@@ -196,7 +211,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 `}
                 onClick={() => setShowPassword(prev => !prev)}>
                 <SvgIcon name={showPassword ? "eye" : "eye-off"} />
-              </span>
+              </button>
             ) : (
               endIcon && <span css={endIconStyles}>{endIcon}</span>
             )}
@@ -204,9 +219,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {rightText && <span css={rightTextStyles}>{rightText}</span>}
         </div>
 
-        {errorMessage && <span css={errorMessageStyles}>{errorMessage}</span>}
+        {errorMessage && (
+          <span
+            id={errorId}
+            role="alert"
+            css={errorMessageStyles}>
+            {errorMessage}
+          </span>
+        )}
 
-        {helperText && !errorMessage && <span css={helperTextStyles}>{helperText}</span>}
+        {helperText && !errorMessage && (
+          <span
+            id={helperId}
+            css={helperTextStyles}>
+            {helperText}
+          </span>
+        )}
       </div>
     );
   },
