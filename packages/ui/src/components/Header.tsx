@@ -262,17 +262,17 @@ const InvestmentRoundContent = styled.div`
 `;
 
 const SchoolTag = styled.a`
-  font: ${font.t4};
-  color: ${color.zinc[500]};
+  font: ${font.l1};
+  color: ${color.zinc[400]};
   text-decoration: none;
   transition: color 0.2s ease;
 
   &:hover {
-    color: ${color.zinc[700]};
+    color: ${color.zinc[600]};
   }
 
   /* 데스크탑 반응형 - 소형 데스크탑 (1366px 이하) */
   ${desktopMediaQueries.small} {
-    font: ${font.b2};
+    font: ${font.l2};
   }
 `;
