@@ -9,9 +9,10 @@ interface ISideBarType {
   name?: string;
   role?: string;
   navTitle?: string;
+  onLogout?: () => void;
 }
 
-export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
+export const SideBar = ({ name, role, navTitle, onLogout }: ISideBarType) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [nav, setIsNav] = useState<string>("class");
@@ -69,9 +70,47 @@ export const SideBar = ({ name, role, navTitle }: ISideBarType) => {
           </NavBtn>
         </BtnContainer>
       </ContentContainer>
+      {onLogout ? (
+        <LogoutBtn type="button" onClick={onLogout}>
+          로그아웃
+        </LogoutBtn>
+      ) : null}
     </SideBarContainer>
   );
 };
+
+const LogoutBtn = styled.button`
+  margin-top: auto;
+  margin-bottom: 24px;
+  width: 240px;
+  padding: 12px 16px;
+  background-color: transparent;
+  color: ${color.zinc[600]};
+  font: ${font.b2};
+  text-align: left;
+  border: 1px solid ${color.zinc[200]};
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: ${color.zinc[50]};
+    color: ${color.zinc[800]};
+  }
+
+  @media (max-width: 1200px) {
+    width: 200px;
+  }
+  @media (max-width: 1024px) {
+    width: 180px;
+  }
+  @media (max-width: 900px) {
+    width: 40px;
+    padding: 8px;
+    text-align: center;
+    font-size: 10px;
+  }
+`;
 
 const BtnContainer = styled.div`
   width: 100%;

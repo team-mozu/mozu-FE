@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
-import { Header, SideBar } from "@mozu/ui";
+import { Header, SideBar, Toast } from "@mozu/ui";
+import { removeAuthTokens } from "@mozu/util-config";
 import { AnimatePresence } from "framer-motion";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { PageTransition } from "@/shared/ui";
 import {
   shouldApplyMargin,
@@ -16,9 +17,16 @@ const desktopMediaQueries = {
 
 export const AppLayoutUI = () => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const isMargin = shouldApplyMargin(pathname);
   const useTransition = shouldUsePageTransition(pathname);
+
+  const handleLogout = () => {
+    removeAuthTokens();
+    Toast("로그아웃 되었습니다.", { type: "success" });
+    navigate("/signin", { replace: true });
+  };
 
   return (
     <AppContainer>
@@ -31,6 +39,7 @@ export const AppLayoutUI = () => {
         name={"대전진로융합교육원\n창업경영마을"}
         role={"관리자"}
         navTitle={"관리"}
+        onLogout={handleLogout}
       />
       <MainContent isMargin={isMargin}>
         {useTransition ? (
