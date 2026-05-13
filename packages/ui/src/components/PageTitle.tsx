@@ -10,7 +10,7 @@ export const PageTitle = ({ mainTitle, subTitle }: ITitleType) => {
   return (
     <TitleContainer>
       <MainTitle>{mainTitle}</MainTitle>
-      <SubTitle>{subTitle}</SubTitle>
+      {subTitle ? <SubTitle>{subTitle}</SubTitle> : null}
     </TitleContainer>
   );
 };

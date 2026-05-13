@@ -78,7 +78,7 @@ export const ClassManagement = () => {
       <ClassManagementContent>
         <ClassManagementTitleBar
           title="수업 관리"
-          subTitle="수업 환경을 만들어 사용해 보세요."
+          subTitle=""
           buttonText="수업 생성하기"
           buttonClick={() => navigate("create")}
         />
