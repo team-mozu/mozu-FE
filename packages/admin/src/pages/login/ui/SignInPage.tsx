@@ -120,6 +120,7 @@ const Container = styled.div`
   > p {
     font: ${font.l2};
     color: ${color.zinc[500]};
+    margin-top: 24px;
   }
 `;
 
